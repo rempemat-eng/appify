@@ -55,6 +55,7 @@ var _run_in := false
 var _closest := INF
 var _stuck_t := 0.0
 var _gave_up := false
+var _pursue := 0.0            ## hurt by the player: it keeps coming across its leash this long (Enemy.PROVOKED_TIME)
 
 func windup_time() -> float:
 	return 0.65 if role == "elite" else 0.95
@@ -110,6 +111,8 @@ func _changed(current: LimboState, _previous: LimboState) -> void:
 	_stuck_t = 0.0
 	if state != "approach":
 		_run_in = false
+	if state == "leash":
+		_pursue = 0.0
 	if state != "leash":
 		_gave_up = false             # deaf only on the walk home from an approach it gave up
 	if state == "idle":
@@ -131,10 +134,15 @@ func step(delta: float) -> void:
 		return
 	glance_t = maxf(glance_t - delta, 0.0)
 	_grace = maxf(_grace - delta, 0.0)
+	_pursue = maxf(_pursue - delta, 0.0)
+	# hurt by the player, it keeps coming across its leash for Enemy.PROVOKED_TIME (Claude A's call, 11 Nov:
+	# the leash-line dance beat every creature); the give-up in "approach" still applies
+	var pursuing := _pursue > 0.0 and is_instance_valid(target)
 	# a committed wind-up and its strike finish even across the leash (Matt, 11 Nov: stepping over the
 	# line as it wound up beat it every time); the recovery after it turns for home
 	var committed := state == "windup" or state == "attack"
-	if state != "idle" and state != "leash" and _outside_leash() and (not committed or not is_instance_valid(target)):
+	if state != "idle" and state != "leash" and _outside_leash() and not pursuing \
+			and (not committed or not is_instance_valid(target)):
 		_cancel_attack()
 		hsm.dispatch(&"leash")
 	hsm.update(maxf(delta, 0.0))
@@ -146,6 +154,8 @@ func _outside_leash() -> bool:
 ## True when it can come for someone standing at `at`: inside its leash, and, while it is idle or walking
 ## home, near enough to notice a shot from.
 func can_come_for(at: Vector2) -> bool:
+	if _pursue > 0.0 and state != "idle" and state != "leash":
+		return true                  # coming for the archer across its leash: they can strike back
 	if (_gave_up and state == "leash") or home.distance_to(at) > LEASH or global_position.distance_to(home) > LEASH:
 		return false
 	return (state != "idle" and state != "leash") or global_position.distance_to(at) <= WAKE
@@ -252,6 +262,8 @@ func take_hit(amount: int, dir: Vector2, _knockback: float = 200.0) -> bool:
 	# Incoming travel direction opposes the shield's facing on a frontal hit.
 	var guarded := role == "shield" and dir.normalized().dot(facing) < -0.5 and state != "recover"
 	hp -= maxi(1, ceili(float(amount) * (0.5 if guarded else 1.0)))
+	if archer != null:
+		_pursue = Enemy.PROVOKED_TIME
 	if hp <= 0:
 		dead = true
 		_cancel_attack()

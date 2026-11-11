@@ -205,7 +205,9 @@ expect cached 8
 expect glint 33
 
 step free the Thornback
-goto 1770 408 16
+# well inside the arena: the fight's pilot walks back here after a downing, and from the doorway (outside the
+# arena) its arrows glance and the Thornback heals 3 s after the player has left (Matt, 11 Nov)
+goto 1830 408 12
 fight 360
 expect flag camp_cleared:thornback
 expect quest under_the_stones active shard

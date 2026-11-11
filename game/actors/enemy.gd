@@ -71,6 +71,7 @@ var _leash_t := 0.0
 var _leash_budget := 0.0
 var _grace := 0.0
 var _provoked := 0.0
+var _pursue := 0.0             ## hurt by the player: it keeps coming across its leash this long (PROVOKED_TIME)
 var _run_in := false
 var _closest := INF
 var _stuck_t := 0.0
@@ -132,6 +133,7 @@ func _physics_process(delta: float) -> void:
 	_fade = maxf(_fade - delta, 0.0)
 	_grace = maxf(_grace - delta, 0.0)
 	_provoked = maxf(_provoked - delta, 0.0)
+	_pursue = maxf(_pursue - delta, 0.0)
 	if _stagger > 0.0:
 		_stagger -= delta
 		velocity = velocity.move_toward(Vector2.ZERO, 1800.0 * delta)
@@ -146,7 +148,10 @@ func _target_dist() -> float:
 	return INF if target == null else global_position.distance_to(target.global_position)
 
 func _should_leash() -> bool:
-	return global_position.distance_to(home) > leash_radius or (_target_dist() > lose_radius and _provoked <= 0.0)
+	# hurt by the player, it keeps coming across its leash for PROVOKED_TIME (Claude A's call, 11 Nov: the
+	# leash-line dance beat every enemy); the give-up in _chase still applies, and it never leaves the zone
+	return (global_position.distance_to(home) > leash_radius and _pursue <= 0.0) \
+		or (_target_dist() > lose_radius and _provoked <= 0.0)
 
 ## True when `at` is on the ground it keeps to: its leash lets it get within striking distance of it.
 func on_its_ground(at: Vector2) -> bool:
@@ -158,6 +163,8 @@ func on_its_ground(at: Vector2) -> bool:
 func can_come_for(at: Vector2) -> bool:
 	if state == &"windup" or state == &"lunge" or state == &"recover":
 		return true
+	if _pursue > 0.0 and state == &"chase":
+		return true                  # coming for the archer across its leash: they can strike back
 	if (_gave_up and state == &"leash") or not on_its_ground(at):
 		return false
 	return (state != &"idle" and state != &"leash") or global_position.distance_to(at) <= wake_radius
@@ -242,6 +249,7 @@ func _recover(delta: float) -> void:
 
 func _leash_enter() -> void:
 	steer.reset()
+	_pursue = 0.0
 	_run_in = false
 	_leash_t = 0.0
 	_leash_budget = LEASH_GIVE_UP + 2.0 * global_position.distance_to(home) / (speed * 1.3)
@@ -280,6 +288,7 @@ func take_hit(amount: int, dir: Vector2, knockback: float = 200.0) -> bool:
 	_flash = 0.12
 	if archer != null:
 		_provoked = PROVOKED_TIME
+		_pursue = PROVOKED_TIME
 		if hp > 0 and (state == &"idle" or state == &"leash"):
 			_wake(archer.global_position)
 	if state != &"windup" and state != &"lunge":

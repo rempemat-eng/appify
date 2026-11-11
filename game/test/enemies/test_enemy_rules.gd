@@ -227,6 +227,7 @@ func test_a_creature_is_whole_three_seconds_after_it_is_home_and_not_before() ->
 	assert_int(e.hp).is_equal(5)
 	e.global_position = Vector2(150, 0)
 	_archer.position = Vector2(5000, 5000)               # the target leaves its leash
+	e._pursue = 0.0                                      # (3 s since it was last hurt)
 	e.step(0.01)
 	assert_str(e.state).is_equal("leash")
 	e.step(0.5)
@@ -272,6 +273,7 @@ func test_a_hit_wakes_an_idle_creature_and_its_near_mates_and_glances_from_out_o
 	# walking home because the archer left its leash: no harm from out there
 	_archer.position = Vector2(SliceEnemy.LEASH + 40.0, 0)
 	a.global_position = Vector2(SliceEnemy.LEASH - 20.0, 0)
+	a._pursue = 0.0                                      # (3 s since it was last hurt)
 	a.step(0.01)
 	assert_str(a.state).is_equal("leash")
 	var hp := a.hp
@@ -403,6 +405,7 @@ func test_a_mossling_that_winds_up_lunges_or_recovers_can_always_be_hurt() -> vo
 	e.hp = 9
 	e.take_hit(1, Vector2.LEFT)
 	assert_int(e.hp).is_equal(8)
+	e._pursue = 0.0                                      # (3 s since it was last hurt: see the leash-pursuit test)
 	e.hsm.update(Enemy.RECOVER_TIME + 0.01)              # and once it turns for home it is out of it again
 	assert_str(String(e.state)).is_equal("leash")
 	e.take_hit(1, Vector2.LEFT)
@@ -776,3 +779,59 @@ func test_in_the_woodland_the_camp_gets_round_the_bramble_to_a_player_behind_it(
 		Zones.current.free()
 		Zones.current = null
 		SaveGame.reset()
+
+
+## Claude A's call, 11 Nov: hurt by the player, an enemy keeps coming across its leash for PROVOKED_TIME (the
+## mossling's own constant), then goes home. Before, stepping over the leash line as it came beat every
+## creature: elite freed in 10 s, shield in 7 s, no heart lost.
+func test_a_hurt_creature_keeps_coming_across_its_leash_for_the_provoked_time() -> void:
+	for role: String in ["elite", "shield", "rusher"]:
+		var host := _host()
+		var e := _creature(host, Vector2.ZERO, role)
+		e.set_physics_process(false)
+		_archer.position = Vector2(200, 0)
+		e.step(0.016)
+		assert_str(e.state).is_equal("approach")
+		assert_bool(e.take_hit(1, Vector2.LEFT)).is_true()
+		_archer.position = Vector2(SliceEnemy.LEASH + 40.0, 0)    # stepped over the line
+		e.global_position = Vector2(100, 0)
+		e.step(0.016)
+		assert_str(e.state).override_failure_message(role + " turned for home at once").is_equal("approach")
+		assert_bool(e.take_hit(1, Vector2.LEFT)).is_true()       # coming for them: they can strike back
+		var x := 100.0
+		for i in 28:                                             # 2.8 s of coming, gaining ground (no give-up)
+			x += 6.0
+			e.global_position = Vector2(x, 0)
+			e.step(0.1)
+		assert_str(e.state).override_failure_message("%s stopped coming after %.1f s" % [role, 2.8]).is_equal("approach")
+		for i in 4:                                              # past 3 s since the last hurt: home
+			x += 6.0
+			e.global_position = Vector2(x, 0)
+			e.step(0.1)
+		assert_str(e.state).is_equal("leash")
+		assert_bool(e.take_hit(1, Vector2.LEFT)).is_false()      # and out of reach again
+		e._cancel_attack()
+
+func test_a_hurt_mossling_keeps_coming_across_its_leash_for_the_provoked_time() -> void:
+	var host := _host()
+	var e := _mossling(host, Vector2.ZERO)
+	e.set_physics_process(false)
+	_archer.position = Vector2(100, 0)
+	e.hsm.update(0.016)
+	assert_str(String(e.state)).is_equal("chase")
+	assert_bool(e.take_hit(1, Vector2.LEFT, 0.0)).is_true()
+	e._stagger = 0.0
+	e.global_position = Vector2(e.leash_radius + 5.0, 0)          # past its leash
+	_archer.position = Vector2(e.leash_radius + 90.0, 0)
+	e._physics_process(0.016)
+	assert_str(String(e.state)).is_equal("chase")                # main: home at once
+	for i in 40:
+		e._physics_process(0.05)
+		e.global_position = Vector2(e.leash_radius + 5.0, 0)
+		e.velocity = Vector2.ZERO
+	assert_str(String(e.state)).is_equal("chase")                # 2 s
+	for i in 30:
+		e._physics_process(0.05)
+		e.global_position = Vector2(e.leash_radius + 5.0, 0)
+	assert_str(String(e.state)).is_equal("leash")                # past 3 s without a hit: home
+	assert_float(Enemy.PROVOKED_TIME).is_equal(3.0)
