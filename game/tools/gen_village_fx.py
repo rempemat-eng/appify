@@ -6,6 +6,10 @@ Writes game/zones/crossroads/art/fx/:
                       the kit's static forge_fire.png, which the strip replaces once the forge is lit)
   chimney_smoke_8.png the smithy chimney's smoke, 8 drawings of 32 x 56, foot at the bottom centre
                       (the pot's top)
+  forge_ember_8.png   the forge paid for before Hale is home (Matt, 11 Nov: a dark hearth until she
+                      arrives): "an ember under the ash", a banked bed of grey ash on the hearth with
+                      three coals breathing red through it, slowly; no flame, no sparks, no smoke.
+                      Same frame and foot as forge_fire_8.png
 
 Pixel art at the zone's density (1 texel per pixel), hard alpha, the kit's fire colours and three
 smoke greys. world/loop_fx.gd plays them (only on screen; one still drawing under reduced motion).
@@ -22,6 +26,8 @@ N = 8
 
 # the kit's fire ramp (forge_fire.png): ember, deep, flame, light, pale, core
 EMBER, DEEP, FLAME, LIGHT, PALE, CORE = (139, 59, 1), (195, 87, 10), (242, 114, 34), (252, 182, 138), (245, 212, 156), (255, 246, 230)
+# the house palette's ash ramp (art/house-palette.json 'ash', tones 0 to 5)
+ASH = [(0x24, 0x1A, 0x26), (0x41, 0x37, 0x3E), (0x5F, 0x55, 0x57), (0x7C, 0x74, 0x6E), (0x98, 0x8D, 0x7F), (0xB2, 0xA4, 0x8F)]
 SMOKE = [(122, 118, 122), (156, 152, 154), (190, 186, 184), (214, 210, 204)]
 
 
@@ -69,6 +75,57 @@ def fire_frame(i):
     return img
 
 
+def ember_frame(i):
+    """The banked hearth: an ash mound lying on the hearth's stone top (the smithy picture's coping, row
+    53 of this frame), lit from
+    the upper left, a few charcoal lumps, and three embers under the ash that breathe out of phase
+    (deep red, then the ember orange, one reaching the flame tone at its peak), each warming one ash
+    pixel above it at its brightest. Whole pixels only, hard alpha."""
+    W, H = 54, 72
+    img = np.zeros((H, W, 4), np.uint8)
+    base = 51                                      # the mound's lowest row sits on the coping (row 53)
+    lv = np.full((H, W), -1, int)                  # ash tone per pixel, -1 empty
+    for x in range(17, 51):
+        u = (x - 33.5) / 17.0
+        h = 3.2 * math.sqrt(max(0.0, 1 - u * u)) + 0.8 * math.sin(x * 1.7) * (1 - abs(u))
+        top = int(round(base - 1 - h))
+        for y in range(top, base + 2):
+            depth = y - top
+            # upper-left light: the top two rows on the left of the crest are lit, the right falls off
+            if depth == 0:
+                t = 5 if x < 30 else (4 if x < 42 else 3)
+            elif depth == 1:
+                t = 4 if x < 36 else 3
+            elif y >= base + 1:
+                t = 2
+            else:
+                t = 3 if x < 39 else 2
+            lv[y, x] = t
+    # the outline on the right and below only (as the fire's rim): the ash's darkest tone
+    op = lv >= 0
+    edge = op & ((~np.roll(op, -1, axis=1)) | (~np.roll(op, -1, axis=0)))
+    lv[edge] = 1
+    # charcoal lumps showing through: short dark runs with a lit grey top pixel
+    for x, y in ((21, 50), (29, 49), (38, 49), (45, 50)):
+        lv[y, x:x + 2] = 1
+        lv[y - 1, x] = 4
+    for t in range(6):
+        img[lv == t, :3] = ASH[t]
+        img[lv == t, 3] = 255
+    # the embers: three coals under the ash, a third of a cycle apart, breathing
+    for k, (x, y, big) in enumerate(((24, 51, False), (33, 50, True), (41, 51, False))):
+        b = 0.5 - 0.5 * math.cos(2 * math.pi * (i / N + k / 3.0))
+        core = EMBER if b < 0.3 else (DEEP if b < 0.8 or not big else FLAME)
+        img[y, x, :3] = core
+        img[y, x + 1, :3] = EMBER if b < 0.6 else DEEP
+        if big:                                    # the middle coal: a wider seam of fire under the crust
+            img[y + 1, x:x + 2, :3] = EMBER
+            img[y, x - 1, :3] = EMBER if b < 0.5 else DEEP
+        if b >= 0.8:                               # at its brightest it warms the ash just above
+            img[y - 1, x, :3] = (0x88, 0x5C, 0x4B)      # the house palette's path tone 2: ash warmed red
+    return img
+
+
 def smoke_frame(i):
     W, H = 32, 56
     img = np.zeros((H, W, 4), np.uint8)
@@ -105,4 +162,5 @@ if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     strip([fire_frame(i) for i in range(N)]).save(os.path.join(OUT, 'forge_fire_8.png'))
     strip([smoke_frame(i) for i in range(N)]).save(os.path.join(OUT, 'chimney_smoke_8.png'))
+    strip([ember_frame(i) for i in range(N)]).save(os.path.join(OUT, 'forge_ember_8.png'))
     print('wrote', OUT)
