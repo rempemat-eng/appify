@@ -148,9 +148,33 @@ func paint_cells(cells: Array, material_id: String, variant: String = "") -> Dic
 	if before.tiles == after.tiles and before.variants == after.variants:
 		return {"ok": true, "diagnostics": [], "changed": false}
 	after.baked_live = false
+	# land painted over water takes the water's flow arrows with it, in the same undo action (an
+	# arrow on dry ground is a validator fault; the audit of #471, P3)
+	var flow_old: TileMapLayer = null
+	var flow_new: TileMapLayer = null
+	var dries := not variant_only and (material_id == "" or definition(material_id).get("terrain", {}).get("water") == null)
+	if dries:
+		var rows := flow_rows()
+		var cleared := false
+		for cell in chosen:
+			if cell.y < rows.size() and cell.x < rows[cell.y].length() and rows[cell.y][cell.x] != ".":
+				rows[cell.y] = rows[cell.y].substr(0, cell.x) + "." + rows[cell.y].substr(cell.x + 1)
+				cleared = true
+		if cleared:
+			flow_old = _ground.get_node_or_null("Flow") as TileMapLayer
+			var empty := true
+			for row in rows:
+				empty = empty and row.count(".") == row.length()
+			flow_new = null if empty else ZonePlan._flow_layer(Array(rows), _ground.kit.cell)
 	_begin("Paint surface variant" if variant_only else "Paint terrain %s" % material_id)
 	_do(Callable(self, "_apply_paint").bind(_ground, after))
 	_undo(Callable(self, "_apply_paint").bind(_ground, before))
+	if flow_old != null:
+		_do(Callable(self, "_apply_flow").bind(_ground, flow_old, flow_new, true))
+		_undo(Callable(self, "_apply_flow").bind(_ground, flow_old, flow_new, false))
+		_history.add_undo_reference(flow_old)
+		if flow_new != null:
+			_history.add_do_reference(flow_new)
 	_history.commit_action()
 	return {"ok": true, "diagnostics": [], "changed": true, "cells": chosen, "snapped": snapped}
 
@@ -1009,7 +1033,7 @@ func paint_tiers(cells: Array, tier: int) -> Dictionary:
 		before[cell] = _ground.tier_at(cell)
 		after[cell] = tier
 	if before == after:
-		return {"ok": true, "diagnostics": [], "changed": false}
+		return {"ok": true, "diagnostics": [], "changed": false, "message": "No height changed."}
 	var layer := _ground.get_tiers_layer()
 	var created := layer == null
 	if created:
@@ -1024,7 +1048,11 @@ func paint_tiers(cells: Array, tier: int) -> Dictionary:
 	if created:
 		_history.add_do_reference(layer)
 	_history.commit_action()
-	return {"ok": true, "diagnostics": [], "changed": true, "cells": stroke.cells}
+	var raised := 0
+	for cell in stroke.cells:
+		raised += 1 if int(before.get(cell, -1)) != int(after.get(cell, -1)) else 0
+	return {"ok": true, "diagnostics": [], "changed": true, "cells": stroke.cells,
+		"message": "Painted tier %d on %d cell%s." % [tier, raised, "" if raised == 1 else "s"]}
 
 func _apply_tiers(target: TerrainGround, layer: TileMapLayer, values: Dictionary, created: bool, forward: bool, state: Dictionary) -> void:
 	if not is_instance_valid(target) or not is_instance_valid(layer):
@@ -1183,6 +1211,41 @@ func refresh_derived(target: TerrainGround = null) -> bool:
 	var rebuilt := walk.rebuild(target)
 	prepare_save(target)
 	return rebuilt
+
+## What a bake reads, as one string: the zone's plan as the scene holds it now. The plugin keeps it
+## when the painters start and compares it when they end (bind_bake).
+static func bake_key(zone: Node) -> String:
+	return ZonePlan.canonical(ZonePlan.plan_from_scene(zone)) if is_instance_valid(zone) else ""
+
+## A finished bake's picture onto its ground. When the zone changed while the painters ran (an edit
+## through the dock or Godot's own tools; the audit of #471, B1), the picture is behind the cells:
+## it is bound but marked stale, so it is not shown, and the scene says so when saved. Before, the
+## `baked` setter marked it current and the plugin saved it as current. Returns true when current.
+func bind_bake(zone: Node, target: TerrainGround, texture: Texture2D, key_at_start: String) -> bool:
+	if not is_instance_valid(target):
+		return false
+	target.baked = texture
+	if bake_key(zone) == key_at_start:
+		return true
+	target._baked_live = false
+	target._rebuild()
+	return false
+
+## The zone's walk mask as walk.txt (the plan's export for gen_zone.py and the review tools), derived
+## from the ground as it is: a zone that was never edited has no walk node, and a reopened zone's
+## node holds no rows until it rebuilds, so the node's rows are not used (the audit of #471, P1).
+func write_walk_file(target: TerrainGround, path: String) -> Error:
+	if not is_instance_valid(target):
+		return ERR_INVALID_PARAMETER
+	var rows := Walk.derive(target)
+	if rows.is_empty():
+		return ERR_UNCONFIGURED
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		return FileAccess.get_open_error()
+	file.store_string("\n".join(rows) + "\n")
+	file.close()
+	return OK
 
 ## The walk node joins the scene inside the first edit's own undo action (`install_walk`, which the
 ## plugin sets): undoing that edit takes the node out again. It used to be added beside the action,

@@ -644,7 +644,9 @@ func test_the_tier_brush_paints_height_with_undo_and_the_walk_mask_follows() -> 
 	var version: int = f.history.get_version()
 	assert_str(ops.paint_tiers(block, 4).diagnostics[0].rule).is_equal("rules.tier")
 	assert_str(ops.paint_tiers([Vector2i(40, 0)], 1).diagnostics[0].rule).is_equal("rules.bounds")
-	assert_bool(ops.paint_tiers(block, 1).changed).is_false()
+	var same: Dictionary = ops.paint_tiers(block, 1)
+	assert_bool(same.changed).is_false()
+	assert_str(same.message).is_equal("No height changed.")     # not "Painted tier 1 on 4 cells"
 	assert_int(f.history.get_version()).is_equal(version)
 
 func test_tiers_painted_with_the_brush_give_the_mask_python_derives() -> void:
@@ -700,6 +702,22 @@ func test_the_flow_brush_paints_direction_on_water_only_with_undo() -> void:
 	assert_object(f.ground.get_node_or_null("Flow")).is_null()
 	assert_str(ZonePlan.canonical(ops.export_plan().plan)).is_equal(before)
 	assert_bool(f.history.redo()).is_true()
+	assert_str(ops.export_plan().plan.flow[6]).is_equal("........↓.")
+	# an arrow into water a tier up is named as uphill
+	assert_bool(ops.paint_tiers([Vector2i(9, 7)], 1).ok).is_true()
+	var uphill: Dictionary = ops.paint_flow([Vector2i(8, 7)], "→")
+	assert_bool(uphill.ok).is_true()
+	var rules := []
+	for w in uphill.warnings:
+		rules.append(w.rule)
+	assert_that(rules).contains(["rules.water_uphill"])
+	assert_bool(f.history.undo()).is_true()
+	assert_bool(f.history.undo()).is_true()
+	# land painted over water takes the arrow with it, in the same undo step
+	assert_str(ops.export_plan().plan.flow[6]).is_equal("........↓.")
+	assert_bool(ops.paint_cells([Vector2i(8, 6)], "lawn").ok).is_true()
+	assert_that(ops.export_plan().plan.flow.slice(6, 8)).is_equal(["..........", "........↓."])
+	assert_bool(f.history.undo()).is_true()
 	assert_str(ops.export_plan().plan.flow[6]).is_equal("........↓.")
 	# an arrow on dry ground only is refused with the validator's own rule; a wrong glyph too
 	var version: int = f.history.get_version()
@@ -769,6 +787,79 @@ func test_a_drystone_run_is_drawn_from_the_walls_own_pieces() -> void:
 	ids.sort()
 	assert_that(ids).is_equal(["wall_drystone_e", "wall_drystone_ew", "wall_drystone_n", "wall_drystone_sw"])
 
+# --- the audit of #471
+
+func test_an_edit_made_while_the_painters_run_leaves_the_picture_stale() -> void:
+	# B1: the bake read the plan before the edit, and the picture came back marked current.
+	var f := await _fixture()
+	var ops: Operations = f.operations
+	var ground: TerrainGround = f.ground
+	var picture := ImageTexture.create_from_image(Image.create_empty(240, 192, false, Image.FORMAT_RGB8))
+	# no edit while it ran: the picture is current
+	var key := Operations.bake_key(f.zone)
+	assert_bool(ops.bind_bake(f.zone, ground, picture, key)).is_true()
+	assert_bool(ground.showing_baked()).is_true()
+	assert_bool(ground.baked_stale).is_false()
+	# a stroke painted while the painters ran: bound, not shown, saved as stale
+	key = Operations.bake_key(f.zone)
+	assert_bool(ops.paint_cells([Vector2i(1, 1)], "path").ok).is_true()
+	assert_bool(ops.bind_bake(f.zone, ground, picture, key)).is_false()
+	assert_object(ground.baked).is_same(picture)
+	assert_bool(ground.showing_baked()).is_false()
+	assert_bool(ground.baked_stale).is_true()
+	# a piece moved with Godot's own tools counts as an edit too
+	key = Operations.bake_key(f.zone)
+	assert_bool(ops.place_piece("woodland_stump", Vector2(132, 48)).ok).is_true()
+	assert_bool(ops.bind_bake(f.zone, ground, picture, key)).is_false()
+
+func test_a_bake_writes_the_walk_mask_of_a_zone_never_edited() -> void:
+	# P1: a zone with no walk node (never edited) baked without walk.txt; a reopened zone's node has
+	# no rows until it rebuilds. The file is derived from the ground as it is.
+	var plan := {"zone": "walk_file", "lab": true, "legend": {".": "lawn", "~": "water"},
+		"rows": ["....", "..~~", "..~~"], "spawns": {"start": [12, 12]}}
+	var zone := ZonePlan.scene_from_plan(plan)
+	add_child(zone)
+	_scenes.append(zone)
+	await get_tree().process_frame
+	var ground := zone.get_node("Ground") as TerrainGround
+	assert_object(ground.get_node_or_null("KitWalk")).is_null()
+	var ops := Operations.new()
+	var history := UndoRedo.new()
+	ops.configure(zone, ground, history, {})
+	var path := "user://walk_file_test.txt"
+	assert_int(ops.write_walk_file(ground, path)).is_equal(OK)
+	assert_str(FileAccess.get_file_as_string(path)).is_equal("\n".join(KitWalk.derive(ground)) + "\n")
+	assert_str(FileAccess.get_file_as_string(path).get_slice("\n", 2)).is_equal("....####")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+	history.free()
+
+func test_the_walk_node_waits_for_the_add_on_in_the_editor() -> void:
+	# In the editor a loaded KitWalk must not rebuild on its own: it would take over the pieces'
+	# solids and mark the ground with this process's id, which the next save would write.
+	var plan := {"zone": "walk_editor", "lab": true, "legend": {".": "lawn", "~": "water"},
+		"rows": ["....", "..~~"], "spawns": {"start": [12, 12]}}
+	var zone := ZonePlan.scene_from_plan(plan)
+	_scenes.append(zone)
+	var ground := zone.get_node("Ground") as TerrainGround
+	var walk := KitWalk.new()
+	walk.name = "KitWalk"
+	walk._in_editor = true
+	ground.add_child(walk)
+	add_child(zone)
+	for i in 3:
+		await get_tree().process_frame
+	assert_int(walk.rows.size()).is_equal(0)
+	assert_bool(ground.has_meta(KitWalk.OWNER_META)).is_false()
+	# the same node in the game rebuilds by itself
+	var played := ZonePlan.scene_from_plan(plan)
+	_scenes.append(played)
+	var game_walk := KitWalk.new()
+	(played.get_node("Ground") as TerrainGround).add_child(game_walk)
+	add_child(played)
+	for i in 3:
+		await get_tree().process_frame
+	assert_int(game_walk.rows.size()).is_greater(0)
+
 func test_the_walk_node_is_a_real_instance_in_the_editor() -> void:
 	# A zone saved once holds its KitWalk. In the editor a script that is not a tool script gives
 	# that node a placeholder, and the add-on's rebuild() after every edit failed on it.
@@ -804,6 +895,19 @@ func _wait_until(done: Callable, seconds: float = 30.0) -> bool:
 		waited += 0.1
 	return false
 
+## Linux's view of a process, read without the engine (OS.is_process_running logs an error for a
+## pid it has already reaped): running unless it is gone or a zombie.
+func _process_alive(pid: int) -> bool:
+	if OS.get_name() != "Linux" or pid <= 0:
+		return false
+	var out := []
+	OS.execute("sh", ["-c", "cat /proc/%d/stat 2>/dev/null" % pid], out)
+	var stat := String(out[0]) if not out.is_empty() else ""
+	if stat.strip_edges() == "":
+		return false
+	var state := stat.substr(stat.rfind(")") + 2, 1)
+	return state != "Z" and state != "X"
+
 func test_a_bake_job_runs_beside_the_caller_reports_progress_and_can_be_cancelled() -> void:
 	var log := ProjectSettings.globalize_path("user://bake_job_test.log")
 	var job := BakeJob.new()
@@ -817,10 +921,20 @@ func test_a_bake_job_runs_beside_the_caller_reports_progress_and_can_be_cancelle
 	assert_str(job.progress_text()).starts_with("Baking test: ")
 	assert_str(job.progress_text()).contains("painting water")
 	assert_int(job.exit_code()).is_equal(-1)
+	var pid := job.pid
 	job.cancel()
 	assert_bool(job.running()).is_false()
 	assert_bool(job.cancelled()).is_true()
 	assert_int(job.exit_code()).is_not_equal(0)            # killed, not finished
+	# and the process is really gone (or a zombie awaiting its reap), not left painting
+	assert_bool(await _wait_until(func() -> bool: return not _process_alive(pid))).is_true()
+	# a job that nobody holds any more stops its process too (the editor closing mid-bake)
+	var dropped := BakeJob.new()
+	assert_bool(dropped.start(_python(), slow, PackedStringArray([log]), log, "Baking test")).is_true()
+	var dropped_pid := dropped.pid
+	assert_bool(_process_alive(dropped_pid)).is_true()
+	dropped = null
+	assert_bool(await _wait_until(func() -> bool: return not _process_alive(dropped_pid))).is_true()
 	DirAccess.remove_absolute(log)
 
 func test_a_bake_job_hands_back_the_modules_exit_code_and_output() -> void:

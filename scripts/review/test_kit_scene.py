@@ -115,6 +115,11 @@ def cases():
     add('declared-scale-good', p, lib=lib, guide=guide)
     lib = copy.deepcopy(lib); lib['box']['geometry']['size_px'] = [240, 24]
     add('declared-scale-bad', p, ['rules.scale'], lib=lib, guide=guide)
+    # a spec names its kind by its head word, its bounds after it (scale.guide_kind; the audit of #471)
+    lib = copy.deepcopy(lib); lib['box']['geometry']['size_px'] = [24, 24]; lib['box']['audit'] = {'size_class': 'custom (8 to 8 tall, 8 to 8 wide)'}
+    add('declared-scale-good-with-its-bounds-in-words', p, lib=lib, guide=guide)
+    lib = copy.deepcopy(lib); lib['box']['geometry']['size_px'] = [240, 24]
+    add('declared-scale-bad-with-its-bounds-in-words', p, ['rules.scale'], lib=lib, guide=guide)
     p = plan(); p['pieces'] = [instance()]; lib = library(); lib['box']['approval']['state'] = 'concept'
     add('concept-even-in-lab', p, ['rules.unapproved'], lib=lib)
     p = plan(); p['pieces'] = [instance()]; lib = library(); lib['box']['approval']['state'] = 'candidate'

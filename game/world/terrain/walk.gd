@@ -24,6 +24,7 @@ var _body: StaticBody2D
 var _replaced: Dictionary = {}
 var _queued := false
 var _loaded_layers: Dictionary = {}
+var _in_editor := Engine.is_editor_hint()   ## a test sets it to stand in for the editor
 
 ## A tool script, so that the node a saved zone already holds is a real instance in the editor
 ## too. Without it that node was a placeholder there: the world editor's rebuild() after each edit
@@ -31,7 +32,7 @@ var _loaded_layers: Dictionary = {}
 ## The editor never rebuilds on its own; the add-on calls rebuild() at its edit boundaries.
 func _ready() -> void:
 	_loaded_layers = saved_collision_layers.duplicate()
-	if Engine.is_editor_hint():
+	if _in_editor:
 		return
 	if not ground_path.is_empty():
 		source = get_node_or_null(ground_path) as TerrainGround

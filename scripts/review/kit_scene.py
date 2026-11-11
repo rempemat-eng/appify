@@ -330,17 +330,23 @@ def _extra_checks(plan, library, materials, state, guide):
         geometry, audit = piece.get('geometry', {}), piece.get('audit', {})
         size, cells = geometry.get('size_px'), geometry.get('size_cells')
         category = audit.get('size_class')
+        # The size spec's head word is its kind ("bush (41 to 81 tall, 44 to 115 wide)" is a bush), as
+        # scripts/review/scale.py guide_kind and docs/vision/size-guide.md read it. The whole text
+        # was looked up, so every piece whose spec carries its bounds was an unknown class.
+        kind = category.split('(')[0].strip().split(' ')[0] if isinstance(category, str) else category
         if _xy(size) and _xy(cells) and any(abs(size[k] / TEXEL_CELL - cells[k]) > 0.500001 for k in (0, 1)):
             fs.append(_f('rules.scale', '%s: size_cells disagrees with art size on the cell grid' % name, at,
                          'fault' if category else 'advice'))
         if not category:
             fs.append(_f('rules.scale', '%s: size class is unclassified; art scale is not audited' % name, at, 'advice'))
-        elif category not in guide.get('kinds', {}):
+        elif kind in ('unsized', 'ground'):
+            fs.append(_f('rules.scale', '%s: size class is %s; art scale is not audited by box' % (name, kind), at, 'advice'))
+        elif kind not in guide.get('kinds', {}):
             fs.append(_f('rules.scale', '%s: unknown size-guide class %s' % (name, category), at))
         elif not _xy(size) or any(v <= 0 for v in size):
             fs.append(_f('rules.scale', '%s: declared size class needs finite positive art dimensions' % name, at))
         else:
-            bounds, tolerance = guide['kinds'][category], guide.get('tolerance', 2)
+            bounds, tolerance = guide['kinds'][kind], guide.get('tolerance', 2)
             if any(axis in bounds and not bounds[axis][0] - tolerance <= size[k] / DENSITY <= bounds[axis][1] + tolerance for k, axis in enumerate(('w', 'h'))):
                 fs.append(_f('rules.scale', '%s: art size is outside its size-guide class' % name, at))
     for x, y in sorted(route):

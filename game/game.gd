@@ -129,6 +129,9 @@ func autosave() -> void:
 	# The picture and demo modes (--shot, --demo, --lineup, --cycle ...) look at a save and never write one.
 	if not hud.guidance:
 		return
+	# a lab zone is a test bed: nothing that happens there is kept
+	if Zones.in_lab():
+		return
 	# a downed player gets up with full health, so that is what a save made on the ground holds
 	SaveGame.data.player.hp = player.hp if player.hp > 0 else player.max_hp
 	SaveGame.save()
@@ -157,7 +160,7 @@ func _on_zone(zone: Zone) -> void:
 ## The story's title cards (data/leads.json): the opening on a new game, the closing beat when the last
 ## quest of this build is done. Each shows once a save; a card waits for an open dialogue to close.
 func _show_due_card() -> void:
-	if not hud.guidance:
+	if not hud.guidance or Zones.in_lab():
 		return
 	while Dialogue.busy:
 		await Dialogue.closed

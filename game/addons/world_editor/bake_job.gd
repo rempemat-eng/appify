@@ -72,6 +72,13 @@ func cancel() -> void:
 	OS.kill(pid)
 	_exit_code = -2                    # killed: the engine forgets the process, so it is not asked after again
 
+## A job nobody holds any more is stopped: the plugin dropping it (the editor closing, the plugin
+## disabled) never leaves the painters running on their own.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE and pid > 0 and _exit_code == -1:
+		_cancelled = true
+		OS.kill(pid)
+
 func progress_text() -> String:
 	var line := last_line()
 	return "%s: %d s%s" % [label if label != "" else "Working", int(seconds()), (" (" + line.left(80) + ")") if line != "" else ""]

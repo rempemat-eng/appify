@@ -42,7 +42,9 @@ the top of `docs/world-editor.md`.
    flow arrows while either brush is held.
 8. **Bake ground** when the layout is settled (15 to 20 seconds a screen). It runs
    beside the editor: the status line shows the painter's progress, the button reads
-   _Cancel bake_ while it runs, and the result is bound and saved when it ends.
+   _Cancel bake_ while it runs, and the result is bound and saved when it ends. A cancel
+   never leaves a partial picture. If the zone is edited while it runs, the picture is
+   bound as stale and not shown: bake again.
 
 **A walled fold with a gate** takes three steps in this order: drag the wall piece round
 the ring (the run tool picks each cell's piece), paint the road under the three cells

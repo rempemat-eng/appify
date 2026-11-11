@@ -766,20 +766,26 @@ def write(zone: str) -> str:
         os.unlink(meta)
     except FileNotFoundError:
         pass
+    # The picture is written beside its name and moved into place whole (the audit of #471, B2): the
+    # editor's Cancel bake kills this process, and a kill during the save left a 0-byte picture that
+    # the zone's scene still named, so the zone's ground would not load until the next full bake.
+    tmp = p + '.tmp'
     try:
-        img.convert('RGB').save(p, optimize=True)
-        with Image.open(p) as output:
+        img.convert('RGB').save(tmp, format='PNG', optimize=True)
+        with Image.open(tmp) as output:
             if output.format != 'PNG':
                 raise ValueError('Baked ground is not a PNG')
             output.verify()
+        os.replace(tmp, p)
         with open(meta, 'w') as marker:
             json.dump({'zone': zone, 'hash': input_hash(plan, lib)}, marker, indent=1)
     except BaseException:
         # A failed marker write/close is incomplete publication too.
-        try:
-            os.unlink(meta)
-        except FileNotFoundError:
-            pass
+        for stale in (meta, tmp):
+            try:
+                os.unlink(stale)
+            except FileNotFoundError:
+                pass
         raise
     return p
 

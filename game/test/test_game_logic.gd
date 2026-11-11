@@ -117,6 +117,46 @@ func test_fresh_start_does_not_read_the_save() -> void:
 	assert_int(SaveGame.boot(false)).is_equal(OK)
 	assert_bool(SaveGame.has_flag("on_disk")).is_true()
 
+func test_a_lab_zone_is_never_where_the_game_resumes() -> void:
+	# The audit of #471: one start of the Brackens lab made it the save's zone, so every later plain
+	# start opened inside it, with no door out, under the woodland's banner and quest.
+	var g := _game()
+	await _ticks(2)
+	await _frames(3)
+	assert_str(Zones.current.zone_id).is_equal("woodland")
+	assert_bool(Zones.go_to("brackens_lab", "west")).is_true()
+	await _frames(2)
+	assert_bool(Zones.in_lab()).is_true()
+	# closing the window, and a settings change in the pause menu, both save: neither names the lab
+	g.autosave()
+	g.notification(Window.NOTIFICATION_WM_CLOSE_REQUEST)
+	assert_int(SaveGame.save()).is_equal(OK)
+	assert_str(String(_saved().zone)).is_equal("woodland")
+	assert_str(String(_saved().spawn)).is_equal("start")
+	assert_bool(_saved().flags.has("visited:brackens_lab")).is_false()
+	# in the game it is still the lab (the play driver and the HUD read this)
+	assert_str(SaveGame.data.zone).is_equal("brackens_lab")
+	# the HUD shows no quest and no lead in a lab
+	var hud: Control = g.get_node("UI/HUD")
+	assert_str(hud.shown_text().quest_title).is_equal("")
+	# leaving the lab makes the save follow the player again
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	assert_int(SaveGame.save()).is_equal(OK)
+	assert_str(String(_saved().zone)).is_equal("crossroads")
+
+func test_a_save_already_inside_a_lab_resumes_at_the_start() -> void:
+	SaveGame.data.zone = "brackens_lab"
+	SaveGame.data.spawn = "start"
+	var g := _game()
+	await _ticks(2)
+	await _frames(3)
+	assert_str(Zones.current.zone_id).is_equal("brackens_lab")
+	var hud: Control = g.get_node("UI/HUD")
+	assert_str(hud.shown_text().banner).is_equal("")                # no opening card in a lab
+	assert_bool(SaveGame.has_flag("seen:opening")).is_false()
+	assert_int(SaveGame.save()).is_equal(OK)
+	assert_str(String(_saved().zone)).is_equal("woodland")
+
 # --- the HUD's guidance ---------------------------------------------------------------------------
 func test_a_new_game_shows_the_opening_card_once_and_a_lead() -> void:
 	var g := _game()

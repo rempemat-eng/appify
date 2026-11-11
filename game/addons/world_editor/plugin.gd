@@ -34,6 +34,7 @@ var _bake_job: RefCounted
 var _bake_zone_id := ""
 var _bake_ground: TerrainGround
 var _bake_zone: Node
+var _bake_key := ""      ## the zone's plan when the painters started (Operations.bake_key)
 signal bake_finished(result: Dictionary)
 var _fence_style := ""
 var clipboard: Array = []
@@ -257,7 +258,8 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 				return true
 			if brush.begins_with("tier:"):
 				var tier := int(brush.substr(5))
-				_say_result(operations.paint_tiers(cells, tier), "Painted tier %d on %d cells" % [tier, cells.size()])
+				var raised := operations.paint_tiers(cells, tier)
+				_say_result(raised, String(raised.get("message", "")))
 				return true
 			if brush.begins_with("flow:"):
 				var flowed := operations.paint_flow(cells, brush.substr(5))
@@ -602,6 +604,7 @@ func start_bake() -> Dictionary:
 	_bake_zone_id = String(prepared.zone_id)
 	_bake_ground = ground
 	_bake_zone = zone
+	_bake_key = Operations.bake_key(zone)
 	return {"ok": true, "diagnostics": [], "running": true, "message": "Baking %s: the editor stays usable; press Cancel bake to stop it." % _bake_zone_id}
 
 func bake_running() -> bool:
@@ -688,10 +691,14 @@ func _bake_finish() -> Dictionary:
 		return Rules.failure("editor.bake_missing", "The bake did not produce its ground image.")
 	if not is_instance_valid(_bake_ground):
 		return Rules.failure("editor.bake_scene", "The zone was closed while it baked; its picture is on disk and binds at the next bake.")
-	_bake_ground.baked = ResourceLoader.load(png, "Texture2D", ResourceLoader.CACHE_MODE_REPLACE) as Texture2D
+	var texture := ResourceLoader.load(png, "Texture2D", ResourceLoader.CACHE_MODE_REPLACE) as Texture2D
+	if not operations.bind_bake(_bake_zone, _bake_ground, texture, _bake_key):
+		# the zone was edited while the painters ran: the picture is behind it. Nothing is saved over
+		# the edit and walk.txt stays the export of the plan the painters read.
+		operations.refresh_derived(_bake_ground)
+		return Rules.failure("editor.bake_behind", "Baked %s, but the zone was edited during the bake: the picture is behind it and is not shown. Bake again." % zone_id)
 	operations.refresh_derived(_bake_ground)
-	var walk := _bake_ground.get_node_or_null("KitWalk") as KitWalk
-	if walk != null and walk.write_walk("res://zones/%s/walk.txt" % zone_id) != OK:
+	if operations.write_walk_file(_bake_ground, "res://zones/%s/walk.txt" % zone_id) != OK:
 		return Rules.failure("editor.walk_export_failed", "The ground was baked, but its walk mask could not be written.")
 	# The scene was saved before the painters ran, so the file on disk does not hold the new
 	# picture yet: save again, or the game would show the live tiles until the next save.

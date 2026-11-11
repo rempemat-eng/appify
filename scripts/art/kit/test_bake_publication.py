@@ -152,13 +152,29 @@ class PublicationFaults(BakeBoundary):
         self.assertEqual(self.b.check(), 0, 'prerequisite: baseline is not current')
         before = path.read_bytes()
         self._snapshot('before')
-        fault, writers = self._fault(path, 32)
+        # the picture is written beside its name first (bake.write), so the fault lands there
+        fault, writers = self._fault(Path(str(path) + '.tmp'), 32)
         with fault, self.assertRaises(InjectedWriteError):
             self.b.write('probe_a')  # Real same-input encoder, real truncated file.
         self.assertTrue(any(w.triggered for w in writers), 'fault boundary was not reached')
         self._snapshot('after')
         if path.read_bytes() != before:
             self._not_current()
+
+    def test_a_picture_cut_off_mid_write_leaves_the_old_one_whole(self):
+        # The audit of #471 (B2): Cancel bake kills the painter with SIGKILL. A kill during the save
+        # left a 0-byte ground_baked.png that the scene still named. Now the old picture stays whole
+        # and nothing half-written is left beside it.
+        path = self._write('probe_a')
+        before = path.read_bytes()
+        fault, writers = self._fault(Path(str(path) + '.tmp'), 32)
+        with fault, self.assertRaises(InjectedWriteError):
+            self.b.write('probe_a')
+        self.assertTrue(any(w.triggered for w in writers), 'the picture was not written beside its name')
+        self.assertEqual(path.read_bytes(), before)
+        self.assertFalse(Path(str(path) + '.tmp').exists())
+        with self.b.Image.open(path) as image:
+            image.verify()
 
     def test_failed_second_bake_does_not_advertise_mixed_generation(self):
         for zone in self.plans:

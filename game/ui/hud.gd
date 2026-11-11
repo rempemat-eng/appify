@@ -147,7 +147,8 @@ func _process(delta: float) -> void:
 	if _shown.get("glint") != g:
 		_shown.glint = g
 		_glint.text = g
-	_show_quest(Quests.tracked_text(guidance))
+	# a lab zone is not part of the story: no quest and no lead pointing somewhere it cannot lead
+	_show_quest("" if Zones.in_lab() else Quests.tracked_text(guidance))
 	var f: Node = player.focus
 	var prompt := f != null and is_instance_valid(f) and not Dialogue.busy
 	_prompt.visible = prompt

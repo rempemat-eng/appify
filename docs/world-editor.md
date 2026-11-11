@@ -37,7 +37,7 @@ The proof is `editor_glade` (`game/kit/zones/editor_glade.json`, `game/zones/edi
 
 ### The Brackens' first screen (11 November): a lab for Matt to play
 
-`brackens_lab` (`game/kit/zones/brackens_lab.json`, `game/zones/brackens_lab/brackens_lab.tscn`) is the test named under "Recommendation" below: one screen of the Brackens built in the dock from the Brackens' own candidate pieces. **It is a lab zone. It is not part of the game, nothing leads to it, and no piece in it is approved.** Start it with `--zone=brackens_lab` (`--spawn=west` for the far end).
+`brackens_lab` (`game/kit/zones/brackens_lab.json`, `game/zones/brackens_lab/brackens_lab.tscn`) is the test named under "Recommendation" below: one screen of the Brackens built in the dock from the Brackens' own candidate pieces. **It is a lab zone. It is not part of the game, nothing leads to it, and no piece in it is approved.** Start it with `--zone=brackens_lab` (`--spawn=west` for the far end). A lab zone is never where the game resumes: the save keeps the zone the player came from, nothing done in a lab is saved, and the HUD shows no quest and no story card there.
 
 What is in it: heath, the Drover's Road (drove) in at the east and out at the west with one bend, a peat cutting, the heather ridge along the north painted with the tier brush (two tiers; nothing climbs it), the shepherd's hut with its peat stack, the drove well, a ruined fold with a cold fire ring, a stone seat, two cairns, a broken peat cart and seven gorse clumps. 16 pieces of 9 kinds, 3 grounds, two spawns, no door, no actor. The region brief puts the drove well about 500 px north of the hut; it stands on this screen so that the screen has one thing that moves.
 
@@ -48,14 +48,14 @@ What building it showed:
 - **The Brackens' drystone wall cannot stand in a valid zone today, so the screen has no wall and no fold.** A wall run must close into a loop (an end at the zone's edge is a fault), a closed loop must hold stock and a trough, and the 59 pieces hold neither. With the farm's sheep and the village trough the dock still cannot fill a fold: the trough is refused until stock is near and the sheep are refused until a trough is in, so neither can be placed first. A first build with an empty fold failed Validate zone (`rules.enclosures`), and the fold was taken out.
 - **The fence run could not draw a drystone wall at all.** It named every cell `fence_<style>_<joins>`; the wall's cells are `wall_drystone_<joins>`. Fixed: the run takes the library's own name for the style and the joins. A gate then needs a fixed order (the ring first, the road under the gate's three cells second, the gate on the run third), because a wall cell is refused on a route and a gate is refused off one.
 - **The heath has no picture for a tier's side or back.** Only a south face is drawn. A bluff with a side in view has an invisible wall along it, so the ridge runs off the screen at both ends and the south bluff of the gap was left out.
-- **Validate zone reports 29 `rules.scale` faults, for all 9 kinds of piece on the screen.** Their `audit.size_class` holds the class and its bounds in one text ("bush (41 to 81 tall, 44 to 115 wide)"), which is not a key of `scripts/art/size_guide.json` ("bush"), and a piece with a size class has its `size_cells` held to its art size as a fault where an unclassified piece gets advice. The woodland pieces have no size class and pass with advice. This is piece data and is not changed here. The zone has no other fault.
+- **Validate zone reports 15 faults on this screen, all piece data.** 13 are `size_cells disagrees with art size on the cell grid`: a piece with a size class has its footprint (`size_cells`) held to its art box as a fault, where an unclassified piece gets advice. One is the stone seat, larger than the bench class. One is the cart, whose spec names a kind (`cart`) the size guide does not have. The validator used to report 29: it looked up the whole size spec ("bush (41 to 81 tall, 44 to 115 wide)") instead of its head word, as `scripts/review/scale.py` does; that is fixed (16 false faults across 61 pieces of the library). The piece data is not changed here.
 - The 59 hold no animal, no tree and no person: the screen has no sheep, no pine and nobody at the hut.
 
 ### Open faults (not fixed)
 
 - **The committed `woodland_kit.tscn` is behind the woodland it copies its actors from.** Since #463 Hale stands at (600, 1296) in the woodland and still at (800, 1330) in the committed kit scene; a rebuild from the plan moves him. Copied actors are not in the plan, so the test that holds scene and plan together cannot see this.
 - **`walk.gd` still looks up a saved process id** if one reaches a scene (`_ground_owner`). The dock no longer saves one.
-- **A cancelled bake may leave a half-written `ground_baked.png` on disk.** The scene does not point at it and the next bake overwrites it. Not reproduced: the painters write the picture at the end.
+- **The fold ruin's side walls can be walked through** (its only box is the back wall), and the notch in the Brackens lab's ridge looks open but has an invisible wall at its mouth (the heath has no tier-side picture). Piece data and art; found by the audit of #471.
 
 ### Faults found and fixed on 11 November (wave 2)
 
@@ -68,6 +68,12 @@ Each has a test that fails on the old code unless it says otherwise.
 - A baked ground that is out of date stays out of date through a save and a reopen (`baked_stale` on the ground).
 - The bake froze the editor for its whole run. It is a separate process now: the dock shows the painter's last line and the seconds, the button reads Cancel bake, and closing the editor stops it. Checked in the editor: over 2,000 editor frames during one 15 second bake, an edit accepted meanwhile, cancel, then a full bake that binds and saves.
 - The three signs had no body in their piece scenes while the walk mask blocked their whole 2 by 2 footprint (see point 5 above).
+- From the audit of #471: an edit made while the painters ran was lost from the picture, and the picture was then marked current and saved. The bake now compares the zone's plan at its start and its end; if the zone changed, the picture is bound but stale (not shown) and the scene is not saved over the edit.
+- From the same audit: a cancel during the picture's save left a 0-byte `ground_baked.png` that the scene named. `bake.py` writes the picture beside its name and moves it into place whole, so a cancel never leaves a partial picture.
+- One start of a lab zone made it the save's zone, so every later start opened inside it, with no door out, under the woodland's banner and quest. A lab is never where the game resumes, nothing is autosaved there, and the HUD shows no quest or card in it.
+- A zone never edited (no walk node) baked without `walk.txt`. The bake derives the mask from the ground itself now.
+- The tier brush said "Painted tier 0 on 1 cells" for a stroke that changed nothing; land painted over water left the water's flow arrow behind (now removed in the same undo step).
+- A bake job nobody holds any more (the editor closing mid-bake) stops its process.
 
 ### Faults found and fixed on 10 November
 

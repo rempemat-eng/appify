@@ -23,6 +23,17 @@ func attach(zone_root: Node, the_player: Node2D) -> void:
 	root = zone_root
 	player = the_player
 
+## A zone built from a lab plan (its ground says `lab`): kitlab, the Brackens lab, woodland_kit.
+static func is_lab(zone: Node) -> bool:
+	if zone == null:
+		return false
+	var ground := zone.get_node_or_null("Ground")
+	return ground != null and ground.get("lab") == true
+
+## True while the player stands in a lab zone: no autosave, no story card, no quest on the HUD.
+func in_lab() -> bool:
+	return current != null and is_instance_valid(current) and is_lab(current)
+
 func has_zone(zone_id: String) -> bool:
 	return table.has(zone_id) and ResourceLoader.exists(table[zone_id])
 
@@ -52,9 +63,21 @@ func go_to(zone_id: String, spawn: String = "start") -> bool:
 		player.global_position = next.spawn_position(spawn)
 		if player.has_method("reset_motion"):
 			player.reset_motion()
+	# A lab zone (an editor test bed, started by name) is never where the game resumes: the save
+	# keeps the zone the player came from, and the lab leaves no "visited" mark. Before this, one
+	# start of a lab made it the save's zone, so every later start opened inside it with no door out.
+	if is_lab(next):
+		if SaveGame.resume.is_empty():
+			# a save made before this rule may already name the lab: it resumes at the game's start
+			var fresh := SaveGame.fresh()
+			var from_lab := String(SaveGame.data.zone) == zone_id
+			SaveGame.resume = {"zone": fresh.zone if from_lab else String(SaveGame.data.zone),
+				"spawn": fresh.spawn if from_lab else String(SaveGame.data.spawn)}
+	else:
+		SaveGame.resume = {}
+		SaveGame.set_flag("visited:" + zone_id)
 	SaveGame.data.zone = zone_id
 	SaveGame.data.spawn = spawn
-	SaveGame.set_flag("visited:" + zone_id)
 	Quests.notify("enter:" + zone_id)
 	_busy = false
 	zone_changed.emit(next)
