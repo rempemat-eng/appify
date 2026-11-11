@@ -8,6 +8,7 @@ extends Area2D
 signal collected(glint: int)
 
 const RISE := 0.35
+const REACH := 40.0                         ## the pickup's 18 and the player's 9, with room for a fast step
 const MARK := preload("res://ui/art/glint.png")
 
 var cache := {}
@@ -35,6 +36,11 @@ func _draw() -> void:
 
 func _on_body(body: Node) -> void:
 	if _taken or not body.is_in_group("player"):
+		return
+	# The zone has just loaded and the player has just been set at its start: for one physics step the
+	# physics server still has the body where it fell, on this very spot. Only a body that is really here
+	# picks the cache up (played 11 Nov: every cache was taken back in the frame the player got up).
+	if (body as Node2D).global_position.distance_to(global_position) > REACH:
 		return
 	_taken = true
 	var got := GlintCache.collect(cache)

@@ -184,8 +184,13 @@ func test_in_the_game_a_downed_player_finds_the_cache_where_they_fell() -> void:
 		assert_int(int(SaveGame.data.glint)).is_equal(17)
 		pickups = Zones.current.actors.get_children().filter(func(n: Node) -> bool: return n is GlintCachePickup)
 		assert_int(pickups.size()).is_equal(2)
+		# the physics server may still hold the body where it fell for a step after the zone loaded: a body
+		# that is not really here takes nothing (played: every cache was taken back as the player got up)
+		(pickups[0] as GlintCachePickup).body_entered.emit(player)
+		assert_int(int(SaveGame.data.glint)).is_equal(17)
 		# walk over both
 		for p: GlintCachePickup in pickups:
+			player.global_position = p.global_position + Vector2(6, 0)
 			p.body_entered.emit(player)
 		assert_int(int(SaveGame.data.glint)).is_equal(26)
 		assert_array(SaveGame.data.caches).is_empty()

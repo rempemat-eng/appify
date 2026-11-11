@@ -145,6 +145,8 @@ expect zone undercroft
 expect quest under_the_stones active rooms
 
 step downed in the first room: up again at the stair with every heart, the quest kept; a fifth of the 26 Glint carried lies where the player fell
+# (a few steps into the hall first: a cache left on the stair itself is picked up again on getting up there)
+goto 250 400 16
 down 60
 expect zone undercroft
 expect hp 5
