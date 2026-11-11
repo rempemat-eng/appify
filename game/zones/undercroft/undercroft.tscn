@@ -106,7 +106,7 @@ size = Vector2(48, 144)
 radius = 30
 
 [sub_resource type="RectangleShape2D" id="s24"]
-size = Vector2(18, 18)
+size = Vector2(34, 34)
 
 [sub_resource type="RectangleShape2D" id="s25"]
 size = Vector2(24, 96)
@@ -595,6 +595,7 @@ script = ExtResource("plate")
 flag = "undercroft_plate"
 
 [node name="Shape" type="CollisionShape2D" parent="Actors/SealPlate"]
+position = Vector2(0, -16)
 shape = SubResource("s24")
 
 [node name="SealLever" type="Area2D" parent="Actors"]

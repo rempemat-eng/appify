@@ -3139,7 +3139,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
             lift_jobs.append((pr['id'], pic, (q(x), q(y))))
         objects.append(dict(id=pr['id'], kind=pr['kind'], png=add_pic(pr['id'], pic.rgba()), foot=(q(x), q(y)),
                             anchor=(pic.ax, pic.ay), alpha=pic.alpha(), cond=pr.get('if'),
-                            solid=[x - w / 2, y - h, w, h] if pr.get('solid') else None))
+                            solid=[x - w / 2, y - h, w, h] if pr.get('solid') else None, box=pr.get('box')))
     frames = [p_torch(i, 7) for i in range(TORCH_FRAMES)]
     fw = frames[0].W
     sheet = Image.new('RGBA', (fw * TORCH_FRAMES, frames[0].H))
@@ -3394,7 +3394,9 @@ def build(plan: dict, out_dir: str, preview: str | None = None, fields: dict | N
     for o in objects:
         e = dict(id=o['id'], kind=o['kind'], png=o['png'] + '.png', foot=[int(o['foot'][0]), int(o['foot'][1])],
                  offset=[-int(o['anchor'][0]), -int(o['anchor'][1]) - int(o.get('lift', 0))], cond=o.get('cond'),
-                 solid=o.get('solid'))
+                 solid=o.get('box') or o.get('solid'))
+        # a prop's `box` (the plan's, measured on its picture) is its solid in the game; the box `size` gives
+        # stays what the painting uses (the contact shadow above), so recording the box moves no pixel
         if o.get('frames'):
             e['frames'] = o['frames']
         doc['objects'].append(e)

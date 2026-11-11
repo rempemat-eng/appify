@@ -113,6 +113,43 @@ func test_no_rest_during_a_fight_or_a_line() -> void:
 	spot.interact()
 	assert_int(_player.hp).is_equal(_player.max_hp)
 
+func test_no_rest_while_flinching_from_a_hit() -> void:
+	var spot: RestSpot = await _at_the_hut()
+	assert_bool(_player.take_damage(1, Vector2.LEFT)).is_true()
+	assert_bool(_player.is_invulnerable()).is_true()
+	var hurt := _player.hp
+	assert_bool(spot.fight_near()).is_true()
+	assert_bool(spot.usable()).is_false()
+	spot.interact()
+	assert_int(_player.hp).is_equal(hurt)
+	# the mercy frames over, it is a rest again
+	while _player.is_invulnerable():
+		await get_tree().physics_frame
+	await _ticks(2)
+	assert_bool(spot.usable()).is_true()
+	spot.interact()
+	assert_int(_player.hp).is_equal(_player.max_hp)
+
+func test_a_fight_is_an_enemy_within_half_a_screen() -> void:
+	var spot: RestSpot = await _at_the_hut()
+	var enemy: Node2D = auto_free(load("res://actors/enemy.tscn").instantiate())
+	Zones.current.actors.add_child(enemy)
+	enemy.set_physics_process(false)          # standing where it is put
+	for row: Array in [[400.0, true], [470.0, true], [490.0, false], [560.0, false]]:
+		enemy.global_position = spot.global_position + Vector2(row[0], 0)
+		await _ticks(1)
+		assert_bool(spot.fight_near()).override_failure_message(
+			"an enemy %.0f texels from the hut: fight is %s" % [row[0], spot.fight_near()]).is_equal(row[1])
+
+func test_the_hut_line_speaks_of_aches_only_when_there_were_some() -> void:
+	var spot: RestSpot = await _at_the_hut()
+	var whole := " ".join(Dialogue.lines_for(spot.speaker_for(_player.max_hp, _player.max_hp)))
+	var hurt := " ".join(Dialogue.lines_for(spot.speaker_for(_player.max_hp - 2, _player.max_hp)))
+	assert_str(whole).contains("swollen shut")
+	assert_str(whole).not_contains("aches")
+	assert_str(hurt).contains("swollen shut")
+	assert_str(hurt).contains("aches have gone")
+
 func test_the_rest_is_shown_quietly_and_ends() -> void:
 	var spot: RestSpot = await _at_the_hut()
 	_player.hp = 1
@@ -131,32 +168,55 @@ func test_the_rest_is_shown_quietly_and_ends() -> void:
 	assert_object(spot.get_node_or_null("RestHush")).is_null()
 
 # --- 2. the seal plate ------------------------------------------------------------------------
+## The raised slab as drawn, in the zone: scripts/art/native/undercroft.py p_plate sets it 10 texels in
+## from the picture's sides and top (the 3 texel margin, the 6 texel frame and its gap, less the 2 world px
+## lift for the top) and 16 above its bottom (the same, plus the slab's front face and the lift).
+func _drawn_panel(zone: Zone) -> Rect2:
+	var pic := zone.get_node("Floor/If_plate_up/PlateUp") as Sprite2D
+	var box := Rect2(pic.global_position + pic.offset, pic.texture.get_size())
+	var panel := Rect2(box.position + Vector2(10, 10), box.size - Vector2(20, 26))
+	var img := pic.texture.get_image()
+	for corner: Vector2 in [panel.position, panel.end - Vector2.ONE, panel.get_center()]:
+		assert_float(img.get_pixelv(Vector2i(corner - box.position)).a).is_greater(0.5)   # drawn there
+	return panel
+
+## True when a body with its feet at `feet` overlaps the plate's area (the circle against the rectangle).
+func _presses(plate: Rect2, feet: Vector2) -> bool:
+	return _dist_to_rect(feet + Vector2(0, -BODY_UP), plate) < BODY / 2.0
+
+func test_feet_anywhere_on_the_drawn_slab_press_the_plate() -> void:
+	var zone := _enter("undercroft")
+	var plate := _rect(zone.get_node("Actors/SealPlate"))
+	var panel := _drawn_panel(zone)
+	for i in 9:
+		for j in 9:
+			var feet := panel.position + Vector2(i / 8.0 * (panel.size.x - 1.0), j / 8.0 * (panel.size.y - 1.0))
+			assert_bool(_presses(plate, feet)).override_failure_message(
+				"feet at %s stand on the drawn slab %s and do not press the plate %s" % [feet, panel, plate]).is_true()
+	# and in the running zone, with the player's own body: the corners and the middle
+	for feet: Vector2 in [panel.position, Vector2(panel.end.x - 1.0, panel.position.y), panel.get_center(),
+			Vector2(panel.position.x, panel.end.y - 1.0), panel.end - Vector2.ONE]:
+		SaveGame.set_flag("undercroft_plate", false)
+		_player.global_position = panel.get_center() + Vector2(0, -120)
+		await _ticks(4)
+		_player.global_position = feet
+		await _ticks(4)
+		assert_bool(SaveGame.has_flag("undercroft_plate")).override_failure_message("the plate stayed up under feet at %s" % feet).is_true()
+
 func test_the_walk_from_the_doorway_to_the_lever_misses_the_plate() -> void:
 	var zone := _enter("undercroft")
 	var plate := _rect(zone.get_node("Actors/SealPlate"))
+	var panel := _drawn_panel(zone)
 	var lever := (zone.get_node("Actors/SealLever") as Node2D).global_position
 	# the doorway into the seal room: between the two blocks of the wall west of it
 	var north := _rect(zone.get_node("Walls/Wall_sep2_n"))
 	var south := _rect(zone.get_node("Walls/Wall_sep2_s"))
 	var from := Vector2(north.end.x, (north.end.y + south.position.y) / 2.0)
 	var to := lever + Vector2(0, Interactable.REACH * 0.5)      # where the Pull prompt is well in reach
-	var nearest := INF
 	for i in 201:
 		var feet := from.lerp(to, i / 200.0)
-		nearest = minf(nearest, _dist_to_rect(feet + Vector2(0, -BODY_UP), plate))
-	assert_float(nearest).override_failure_message(
-		"walking straight from the doorway to the lever passes %.1f texels from the plate: a body (r 9) presses it" % nearest) \
-		.is_greater(BODY / 2.0 + 6.0)
-	# nor does walking east along the doorway's own axis, to the slab
-	var slab := Vector2(_rect(zone.get_node("Walls/Wall_sep3_n")).position.x, from.y)
-	nearest = INF
-	for i in 201:
-		nearest = minf(nearest, _dist_to_rect(from.lerp(slab, i / 200.0) + Vector2(0, -BODY_UP), plate))
-	assert_float(nearest).override_failure_message(
-		"walking east along the doorway's axis passes %.1f texels from the plate" % nearest).is_greater(BODY / 2.0 + 6.0)
-	# feet on the slab press it
-	var on_it := (zone.get_node("Actors/SealPlate") as Node2D).global_position
-	assert_float(_dist_to_rect(on_it + Vector2(0, -BODY_UP), plate)).is_less(BODY / 2.0)
+		assert_bool(_presses(plate, feet)).override_failure_message("walking straight to the lever, feet at %s press the plate" % feet).is_false()
+		assert_bool(panel.has_point(feet)).override_failure_message("walking straight to the lever crosses the drawn slab at %s" % feet).is_false()
 	# and the plate still starts the channel: its picture reaches the channel's west end
 	var channel := zone.get_node("Floor/If_channel_lit/ChannelLit") as Sprite2D
 	var plate_pic := zone.get_node("Floor/If_plate_up/PlateUp") as Sprite2D
@@ -198,6 +258,7 @@ func test_the_undercroft_roots_and_pillars_block_what_is_drawn() -> void:
 	# plain floor inside the box on either side, and the box no narrower than three fifths of them (a
 	# root that runs aslant and a plinth's scattered pebbles are wider than what stops a foot)
 	for id: String in ["roots_hall", "stump_nw", "stump_se", "rubble_seal"]:
+		var pillar := id.begins_with("stump")
 		var box := _rect(zone.get_node("Walls/Solid_" + id))
 		var pic := zone.get_node("Props/" + id.to_pascal_case()) as Sprite2D
 		var img := pic.texture.get_image()
@@ -215,6 +276,31 @@ func test_the_undercroft_roots_and_pillars_block_what_is_drawn() -> void:
 		assert_float(lo - box.position.x).override_failure_message("%s: %.0f texels of bare floor inside its box on the west" % [id, lo - box.position.x]).is_less_equal(8.0)
 		assert_float(box.end.x - hi).override_failure_message("%s: %.0f texels of bare floor inside its box on the east" % [id, box.end.x - hi]).is_less_equal(8.0)
 		assert_float(box.size.x).override_failure_message("%s blocks %.0f of %.0f drawn texels" % [id, box.size.x, hi - lo]).is_greater_equal((hi - lo) * 0.6)
+		if pillar:
+			# a broken pillar stands on its plinth: the box spans at least 80 % of the plinth as drawn, the
+			# middle width of the picture's lowest 18 rows (6 world px), whatever rows the box itself takes
+			var widths: Array[float] = []
+			var bottom := -1
+			for py in range(img.get_height() - 1, -1, -1):
+				for px in img.get_width():
+					if img.get_pixel(px, py).a > 0.5:
+						bottom = py
+						break
+				if bottom >= 0:
+					break
+			for py in range(bottom - 17, bottom + 1):
+				var l := -1
+				var r := -1
+				for px in img.get_width():
+					if img.get_pixel(px, py).a > 0.5:
+						if l < 0:
+							l = px
+						r = px
+				if l >= 0:
+					widths.append(float(r - l + 1))
+			widths.sort()
+			var plinth := widths[widths.size() / 2]
+			assert_float(box.size.x).override_failure_message("%s blocks %.0f of its %.0f texel plinth" % [id, box.size.x, plinth]).is_greater_equal(plinth * 0.8)
 
 # --- 5. arrival spawns ------------------------------------------------------------------------
 func test_arrivals_stand_clear_of_their_door_and_in_the_open() -> void:
@@ -238,7 +324,9 @@ func test_arrivals_stand_clear_of_their_door_and_in_the_open() -> void:
 		# the Undercroft's stair is a slot in the west wall, and the hatch stands by the stones: named, not waved through
 		if pair != ["undercroft", "start"]:
 			assert_array(hits).override_failure_message("%s:%s is within a body of a solid" % [pair[0], pair[1]]).is_empty()
-		assert_float(zone.occlusion.hidden_share(_player)).is_less(Occlusion.HIDDEN_SHARE)
+		# in the open: nothing drawn in front of the arrival at all (under the willow it was 0.32 at (880, 1340))
+		assert_float(zone.occlusion.hidden_share(_player)).override_failure_message(
+			"%s:%s arrives %.0f %% hidden" % [pair[0], pair[1], 100.0 * zone.occlusion.hidden_share(_player)]).is_equal(0.0)
 
 # --- 6. the kit woodland ----------------------------------------------------------------------
 func _gameplay(node: Node, root: Node, out: Dictionary) -> void:
@@ -309,6 +397,28 @@ func test_a_forge_paid_before_hale_is_home_has_no_flame_until_she_is() -> void:
 	assert_bool((zone.get_node("Props/If_forge_fire") as Conditional).visible).is_true()
 	assert_bool((zone.get_node("Props/If_smithy_smoke") as Conditional).visible).is_true()
 	assert_bool((zone.get_node("Actors/If_hale_forge") as Conditional).visible).is_true()
+
+## Whichever order the forge was paid in, Hale first speaks to it with her fire already burning: her line
+## must not promise to light it (11 Nov audit: "Give me a moment with the bellows" over a lit forge).
+func test_hale_s_first_line_after_an_early_forge_fits_a_lit_fire() -> void:
+	for was_home: bool in [false, true]:
+		SaveGame.reset()
+		SaveGame.add_glint(30)
+		SaveGame.set_flag("hale_walked_home", was_home)
+		Quests.notify("talk:hale")                      # the road starts on the woodland path
+		_enter("crossroads", "woodland")
+		assert_bool(Village.restore("forge")).is_true()
+		_enter("woodland", "crossroads")
+		var zone := _enter("crossroads", "woodland")      # she is home now, in either order
+		Quests.notify("talk:moss")
+		assert_str(Quests.state("road_to_crossroads")).is_equal("done")
+		assert_str(Quests.state("cold_forge")).is_equal("none")
+		await _ticks(2)
+		assert_bool((zone.get_node("Props/If_forge_fire") as Conditional).visible).is_true()
+		var said := " ".join(Dialogue.lines_for("hale"))
+		assert_str(said).contains("cleared my door")
+		for promise: String in ["moment", "forge again", "light", "nightfall"]:
+			assert_str(said).override_failure_message("with the fire burning Hale says: %s" % said).not_contains(promise)
 
 func test_a_forge_paid_with_hale_watching_lights_at_once() -> void:
 	SaveGame.add_glint(30)

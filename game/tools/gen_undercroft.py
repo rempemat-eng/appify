@@ -123,11 +123,10 @@ def build(plan: dict, kit: dict) -> str:
         frames = o.get('frames') or 1
         return PH.is_low(PH.rise(os.path.join(GAME, 'zones', ZID, 'art', o['png']), -o['offset'][1], frames))
 
-    # a prop's `box` in the plan is its solid, measured on the picture; without one the box its size gives stands
-    boxes = {p['id']: p['box'] for p in plan.get('props', []) if p.get('box')}
+    # kit.json's `solid` is the plan's `box` where a prop has one (measured on the picture), else the box its size gives
     for o in kit['objects']:
         if o.get('solid') and not o.get('cond'):
-            s.solid('Solid_' + o['id'], 'Walls', boxes.get(o['id'], o['solid']), low(o))
+            s.solid('Solid_' + o['id'], 'Walls', o['solid'], low(o))
 
     # torches hang on the wall faces, behind everyone who can stand in the room: drawn with the walls,
     # not y-sorted (their feet would be the wall's foot, far below the bracket)
@@ -160,9 +159,13 @@ def build(plan: dict, kit: dict) -> str:
         w, h = pl['size']
         s.node('SealPlate', 'Area2D', 'Actors', {'position': vec(t(x), t(y)), 'script': 'ExtResource("plate")',
                                                  'flag': '"%s"' % pl['flag']})
-        # Pressed by feet on the slab, not by a body's edge brushing it: the slab inside its frame (6 texels
-        # a side) less the body's radius (9), so walking past along the doorway's axis leaves it up.
-        s.node('Shape', 'CollisionShape2D', 'Actors/SealPlate', {'shape': 'SubResource("%s")' % s.rect_shape(t(w) - 30, t(h) - 30)})
+        # Pressed when the feet stand anywhere on the drawn slab (scripts/art/native/undercroft.py p_plate: the
+        # raised panel is t(w) square, its middle 4 texels above the plate's point). The area is met by the
+        # body, a circle of r 9 centred 4 texels above the feet, so it is the panel moved up 4 and less 7 a side:
+        # less 9 would leave the panel's four corners unpressed (the round body misses a square's corner), less
+        # 7 is the least that covers them, and it reaches 2 texels past the panel's edges, into the frame's gap.
+        s.node('Shape', 'CollisionShape2D', 'Actors/SealPlate', {'position': vec(0, -16),
+                                                               'shape': 'SubResource("%s")' % s.rect_shape(t(w) - 14, t(h) - 14)})
         lv = pz['lever']
         x, y = lv['at']
         s.node('SealLever', 'Area2D', 'Actors', {'position': vec(t(x), t(y)), 'script': 'ExtResource("lever")',

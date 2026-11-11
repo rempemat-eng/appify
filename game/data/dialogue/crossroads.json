@@ -50,7 +50,7 @@
         "if": { "done": ["road_to_crossroads"], "not_started": ["cold_forge"], "restored": ["forge"] },
         "lines": [
           "You cleared my door before I'd even asked. Bless you, Bramble.",
-          "Give me a moment with the bellows and it's a forge again."
+          "Hear her? She took on the first try."
         ]
       },
       {
@@ -207,6 +207,12 @@
     "name": "Your hut",
     "entries": [
       { "lines": ["Your hut came through the storm, roof and all. The door is swollen shut with the rain, so you sit down on the step, out of the wind.", "When you get up again the aches have gone."] }
+    ]
+  },
+  "hut_door_unhurt": {
+    "name": "Your hut",
+    "entries": [
+      { "lines": ["Your hut came through the storm, roof and all. The door is swollen shut with the rain, so you sit on the step a while, out of the wind."] }
     ]
   },
   "restore_forge": {
