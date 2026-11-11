@@ -147,6 +147,16 @@ func test_the_walk_from_the_doorway_to_the_lever_misses_the_plate() -> void:
 	assert_float(nearest).override_failure_message(
 		"walking straight from the doorway to the lever passes %.1f texels from the plate: a body (r 9) presses it" % nearest) \
 		.is_greater(BODY / 2.0 + 6.0)
+	# nor does walking east along the doorway's own axis, to the slab
+	var slab := Vector2(_rect(zone.get_node("Walls/Wall_sep3_n")).position.x, from.y)
+	nearest = INF
+	for i in 201:
+		nearest = minf(nearest, _dist_to_rect(from.lerp(slab, i / 200.0) + Vector2(0, -BODY_UP), plate))
+	assert_float(nearest).override_failure_message(
+		"walking east along the doorway's axis passes %.1f texels from the plate" % nearest).is_greater(BODY / 2.0 + 6.0)
+	# feet on the slab press it
+	var on_it := (zone.get_node("Actors/SealPlate") as Node2D).global_position
+	assert_float(_dist_to_rect(on_it + Vector2(0, -BODY_UP), plate)).is_less(BODY / 2.0)
 	# and the plate still starts the channel: its picture reaches the channel's west end
 	var channel := zone.get_node("Floor/If_channel_lit/ChannelLit") as Sprite2D
 	var plate_pic := zone.get_node("Floor/If_plate_up/PlateUp") as Sprite2D

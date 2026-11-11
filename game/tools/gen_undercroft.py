@@ -160,7 +160,9 @@ def build(plan: dict, kit: dict) -> str:
         w, h = pl['size']
         s.node('SealPlate', 'Area2D', 'Actors', {'position': vec(t(x), t(y)), 'script': 'ExtResource("plate")',
                                                  'flag': '"%s"' % pl['flag']})
-        s.node('Shape', 'CollisionShape2D', 'Actors/SealPlate', {'shape': 'SubResource("%s")' % s.rect_shape(t(w) - 12, t(h) - 12)})
+        # Pressed by feet on the slab, not by a body's edge brushing it: the slab inside its frame (6 texels
+        # a side) less the body's radius (9), so walking past along the doorway's axis leaves it up.
+        s.node('Shape', 'CollisionShape2D', 'Actors/SealPlate', {'shape': 'SubResource("%s")' % s.rect_shape(t(w) - 30, t(h) - 30)})
         lv = pz['lever']
         x, y = lv['at']
         s.node('SealLever', 'Area2D', 'Actors', {'position': vec(t(x), t(y)), 'script': 'ExtResource("lever")',

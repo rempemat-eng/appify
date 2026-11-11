@@ -12,7 +12,7 @@ How bodies collide, where solids come from, what is drawn in front of what and w
 | 4 | 8 | interact | talk and read areas |
 | 5 | 16 | low | set together with bit 1 (value 17): a solid that stops feet and that a shot flies over |
 
-Bits 1 to 4 are named in `game/project.godot`. Bit 5 is not named there yet (the file is shared; the name is a label only).
+All five are named in `game/project.godot` (`[layer_names]`); `test_world_fixes.gd` holds the names.
 
 ## Who is on what
 
@@ -26,9 +26,9 @@ Bits 1 to 4 are named in `game/project.godot`. Bit 5 is not named there yet (the
 | A dead enemy | | 0 | | | set to 0 on death, so nothing meets it |
 | Solid | StaticBody2D | 1 | 0 | rectangles (a post: circle r 5) | the zone generators |
 | Low solid | StaticBody2D | 17 | 0 | rectangles | the zone generators |
-| Talk or read area | Area2D (`Interactable`, `RestoreSite`, `SealLever`) | 8 | 2 | circle r 30 (the shard lantern in Crossroads: r 22) | `world/interactable.gd` |
+| Talk or read area | Area2D (`Interactable`, `RestoreSite`, `SealLever`, `RestSpot`) | 8 | 2 | circle r 30 (the shard lantern in Crossroads: r 22) | `world/interactable.gd` |
 | Door | Area2D (`Door`) | 0 | 2 | rectangle | `world/door.gd` |
-| Pressure plate | Area2D (`PressurePlate`) | 0 | 2 | rectangle | `world/pressure_plate.gd` |
+| Pressure plate | Area2D (`PressurePlate`) | 0 | 2 | rectangle: the slab inside its frame less the body's radius, so feet on the slab press it and a body brushing its edge does not | `world/pressure_plate.gd` |
 | Arrow | Area2D (`Arrow`) | 0 | 1 and 4 | circle r 4 | `actors/arrow.gd` |
 | Thorn (boss) | Area2D | 0 | 1 and 2 | circle r 9 | `bosses/thorn.gd` |
 | Camp creature's shot | a ray each step | | 1 and 2 | | `enemies/projectile.gd` |
@@ -43,13 +43,16 @@ The generators write the solids, with one exception: the 5 texel posts of the st
 | --- | --- | --- | --- |
 | woodland | `gen_zone.py` writes `woodland_base.tscn` | `walk.txt`: 12 texel cells, `#` blocked, merged into rectangles (`Base/Walls/c<i>`). `low.txt` marks the blocked cells that are water (`Base/LowWalls/l<i>`). Four edge walls stand outside the picture (`edge_n`, `edge_s`, `edge_w`, `edge_e`). | one rectangle per object (`s_<id>`) from the kit library: `game/kit/pieces/prop/woodland_<kind>.json`, `geometry.collision`, world px from the foot |
 | Crossroads | `gen_village.py` writes `crossroads.tscn` | the plan's box edges, `faces` and building rectangles (`Walls/Edge*`, `Face_*`, `Building_*`) | the plan's box (`kit.json` `solid`), except where the kit library holds a box reviewed against the art or the object is an approved woodland picture: then the library's box stands. The notice board and the waystone get the texels drawn in their lowest 12 rows |
-| Undercroft | `gen_undercroft.py` writes `undercroft.tscn` | the plan's box edges and wall blocks (`Walls/Edge*`, `Wall_*`) | the plan's box (`kit.json` `solid`) |
+| Undercroft | `gen_undercroft.py` writes `undercroft.tscn` | the plan's box edges and wall blocks (`Walls/Edge*`, `Wall_*`) | the plan's box (`kit.json` `solid`), or the prop's own `box` in the plan where that one was measured on the picture (the hall's roots, the two broken pillars, the seal room's rubble). `size` stays as it is: it also shapes the picture and its shadow |
 
 A solid inside a `Conditional` (the choked well, the dark lantern, the sealed slab) comes and goes with its picture, because a hidden Conditional disables its children.
 
 Two rules hold for every object solid:
 
-1. **It is not wider than what is drawn.** A solid may not reach more than 8 texels past the texels drawn in the rows it covers, and may not be narrower than a third of them (`test_a_woodland_solid_is_no_wider_than_what_is_drawn`, every woodland object). An invisible block is the fault that rule is for: until 10 Nov the woodland's mask blocked each picture's whole width at its feet (180 texels under the willow's 30 texel trunk). Narrower is right where the drawing spreads at ground level and feet may step there: a trunk blocks its stem, not its root flare (oak 30 on a 41 texel stem and 64 of roots, stump 36 in 69), a bramble its mass and not its cane sprays (90 in 120), the handcart its bed and not its shafts (66 in 88), the choked well its ring (60 in 93). The test is the woodland's. Crossroads has pinned sizes for the boxes that changed (`test_crossroads_solids_follow_the_reviewed_boxes`); the Undercroft's boxes are its plan's and have no fit test (known: `roots_hall` reaches 34 texels past its roots on one side, the broken pillars block 36 of 55 and 68).
+1. **It is not wider than what is drawn.** A solid may not reach more than 8 texels past the texels drawn in the rows it covers, and may not be narrower than a third of them (`test_a_woodland_solid_is_no_wider_than_what_is_drawn`, every woodland object). An invisible block is the fault that rule is for: until 10 Nov the woodland's mask blocked each picture's whole width at its feet (180 texels under the willow's 30 texel trunk). Narrower is right where the drawing spreads at ground level and feet may step there: a trunk blocks its stem, not its root flare (oak 30 on a 41 texel stem and 64 of roots, stump 36 in 69), a bramble its mass and not its cane sprays (90 in 120), the handcart its bed and not its shafts (66 in 88), the choked well its ring (60 in 93). The test is the woodland's. Crossroads has pinned sizes for the boxes that changed (`test_crossroads_solids_follow_the_reviewed_boxes`); the Undercroft's four measured boxes are held by `test_the_undercroft_roots_and_pillars_block_what_is_drawn` (no more than 8 texels of bare floor inside a box, no narrower than three fifths of what is drawn); its other rubble, roots and the urn keep the plan's box and have no fit test.
+3. **No slot a body just fits.** A prop stands against its wall, nearer to it than a body (18 texels), or at least 24 texels clear (`test_no_undercroft_solid_leaves_a_body_wide_slot`, the Undercroft). Until 11 Nov the hall's roots and the seal room's rubble each left exactly 18.
+
+Crossroads' retaining faces end on the drawn wall's foot: the garden walk's and the terrace's are one wall and share one south edge (`test_the_garden_walk_and_the_terrace_share_one_wall_foot`).
 2. **The same picture has the same solid everywhere.** The kit library is the one place a picture's box is written, so the playable zones and the kit zones cannot disagree.
 
 `walk.txt` is the terrain only: the ground nobody can stand on (water, cliff faces, the rock bank). Objects are not in it. The review tools (`scripts/review/scene.py`) read the same file as their walk mask.
@@ -115,6 +118,7 @@ A y-sorted picture's origin is on its drawn feet, its lowest opaque row, within 
 | `game/test/test_physics_model.gd` | layers and masks of every body and area in the three zones; no villager hidden behind scenery; a solid 6 texels outside each edge at 40 points a side (a sample, not a proof: a gap between two points would pass); woodland solids no wider than what is drawn; Crossroads' reviewed boxes; y-sort origins on drawn feet; flat things under people |
 | `game/test/test_occlusion.gd` | the 40 % rule and its branches, the fade, reduced motion, the terrace road and the willow |
 | `game/test/test_arrow_physics.gd`, `test_arrow_walls.gd` | the start check, low solids, the archer |
+| `game/test/test_world_fixes.gd` | the Undercroft's measured boxes and slots, Crossroads' wall foot, the plate off the walk to the lever, arrival spawns clear of their doors (32 texels: more than the walk covers in the 0.4 s a door takes to arm), the layer names |
 
 After changing a plan, a piece's box or a walk mask, regenerate and run `npm run check:godot`:
 
