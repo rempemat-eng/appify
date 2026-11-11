@@ -127,7 +127,7 @@
   "game/kit/terrain/palette.png": "72146f1ab0023d9fc70669932958c317347b4f01a0a4519810c48d2e43b5e07a",
   "game/test/fixtures/kit/generate.py": "06d57a3e5d1a18961611f86b6a4bfa4bf7e1e3c6105358dc79b18e77bb349a25",
   "scripts/art/house_palette.py": "17c1eae374e95e7bb3800f94e5fb38dbe53e7a35ab35eaa5ccb13209cd2ad667",
-  "scripts/art/kit/build.py": "617fd76854e4bb4787dbd3142458d3bd0bf9077e1ec6527b4e65b18fab89419a",
+  "scripts/art/kit/build.py": "ef5b2c19402725aba22fd594ff00edbc24b9699fab44e6a31e2175889bd4e419",
   "scripts/art/kit/compose.py": "bb23f57830a10e59049c87f7d7f07e5bc02c10dc7ebc99bfa3cc18a9f5be0997",
   "scripts/art/kit/dressing.py": "2c3d80e0f06df646480803f92123512a239d629ba5737194de77c66251fffd3d",
   "scripts/art/kit/edges.py": "d21a95c0a07449fdb0df5bff52aa6c6630cebfc7bf0f7ecf6acc59f4cb5838d1",

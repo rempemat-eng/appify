@@ -190,10 +190,24 @@ class Kit:
 # ------------------------------------------------------------------------------------------------
 # outputs
 # ------------------------------------------------------------------------------------------------
+def resource_uid(res_path: str) -> str:
+    """A stable id for a hand-written resource, in Godot's own text form (base 34, a to y then 0
+    to 8). A .tres without one gets an id the editor invents and keeps only in its own cache; the
+    editor then writes that id into every scene it saves, and each load elsewhere warns "invalid
+    UID" (the world editor's zones, 10 Nov). The id is derived from the path, so it never changes."""
+    chars = 'abcdefghijklmnopqrstuvwxy012345678'
+    n = int.from_bytes(hashlib.sha256(res_path.encode()).digest()[:8], 'big') & 0x7FFFFFFFFFFFFFFF
+    text = ''
+    while n:
+        text = chars[n % 34] + text
+        n //= 34
+    return 'uid://' + text
+
+
 def write_tileset(path: str, mats: list) -> None:
     """The logical layer's TileSet (a hand-written .tres, format 3): one 24 x 24 tile per material
     cut from palette.png, with the custom data the validator, the walk mask and the dock read."""
-    lines = ['[gd_resource type="TileSet" load_steps=3 format=3]', '',
+    lines = ['[gd_resource type="TileSet" load_steps=3 format=3 uid="%s"]' % resource_uid(RES + os.path.basename(path)), '',
              '[ext_resource type="Texture2D" path="%spalette.png" id="1"]' % RES, '',
              '[sub_resource type="TileSetAtlasSource" id="mats"]', 'texture = ExtResource("1")',
              'texture_region_size = Vector2i(24, 24)']
@@ -222,7 +236,7 @@ def write_tiers(out: str) -> None:
         img[:, t * E.CELL:(t + 1) * E.CELL] = (v, v, 255 - v, 255)
         img[:2, t * E.CELL:(t + 1) * E.CELL] = (255, 255, 255, 255)
     Image.fromarray(img, 'RGBA').save(os.path.join(out, 'tiers.png'))
-    lines = ['[gd_resource type="TileSet" load_steps=3 format=3]', '',
+    lines = ['[gd_resource type="TileSet" load_steps=3 format=3 uid="%s"]' % resource_uid(RES + 'tiers.tres'), '',
              '[ext_resource type="Texture2D" path="%stiers.png" id="1"]' % RES, '',
              '[sub_resource type="TileSetAtlasSource" id="tiers"]', 'texture = ExtResource("1")',
              'texture_region_size = Vector2i(24, 24)']

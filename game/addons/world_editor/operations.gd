@@ -990,13 +990,24 @@ func refresh_derived(target: TerrainGround = null) -> bool:
 	target.rebuild_shadows()
 	var walk := target.get_node_or_null("KitWalk") as KitWalk
 	if walk == null:
-		walk = Walk.new()
-		walk.name = "KitWalk"
-		target.add_child(walk)
-		walk.owner = target.owner
+		return false
 	var rebuilt := walk.rebuild(target)
 	prepare_save(target)
 	return rebuilt
+
+## The walk node joins the scene inside the first edit's own undo action (`install_walk`, which the
+## plugin sets): undoing that edit takes the node out again. It used to be added beside the action,
+## so an edit and its undo left an older lab scene with a KitWalk it never had, and saving then
+## changed how that zone collides.
+func _attach_walk(target: TerrainGround, walk: Node, attach: bool) -> void:
+	if not is_instance_valid(target) or not is_instance_valid(walk):
+		return
+	if attach:
+		if walk.get_parent() == null and target.get_node_or_null("KitWalk") == null:
+			target.add_child(walk)
+			walk.owner = target.owner
+	elif walk.get_parent() == target:
+		target.remove_child(walk)
 
 ## Before the scene is saved (the plugin's _apply_changes): KitWalk marks its ground with its own
 ## instance id while it runs, and rebuilds on its own when cells change. That id means nothing in
@@ -1381,6 +1392,12 @@ func _begin(title: String) -> void:
 		_history.create_action(title)
 	else:
 		_history.create_action(title, UndoRedo.MERGE_DISABLE, _zone)
+	if bool(_options.get("install_walk", false)) and is_instance_valid(_ground) and _ground.get_node_or_null("KitWalk") == null:
+		var walk := Walk.new()
+		walk.name = "KitWalk"
+		_do(Callable(self, "_attach_walk").bind(_ground, walk, true))
+		_undo(Callable(self, "_attach_walk").bind(_ground, walk, false))
+		_history.add_do_reference(walk)
 
 func _do(action: Callable) -> void:
 	if _history is UndoRedo:
