@@ -1,0 +1,232 @@
+{
+ "lab": true,
+ "legend": {
+  ".": "heath",
+  "a": "drove",
+  "b": "peat"
+ },
+ "note": "LAB ZONE, not part of the game. The Brackens' first screen (the Drover's Road under the heather ridge, the shepherd's hut, a fold and a ruined fold), built in the world editor's dock on 11 Nov from the Brackens' candidate pieces for Matt to play. No piece in it is approved.",
+ "pieces": [
+  {
+   "at": [
+    744,
+    288
+   ],
+   "facing": "s",
+   "id": "brackens_shepherds_hut",
+   "piece": "brackens_shepherds_hut",
+   "variant": "still"
+  },
+  {
+   "at": [
+    744,
+    432
+   ],
+   "facing": "s",
+   "id": "brackens_drove_well",
+   "piece": "brackens_drove_well",
+   "variant": "still"
+  },
+  {
+   "at": [
+    876,
+    264
+   ],
+   "facing": "s",
+   "id": "brackens_peat_stack",
+   "piece": "brackens_peat_stack",
+   "variant": "still"
+  },
+  {
+   "at": [
+    576,
+    264
+   ],
+   "facing": "s",
+   "id": "brackens_bench",
+   "piece": "brackens_bench",
+   "variant": "still"
+  },
+  {
+   "at": [
+    204,
+    360
+   ],
+   "facing": "s",
+   "id": "brackens_fold_ruin",
+   "piece": "brackens_fold_ruin",
+   "variant": "still"
+  },
+  {
+   "at": [
+    312,
+    312
+   ],
+   "facing": "s",
+   "id": "brackens_fire_ring_cold",
+   "piece": "brackens_fire_ring_cold",
+   "variant": "still"
+  },
+  {
+   "at": [
+    504,
+    408
+   ],
+   "facing": "s",
+   "id": "brackens_cairn",
+   "piece": "brackens_cairn",
+   "variant": "standing"
+  },
+  {
+   "at": [
+    96,
+    456
+   ],
+   "facing": "s",
+   "id": "brackens_cart_broken",
+   "piece": "brackens_cart_broken",
+   "variant": "still"
+  },
+  {
+   "at": [
+    372,
+    504
+   ],
+   "facing": "s",
+   "id": "brackens_gorse",
+   "piece": "brackens_gorse",
+   "variant": "a"
+  },
+  {
+   "at": [
+    636,
+    144
+   ],
+   "facing": "s",
+   "id": "brackens_gorse_2",
+   "piece": "brackens_gorse",
+   "variant": "b"
+  },
+  {
+   "at": [
+    828,
+    120
+   ],
+   "facing": "s",
+   "id": "brackens_gorse_3",
+   "piece": "brackens_gorse",
+   "variant": "a"
+  },
+  {
+   "at": [
+    900,
+    168
+   ],
+   "facing": "s",
+   "id": "brackens_gorse_4",
+   "piece": "brackens_gorse",
+   "variant": "b"
+  },
+  {
+   "at": [
+    900,
+    480
+   ],
+   "facing": "s",
+   "id": "brackens_gorse_5",
+   "piece": "brackens_gorse",
+   "variant": "a"
+  },
+  {
+   "at": [
+    540,
+    504
+   ],
+   "facing": "s",
+   "id": "brackens_gorse_6",
+   "piece": "brackens_gorse",
+   "variant": "b"
+  },
+  {
+   "at": [
+    60,
+    168
+   ],
+   "facing": "s",
+   "id": "brackens_gorse_7",
+   "piece": "brackens_gorse",
+   "variant": "a"
+  },
+  {
+   "at": [
+    48,
+    336
+   ],
+   "facing": "s",
+   "id": "brackens_cairn_2",
+   "piece": "brackens_cairn",
+   "variant": "toppled"
+  }
+ ],
+ "rows": [
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  ".................aaaaaaaaaaaaaaaaaaaaaaa",
+  ".................aaaaaaaaaaaaaaaaaaaaaaa",
+  ".................aaaaaaaaaaaaaaaaaaaaaaa",
+  "aaaaaaaaaaaaaaaaaaaa....................",
+  "aaaaaaaaaaaaaaaaaaaa....................",
+  "aaaaaaaaaaaaaaaaaaaa....................",
+  "........................................",
+  "bbb.....................................",
+  "bbbbb...................................",
+  "bbbbb...................................",
+  "bbbbb..................................."
+ ],
+ "spawns": {
+  "start": [
+   888,
+   324
+  ],
+  "west": [
+   48,
+   396
+  ]
+ },
+ "tiers": [
+  "1111111112222222222211111111111111111111",
+  "1111111112222222222211111111111111111111",
+  "1111111111111111111111100000000000000000",
+  "0000001111111111111111100000000000000000",
+  "0000001111111111111111100000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000",
+  "0000000000000000000000000000000000000000"
+ ],
+ "zone": "brackens_lab"
+}

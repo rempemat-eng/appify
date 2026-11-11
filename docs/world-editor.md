@@ -35,6 +35,22 @@ The proof is `editor_glade` (`game/kit/zones/editor_glade.json`, `game/zones/edi
 7. **No frame or resize tools.** The dock cannot change a zone's size, show screen boundaries or preview the camera. A new zone starts from `kit_zone.gd --new`.
 8. **Materials stop at the home valley.** There are 12 terrain materials (lawn, path, cobbled road, worn ground, scree, water, earth face, and the Brackens' and coast's five). There is one cliff material, earth, two cells high. No snow, ice, rock ground or rock cliff exists.
 
+### The Brackens' first screen (11 November): a lab for Matt to play
+
+`brackens_lab` (`game/kit/zones/brackens_lab.json`, `game/zones/brackens_lab/brackens_lab.tscn`) is the test named under "Recommendation" below: one screen of the Brackens built in the dock from the Brackens' own candidate pieces. **It is a lab zone. It is not part of the game, nothing leads to it, and no piece in it is approved.** Start it with `--zone=brackens_lab` (`--spawn=west` for the far end).
+
+What is in it: heath, the Drover's Road (drove) in at the east and out at the west with one bend, a peat cutting, the heather ridge along the north painted with the tier brush (two tiers; nothing climbs it), the shepherd's hut with its peat stack, the drove well, a ruined fold with a cold fire ring, a stone seat, two cairns, a broken peat cart and seven gorse clumps. 16 pieces of 9 kinds, 3 grounds, two spawns, no door, no actor. The region brief puts the drove well about 500 px north of the hut; it stands on this screen so that the screen has one thing that moves.
+
+How it was built: every step went through the dock's own handlers and the plugin's canvas input in an editor process (the route and rectangle tools, the tier brush, single placements, the Gameplay row, Validate, Save and export). It shows live tiles: no ground was baked, because a bake is a new picture.
+
+What building it showed:
+
+- **The Brackens' drystone wall cannot stand in a valid zone today, so the screen has no wall and no fold.** A wall run must close into a loop (an end at the zone's edge is a fault), a closed loop must hold stock and a trough, and the 59 pieces hold neither. With the farm's sheep and the village trough the dock still cannot fill a fold: the trough is refused until stock is near and the sheep are refused until a trough is in, so neither can be placed first. A first build with an empty fold failed Validate zone (`rules.enclosures`), and the fold was taken out.
+- **The fence run could not draw a drystone wall at all.** It named every cell `fence_<style>_<joins>`; the wall's cells are `wall_drystone_<joins>`. Fixed: the run takes the library's own name for the style and the joins. A gate then needs a fixed order (the ring first, the road under the gate's three cells second, the gate on the run third), because a wall cell is refused on a route and a gate is refused off one.
+- **The heath has no picture for a tier's side or back.** Only a south face is drawn. A bluff with a side in view has an invisible wall along it, so the ridge runs off the screen at both ends and the south bluff of the gap was left out.
+- **Validate zone reports 29 `rules.scale` faults, for all 9 kinds of piece on the screen.** Their `audit.size_class` holds the class and its bounds in one text ("bush (41 to 81 tall, 44 to 115 wide)"), which is not a key of `scripts/art/size_guide.json` ("bush"), and a piece with a size class has its `size_cells` held to its art size as a fault where an unclassified piece gets advice. The woodland pieces have no size class and pass with advice. This is piece data and is not changed here. The zone has no other fault.
+- The 59 hold no animal, no tree and no person: the screen has no sheep, no pine and nobody at the hut.
+
 ### Open faults (not fixed)
 
 - **The committed `woodland_kit.tscn` is behind the woodland it copies its actors from.** Since #463 Hale stands at (600, 1296) in the woodland and still at (800, 1330) in the committed kit scene; a rebuild from the plan moves him. Copied actors are not in the plan, so the test that holds scene and plan together cannot see this.

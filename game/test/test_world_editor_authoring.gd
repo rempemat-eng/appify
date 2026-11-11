@@ -751,6 +751,24 @@ func test_a_signs_round_post_is_its_body_and_the_cells_the_mask_blocks() -> void
 	assert_that(blocked.keys()).contains_exactly_in_any_order(expected.keys())
 	assert_int(blocked.size()).is_equal(4 + 1)                # the node's four cells; one cell off it
 
+func test_a_drystone_run_is_drawn_from_the_walls_own_pieces() -> void:
+	# The run tool named every cell fence_<style>_<joins>; the drystone wall's cells are
+	# wall_drystone_<joins>, so the Brackens' fold could not be drawn ("Unknown fence piece").
+	var f := await _fixture()
+	var ops: Operations = f.operations
+	var library := _library()
+	for id in ["wall_drystone_e", "wall_drystone_ew", "wall_drystone_sw", "wall_drystone_n"]:
+		var piece: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://kit/pieces/prop/%s.json" % id))
+		library[id] = piece
+	ops.configure(f.zone, f.ground, f.history, {"library": library, "relation_evaluator": Callable(Rules, "placement"), "install_walk": true})
+	var run: Dictionary = ops.place_fence_run("drystone", [Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(3, 1)])
+	assert_bool(run.ok).override_failure_message(str(run)).is_true()
+	var ids := []
+	for piece in f.zone.get_node("Props").get_children():
+		ids.append(piece.piece_id)
+	ids.sort()
+	assert_that(ids).is_equal(["wall_drystone_e", "wall_drystone_ew", "wall_drystone_n", "wall_drystone_sw"])
+
 func test_the_walk_node_is_a_real_instance_in_the_editor() -> void:
 	# A zone saved once holds its KitWalk. In the editor a script that is not a tool script gives
 	# that node a placeholder, and the add-on's rebuild() after every edit failed on it.
@@ -857,9 +875,10 @@ func test_the_editor_built_glade_is_a_whole_zone() -> void:
 	for actor in plan.actors:
 		kinds[actor.kind] = true
 	assert_that(kinds.keys()).contains(["interactable", "camp"])
-	# The sign can be read without hunting for the spot: its piece blocks a square 24 texels either
-	# way from its foot in a dock-saved zone and the body is 9 across, so a talk area of the
-	# default 30 left a band 2 world px deep (the audit of #465). 44 leaves 20 texels.
+	# The sign can be read without hunting for the spot. When this was set its piece blocked a
+	# square 24 texels either way from its foot and a talk area of the default 30 left a band
+	# 2 world px deep (the audit of #465); 44 left 20 texels. Since wave 2 the sign blocks only
+	# its round post, so the reach is more than was needed; it is kept.
 	var sign: Area2D = root.get_node("Actors/Sign")
 	var reach: float = (sign.get_node("Shape") as CollisionShape2D).shape.radius
 	assert_float(reach).is_equal(44.0)
@@ -873,9 +892,9 @@ func test_the_editor_built_glade_is_a_whole_zone() -> void:
 	assert_that(ZonePlan.unexported_actors(root)).is_empty()
 	assert_bool(root.get_node("Ground").has_meta(&"kit_walk_owner")).is_false()
 	assert_object(root.get_node_or_null("Edge")).is_not_null()
-	# kit/terrain/materials.tres has no uid of its own, so the editor invents one that only its own
-	# cache knows and writes it into every zone it saves; elsewhere each load then warns "invalid
-	# UID". A committed zone names that file by its path alone.
+	# When the glade was saved kit/terrain/materials.tres had no uid of its own, and the editor
+	# invented one that only its own cache knew. The glade names that file by its path alone; a
+	# zone saved since wave 2 names it by the file's own uid (the Brackens lab below).
 	var text := FileAccess.get_file_as_string("res://zones/editor_glade/editor_glade.tscn")
 	for line in text.split("\n"):
 		if line.begins_with("[ext_resource") and line.contains("res://kit/terrain/"):
@@ -919,5 +938,89 @@ func test_the_glade_blocks_its_pond_and_props_and_leaves_its_path_open() -> void
 	assert_vector(pond).is_not_equal(Vector2.ZERO)
 	probe.transform = Transform2D(0.0, pond)
 	assert_int(space.intersect_shape(probe).size()).is_greater(0)
+	probe.transform = Transform2D(0.0, Vector2(plan.spawns.start[0], plan.spawns.start[1]))
+	assert_int(space.intersect_shape(probe).size()).is_equal(0)
+
+# --- wave 2, step 5: the Brackens' first screen, a lab built in the dock
+
+func _brackens() -> Node2D:
+	var root := (load("res://zones/brackens_lab/brackens_lab.tscn") as PackedScene).instantiate() as Node2D
+	_scenes.append(root)
+	return root
+
+func test_the_brackens_lab_is_a_lab_made_of_the_brackens_own_pieces() -> void:
+	var root := _brackens()
+	var plan: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://kit/zones/brackens_lab.json"))
+	assert_str(ZonePlan.plan_error(plan)).is_equal("")
+	assert_bool(plan.lab).is_true()
+	assert_str(plan.note).starts_with("LAB ZONE, not part of the game.")
+	# only the Brackens' three grounds and pieces that carry the Brackens biome; none approved
+	var materials := {}
+	for row in plan.rows:
+		for glyph in row:
+			materials[plan.legend[glyph]] = true
+	for id in materials:
+		assert_bool(id in ["heath", "drove", "peat"]).override_failure_message("ground %s is not the Brackens'" % id).is_true()
+	assert_int(plan.pieces.size()).is_greater_equal(16)
+	for entry in plan.pieces:
+		var piece: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://kit/pieces/prop/%s.json" % entry.piece))
+		assert_bool("brackens" in piece.biomes).override_failure_message("%s is not a Brackens piece" % entry.piece).is_true()
+		assert_str(piece.approval.state).is_equal("candidate")
+	# the ridge was painted with the tier brush
+	assert_bool("".join(plan.tiers).contains("1") and "".join(plan.tiers).contains("2")).is_true()
+	# the scene and the plan are one zone, and the scene names the tile sets by their own ids
+	assert_str(ZonePlan.canonical(ZonePlan.plan_from_scene(root))).is_equal(ZonePlan.canonical(plan))
+	assert_that(ZonePlan.unexported_actors(root)).is_empty()
+	assert_bool(root.get_node("Ground").has_meta(&"kit_walk_owner")).is_false()
+	var text := FileAccess.get_file_as_string("res://zones/brackens_lab/brackens_lab.tscn")
+	assert_str(text).contains('uid="uid://damjj22xg5kso" path="res://kit/terrain/materials.tres"')
+	assert_str(text).not_contains("ground_baked")           # no new picture: it shows live tiles
+	# it can be started by name and nothing leads to it: no door in it, none into it
+	var zones: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/zones.json"))
+	assert_str(zones.get("brackens_lab", "")).is_equal("res://zones/brackens_lab/brackens_lab.tscn")
+	assert_bool(plan.has("doors")).is_false()
+	for id in zones:
+		if id != "brackens_lab":
+			assert_str(FileAccess.get_file_as_string(zones[id])).override_failure_message("%s leads to the lab" % id).not_contains("brackens_lab")
+
+func test_the_brackens_lab_can_be_walked_from_end_to_end() -> void:
+	var root := _brackens()
+	add_child(root)
+	for i in 4:
+		await get_tree().process_frame
+		await get_tree().physics_frame
+	var ground := root.get_node("Ground") as TerrainGround
+	var walk := ground.get_node("KitWalk") as KitWalk
+	assert_that(walk.rows).is_equal(KitWalk.derive(ground))
+	var plan: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://kit/zones/brackens_lab.json"))
+	# flood the walk mask from the start spawn
+	var start := Vector2i(int(plan.spawns.start[0] / 12), int(plan.spawns.start[1] / 12))
+	var seen := {start: true}
+	var queue := [start]
+	while not queue.is_empty():
+		var at: Vector2i = queue.pop_back()
+		for step in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+			var next: Vector2i = at + step
+			if next.y < 0 or next.y >= walk.rows.size() or next.x < 0 or next.x >= walk.rows[0].length():
+				continue
+			if not seen.has(next) and walk.rows[next.y][next.x] == ".":
+				seen[next] = true
+				queue.append(next)
+	assert_str(walk.rows[start.y][start.x]).is_equal(".")
+	var west := Vector2i(int(plan.spawns.west[0] / 12), int(plan.spawns.west[1] / 12))
+	assert_bool(seen.has(west)).override_failure_message("the road is shut between the two spawns").is_true()
+	# the ridge is never climbed
+	for cell in seen:
+		assert_int(ground.tier_at(Vector2i(cell.x / 2, cell.y / 2))).override_failure_message("the ridge can be climbed at %s" % cell).is_equal(0)
+	# what stands in the way does stop the body: the hut, the well
+	var space := root.get_world_2d().direct_space_state
+	var probe := PhysicsShapeQueryParameters2D.new()
+	probe.shape = CircleShape2D.new()
+	(probe.shape as CircleShape2D).radius = 6.0
+	probe.collision_mask = 1
+	for entry in plan.pieces:
+		if entry.piece in ["brackens_shepherds_hut", "brackens_drove_well"]:
+			probe.transform = Transform2D(0.0, Vector2(entry.at[0], entry.at[1] - 12.0))
+			assert_int(space.intersect_shape(probe).size()).override_failure_message("%s does not block" % entry.id).is_greater(0)
 	probe.transform = Transform2D(0.0, Vector2(plan.spawns.start[0], plan.spawns.start[1]))
 	assert_int(space.intersect_shape(probe).size()).is_equal(0)

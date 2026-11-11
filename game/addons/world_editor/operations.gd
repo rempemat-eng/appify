@@ -355,7 +355,7 @@ func place_fence_run(style: String, cells: Array, options: Dictionary = {}) -> D
 	for at in run:
 		if not existing.has(at):
 			all_cells.append(at)
-	var chosen := Tools.fence_pieces(style, all_cells + fixed.keys(), fixed)
+	var chosen := _fence_choice(style, all_cells + fixed.keys(), fixed)
 	var removed: Array[KitPiece] = []
 	var added: Array[KitPiece] = []
 	var snapshot := export_plan()
@@ -456,7 +456,7 @@ func preview_fence_run(style: String, cells: Array) -> Dictionary:
 		var at := Vector2i(value)
 		if not existing.has(at) and not fixed.has(at) and at not in all_cells:
 			all_cells.append(at)
-	var chosen := Tools.fence_pieces(style, all_cells + fixed.keys(), fixed)
+	var chosen := _fence_choice(style, all_cells + fixed.keys(), fixed)
 	var out := {}
 	for at in chosen:
 		if String(existing.get(at, "")) != String(chosen[at]):
@@ -587,6 +587,27 @@ var _ghost_plans: Dictionary = {}
 var _ghost_verdicts: Dictionary = {}
 var _ghost_snapshot: Dictionary = {}
 var ghost_validations := 0
+
+## Tools.fence_pieces names each cell fence_<style>_<joins>. The library's own name for that
+## style and those joins stands over it: the drystone wall's cells are wall_drystone_<joins>, so
+## a drystone run was refused as "Unknown fence piece 'fence_drystone_w'".
+func _fence_choice(style: String, cells: Array, fixed: Dictionary) -> Dictionary:
+	var chosen := Tools.fence_pieces(style, cells, fixed)
+	var names := {}
+	for id in _library:
+		var boundary: Variant = _library[id].get("placement", {}).get("boundary") if _library[id] is Dictionary else null
+		if not boundary is Dictionary or String(boundary.get("style", "")) != style:
+			continue
+		if bool(boundary.get("gate", false)) or bool(boundary.get("stile", false)):
+			continue
+		var joins := ""
+		for side in ["n", "e", "s", "w"]:
+			if side in boundary.get("joins", []):
+				joins += side
+		names["fence_%s_%s" % [style, joins]] = String(id)
+	for at in chosen:
+		chosen[at] = names.get(chosen[at], chosen[at])
+	return chosen
 
 func _fence_nodes(style: String) -> Dictionary:
 	var props := _zone.get_node_or_null("Props") as Node2D

@@ -44,7 +44,16 @@ the top of `docs/world-editor.md`.
    beside the editor: the status line shows the painter's progress, the button reads
    _Cancel bake_ while it runs, and the result is bound and saved when it ends.
 
-`game/kit/zones/editor_glade.json` and its scene were built this way and are kept as a
+**A walled fold with a gate** takes three steps in this order: drag the wall piece round
+the ring (the run tool picks each cell's piece), paint the road under the three cells
+where the gate goes, then pick the gate and click the run there. A wall cell is refused
+on a route and a gate is refused off one.
+
+A fold cannot be stocked from the dock yet: a trough is refused until stock is near and
+stock is refused until a trough is in.
+
+`game/kit/zones/brackens_lab.json` (a lab, `--zone=brackens_lab`) was built in the dock
+on 11 Nov. `game/kit/zones/editor_glade.json` and its scene were built this way and are kept as a
 fixture (`game/test/test_world_editor_authoring.gd`).
 
 - Choose a terrain swatch, then Brush (1–3 cells), Rectangle, or Route (2–3 cells).
