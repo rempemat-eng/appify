@@ -151,8 +151,18 @@ func _on_zone(zone: Zone) -> void:
 	pcam.follow_target = player
 	pcam.teleport_position()
 	snap_camera()
+	_set_out_caches(zone)
 	_show_due_card()
 	autosave()
+
+## The caches of Glint lying in this zone, where the player went down (core/glint_cache.gd).
+func _set_out_caches(zone: Zone) -> void:
+	for cache: Dictionary in GlintCache.in_zone(zone.zone_id):
+		var pickup := GlintCachePickup.new()
+		pickup.cache = cache
+		pickup.position = Vector2(float(cache.x), float(cache.y))
+		pickup.collected.connect(func(_glint: int) -> void: autosave())
+		zone.actors.add_child(pickup)
 
 ## The story's title cards (data/leads.json): the opening on a new game, the closing beat when the last
 ## quest of this build is done. Each shows once a save; a card waits for an open dialogue to close.
@@ -194,7 +204,9 @@ func snap_camera() -> void:
 	cam.force_update_scroll()
 
 func _on_downed() -> void:
-	# no naps at 0 HP (4): the player gets up at the zone's start with full health
+	# no naps at 0 HP (4): the player gets up at the zone's start with full health; a share of the carried
+	# Glint stays where they fell (core/glint_cache.gd), set out again by _on_zone
+	GlintCache.drop(SaveGame.data.zone, player.global_position)
 	player.heal_full()
 	Zones.go_to.call_deferred(SaveGame.data.zone, "start")
 

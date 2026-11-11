@@ -340,6 +340,19 @@ func run(c: String) -> String:
 			return await fight(float(a[1]) if a.size() > 1 else 90.0)
 		"down":
 			return await down(float(a[1]) if a.size() > 1 else 40.0)
+		"caches":
+			# walks over every cache of Glint lying in this zone (where the player went down: core/glint_cache.gd)
+			for i in 8:
+				var lying := GlintCache.in_zone(SaveGame.data.zone)
+				if lying.is_empty():
+					break
+				var problem := await goto(Vector2(float(lying[0].x), float(lying[0].y)), 10.0)
+				await get_tree().create_timer(0.3, true).timeout
+				if problem != "" and not GlintCache.in_zone(SaveGame.data.zone).is_empty():
+					return "the cache at (%d, %d): %s" % [int(lying[0].x), int(lying[0].y), problem]
+			if not GlintCache.in_zone(SaveGame.data.zone).is_empty():
+				return "a cache is still lying here"
+			out("CACHES picked up; Glint %d" % int(SaveGame.data.glint))
 		"expect":
 			var problem := expect(a)
 			out(("  ok   %s" % c) if problem == "" else ("  MISS %s: %s" % [c, problem]))
@@ -382,6 +395,12 @@ func expect(a: PackedStringArray) -> String:
 			return "" if p.hp == int(a[2]) else "hp is %d" % p.hp
 		"glint":
 			return "" if int(SaveGame.data.glint) == int(a[2]) else "Glint is %d" % int(SaveGame.data.glint)
+		"cached":
+			# the Glint lying in caches, everywhere (`expect cached 5`)
+			var lying := 0
+			for cache: Dictionary in SaveGame.data.caches:
+				lying += int(cache.glint)
+			return "" if lying == int(a[2]) else "%d Glint lies in %d caches" % [lying, (SaveGame.data.caches as Array).size()]
 		"restored":
 			return "" if Village.is_restored(a[2]) else "it is not restored"
 		"notrestored":

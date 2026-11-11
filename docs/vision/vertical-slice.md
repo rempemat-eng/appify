@@ -44,7 +44,7 @@ All in the existing schema (`game/data/quests/*.json`, `game/data/dialogue/*.jso
 | `under_the_stones` *Under the stones* | main | `talk:hale` once the forge is done (the same talk) | `enter:undercroft`; `camp:undercroft_rooms`; `camp:thornback`; `talk:circle_shard` (sets `shard_taken:woodland`); `talk:shard_lantern` (sets `shard_home:woodland`) | 60 Glint; `thornback_freed` |
 | `home_again` *Home again* | village | `talk:moss` once the shard is home | `restore:fern_cottage`; `talk:ada_fern` | 25 Glint; `fern_home`, `seeds:valley` |
 
-Glint over the chain: 40 + 10 - 30 + 60 - 20 + 25 = 85 at the end, enough for a first upgrade at the forge (upgrade prices are Codex's).
+Glint over the chain: 40 + 10 - 30 + 60 - 20 + 25 = 85 from the quests and restores, plus 31 from the fights since 11 Nov (2 for each of the three mosslings, 3 for each of the Undercroft's five creatures, 10 for the Thornback, each paid once for the life of the save): 116 at the end of *Home again*, and 76 after the apothecary's 40 in act 1's first quest. Going down leaves a fifth of the Glint carried, rounded down, as a cache where the player fell; it stays until it is picked up, a second defeat adds a second cache, and both are in the save (`game/core/glint_cache.gd`, `game/data/balance/glint.json`). The story model plays every order with the worst defeats in it: the forge, the Ferns' door and the apothecary stay affordable.
 
 **Schema extensions** (tested in `game/test/test_slice.gd`): conditions gain `restored`, `not_restored` and `glint_at_least`; a door takes `only_if` (a condition), and so does the new `Conditional` node; entering a zone sets `visited:<zone>`. The save gains `village.restored` (id to tier); older saves load as broken.
 
@@ -85,12 +85,12 @@ melee-combo helper is not bound to the attack action.
 
 - [ ] Start in the woodland. Approach the weathered sign and read it.
 - [ ] Free the three enemies in the meadow camp through normal combat, then
-  read the sign again: *Thorns by the stones* completes, with 40 Glint.
+  read the sign again: *Thorns by the stones* completes, with 46 Glint (the sign's 40 and 2 a mossling).
 - [ ] Talk to Hale on the east path, then walk through the east door to
-  Crossroads. Talk to Moss: *The road home* completes, with 50 Glint total.
+  Crossroads. Talk to Moss: *The road home* completes, with 56 Glint total.
 - [ ] Talk to Hale in the square. Use the smithy's Restore mark (30 Glint),
   finish its dialogue, then talk to Hale at the forge. *The cold forge*
-  completes; the Undercroft hatch opens. Expected balance: 20 Glint.
+  completes; the Undercroft hatch opens. Expected balance: 26 Glint.
 - [ ] Walk back through Crossroads' woodland door, then enter the hatch by the
   stones. Do not use a zone/spawn jump to bypass either door.
 - [ ] Traverse the Undercroft and free its five room-camp enemies. Step onto the
@@ -101,7 +101,7 @@ melee-combo helper is not bound to the attack action.
 - [ ] Walk out to the woodland, return to Crossroads and interact with the shard
   lantern. *Under the stones* completes and the village enters homecoming.
 - [ ] Talk to Moss, restore the Ferns' cottage (20 Glint), finish the dialogue,
-  then welcome Ada. *Home again* completes; expected balance is 85 Glint with
+  then welcome Ada. *Home again* completes; expected balance is 116 Glint (85 from quests and restores, 31 from the nine creatures; less whatever lies in a cache not yet picked up) with
   `fern_home`, `seeds:valley` and `shard_home:woodland` set by normal consumers.
 - [ ] Stop here and record the last completed beat plus any obstructed
   approach, failed prompt, dialogue, fight or transition. Do not grant flags

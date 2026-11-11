@@ -309,19 +309,19 @@ func test_reachable_slice_through_home_again_uses_scene_consumers() -> void:
 	await _slice_free_camp("Actors/MeadowCamp", 3)
 	await _slice_talk("Actors/StoneSign")
 	assert_str(Quests.state("woodland_stones")).is_equal("done")
-	assert_int(SaveGame.data.glint).is_equal(40)
+	assert_int(SaveGame.data.glint).is_equal(46)      # the sign's 40 and 2 for each of the three mosslings
 	await _slice_talk("Actors/HaleOnThePath/Hale")
 	assert_str(_step("road_to_crossroads")).is_equal("go")
 	await _slice_door("Doors/ToCrossroads", player, "crossroads")
 
 	await _slice_talk("Actors/Moss")
 	assert_str(Quests.state("road_to_crossroads")).is_equal("done")
-	assert_int(SaveGame.data.glint).is_equal(50)
+	assert_int(SaveGame.data.glint).is_equal(56)
 	await _slice_talk("Actors/If_hale_square/HaleSquare")
 	assert_str(_step("cold_forge")).is_equal("restore")
 	await _slice_talk("Actors/If_smithy_site/SmithySite")
 	assert_bool(Village.is_restored("forge")).is_true()
-	assert_int(SaveGame.data.glint).is_equal(20)
+	assert_int(SaveGame.data.glint).is_equal(26)
 	await _slice_talk("Actors/If_hale_forge/HaleForge")
 	assert_str(Quests.state("cold_forge")).is_equal("done")
 	assert_str(_step("under_the_stones")).is_equal("descend")
@@ -362,7 +362,7 @@ func test_reachable_slice_through_home_again_uses_scene_consumers() -> void:
 	await _slice_talk("Actors/If_ada/Ada")
 	for q in CHAIN:
 		assert_str(Quests.state(q)).is_equal("done")
-	assert_int(SaveGame.data.glint).is_equal(85)
+	assert_int(SaveGame.data.glint).is_equal(116)     # 85 from the quests and restores, 31 from the nine creatures
 	assert_bool(SaveGame.has_flag("seeds:valley")).is_true()
 	assert_bool(SaveGame.has_flag("shard_home:frostline")).is_false()
 	assert_bool(SaveGame.has_flag("shard_home:brackens")).is_false()

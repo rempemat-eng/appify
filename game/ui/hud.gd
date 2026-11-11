@@ -145,6 +145,7 @@ func _process(delta: float) -> void:
 	_meter(_rolls, "rolls", player.roll_charges, Player.ROLL_CHARGES, "roll")
 	var g := str(int(SaveGame.data.glint))
 	if _shown.get("glint") != g:
+		_glint_changed(int(_shown.get("glint", g)), int(g))
 		_shown.glint = g
 		_glint.text = g
 	_show_quest(Quests.tracked_text(guidance))
@@ -154,6 +155,15 @@ func _process(delta: float) -> void:
 	if prompt:
 		_prompt_key.text = "Y" if Inputs.last_device == &"gamepad" else "E"
 		_prompt_verb.text = str(f.verb)
+
+## The count changed: it shows the new number at once, tinted for GLINT_FLASH seconds (lamp gold for a
+## gain, a muted red for a loss). One finite tween; under reduced motion only the number changes.
+const GLINT_FLASH := 0.5
+func _glint_changed(from: int, to: int) -> void:
+	if from == to or SaveGame.setting("reduced_motion", false) or not is_inside_tree():
+		return
+	_glint.modulate = Color("#f5d49c") if to > from else Color("#d98a7a")
+	create_tween().tween_property(_glint, "modulate", Color.WHITE, GLINT_FLASH)
 
 ## What the HUD shows right now, as text (the play driver and the tests read the screen through this).
 func shown_text() -> Dictionary:
