@@ -112,6 +112,7 @@
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/square_puddles.png" id="t102"]
 [ext_resource type="Script" path="res://world/villager.gd" id="villager"]
 [ext_resource type="Script" path="res://world/loop_fx.gd" id="loopfx"]
+[ext_resource type="Script" path="res://world/rest_spot.gd" id="rest"]
 
 [sub_resource type="RectangleShape2D" id="s0"]
 size = Vector2(1920, 24)
@@ -123,7 +124,7 @@ size = Vector2(24, 1680)
 size = Vector2(450, 120)
 
 [sub_resource type="RectangleShape2D" id="s3"]
-size = Vector2(450, 150)
+size = Vector2(450, 156)
 
 [sub_resource type="RectangleShape2D" id="s4"]
 size = Vector2(450, 36)
@@ -285,7 +286,7 @@ shape = SubResource("s2")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Face_lane_face"]
-position = Vector2(225, 375)
+position = Vector2(225, 378)
 shape = SubResource("s3")
 
 [node name="Face_terrace_face_w" type="StaticBody2D" parent="Walls"]
@@ -775,7 +776,7 @@ offset = Vector2(-146, -341)
 
 [node name="If_smithy_smoke" type="Node2D" parent="Props"]
 script = ExtResource("cond")
-only_if = "{\"restored\":[\"forge\"]}"
+only_if = "{\"restored\":[\"forge\"],\"flags\":[\"hale_walked_home\"]}"
 
 [node name="SmithySmoke" type="Sprite2D" parent="Props/If_smithy_smoke"]
 position = Vector2(1535, 533)
@@ -870,7 +871,7 @@ only_if = "{\"not_restored\":[\"forge\"]}"
 
 [node name="If_forge_fire" type="Node2D" parent="Props"]
 script = ExtResource("cond")
-only_if = "{\"restored\":[\"forge\"]}"
+only_if = "{\"restored\":[\"forge\"],\"flags\":[\"hale_walked_home\"]}"
 
 [node name="ForgeFire" type="Sprite2D" parent="Props/If_forge_fire"]
 position = Vector2(1458, 842)
@@ -1710,10 +1711,10 @@ shape = SubResource("s37")
 
 [node name="HutBed" type="Area2D" parent="Actors"]
 position = Vector2(960, 216)
-script = ExtResource("talk")
+script = ExtResource("rest")
 speaker_id = "hut_door"
 marker_height = 40.0
-verb = "Look"
+verb = "Rest"
 
 [node name="Shape" type="CollisionShape2D" parent="Actors/HutBed"]
 shape = SubResource("s35")

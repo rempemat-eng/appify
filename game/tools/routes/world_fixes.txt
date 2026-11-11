@@ -1,0 +1,41 @@
+# The world fixes of 11 Nov, played: hurt at the camp, the walk back from Crossroads lands clear of the
+# door, the hut's doorstep gives the hearts back for nothing and saves, and the foot of the garden
+# walk's retaining wall is one straight line past the corner where its two solids meet.
+# Commands: tools/play_driver.gd.
+
+step hurt at the camp, not downed, and away to Crossroads
+goto 640 1392 20
+hurt 40
+expect hurt
+door 951 1356 crossroads
+expect hurt
+expect glint 0
+
+step the hut's doorstep: Rest, full hearts, nothing paid
+goto 960 250 10
+expect prompt Rest
+shot 01_hut_prompt_hurt
+talk HutBed
+expect said swollen shut
+expect hp 5
+expect glint 0
+shot 02_rested
+
+step the rest was saved
+restart
+expect zone crossroads
+expect hp 5
+expect glint 0
+
+step along the wall's foot, past the corner at x 450: no step to catch on
+goto 380 478 6
+hold up 0.8
+hold upright 3.0
+expect at 608 469 16
+shot 03_wall_foot
+
+step back to the woodland: arriving clear of the door, in the open
+door 12 210 woodland
+expect at 892 1352 12
+shot 04_woodland_arrival
+end

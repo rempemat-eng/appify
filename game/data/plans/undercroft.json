@@ -1,5 +1,5 @@
 {
-  "_about": "The Undercroft under the woodland's stone circle (Claude A, 25 Oct; docs/vision/vertical-slice.md, beat 6), drawn: python3 game/tools/gen_undercroft.py renders it with scripts/art/native/undercroft.py and writes zones/undercroft/undercroft.tscn. World px, on the 8 px soft grid. Four rooms in a row: the stair hall under the hatch, the root corridor, the seal room (the two-step puzzle: stand on the plate, then pull the lever) and the Thornback's chamber. Walls are blocks: `rect` is the whole drawn block and its collision, `face` the height of its south face (0: only its top shows).",
+  "_about": "A prop's `box` [x, y, w, h] is its solid when the box that `at` and `size` give does not fit what is drawn (`size` also shapes the picture and its shadow, so it stays). The Undercroft under the woodland's stone circle (Claude A, 25 Oct; docs/vision/vertical-slice.md, beat 6), drawn: python3 game/tools/gen_undercroft.py renders it with scripts/art/native/undercroft.py and writes zones/undercroft/undercroft.tscn. World px, on the 8 px soft grid. Four rooms in a row: the stair hall under the hatch, the root corridor, the seal room (the two-step puzzle: stand on the plate, then pull the lever) and the Thornback's chamber. Walls are blocks: `rect` is the whole drawn block and its collision, `face` the height of its south face (0: only its top shows).",
   "id": "undercroft",
   "owner": "claude-a",
   "box": [0, 0, 768, 216],
@@ -38,23 +38,23 @@
   "skylight": { "at": [640, 132], "rx": 40, "ry": 30, "why": "a crack in the vault under the circle lets a shaft of daylight in" },
   "props": [
     { "id": "rubble_hall", "kind": "rubble", "at": [44, 192], "size": [28, 12], "solid": true },
-    { "id": "roots_hall", "kind": "roots", "at": [120, 72], "size": [28, 10], "solid": true, "why": "the oak's roots came through the vault and spread on the floor" },
+    { "id": "roots_hall", "kind": "roots", "at": [120, 72], "size": [28, 10], "solid": true, "box": [102, 56, 21, 16], "why": "the oak's roots came through the vault and spread on the floor", "why_box": "the root as drawn, from the wall's foot to the floor: the plan's box left an 18 texel slot under the wall, a body wide, and reached 34 texels past the root over plain floor" },
     { "id": "rubble_corridor", "kind": "rubble", "at": [344, 118], "size": [20, 10], "solid": true, "why": "a block fallen where the roots split the vault" },
     { "id": "roots_corridor", "kind": "roots", "at": [272, 160], "size": [26, 8], "solid": true },
     { "id": "urn_seal", "kind": "urn", "at": [432, 72], "size": [10, 6], "solid": true },
-    { "id": "rubble_seal", "kind": "rubble", "at": [432, 194], "size": [16, 6], "solid": true },
-    { "id": "stump_nw", "kind": "stump", "at": [592, 80], "size": [12, 8], "solid": true, "why": "a broken pillar of the old vault" },
-    { "id": "stump_se", "kind": "stump", "at": [736, 192], "size": [12, 8], "solid": true },
+    { "id": "rubble_seal", "kind": "rubble", "at": [432, 194], "size": [16, 6], "solid": true, "box": [424, 188, 15, 7], "why_box": "the stones as drawn: the plan's box stood 4 texels past them to the east and left an 18 texel slot to the south wall" },
+    { "id": "stump_nw", "kind": "stump", "at": [592, 80], "size": [12, 8], "solid": true, "box": [585, 74, 18, 6], "why": "a broken pillar of the old vault", "why_box": "the plinth and its fallen block as drawn (54 of 55 texels): the plan's box blocked 36" },
+    { "id": "stump_se", "kind": "stump", "at": [736, 192], "size": [12, 8], "solid": true, "box": [729, 186, 15, 6], "why_box": "the plinth as drawn (45 of 51 texels, 24 clear to the east wall): the plan's box blocked 36" },
     { "id": "rubble_chamber", "kind": "rubble", "at": [734, 78], "size": [20, 10], "solid": true, "seed": 7 },
     { "id": "shard", "kind": "shard", "at": [700, 128], "size": [12, 8], "solid": false, "if": { "not_flags": ["shard_taken:woodland"] }, "why": "the woodland's great shard" }
   ],
   "puzzle": {
-    "plate": { "id": "seal_plate", "at": [472, 128], "size": [16, 16], "flag": "undercroft_plate" },
+    "plate": { "id": "seal_plate", "at": [472, 144], "size": [16, 16], "flag": "undercroft_plate" },
     "channel": [[480, 136], [560, 136]],
     "channel_branch": [[548, 136], [548, 98]],
     "lever": { "id": "seal_lever", "at": [548, 96], "flag": "undercroft_seal_open" },
     "seal": { "id": "seal_slab", "rect": [560, 112, 16, 48], "height": 40 },
-    "why": "two steps: the plate charges the channel, the lever sinks the slab; both persist in the save"
+    "why": "two steps: the plate charges the channel, the lever sinks the slab; both persist in the save. The plate lies south of the channel's west end (Matt, 10 Nov: 16 px off the straight line from the doorway to the lever, where it was pressed by walking to the lever)"
   },
   "camps": [
     { "id": "undercroft_rooms", "enemies": [[96, 128, "rusher"], [160, 96, "shooter"], [304, 136, "shield"], [368, 128, "rusher"], [496, 104, "elite"]], "why": "the rooms' shardstruck (Codex's woodland roles: rusher, shooter, shield bearer, elite)" },
