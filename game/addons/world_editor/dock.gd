@@ -3,6 +3,8 @@ extends VBoxContainer
 ## Palette and authoring controls. Placement and validation verdicts belong to operations.gd.
 
 const Tools := preload("res://addons/world_editor/tools.gd")
+const BAKE_LABEL := "Bake ground (the painters)"
+const BAKE_CANCEL := "Cancel bake"
 
 var plugin
 var zone: Node
@@ -227,7 +229,7 @@ func _ready() -> void:
 	_content.add_child(export_button)
 	bake_button = Button.new()
 	bake_button.name = "Bake"
-	bake_button.text = "Bake ground (the painters)"
+	bake_button.text = BAKE_LABEL
 	bake_button.pressed.connect(_bake)
 	_content.add_child(bake_button)
 	_sync_controls()
@@ -812,17 +814,34 @@ func _bake() -> void:
 	if not is_instance_valid(zone):
 		say("Select a kit zone first.")
 		return
-	if not is_instance_valid(plugin) or not plugin.has_method("bake_zone"):
+	if not is_instance_valid(plugin) or not plugin.has_method("start_bake"):
 		say("Bake unavailable: the editor backend is required.")
 		return
-	bake_button.disabled = true
-	say("Bake: save, export and render the selected zone.")
-	var result: Variant = plugin.call("bake_zone")
+	if bool(plugin.call("bake_running")):
+		plugin.call("cancel_bake")     # the plugin reports the outcome through bake_done
+		return
+	say("Bake: check, save and export the zone, then run the painters.")
+	var result: Variant = plugin.call("start_bake")
+	say(_message(result, "Bake failed; no output was accepted."))
+	if result is Dictionary and bool(result.get("running", false)):
+		bake_button.text = BAKE_CANCEL
+
+## While the painters run (called every frame by the plugin): how long, and their last line.
+func bake_progress(text: String) -> void:
+	if bake_button != null and bake_button.text != BAKE_CANCEL:
+		bake_button.text = BAKE_CANCEL
+	if status != null and status.text != text:
+		say(text)
+
+## The bake has ended, was cancelled or failed.
+func bake_done(result: Variant) -> void:
+	if bake_button != null:
+		bake_button.text = BAKE_LABEL
+		bake_button.disabled = not is_instance_valid(zone)
 	if result is Dictionary and bool(result.get("ok", false)) and _text(result.get("message", "")) == "":
 		result = result.duplicate(true)
 		result["message"] = "Bake completed."
 	say(_message(result, "Bake failed; no output was accepted."))
-	bake_button.disabled = not is_instance_valid(zone)
 
 func _export() -> void:
 	if not is_instance_valid(zone):

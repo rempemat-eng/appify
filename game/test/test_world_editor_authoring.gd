@@ -65,7 +65,7 @@ func _fixture(extra_plan: Dictionary = {}) -> Dictionary:
 	await get_tree().physics_frame
 	var history := UndoRedo.new()
 	var ops := Operations.new()
-	ops.configure(zone, ground, history, {"library": _library(), "relation_evaluator": Callable(Rules, "placement")})
+	ops.configure(zone, ground, history, {"library": _library(), "relation_evaluator": Callable(Rules, "placement"), "install_walk": true})
 	ops.changed.connect(func() -> void: ops.refresh_derived(ops.last_changed_ground))
 	var f := {"zone": zone, "ground": ground, "history": history, "operations": ops}
 	_fixtures.append(f)
@@ -514,6 +514,149 @@ func test_a_door_spawn_or_actor_outside_the_ground_is_refused() -> void:
 	assert_str(ZonePlan.plan_error(cells)).is_equal("")
 	cells.spawns.start = [4.5, 3]
 	assert_str(ZonePlan.plan_error(cells)).contains("spawns.start must lie inside the ground")
+
+# --- wave 2 (11 Nov): the faults docs/world-editor.md recorded as open
+
+func _scene_text(zone: Node) -> String:
+	var packed := PackedScene.new()
+	assert_int(packed.pack(zone)).is_equal(OK)
+	var path := "user://authoring_scene_text.tscn"
+	assert_int(ResourceSaver.save(packed, path)).is_equal(OK)
+	var text := FileAccess.get_file_as_string(path)
+	DirAccess.remove_absolute(path)
+	var ids := RegEx.new()
+	ids.compile("(unique_id=\\d+|uid=\"[^\"]*\"|id=\"[^\"]*\"|(Ext|Sub)Resource\\(\"[^\"]*\"\\))")
+	return ids.sub(text, "", true)
+
+func test_the_first_edits_undo_takes_the_walk_node_out_again() -> void:
+	# An edit and its undo left an older lab scene with a KitWalk node it never had; saving then
+	# changed how the zone collides (N1). The node now joins and leaves with the first edit.
+	var f := await _fixture()
+	var ground: TerrainGround = f.ground
+	assert_object(ground.get_node_or_null("KitWalk")).is_null()
+	var before := _scene_text(f.zone)
+	assert_bool(f.operations.paint_cells([Vector2i(0, 0)], "path").ok).is_true()
+	var walk := ground.get_node_or_null("KitWalk") as KitWalk
+	assert_object(walk).is_not_null()
+	assert_object(walk.owner).is_same(f.zone)
+	assert_that(walk.rows).is_equal(KitWalk.derive(ground))
+	# a second edit adds no second node, and its undo leaves the first
+	assert_bool(f.operations.place_piece("woodland_stump", Vector2(132, 48)).ok).is_true()
+	assert_bool(f.history.undo()).is_true()
+	assert_object(ground.get_node_or_null("KitWalk")).is_same(walk)
+	assert_bool(f.history.undo()).is_true()
+	assert_object(ground.get_node_or_null("KitWalk")).is_null()
+	assert_str(_scene_text(f.zone)).is_equal(before)
+	assert_bool(f.history.redo()).is_true()
+	assert_object(ground.get_node_or_null("KitWalk")).is_same(walk)
+	assert_that(walk.rows).is_equal(KitWalk.derive(ground))
+
+func test_a_stale_bake_stays_stale_through_a_save() -> void:
+	# The "bake is current" flag was not saved, so a reopened zone showed its old baked ground
+	# over cells painted since.
+	var f := await _fixture()
+	var ground: TerrainGround = f.ground
+	ground.baked = load("res://zones/kitlab/ground_baked.png")
+	assert_bool(ground.showing_baked()).is_true()
+	var fresh := PackedScene.new()
+	assert_int(fresh.pack(f.zone)).is_equal(OK)
+	var current := fresh.instantiate()
+	_scenes.append(current)
+	add_child(current)
+	assert_bool((current.get_node("Ground") as TerrainGround).showing_baked()).is_true()
+	assert_bool(f.operations.paint_cells([Vector2i(0, 0)], "path").ok).is_true()
+	assert_bool(ground.showing_baked()).is_false()
+	var packed := PackedScene.new()
+	assert_int(packed.pack(f.zone)).is_equal(OK)
+	var again := packed.instantiate()
+	_scenes.append(again)
+	add_child(again)
+	var reopened := again.get_node("Ground") as TerrainGround
+	assert_object(reopened.baked).is_not_null()
+	assert_bool(reopened.showing_baked()).is_false()
+	# a new bake is current again, and that is saved too
+	reopened.baked = load("res://zones/kitlab_tiers/ground_baked.png")
+	assert_bool(reopened.showing_baked()).is_true()
+	assert_int(packed.pack(again)).is_equal(OK)
+	var third := packed.instantiate()
+	_scenes.append(third)
+	add_child(third)
+	assert_bool((third.get_node("Ground") as TerrainGround).showing_baked()).is_true()
+
+func test_a_new_zone_needs_ground_somebody_can_stand_on() -> void:
+	assert_str(ZonePlan.new_zone_error("my_zone", "40x23", "lawn")).is_equal("")
+	assert_str(ZonePlan.new_zone_error("my_zone", "40x23", "water")).contains("nobody can stand on")
+	assert_str(ZonePlan.new_zone_error("my_zone", "40x23", "earth_face")).contains("nobody can stand on")
+	assert_str(ZonePlan.new_zone_error("my_zone", "40x23", "tarmac")).contains("not a built terrain material")
+	assert_str(ZonePlan.new_zone_error("My-Zone", "40x23", "lawn")).contains("zone id")
+	assert_str(ZonePlan.new_zone_error("my_zone", "0x23", "lawn")).contains("--size")
+
+func test_the_kits_tile_sets_carry_their_own_ids() -> void:
+	# Without one the editor invents an id, keeps it in its own cache and writes it into every zone
+	# it saves; any other checkout then warns "invalid UID" on each load.
+	var header := RegEx.new()
+	header.compile("^\\[gd_resource [^\\]]*uid=\"(uid://[a-y0-8]+)\"\\]")
+	for file in ["materials.tres", "tiers.tres"]:
+		var found := header.search(FileAccess.get_file_as_string("res://kit/terrain/" + file))
+		assert_object(found).override_failure_message(file + " has no uid in its header").is_not_null()
+		if found == null:
+			continue
+		# and the project knows the file by that id, so a scene that names it resolves
+		var id := ResourceUID.text_to_id(found.get_string(1))
+		assert_bool(ResourceUID.has_id(id)).is_true()
+		assert_str(ResourceUID.get_id_path(id)).is_equal("res://kit/terrain/" + file)
+
+# --- the bake runs beside the editor, shows its progress and can be stopped
+
+const BakeJob := preload("res://addons/world_editor/bake_job.gd")
+
+func _python() -> String:
+	var python := OS.get_environment("PYTHON")
+	return "python3" if python.is_empty() else python
+
+func _wait_until(done: Callable, seconds: float = 30.0) -> bool:
+	var waited := 0.0
+	while waited < seconds:
+		if done.call():
+			return true
+		await get_tree().create_timer(0.1).timeout
+		waited += 0.1
+	return false
+
+func test_a_bake_job_runs_beside_the_caller_reports_progress_and_can_be_cancelled() -> void:
+	var log := ProjectSettings.globalize_path("user://bake_job_test.log")
+	var job := BakeJob.new()
+	# a stand-in for the painters: says where it is, then works for a long time
+	var slow := "import sys,time\nf=open(sys.argv[1],'w',buffering=1)\nprint('painting water',file=f,flush=True)\ntime.sleep(120)\n"
+	assert_bool(job.start(_python(), slow, PackedStringArray([log]), log, "Baking test")).is_true()
+	# start() came back at once: the caller is not waiting for the 120 s
+	assert_float(job.seconds()).is_less(5.0)
+	assert_bool(await _wait_until(func() -> bool: return job.last_line() == "painting water")).is_true()
+	assert_bool(job.running()).is_true()
+	assert_str(job.progress_text()).starts_with("Baking test: ")
+	assert_str(job.progress_text()).contains("painting water")
+	assert_int(job.exit_code()).is_equal(-1)
+	job.cancel()
+	assert_bool(job.running()).is_false()
+	assert_bool(job.cancelled()).is_true()
+	assert_int(job.exit_code()).is_not_equal(0)            # killed, not finished
+	DirAccess.remove_absolute(log)
+
+func test_a_bake_job_hands_back_the_modules_exit_code_and_output() -> void:
+	var repo := ProjectSettings.globalize_path("res://").trim_suffix("/").get_base_dir()
+	var log := ProjectSettings.globalize_path("user://bake_job_test_module.log")
+	var good := BakeJob.new()
+	assert_bool(good.start_module(_python(), repo, "json.tool", PackedStringArray(["--help"]), log)).is_true()
+	assert_bool(await _wait_until(func() -> bool: return not good.running())).is_true()
+	assert_int(good.exit_code()).is_equal(0)
+	assert_str(good.output()).contains("started json.tool")
+	var bad := BakeJob.new()
+	assert_bool(bad.start_module(_python(), repo, "scripts.art.kit.no_such_module", PackedStringArray(), log)).is_true()
+	assert_bool(await _wait_until(func() -> bool: return not bad.running())).is_true()
+	assert_int(bad.exit_code()).is_not_equal(0)
+	assert_str(bad.output()).contains("no_such_module")
+	assert_bool(bad.cancelled()).is_false()
+	DirAccess.remove_absolute(log)
 
 # --- one walk mask, twice (scripts/art/kit/walk.py and world/terrain/walk.gd)
 
