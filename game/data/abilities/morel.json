@@ -1,0 +1,157 @@
+{
+  "id": "morel",
+  "name": "Morel",
+  "catalogue_prose": {
+    "role": "Grassland alchemist · prepare and react",
+    "primary": "Reagent flask — throw a flask that leaves a short-lived reagent patch.",
+    "secondary": "Catalyst — send a spark through prepared patches, or burst at close range.",
+    "block": "Mineral ward — hold an alchemical shield.",
+    "special": "Catalyst mask — apparatus opens; flasks ignite nearby patches in a finite chain reaction."
+  },
+  "planar_speed": 57,
+  "resources": {
+    "ammo_capacity": 0,
+    "initial_ammo": 0,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.62,
+        "release_seconds": 0.2356,
+        "cooldown_seconds": 0.62
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "flask",
+        "speed": 135,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 4,
+        "lifetime_seconds": null,
+        "lifetime_formula": "(clamp(aim_distance,28,135)-9)/135",
+        "damage": 14,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": false
+      }
+    ]
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.62,
+        "release_seconds": 0.2356,
+        "cooldown_seconds": 0.62
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "flask",
+        "speed": 135,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 4,
+        "lifetime_seconds": null,
+        "lifetime_formula": "(clamp(aim_distance,28,135)-9)/135",
+        "damage": 14,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      }
+    ],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "primary": null,
+    "secondary_fallback_without_reagent": {
+      "kind": "frontal_arc",
+      "reach": 34,
+      "minimum_direction_dot": 0,
+      "damage": 20,
+      "knockback": 13
+    }
+  },
+  "executed_rules": {
+    "flask": {
+      "speed": 135,
+      "damage": 14,
+      "radius": 4,
+      "splash_radius": 16,
+      "aimed_distance_min": 28,
+      "aimed_distance_max": 135,
+      "lifetime_formula": "(clamp(aim_distance,28,135)-9)/135",
+      "leaves": {
+        "kind": "reagent",
+        "radius": 18,
+        "lifetime_seconds": 5,
+        "damage_per_tick": 3,
+        "initial_tick_seconds": 0.2,
+        "tick_interval_seconds": 0.6,
+        "maximum_active": 4
+      }
+    },
+    "catalyst": {
+      "select_prepared_reagent_within": 155,
+      "fallback_when_none": "secondary close frontal burst:20 damage",
+      "consumes_each_selected_patch_once": true,
+      "explosion_extra_radius": 8,
+      "damage": 32,
+      "powered_damage": 39,
+      "knockback": 5,
+      "powered_chain_neighbour_distance": 46
+    },
+    "powered_flask_impact": {
+      "initial_neighbour_search_distance": 40,
+      "requires_more_than_one_reagent_patch": true,
+      "then_uses_powered_chain": true,
+      "powered_flag_captured_on_launch": true
+    },
+    "source_functions": [
+      "E",
+      "q",
+      "Y",
+      "T",
+      "G",
+      "_"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}
