@@ -21,7 +21,8 @@
  "reviewed": "2026-11-11",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-11",
+  "note": "Audit of PR #476 assets (audit476_assets.md, not committed), PR #476 at d6b6c8eb, detail-auditor, 11 Nov. 1,973 texels changed, all at x 577..739, y 1572..1594: wood-38's cast shadow moved 36 texels east (added 964 x 623..739, removed 1,009 x 577..695; shape IoU 0.85 against the old shadow shifted, the difference is where it used to merge with the holly's). Composed with bramble.png at the new foot (672, 1584) it sits under the bush as before, east and down; the vacated grass shows no remnant or seam; the low fern drawn in the ground now shows between holly and bramble. Detectors pass. Condition: woodland_base.tscn and woodland_kit.tscn still place wood-38 at x 636; regenerate them (gen_zone.py woodland, scripts.art.kit.woodland_kit) before merge, or the shadow lies 36 texels east of the bush."
  }
 }

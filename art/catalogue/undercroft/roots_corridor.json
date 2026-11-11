@@ -51,7 +51,8 @@
  "reviewed": "2026-11-11",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-11",
+  "note": "Audit of PR #476 assets (audit476_assets.md, not committed), PR #476 at d6b6c8eb, detail-auditor, 11 Nov. 299 texels changed (161 alpha), all in the lifted flag at x 101..114: the flag is the new floor's own flag under the roots' east end, copied and tilted (best match lift 3 at x 105, 2 at 106..110, 1 at 111..114; 28 of 29 rows match the re-rolled floor), gap and moss in its foot as round 6. Root strands, bark, holes unchanged. In situ the roots stand 6 texels off the kerb, sitting in the wall-foot shade; no floating part. detail.bar 0.611 accepted as polish (unchanged)."
  }
 }
