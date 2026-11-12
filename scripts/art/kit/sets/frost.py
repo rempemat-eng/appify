@@ -2326,7 +2326,7 @@ def prop_jobs():
         ('frost_lead', [(v, (lambda v=v: lead(v))) for v in ('run', 'short', 'pool', 'gap', 'strip', 'strip_long')], dict(
             name='Open lead in the ice', purpose='mark', role='water', cells=(1, 3), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='axis', z_sort='ground',
-            size_class='unsized (open water in a frozen stream: ground dressing laid on the ice)', eastward='-', fn='lead',
+            size_class='unsized (open water in a frozen stream: ground dressing on the ice)', eastward='-', fn='lead',
             note='Running water left open down the middle of the frozen outlet: a calm dark centre, lighter shallows, '
                  'the shelf ice\'s snow-covered lip round it and its shadow on the water; the fall\'s plunge pool, half '
                  'open under an ice rim; the inflow\'s one dark gap.')),

@@ -111,7 +111,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "unsized (open water in a frozen stream: ground dressing laid on the ice)",
+  "size_class": "unsized (open water in a frozen stream: ground dressing on the ice)",
   "eastward_ref": "-",
   "painter": {
    "module": "scripts.art.kit.sets.frost",
