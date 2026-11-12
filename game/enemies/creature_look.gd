@@ -89,14 +89,20 @@ func _process(delta: float) -> void:
 	if enemy.state == "windup":
 		speed = sprite.duration("telegraph") / enemy.windup_time()
 	_play()
-	if sprite.clip == "move" and sprite.walk_speed() > 0.0:
-		# the stride matches the ground covered: the walk plays at velocity / walk_speed, so the
-		# planted feet do not slide (12 Nov audit, B3/K3)
-		speed = clampf(enemy.velocity.length() / sprite.walk_speed(), 0.25, 4.0)
+	if sprite.clip == "move":
+		speed = walk_rate(enemy.velocity.length(), sprite.walk_speed())
 	sprite.advance(delta * speed)
 	sprite.modulate = Color(1.6, 1.6, 1.6) if _flash > 0.0 else Color.WHITE
 	queue_redraw()
 	tells.queue_redraw()
+
+## The rate the move clip plays at: the stride matches the ground covered, so the walk plays at
+## speed / walk_speed and the planted feet do not slide (12 Nov audit, B3/K3), clamped to 0.25 to 4.
+## A manifest without a walk speed (0) plays at the normal rate.
+static func walk_rate(speed: float, walk_speed: float) -> float:
+	if walk_speed <= 0.0:
+		return 1.0
+	return clampf(speed / walk_speed, 0.25, 4.0)
 
 ## The body's wind-up: it squats and leans back from where it will go as the tell runs (anticipation),
 ## the toad turns its head to the target; all of it let go at the commit. Still under reduced motion.
