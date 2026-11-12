@@ -18,6 +18,24 @@ var _busy := false
 func _ready() -> void:
 	var doc: Variant = JSON.parse_string(FileAccess.get_file_as_string(TABLE))
 	table = doc if typeof(doc) == TYPE_DICTIONARY else {}
+	if OS.is_debug_build():
+		try_zones(OS.get_cmdline_user_args())
+
+## `--try-zone=<id>` (debug builds only, as --play): a zone that is built (res://zones/<id>/<id>.tscn) but
+## not yet in data/zones.json, because nothing in the world leads to it yet, joins the table for this run,
+## so a playtest route can start in it (tools/playtest.sh, a route's `#! args:` line). While it is in the
+## table, "zone_built:<id>" holds as it will once the zone is listed. Returns the ids added.
+func try_zones(args: PackedStringArray) -> PackedStringArray:
+	var added := PackedStringArray()
+	for a in args:
+		if not a.begins_with("--try-zone="):
+			continue
+		var id := a.trim_prefix("--try-zone=")
+		var path := "res://zones/%s/%s.tscn" % [id, id]
+		if id.is_valid_identifier() and not table.has(id) and ResourceLoader.exists(path):
+			table[id] = path
+			added.append(id)
+	return added
 
 func attach(zone_root: Node, the_player: Node2D) -> void:
 	root = zone_root

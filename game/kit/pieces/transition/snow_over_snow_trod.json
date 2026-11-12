@@ -1,0 +1,37 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "snow_over_snow_trod",
+ "name": "Snow over snow_trod",
+ "kind": "transition",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "The snow hanging over the trod's north side, lit on its south."
+ },
+ "transition": {
+  "upper": "snow",
+  "lower": "snow_trod",
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "snow_lip",
+   "args": {}
+  },
+  "variants": 1,
+  "shape": "lower",
+  "dressing": null
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "snow_lip",
+   "args": {}
+  },
+  "eastward_ref": "Eastward 22 and 23 (snow over the trod and the shore)"
+ }
+}

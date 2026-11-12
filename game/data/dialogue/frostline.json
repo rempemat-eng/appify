@@ -86,6 +86,22 @@
           "step": [
             "a1_the_ring_is_shut",
             "report"
+          ],
+          "not_flags": [
+            "zone_built:ice_caves"
+          ]
+        },
+        "lines": [
+          "The fells are clear? Then I can open the ring again, and you can hear the rest.",
+          "The light that fell up here slid under the glacier. Tam went in after it the night of the starfall, before the new ice closed the snout.",
+          "She has the shard's warmth to keep her. We're cutting toward her from this side. When the snout opens, I'll send for you."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_ring_is_shut",
+            "report"
           ]
         },
         "lines": [
@@ -116,6 +132,24 @@
           "Bread! Real bread, from Moss! Sit down. No, the bench, I'll stand. I always stand.",
           "Since the storm I've kept the hut open on my own. Kettle on, door open, ring shut.",
           "The ring stays shut till the fells are safe. The ibex up there have gone wild. Free them and we'll talk."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "a1_the_ring_is_shut"
+          ],
+          "not_started": [
+            "a1_under_the_snout"
+          ],
+          "not_flags": [
+            "zone_built:ice_caves"
+          ]
+        },
+        "lines": [
+          "The ring's open, and the kettle's on. Sit a while.",
+          "The snout's sealed with new ice since the storm. We're cutting toward Tam from this side, a block a day.",
+          "When it rots enough to let a body in, I'll tell you. Not before."
         ]
       },
       {

@@ -1,0 +1,60 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "moraine",
+ "name": "Moraine",
+ "kind": "terrain",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "The High Fells' moraine: cold grey granite grit with stones of three sizes, old snow in their lee."
+ },
+ "terrain": {
+  "material_id": 15,
+  "priority": 16,
+  "fill": {
+   "module": "scripts.art.kit.fills",
+   "fn": "moraine",
+   "args": {
+    "seed": 1403
+   }
+  },
+  "walkable": true,
+  "surface": "rock",
+  "route": false,
+  "water": null,
+  "swatch": [
+   96,
+   96
+  ],
+  "paint": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "paint_moraine",
+   "args": {}
+  }
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false,
+  "nav_cost": 1.0
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.kit.fills",
+   "fn": "moraine",
+   "args": {
+    "seed": 1403
+   }
+  },
+  "size_class": "ground",
+  "eastward_ref": "Eastward 22 to 24 (the snowfield, the trodden path); refs local only"
+ }
+}

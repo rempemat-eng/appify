@@ -9,6 +9,9 @@
     "if": {
       "done": [
         "a1_the_ring_is_shut"
+      ],
+      "flags": [
+        "zone_built:ice_caves"
       ]
     }
   },
