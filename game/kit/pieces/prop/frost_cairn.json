@@ -1,0 +1,141 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "frost_cairn",
+ "name": "Granite cairn",
+ "kind": "prop",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "standing",
+   "weight": 1.0,
+   "png": "res://kit/props/art/frost/frost_cairn_standing.png",
+   "foot": [
+    22,
+    44
+   ]
+  },
+  {
+   "id": "toppled",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_cairn_toppled.png",
+   "foot": [
+    22,
+    20
+   ]
+  },
+  {
+   "id": "small",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_cairn_small.png",
+   "foot": [
+    17,
+    30
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "A granite waymark with snow on each ring: standing, toppled east, or a small marker."
+ },
+ "geometry": {
+  "size_px": [
+   63,
+   59
+  ],
+  "size_cells": [
+   2,
+   2
+  ],
+  "z_sort": "foot",
+  "height_px": 59,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -5.0,
+    -4.0,
+    10,
+    4
+   ]
+  },
+  "foot": [
+   22,
+   44
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "guide",
+  "role": "marker",
+  "provides": [
+   "feature"
+  ],
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 2,
+    "note": "a waymark beside the Col Path"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    5.5,
+    1.5
+   ],
+   "dir": [
+    0.5,
+    0.9
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "cairn (size-guide: 12 to 28 tall, 12 to 24 wide in world px)",
+  "eastward_ref": "13 (the boulder)",
+  "painter": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "cairn",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/frost.py",
+  "todo": []
+ }
+}

@@ -1,0 +1,41 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "snow_over_water",
+ "name": "Snow over water",
+ "kind": "transition",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "A snow cornice over a granite bank, shore ice on the open water."
+ },
+ "transition": {
+  "upper": "snow",
+  "lower": "water",
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "cornice_bank",
+   "args": {
+    "rim": "ice"
+   }
+  },
+  "variants": 1,
+  "shape": "lower",
+  "dressing": null
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "cornice_bank",
+   "args": {
+    "rim": "ice"
+   }
+  },
+  "eastward_ref": "Eastward 22 and 23 (snow over the trod and the shore)"
+ }
+}

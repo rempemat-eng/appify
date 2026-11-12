@@ -47,7 +47,11 @@ func _ready() -> void:
 		leads = doc.get("leads", [])
 		cards = doc.get("cards", [])
 	SaveGame.loaded.connect(shelve_unbuilt)
-	shelve_unbuilt()   # the save was read before this autoload woke (core/save_game.gd boot)
+	# The save was read before this autoload woke (core/save_game.gd boot). Zones, which answers
+	# "zone_built:<zone>", wakes after this one (project.godot's autoload order) and reads its table in
+	# its own _ready: checked now, every zone would look unbuilt and a save's active Frostline quest would
+	# be shelved at every start. Deferred, it runs once every autoload is ready.
+	shelve_unbuilt.call_deferred()
 
 ## A save can hold an active quest that this build cannot start: its start condition asks for a zone
 ## that is not built ("zone_built:<zone>"), and the save was made by a build without that gate. Such a

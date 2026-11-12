@@ -132,6 +132,21 @@
       },
       "title": "The valley holds",
       "text": "The Col Path is still buried. The story goes on when it opens"
+    },
+    {
+      "if": {
+        "done": [
+          "a1_the_ring_is_shut"
+        ],
+        "not_started": [
+          "a1_under_the_snout"
+        ],
+        "not_flags": [
+          "zone_built:ice_caves"
+        ]
+      },
+      "title": "The Frostline",
+      "text": "The ice caves under the glacier's snout are sealed. The story goes on when they open"
     }
   ]
 }

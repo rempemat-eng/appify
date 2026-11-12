@@ -1,0 +1,204 @@
+{
+  "_about": "The Frostline as a zone plan (Claude A's world-building stream, 11 Nov), from docs/vision/regions/home-valley-frostline-brackens.md (the Col hut threshold, the Frostline lip, the tarn, the High Fells, the ibex rocks) and docs/vision/regions/valley-plan.md (the Col Path leaves the valley northwards from the woodland's T2 terrace; the Frostline's foot meets the valley along y 2304). It is built in the world editor's format: its ground, pieces, actors, spawns and doors are the kit plan game/kit/zones/frostline.json, and game/tools/kit_zone.gd turns that into game/zones/frostline/frostline.tscn (docs/world-editor.md). This file holds what the kit plan does not: where the zone sits on the world canvas, why each place is where it is, which quest binding each actor carries, what is gated and why, and the named states `--stage` sets (game.gd apply_stage). World px, local to the zone, origin at its top-left (one cell 8 px; the kit plan's texels are 3 to the px). `kit_plan` marks it a kit zone, so game/tools/gen_blockout.py skips it (no `art` key: that names the native town and vault painters, scripts/art/native/check.py). Smallest complete: two screens on two shelves, the Col hut below the cirque's 32 px granite step and the frozen tarn above it, closer together than the brief's 450 px so the first chapter plays on them. Round 2 (12 Nov) follows the detail and logic audits of #478.",
+  "id": "frostline",
+  "owner": "claude-a",
+  "kit_plan": "game/kit/zones/frostline.json",
+  "kit": {
+    "kit": "frost",
+    "set": "scripts/art/kit/sets/frost.py",
+    "lab": true,
+    "why": "every piece is a candidate of the library gate (docs/world-editor.md, 'The library gate'): the zone stays a lab, out of data/zones.json, until Matt approves the Frostline set"
+  },
+  "origin_on_canvas": [
+    6080,
+    1720
+  ],
+  "box": [
+    0,
+    0,
+    376,
+    368
+  ],
+  "places": [
+    {
+      "id": "col_path",
+      "kind": "route",
+      "rect": [
+        64,
+        64,
+        144,
+        304
+      ],
+      "why": "the Col Path trodden into the snow: in at the south door, a spur west over the outlet's footbridge to the hut's door, up the cirque's step by its granite stair (40 px wide), on the upper bench to the ice-cut and toward the High Fells"
+    },
+    {
+      "id": "col_hut",
+      "kind": "hut",
+      "at": [
+        64,
+        304
+      ],
+      "why": "the threshold of the brief's section 3: the hut warden's bothy at the Frostline hut scale (eaves 41, door 29 world px), its door on the spur; the yard: a woodpile on its west, skis and a shovel by its east wall"
+    },
+    {
+      "id": "step",
+      "kind": "face",
+      "rect": [
+        0,
+        144,
+        376,
+        32
+      ],
+      "why": "the cirque's step (brief 4: faces 32 in rock with snow lips): a granite face with a snow lip across the zone at one height, its blocks running on through the pieces, climbed by the stair between its cheeks, the tarn's outlet frozen over it"
+    },
+    {
+      "id": "tarn",
+      "kind": "water",
+      "rect": [
+        32,
+        32,
+        104,
+        80
+      ],
+      "why": "the tarn under the headwall, deep at its north and shelving to the south-east; frozen (the ice-cutter's trade), with one cut hole by her sledge, a rill bending down from the north gully, frozen over with one dark gap and its outlet leaving the south-west shore: the Sleepwater's source"
+    },
+    {
+      "id": "outlet",
+      "kind": "stream",
+      "rect": [
+        64,
+        88,
+        120,
+        280
+      ],
+      "why": "the Sleepwater leaving the tarn, 24 to 40 px wide and frozen as midwinter freezes running water: shelf ice grown in from both banks with a narrow dark lead open down its middle that closes in places; a short bend to the step's lip, over it as a fall still running in one narrow column between frozen curtains into a half-open plunge pool, then meandering south-east clear of the hut's roof (cut banks on the outside of its bends, point bars inside), under the footbridge and south to the zone's edge at x 144 to 168, its lead open there (to meet the woodland's brook when the door is hooked up), under the hut spur's footbridge"
+    },
+    {
+      "id": "ice_cut",
+      "kind": "work",
+      "at": [
+        144,
+        88
+      ],
+      "why": "the hole cut in the ice, the sledge drawn up on the shore (off the water), the stack of cut blocks"
+    },
+    {
+      "id": "high_fells",
+      "kind": "boulder_field",
+      "rect": [
+        248,
+        0,
+        128,
+        120
+      ],
+      "why": "the High Fells' moraine under the headwall's crags: granite grit, boulders in clusters, the shardstruck ibex's camp"
+    },
+    {
+      "id": "climbers_camp",
+      "kind": "ruin",
+      "at": [
+        244,
+        288
+      ],
+      "why": "the brief's fallen climbers' camp beside the path: the fire ring cold under snow, a lost hat on the path"
+    },
+    {
+      "id": "frame",
+      "kind": "edge",
+      "rect": [
+        0,
+        0,
+        376,
+        24
+      ],
+      "why": "the north edge: moraine in bays and spurs, crags in two clusters either side of the rill's gully; the shoulders and the south edge closed by clumps of spruce, pine, wind-cropped pine, krummholz and snags, thinning to the tree line on the upper bench"
+    }
+  ],
+  "people": [
+    {
+      "id": "HutWarden",
+      "speaker": "hut_warden",
+      "at": [
+        62,
+        312
+      ],
+      "why": "Bread for the Col hut (step warden), The ring is shut (start and report), Under the snout (start), A cup by the stove, A ring of our own. No cast art yet (a stand-in, not placeable): she speaks from the hut's door"
+    },
+    {
+      "id": "IceCutter",
+      "speaker": "ice_cutter",
+      "at": [
+        152,
+        100
+      ],
+      "why": "Under the snout (step cutter); her default lines otherwise. No cast art yet (a stand-in, not placeable): she speaks from her sledge"
+    }
+  ],
+  "camps": [
+    {
+      "id": "fells_ibex",
+      "at": [
+        320,
+        64
+      ],
+      "scene": "res://zones/frostline/fells_ibex_camp.tscn",
+      "why": "The ring is shut (step fells): two rushers and a shooter of Codex's slice enemies in the woodland creatures' looks (enemies/creature_dresser.gd, no den) until the ibex are drawn. The scene's root is a plain node holding the Camp, so the kit plan holds it as a `scene` actor and the editor's export keeps it"
+    }
+  ],
+  "spawns": [
+    {
+      "id": "start",
+      "at": [
+        200,
+        344
+      ]
+    },
+    {
+      "id": "woodland",
+      "at": [
+        200,
+        344
+      ],
+      "why": "where the woodland's north door brings the player in (its spawn on this side)"
+    }
+  ],
+  "doors": [
+    {
+      "id": "ToWoodland",
+      "rect": [
+        192,
+        360,
+        16,
+        8
+      ],
+      "to": "woodland",
+      "spawn": "frostline",
+      "why": "down the Col Path to the woodland. The woodland has no 'frostline' spawn and no north door yet (Claude A sequences them after #476): until then this door lands at the woodland's first spawn (world/zone.gd spawn_position)"
+    }
+  ],
+  "gated": [
+    {
+      "quest": "a1_bread_for_the_bothy",
+      "why": "starts with Moss only while zone_built:frostline holds, so it waits for this zone to be in data/zones.json; its first step, the shard crows at the ridge col (camp:col_crows), belongs on the Col Path below this zone, on the woodland's side of the door, with that door"
+    },
+    {
+      "quest": "a1_under_the_snout",
+      "why": "needs the ice caves (enter:ice_caves, camp:ice_caves_rooms, camp:rime_wyrm, Tam, the frost shard), which are not built: its start now also waits for zone_built:ice_caves, as the bread waits for the Frostline, so it cannot start and then wait on rooms that do not exist"
+    }
+  ],
+  "stages": [
+    {
+      "id": "arrived",
+      "why": "the bread's climb done: the warden waits for her loaf"
+    },
+    {
+      "id": "fells_clear",
+      "if": {
+        "flags": [
+          "camp_cleared:fells_ibex"
+        ]
+      },
+      "why": "the ibex freed: the High Fells quiet"
+    }
+  ]
+}

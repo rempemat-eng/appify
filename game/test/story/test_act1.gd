@@ -10,11 +10,14 @@ const SLICE := ["woodland_stones", "road_to_crossroads", "cold_forge", "under_th
 func before_test() -> void:
 	SaveGame.reset()
 	# Act 1's regions are not built yet. A quest that leaves the valley only starts once its region is
-	# in the build (the flag zone_built:<zone>, core/quests.gd), so these tests stand a fixture in for it.
+	# in the build (the flag zone_built:<zone>, core/quests.gd), so these tests stand a fixture in for it
+	# (the Frostline for the loaf, the ice caves for Under the snout).
 	Zones.table["frostline"] = "res://test/fixtures/zone_a.tscn"
+	Zones.table["ice_caves"] = "res://test/fixtures/zone_a.tscn"
 
 func after_test() -> void:
 	Zones.table.erase("frostline")
+	Zones.table.erase("ice_caves")
 	SaveGame.reset()
 
 func _step(q: String) -> String:

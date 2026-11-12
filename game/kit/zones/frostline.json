@@ -1,0 +1,868 @@
+{
+ "actors": [
+  {
+   "at": [
+    186,
+    936
+   ],
+   "id": "HutWarden",
+   "kind": "interactable",
+   "radius": 40,
+   "speaker": "hut_warden",
+   "verb": "Talk"
+  },
+  {
+   "at": [
+    456,
+    300
+   ],
+   "id": "IceCutter",
+   "kind": "interactable",
+   "radius": 40,
+   "speaker": "ice_cutter",
+   "verb": "Talk"
+  },
+  {
+   "at": [
+    960,
+    192
+   ],
+   "id": "FellsIbexCamp",
+   "kind": "scene",
+   "scene": "res://zones/frostline/fells_ibex_camp.tscn"
+  }
+ ],
+ "doors": [
+  {
+   "id": "ToWoodland",
+   "rect": [
+    24,
+    45,
+    2,
+    1
+   ],
+   "spawn": "frostline",
+   "to": "woodland"
+  }
+ ],
+ "lab": true,
+ "legend": {
+  ".": "snow",
+  "a": "water",
+  "b": "snow_trod",
+  "c": "moraine",
+  "i": "ice"
+ },
+ "note": "LAB ZONE until Matt approves its pieces. The Frostline's first screens (docs/vision/regions/home-valley-frostline-brackens.md; game/data/plans/frostline.json): the Col Path in at the south, the Col hut and its yard on the lower shelf, the tarn's outlet under a footbridge, the cirque's granite step climbed by a stair, the frozen tarn with the ice-cut and the ice-cutter's sledge on the upper bench, and the High Fells' moraine where the shardstruck ibex are, under the headwall's crags. Built from the Frostline set's candidate pieces (scripts/art/kit/sets/frost.py). Not in data/zones.json: nothing leads to it yet.",
+ "pieces": [
+  {
+   "at": [
+    48,
+    528
+   ],
+   "facing": "s",
+   "id": "rockface_short",
+   "piece": "frost_rockface_short",
+   "variant": "plain"
+  },
+  {
+   "at": [
+    144,
+    528
+   ],
+   "facing": "s",
+   "id": "rockface_short_2",
+   "piece": "frost_rockface_short",
+   "variant": "plain_b"
+  },
+  {
+   "at": [
+    240,
+    528
+   ],
+   "facing": "s",
+   "id": "icefall",
+   "piece": "frost_icefall",
+   "variant": "still"
+  },
+  {
+   "at": [
+    360,
+    528
+   ],
+   "facing": "s",
+   "id": "rockface",
+   "piece": "frost_rockface",
+   "variant": "plain_c"
+  },
+  {
+   "at": [
+    480,
+    528
+   ],
+   "facing": "s",
+   "id": "rockface_short_3",
+   "piece": "frost_rockface_short",
+   "variant": "east"
+  },
+  {
+   "at": [
+    588,
+    528
+   ],
+   "facing": "s",
+   "id": "rock_stair",
+   "piece": "frost_rock_stair",
+   "variant": "still"
+  },
+  {
+   "at": [
+    720,
+    528
+   ],
+   "facing": "s",
+   "id": "rockface_2",
+   "piece": "frost_rockface",
+   "variant": "west"
+  },
+  {
+   "at": [
+    840,
+    528
+   ],
+   "facing": "s",
+   "id": "rockface_short_4",
+   "piece": "frost_rockface_short",
+   "variant": "plain_c"
+  },
+  {
+   "at": [
+    960,
+    528
+   ],
+   "facing": "s",
+   "id": "rockface_3",
+   "piece": "frost_rockface",
+   "variant": "plain"
+  },
+  {
+   "at": [
+    1080,
+    528
+   ],
+   "facing": "s",
+   "id": "rockface_short_5",
+   "piece": "frost_rockface_short",
+   "variant": "plain_b"
+  },
+  {
+   "at": [
+    192,
+    912
+   ],
+   "facing": "s",
+   "id": "col_hut",
+   "piece": "frost_col_hut",
+   "variant": "still"
+  },
+  {
+   "at": [
+    60,
+    888
+   ],
+   "facing": "s",
+   "id": "woodpile",
+   "piece": "frost_woodpile",
+   "variant": "still"
+  },
+  {
+   "at": [
+    312,
+    888
+   ],
+   "facing": "s",
+   "id": "hut_tools",
+   "piece": "frost_hut_tools",
+   "variant": "still"
+  },
+  {
+   "at": [
+    660,
+    1008
+   ],
+   "facing": "s",
+   "id": "noticeboard",
+   "piece": "frost_noticeboard",
+   "variant": "still"
+  },
+  {
+   "at": [
+    648,
+    792
+   ],
+   "facing": "s",
+   "id": "cairn",
+   "piece": "frost_cairn",
+   "variant": "standing"
+  },
+  {
+   "at": [
+    528,
+    360
+   ],
+   "facing": "s",
+   "id": "cairn_2",
+   "piece": "frost_cairn",
+   "variant": "small"
+  },
+  {
+   "at": [
+    708,
+    264
+   ],
+   "facing": "s",
+   "id": "cairn_3",
+   "piece": "frost_cairn",
+   "variant": "toppled"
+  },
+  {
+   "at": [
+    552,
+    648
+   ],
+   "facing": "s",
+   "id": "snow_pole",
+   "piece": "frost_snow_pole",
+   "variant": "still"
+  },
+  {
+   "at": [
+    636,
+    144
+   ],
+   "facing": "s",
+   "id": "snow_pole_2",
+   "piece": "frost_snow_pole",
+   "variant": "still"
+  },
+  {
+   "at": [
+    552,
+    1056
+   ],
+   "facing": "s",
+   "id": "snow_pole_3",
+   "piece": "frost_snow_pole",
+   "variant": "still"
+  },
+  {
+   "at": [
+    528,
+    264
+   ],
+   "facing": "s",
+   "id": "bench",
+   "piece": "frost_bench",
+   "variant": "still"
+  },
+  {
+   "at": [
+    732,
+    864
+   ],
+   "facing": "s",
+   "id": "fire_ring",
+   "piece": "frost_fire_ring",
+   "variant": "still"
+  },
+  {
+   "at": [
+    636,
+    720
+   ],
+   "facing": "s",
+   "id": "lost_hat",
+   "piece": "frost_lost_hat",
+   "variant": "still"
+  },
+  {
+   "at": [
+    456,
+    264
+   ],
+   "facing": "s",
+   "id": "sledge",
+   "piece": "frost_sledge",
+   "variant": "still"
+  },
+  {
+   "at": [
+    444,
+    192
+   ],
+   "facing": "s",
+   "id": "ice_stack",
+   "piece": "frost_ice_stack",
+   "variant": "still"
+  },
+  {
+   "at": [
+    468,
+    960
+   ],
+   "facing": "s",
+   "id": "footbridge",
+   "piece": "frost_footbridge",
+   "variant": "still"
+  },
+  {
+   "at": [
+    108,
+    72
+   ],
+   "facing": "s",
+   "id": "crag",
+   "piece": "frost_crag",
+   "variant": "a"
+  },
+  {
+   "at": [
+    516,
+    72
+   ],
+   "facing": "s",
+   "id": "crag_2",
+   "piece": "frost_crag",
+   "variant": "b"
+  },
+  {
+   "at": [
+    708,
+    48
+   ],
+   "facing": "s",
+   "id": "crag_3",
+   "piece": "frost_crag",
+   "variant": "a"
+  },
+  {
+   "at": [
+    1020,
+    48
+   ],
+   "facing": "s",
+   "id": "crag_4",
+   "piece": "frost_crag",
+   "variant": "b"
+  },
+  {
+   "at": [
+    204,
+    96
+   ],
+   "facing": "s",
+   "id": "boulder",
+   "piece": "frost_boulder",
+   "variant": "a"
+  },
+  {
+   "at": [
+    408,
+    96
+   ],
+   "facing": "s",
+   "id": "stone",
+   "piece": "frost_stone",
+   "variant": "still"
+  },
+  {
+   "at": [
+    624,
+    96
+   ],
+   "facing": "s",
+   "id": "boulder_2",
+   "piece": "frost_boulder",
+   "variant": "b"
+  },
+  {
+   "at": [
+    852,
+    144
+   ],
+   "facing": "s",
+   "id": "boulder_large",
+   "piece": "frost_boulder_large",
+   "variant": "still"
+  },
+  {
+   "at": [
+    912,
+    192
+   ],
+   "facing": "s",
+   "id": "stone_2",
+   "piece": "frost_stone",
+   "variant": "still"
+  },
+  {
+   "at": [
+    1056,
+    216
+   ],
+   "facing": "s",
+   "id": "boulder_3",
+   "piece": "frost_boulder",
+   "variant": "a"
+  },
+  {
+   "at": [
+    1080,
+    312
+   ],
+   "facing": "s",
+   "id": "boulder_large_2",
+   "piece": "frost_boulder_large",
+   "variant": "still"
+  },
+  {
+   "at": [
+    864,
+    312
+   ],
+   "facing": "s",
+   "id": "stone_3",
+   "piece": "frost_stone",
+   "variant": "still"
+  },
+  {
+   "at": [
+    36,
+    336
+   ],
+   "facing": "s",
+   "id": "boulder_4",
+   "piece": "frost_boulder",
+   "variant": "b"
+  },
+  {
+   "at": [
+    60,
+    384
+   ],
+   "facing": "s",
+   "id": "stone_4",
+   "piece": "frost_stone",
+   "variant": "still"
+  },
+  {
+   "at": [
+    36,
+    648
+   ],
+   "facing": "s",
+   "id": "spruce",
+   "piece": "frost_spruce",
+   "variant": "still"
+  },
+  {
+   "at": [
+    120,
+    648
+   ],
+   "facing": "s",
+   "id": "pine",
+   "piece": "frost_pine",
+   "variant": "still"
+  },
+  {
+   "at": [
+    24,
+    792
+   ],
+   "facing": "s",
+   "id": "pine_squat",
+   "piece": "frost_pine_squat",
+   "variant": "still"
+  },
+  {
+   "at": [
+    180,
+    648
+   ],
+   "facing": "s",
+   "id": "snag",
+   "piece": "frost_snag",
+   "variant": "still"
+  },
+  {
+   "at": [
+    228,
+    1056
+   ],
+   "facing": "s",
+   "id": "krummholz",
+   "piece": "frost_krummholz",
+   "variant": "wide"
+  },
+  {
+   "at": [
+    348,
+    1080
+   ],
+   "facing": "s",
+   "id": "pine_squat_2",
+   "piece": "frost_pine_squat",
+   "variant": "still"
+  },
+  {
+   "at": [
+    432,
+    648
+   ],
+   "facing": "s",
+   "id": "pine_3",
+   "piece": "frost_pine",
+   "variant": "still"
+  },
+  {
+   "at": [
+    1080,
+    600
+   ],
+   "facing": "s",
+   "id": "spruce_5",
+   "piece": "frost_spruce",
+   "variant": "still"
+  },
+  {
+   "at": [
+    996,
+    696
+   ],
+   "facing": "s",
+   "id": "pine_4",
+   "piece": "frost_pine",
+   "variant": "still"
+  },
+  {
+   "at": [
+    1068,
+    768
+   ],
+   "facing": "s",
+   "id": "pine_squat_4",
+   "piece": "frost_pine_squat",
+   "variant": "still"
+  },
+  {
+   "at": [
+    912,
+    792
+   ],
+   "facing": "s",
+   "id": "spruce_6",
+   "piece": "frost_spruce",
+   "variant": "still"
+  },
+  {
+   "at": [
+    1092,
+    960
+   ],
+   "facing": "s",
+   "id": "pine_5",
+   "piece": "frost_pine",
+   "variant": "still"
+  },
+  {
+   "at": [
+    1032,
+    936
+   ],
+   "facing": "s",
+   "id": "snag_2",
+   "piece": "frost_snag",
+   "variant": "still"
+  },
+  {
+   "at": [
+    972,
+    1008
+   ],
+   "facing": "s",
+   "id": "spruce_7",
+   "piece": "frost_spruce",
+   "variant": "still"
+  },
+  {
+   "at": [
+    1068,
+    1104
+   ],
+   "facing": "s",
+   "id": "pine_squat_5",
+   "piece": "frost_pine_squat",
+   "variant": "still"
+  },
+  {
+   "at": [
+    876,
+    1080
+   ],
+   "facing": "s",
+   "id": "pine_6",
+   "piece": "frost_pine",
+   "variant": "still"
+  },
+  {
+   "at": [
+    780,
+    1056
+   ],
+   "facing": "s",
+   "id": "krummholz_2",
+   "piece": "frost_krummholz",
+   "variant": "low"
+  },
+  {
+   "at": [
+    792,
+    960
+   ],
+   "facing": "s",
+   "id": "spruce_8",
+   "piece": "frost_spruce",
+   "variant": "still"
+  },
+  {
+   "at": [
+    840,
+    648
+   ],
+   "facing": "s",
+   "id": "pine_7",
+   "piece": "frost_pine",
+   "variant": "still"
+  },
+  {
+   "at": [
+    744,
+    768
+   ],
+   "facing": "s",
+   "id": "pine_squat_6",
+   "piece": "frost_pine_squat",
+   "variant": "still"
+  },
+  {
+   "at": [
+    120,
+    408
+   ],
+   "facing": "s",
+   "id": "krummholz_3",
+   "piece": "frost_krummholz",
+   "variant": "low"
+  },
+  {
+   "at": [
+    684,
+    408
+   ],
+   "facing": "s",
+   "id": "krummholz_4",
+   "piece": "frost_krummholz",
+   "variant": "wide"
+  },
+  {
+   "at": [
+    792,
+    384
+   ],
+   "facing": "s",
+   "id": "snag_3",
+   "piece": "frost_snag",
+   "variant": "still"
+  },
+  {
+   "at": [
+    972,
+    408
+   ],
+   "facing": "s",
+   "id": "krummholz_5",
+   "piece": "frost_krummholz",
+   "variant": "still"
+  },
+  {
+   "at": [
+    372,
+    384
+   ],
+   "facing": "s",
+   "id": "krummholz_6",
+   "piece": "frost_krummholz",
+   "variant": "low"
+  },
+  {
+   "at": [
+    312,
+    72
+   ],
+   "facing": "s",
+   "id": "lead_inflow",
+   "piece": "frost_lead",
+   "variant": "gap"
+  },
+  {
+   "at": [
+    228,
+    384
+   ],
+   "facing": "s",
+   "id": "lead_1",
+   "piece": "frost_lead",
+   "variant": "run"
+  },
+  {
+   "at": [
+    252,
+    480
+   ],
+   "facing": "s",
+   "id": "lead_2",
+   "piece": "frost_lead",
+   "variant": "short"
+  },
+  {
+   "at": [
+    240,
+    576
+   ],
+   "facing": "s",
+   "id": "plunge_pool",
+   "piece": "frost_lead",
+   "variant": "pool"
+  },
+  {
+   "at": [
+    312,
+    648
+   ],
+   "facing": "s",
+   "id": "lead_3",
+   "piece": "frost_lead",
+   "variant": "short"
+  },
+  {
+   "at": [
+    372,
+    720
+   ],
+   "facing": "s",
+   "id": "lead_4",
+   "piece": "frost_lead",
+   "variant": "short"
+  },
+  {
+   "at": [
+    432,
+    792
+   ],
+   "facing": "s",
+   "id": "lead_5",
+   "piece": "frost_lead",
+   "variant": "run"
+  },
+  {
+   "at": [
+    432,
+    888
+   ],
+   "facing": "s",
+   "id": "lead_6",
+   "piece": "frost_lead",
+   "variant": "short"
+  },
+  {
+   "at": [
+    468,
+    1008
+   ],
+   "facing": "s",
+   "id": "lead_8",
+   "piece": "frost_lead",
+   "variant": "strip"
+  },
+  {
+   "at": [
+    468,
+    1104
+   ],
+   "facing": "s",
+   "id": "lead_9",
+   "piece": "frost_lead",
+   "variant": "strip_long"
+  }
+ ],
+ "rows": [
+  "ccccccccccc.ii.cccccccccccccccccccccccccccccccc",
+  "ccccccccc.c.ii.ccccccc..ccccccccccccccccccccccc",
+  "cccccc.cc.c.ii..........ccccccccccccccccccccccc",
+  ".......cc..ii.c.........ccccccccccccccccccccccc",
+  "...........ii...........ccccccccccccccccccccccc",
+  "......iiiiiiii................ccccccccccccccccc",
+  ".....iiiiiiiiiii...................cccccccccccc",
+  "....iiiiiiiiiiiii..................cccccccccccc",
+  "....iiiiiiiiiiaai.......bbbbb......cccccccccccc",
+  "....iiiiiiiiiiaai.......bbbbb......cccccccccccc",
+  ".....iiiiiiiiiiii.......bb....ccccccccccccccccc",
+  "......iiiiiiiiiii.......bb.....cccccccccccccccc",
+  "........iiiiiiiii..bbbbbbb........ccccccccccccc",
+  "........iii..ii....bbbbbbb..........ccccccccccc",
+  "........iii.............bb................ccccc",
+  "........iii.............bb.....................",
+  ".........iii............bb.....................",
+  ".........iii............bb.....................",
+  ".........iii............bb.....................",
+  "........iiii............bb.....................",
+  "........iiii............bb.....................",
+  "........iiii............bb.....................",
+  "........iiii............bb.....................",
+  "........iiiii...........bb.....................",
+  ".........iiiii..........bb.....................",
+  "...........iiii.........bb.....................",
+  "............iiii........bb.....................",
+  ".............iii........bb.....................",
+  ".............iiii.......bb.....................",
+  "..............iiiii.....bb.....................",
+  "...............iiiii....bb.....................",
+  "................iiiii...bb.....................",
+  ".................iii....bb.....................",
+  "................iii.....bb.....................",
+  "...............iiii.....bb.....................",
+  "................iiii....bb.....................",
+  ".................iiii...bb.....................",
+  "..................iii...bb.....................",
+  "......bbbbbbbbbbbbiiibbbbb.....................",
+  "......bbbbbbbbbbbbiaibbbbb.....................",
+  "..................iai...bb.....................",
+  "..................iai...bb.....................",
+  "..................iaii..bb.....................",
+  "...................aii..bb.....................",
+  "..................iaii..bb.....................",
+  "..................iai...bb....................."
+ ],
+ "spawns": {
+  "start": [
+   600,
+   1032
+  ],
+  "woodland": [
+   600,
+   1032
+  ]
+ },
+ "zone": "frostline"
+}
