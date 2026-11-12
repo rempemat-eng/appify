@@ -11,7 +11,8 @@ edges, Interactables for people and things, RestoreSites, Camps of actors/enemy.
 raid pad markers (group "raid_pad"). An item with "if" is wrapped in a Conditional (world/conditional.gd)
 so the one scene holds every stage. Positions are world px times DENSITY (3 texels). No art: replace the
 scene with a kit-rendered one when the zone is drawn, keeping the node names: a plan with "art" is drawn by
-tools/gen_village.py (Crossroads) and skipped here.
+tools/gen_village.py (Crossroads) and skipped here, and so is a plan with "kit_plan", whose scene tools/kit_zone.gd
+builds from that kit plan (the Frostline).
 """
 import json
 import os
@@ -270,6 +271,11 @@ def main(ids):
         plan = json.load(open(os.path.join(PLANS, zid + '.json')))
         if 'art' in plan:
             print(zid, 'is drawn: python3 game/tools/gen_village.py', zid)
+            continue
+        if 'kit_plan' in plan:
+            # built in the world editor's format: its scene comes from its kit plan (docs/world-editor.md)
+            print(zid, 'is a kit zone: $GODOT --headless --path game -s tools/kit_zone.gd -- --plan=res://' +
+                  plan['kit_plan'].removeprefix('game/'))
             continue
         out_dir = os.path.join(GAME, 'zones', zid)
         os.makedirs(out_dir, exist_ok=True)
