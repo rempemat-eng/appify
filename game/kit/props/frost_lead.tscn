@@ -10,4 +10,4 @@ piece_id = "frost_lead"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-12, -71)
+offset = Vector2(-12, -95)

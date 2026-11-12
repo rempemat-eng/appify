@@ -14,7 +14,7 @@
    "png": "res://kit/props/art/frost/frost_lead_run.png",
    "foot": [
     12,
-    71
+    95
    ]
   },
   {
@@ -23,7 +23,7 @@
    "png": "res://kit/props/art/frost/frost_lead_short.png",
    "foot": [
     12,
-    47
+    71
    ]
   },
   {
@@ -86,7 +86,7 @@
   },
   "foot": [
    12,
-   71
+   95
   ],
   "footprint": []
  },

@@ -14751,7 +14751,7 @@
   "deck": null,
   "foot": [
    12,
-   71
+   95
   ],
   "footprint": [],
   "forbids": [],
@@ -14788,14 +14788,14 @@
    "run": {
     "foot": [
      12,
-     71
+     95
     ],
     "png": "res://kit/props/art/frost/frost_lead_run.png"
    },
    "short": {
     "foot": [
      12,
-     47
+     71
     ],
     "png": "res://kit/props/art/frost/frost_lead_short.png"
    },

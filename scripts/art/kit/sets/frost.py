@@ -1449,39 +1449,53 @@ SET_BACK = 3.0                                      # each course stands this fa
 
 
 def _wall_blocks(W, seed, ends):
-    """The blocks of one panel: (x0, x1, z0, z1, y_front, base, mix, round). Courses on the shared
-    bedding planes; blocks 12 to 40 texels wide, small ones in clusters (a course split in two);
-    at each panel edge a bridge block whose params depend only on the course, so neighbours meet in
-    one block (no seam); none at a real end."""
+    """The blocks of one panel (round 5: natural granite, not laid courses): the face split again and
+    again at random into joint-bounded blocks of very different sizes (a guillotine split, so joints
+    meet in T's and never line up across the face), each set back or leaning by its own amount, its
+    top out of level, its corners weathered round; here and there a block is missing, a dark pocket.
+    At each panel edge a column of bridge blocks on the shared bedding planes, whose params depend
+    only on the plane, so neighbouring panels meet in one block. Each block is (x0, x1, z0, z1,
+    y_front, base, mix, round)."""
     rng = np.random.default_rng(seed)
     out = []
+    brs = []
     for k in range(len(COURSES) - 1):
         z0, z1 = COURSES[k], COURSES[k + 1]
-        yf = 2.0 - SET_BACK * k
-        br = 9 + int(hsh(k, 41) * 8)                       # the bridge block's half width
+        br = 14
+        brs.append(br)
         bb = 2.75 + 0.35 * (hsh(k, 43) - 0.5)
         bm = hsh(k, 47)
-        lo = 3.0 if ends[0] else float(br)
-        hi = W - 3.0 if ends[1] else W - float(br)
+        yf = 2.0 - SET_BACK * k
         if not ends[0]:
-            out.append((-br, br - 1, z0, z1 - 1, yf, bb, bm, 3.5))
+            out.append((-br, br - 1, z0, z1 - 1, yf, bb, bm, 9.0))
         if not ends[1]:
-            out.append((W - br, W + br - 1, z0, z1 - 1, yf, bb, bm, 3.5))
-        x = lo + (1 if not ends[0] else 0)
-        while x < hi - 6:
-            wdt = float(rng.choice([rng.uniform(12, 18), rng.uniform(18, 28), rng.uniform(26, 40)], p=[0.35, 0.4, 0.25]))
-            x1 = min(hi - 1, x + wdt)
-            if hi - 1 - x1 < 10:
-                x1 = hi - 1
-            jit = rng.uniform(-1.2, 1.6)
-            base = 2.8 + rng.uniform(-0.35, 0.35) - 0.25 * (k == 0)
-            if wdt < 18 and z1 - z0 > 15 and rng.random() < 0.7:
-                zm = z0 + (z1 - z0) * rng.uniform(0.4, 0.6)
-                out.append((x, x1 - 1, z0, zm - 1, yf + jit + 0.8, base - 0.15, rng.random(), 2.5))
-                out.append((x + rng.uniform(-2, 2), x1 - 1, zm, z1 - 1, yf + jit, base + 0.1, rng.random(), 2.5))
-            else:
-                out.append((x, x1 - 1, z0, z1 - 1, yf + jit, base, rng.random(), rng.uniform(3.0, 5.5)))
-            x = x1 + 1
+            out.append((W - br, W + br - 1, z0, z1 - 1, yf, bb, bm, 9.0))
+    lo = (max(brs) if not ends[0] else 2.0)
+    hi = (W - max(brs) if not ends[1] else W - 2.0)
+
+    def split(x0, x1, z0, z1, depth):
+        w, h = x1 - x0, z1 - z0
+        stop = (w < 30 and h < 26 and rng.random() < 0.55) or depth > 7 or (w < 14 and h < 14)
+        if not stop:
+            vertical = (w > h * 1.8) if rng.random() < 0.75 else (rng.random() < 0.4)
+            if vertical and w >= 22:
+                c = x0 + w * rng.uniform(0.28, 0.72)
+                split(x0, c, z0, z1, depth + 1)
+                split(c, x1, z0, z1, depth + 1)
+                return
+            if h >= 18:
+                c = z0 + h * rng.uniform(0.3, 0.7)
+                split(x0, x1, z0, c, depth + 1)
+                split(x0, x1, c, z1, depth + 1)
+                return
+        if w * h < 220 and rng.random() < 0.18:
+            return                                         # a pocket: the block has weathered out
+        u = (z0 + z1) / 2.0 / FACE_PX
+        yf = 2.0 - 5 * SET_BACK * u + rng.uniform(-3.0, 1.5)
+        base = 2.8 + rng.uniform(-0.4, 0.4) - 0.3 * (z0 < 12)
+        out.append((x0, x1 - 1.2, z0, z1 - 1.0 + rng.uniform(-1.5, 1.0), yf, base, rng.random(), rng.uniform(6.0, 10.0)))
+
+    split(lo, hi, 0.0, float(FACE_PX), 0)
     return out
 
 
@@ -1595,6 +1609,21 @@ def _face(width, seed, ends=(True, True), fall=None, stair=None):
     lo_ = fr & (rev <= 2) & (run > 3)
     a[lo_] = (a[lo_] // 8) * 8 + np.maximum(1, a[lo_] % 8 - 1)
     _fractures(a, rockm & (sc.n[..., 1] > 0.5), seed + 5, n=max(2, W // 30))
+    # vertical fractures running down through two or three blocks, and a few dark cracks
+    frng = np.random.default_rng(seed + 77)
+    for _ in range(max(2, W // 40)):
+        x = float(frng.integers(6, W - 6))
+        y = float(sc.oy - FACE_PX + frng.integers(4, 30))
+        for _j in range(int(frng.integers(28, 60))):
+            yi, xi = int(y), int(round(x))
+            if not (0 <= yi < sc.H and 1 <= xi < sc.W - 1):
+                break
+            if rockm[yi, xi]:
+                a[yi, xi] = C('slate_cool', 0)
+                if rockm[yi, xi - 1]:
+                    a[yi, xi - 1] = (a[yi, xi - 1] // 8) * 8 + min(5, a[yi, xi - 1] % 8 + 1)
+            y += 1
+            x += frng.choice((-1, 0, 0, 0, 1)) * 0.8
     # water streaks: from under some ledges, a darker run down the face
     for j in range(max(2, W // 28)):
         xs_ = int(rng.integers(3, W - 3))
@@ -1644,6 +1673,8 @@ def _face(width, seed, ends=(True, True), fall=None, stair=None):
         out[yf + int(round(2.2 * prof[x])):, x] = -1
     a = out
     V.outline(a)
+    if stair is not None:
+        _stair_flat(a, stair, seed)
     if fall is not None:
         _icefall(a, fall, seed)
     return V.Pic(W, H, W // 2, yf - 1), a
@@ -1671,20 +1702,32 @@ def _icefall(a, fall, seed):
     yy = np.arange(H)
     v = np.clip((yy - y_top) / float(y_bot - y_top), 0, 1)
     edges = []
-    for (cx, hw, ph, bs, per) in cols:
-        wy = hw * (1 + bs * np.sin(2 * math.pi * yy / per + ph)) * (0.9 + 0.25 * v)
+    tops = []
+    for j, (cx, hw, ph, bs, per) in enumerate(cols):
+        # (round 5) each curtain narrower up at the lip, where the rock shows between them, and
+        # built up thick and wide at the foot; its top bulging out over the lip by its own height
+        wy = hw * (1 + bs * np.sin(2 * math.pi * yy / per + ph)) * (0.55 + 0.75 * v ** 1.3)
         cxy = cx + 1.2 * np.sin(2 * math.pi * yy / (per * 1.6) + ph * 0.7)
         L_ = np.round(ndi.uniform_filter1d(cxy - wy, 5)).astype(int)
         R_ = np.round(ndi.uniform_filter1d(cxy + wy, 5)).astype(int)
+        q = 6 + j % 3                                     # the edges step every six to eight rows
+        idx_ = np.clip(((yy + j * 2) // q) * q, 0, H - 1)
+        L_, R_ = L_[idx_], R_[idx_]
         edges.append((L_, R_))
+        tops.append(LIP_PX - 3 + int(rng.integers(0, 4)) if rng.random() < 0.45 else LIP_PX + int(rng.integers(3, 15)))
     # paint each column from its west edge (lit) to its east edge (shade); the body in lanes that
     # stay put (their tone steps only every 8 to 30 texels down), so the ice falls in streaks
     body = [C('snow', 5), C('snow', 4), C('snow', 4), C('snow_cool', 4), C('snow_cool', 4), C('sky_cool', 5), C('sky_cool', 5),
             C('sky_cool', 4), C('sky_cool', 3), C('sky_cool', 2)]
-    for (L_, R_) in edges:
+    icem = np.zeros((H, W), bool)
+    for (L_, R_), t0 in zip(edges, tops):
         lm, rm = float(L_[y_top:y_bot].mean()), float(R_[y_top:y_bot].mean())
-        for y in range(y_top, y_bot):
+        for y in range(max(0, t0), y_bot):
             l, r = int(L_[y]), int(R_[y])
+            if y - t0 < 3:                                   # the bulge's rounded crown
+                l, r = l + (3 - (y - t0)), r - (3 - (y - t0))
+                if r - l < 1:
+                    continue
             for x in range(max(0, l), min(W, r + 1)):
                 d, e = x - l, r - x
                 if d == 0:
@@ -1703,14 +1746,16 @@ def _icefall(a, fall, seed):
                     k_ = int(round(rel * 8.5 + 6.6 * x / W - 3.0 + (hsh(seed, ln, sg) - 0.5) * 2.2))
                     c = body[max(0, min(len(body) - 1, k_))]
                 a[y, x] = c
+                icem[y, x] = True
     # (Matt's review of round 3: why is one part frozen and the other not?) fast water freezes last:
     # the fall still runs in one narrow column down its middle, dark and quick, white where it
     # breaks; the ice either side is its frozen flows and icicle curtains
     cxw = (f0 + f1) / 2.0 + 3
     for y in range(y_top, y_bot):
         v_ = (y - y_top) / float(y_bot - y_top)
-        half = 5.0 + 1.5 * math.sin(y / 9.0) + 2.5 * v_
-        c0 = cxw + 1.2 * math.sin(y / 13.0 + 1.0)
+        yq = (y // 6) * 6                                    # the flow's banks step every six rows
+        half = 5.0 + 1.5 * math.sin(yq / 9.0) + 2.5 * v_
+        c0 = cxw + 3.0 * math.sin(yq / 17.0 + 1.0) + 1.2 * math.sin(yq / 6.0)
         l_, r_ = int(round(c0 - half)), int(round(c0 + half))
         for x in range(max(0, l_ - 1), min(W, r_ + 2)):
             if x == l_ - 1 or x == r_ + 1:
@@ -1735,40 +1780,51 @@ def _icefall(a, fall, seed):
     for y in range(y_bot - 16, y_bot + 1):
         for x in range(max(0, int(cxw) - 16), min(W, int(cxw) + 17)):
             d = ((x - cxw) / 15.0) ** 2 + ((y - y_bot + 3) / 10.0) ** 2
-            if d < 1.0 and hsh(seed, x // 2, y // 2, 40) > 0.25 + 0.6 * d:
+            if d < 1.0 and y < yf - 6 and hsh(seed, x // 2, y // 8, 40) > 0.25 + 0.6 * d:
                 a[y, x] = C('snow', 5) if d < 0.45 else C('snow_cool', 4)
-    # the frozen lip: a crown of snow on the ice over the edge, icicles hanging under it in clusters
-    for x in range(f0 - 2, f1 + 2):
-        if not (0 <= x < W):
-            continue
-        hcap = 3 + int(round(2 * hsh(seed, x // 3, 5)))
-        for k_ in range(hcap):
-            y = y_top - 2 + k_
-            a[y, x] = C('snow', 5) if k_ == 0 else (C('snow', 4) if k_ < hcap - 1 else C('snow_cool', 3))
-    x = f0 + int(rng.integers(1, 4))
-    while x < f1 - 1:
-        if rng.random() < 0.6:
-            n = int(rng.integers(2, 4))
-            for j in range(n):
-                xi = x + j * 2
-                ln = int(rng.integers(5, 13))
-                for k_ in range(ln):
-                    y = y_top + 1 + k_
-                    if 0 <= xi < W and y < H:
-                        a[y, xi] = C('snow', 5) if k_ < ln // 2 else C('sky_cool', 5)
-                        if k_ < ln // 3 and xi + 1 < W:
-                            a[y, xi + 1] = C('sky_cool', 4)
-            x += n * 2 + int(rng.integers(3, 7))
-        else:
-            x += int(rng.integers(3, 6))
+    # the lip over the fall: the upper tier's snow running to the edge in one soft mass per column
+    # (no rows of shade under it here: the ice and the rime take its place)
+    for x in range(max(0, f0), min(W, f1)):
+        col = np.nonzero(icem[:, x])[0]
+        t = int(col.min()) if len(col) else LIP_PX
+        for y in range(4, min(t, LIP_PX + 1)):
+            a[y, x] = C('snow', 5) if y < 6 else C('snow', 4)
+    # the rock between the curtains: wet granite glazed with rime in streaks down the fall line
+    for x in range(max(0, f0), min(W, f1)):
+        ln = x // 2
+        for y in range(LIP_PX, y_bot):
+            if icem[y, x] or a[y, x] < 0:
+                continue
+            sg = (y + int(hsh(seed, ln, 51) * 40)) // 40
+            g = hsh(seed, ln, sg, 53)
+            a[y, x] = C('slate', 3) if g < 0.4 else (C('slate', 4) if g < 0.75 else C('snow_cool', 3))
+    # the frozen lip: snow lying on each curtain's bulging crown (it follows the ice, not a ruler);
+    # between the curtains an uneven fringe of icicles hangs over the bare rock from the lip
+    for x in range(W):
+        col = np.nonzero(icem[:, x])[0]
+        if len(col):
+            t = int(col.min())
+            hcap = 3
+            for k_ in range(hcap):
+                y = t - hcap + 1 + k_
+                if 0 <= y < H:
+                    a[y, x] = C('snow', 5) if k_ == 0 else C('sky_cool', 5)
+        elif f0 <= x < f1 and hsh(seed, x // 2, 7) > 0.35:
+            ln = 3 + int(15 * hsh(seed, x, 8) ** 1.6)
+            for k_ in range(ln):
+                y = LIP_PX - 1 + k_
+                if y < H:
+                    a[y, x] = C('sky_cool', 5) if k_ < ln - 2 else C('sky_cool', 4)
     # the apron at the foot: the ice spreading in a low mound across the channel, lit on its top
     for x in range(max(0, f0 - 4), min(W, f1 + 4)):
         e = min(x - (f0 - 4), (f1 + 4) - x)
-        h = int(round(min(4.0, 2 + e * 0.5) + 1.2 * hsh(seed, x // 5, 8)))
+        h = int(round(min(9.0, 6 + e * 0.6) + 2.0 * hsh(seed, x // 5, 8)))
         for k_ in range(h):
             y = yf + 1 - h + k_
             if 0 <= y < H:
-                a[y, x] = C('snow', 5) if k_ == 0 else (C('snow', 4) if k_ < 2 else (C('sky_cool', 5) if k_ < h - 1 else C('sky_cool', 3)))
+                a[y, x] = C('snow', 5) if k_ == 0 else (C('snow', 4) if k_ < h - 2 else
+                                                        (C('sky_cool', 4), C('water_cool', 4), C('sky_cool', 3), C('water', 4),
+                                                         C('sky_cool', 5))[int(hsh(seed, x // 3, 9) * 5)])
 
 
 STEPS = 6
@@ -1776,40 +1832,106 @@ RISE, TREAD = 6.5, 9.5          # (Matt's review of round 3) seen from above a s
 CHEEK = 14
 
 
+STEP_PX = FACE_PX // STEPS           # 16 rows a step in the picture: a broad tread over a thin riser
+RISER_PX = 3
+
+
 def _cheek(a, side, seed):
-    """The face's end where a stair is cut through it (Matt's review of round 3): a cheek 14 texels
-    wide showing the cut's side wall, the face's courses running round onto it with their joints,
-    lit where it faces west (the east cheek) and in shade where it faces east, a sharp arris where
-    it turns from the face, the upper tier's snow capping it and a drift banked into its foot."""
+    """The face's end where the stair is cut through it (round 5): the face's own stone stepping
+    down beside the treads, one weathered block end a step (two where a block spans two), each with
+    a lit top level with its tread, a front in shade, a dark joint under it and a rounded outer
+    corner; the upper tier's snow on the top block, snow lodged on each step of the cheek."""
     H, W = a.shape
     yf = LIP_PX + FACE_PX
-    x0, x1 = (0, CHEEK) if side == 0 else (W - CHEEK, W)
-    lit = side == 0
-    rows_course = [yf - 1 - z for z in COURSES]
+    rng = np.random.default_rng(seed + 61 + side)
+    k = 0
+    while k < STEPS:
+        span = 2 if (rng.random() < 0.35 and k < STEPS - 1) else 1
+        y0 = LIP_PX + k * STEP_PX
+        y1 = min(yf, y0 + span * STEP_PX)
+        wd = CHEEK + int(rng.integers(-2, 3))
+        for x in range(W):
+            d = x if side == 1 else (W - 1 - x)          # 0 at the picture's edge (the stair side)
+            d = (W - 1 - x) if side == 1 else x
+            if d >= wd:
+                continue
+            for y in range(y0, y1):
+                r = y - y0
+                c = C('slate', 2) if side == 0 else C('slate_cool', 2)
+                if r < 3:
+                    c = C('slate', 5) if r == 0 else C('slate', 4)          # the lit top, level with the tread
+                elif r < 5:
+                    c = C('slate', 3)
+                elif y == y1 - 1:
+                    c = C('slate_cool', 0)                                   # the joint under it
+                elif hsh(seed, x // 2, y // 2, side) > 0.86:
+                    c = C('slate_cool', 1)
+                if d == wd - 1 and r >= 3:
+                    c = C('slate_cool', 1) if side == 0 else C('slate', 4)  # the turned outer corner
+                if d == wd - 1 and r < 2:
+                    continue                                                 # its corner rounded off
+                a[y, x] = c
+            if hsh(seed, x // 3, k, side) > 0.35 and d < wd - 2:
+                a[y0, x] = C('snow', 5)                                      # snow lodged on the step
+        k += span
+    x0, x1 = (0, CHEEK + 2) if side == 0 else (W - CHEEK - 2, W)
     for x in range(x0, x1):
-        d = (x - x0) if side == 0 else (x1 - 1 - x)       # 0 at the stair, CHEEK-1 at the arris
-        for y in range(LIP_PX - 2, yf):
-            k = sum(1 for r in rows_course if y < r)
-            c = C('slate', 3 if lit else 2) if lit else C('slate_cool', 2)
-            if (y + d // 5) % 3 == 0 and hsh(seed, x, y // 3) > 0.6:
-                c = C('slate', 4) if lit else C('slate_cool', 1)
-            if any(abs(y - r) == 0 for r in rows_course):
-                c = C('slate_cool', 0) if not lit else C('slate_cool', 1)
-            if (d + 4 * k) % 9 == 0 and hsh(seed, k, x) > 0.4:
-                c = C('slate_cool', 0) if not lit else C('slate_cool', 1)
-            if d == CHEEK - 1:
-                c = C('slate', 5) if lit else C('slate', 4)      # the arris where it turns from the face
-            if d == 0:
-                c = C('slate_cool', 0)
-            a[y, x] = c
         top = LIP_PX - 6 + int(round(1.5 * hsh(seed, x // 4, 2)))
-        for y in range(max(0, top), LIP_PX - 1):
-            a[y, x] = C('snow', 5) if y == top else (C('snow', 4) if y < LIP_PX - 3 else C('snow_cool', 3))
-        a[LIP_PX - 1, x] = C('sky_cool', 2)
-        h = int(round(3 + 4 * (1 - d / CHEEK)))
-        for k_ in range(h):
-            y = yf - 1 - k_
-            a[y, x] = C('snow', 5) if k_ == h - 1 else (C('snow', 4) if k_ > 1 else C('snow_cool', 4))
+        for y in range(max(0, top), LIP_PX):
+            a[y, x] = C('snow', 5) if y == top else (C('snow', 4) if y < LIP_PX - 2 else C('snow_cool', 3))
+
+
+def _stair_flat(a, stair, seed):
+    """The stair seen from above (round 5): six broad lit treads, each one calm plane of stone (the
+    lightest value), sparse wear, a thin dark riser (three rows, the darkest value) under each; a
+    path of packed snow trodden up the middle two or three footprints wide; snow in the back corners
+    of every tread. No joints across the treads."""
+    s0, s1 = stair
+    yf = LIP_PX + FACE_PX
+    mid = (s0 + s1) / 2.0
+    for k in range(STEPS):
+        y0 = LIP_PX + k * STEP_PX
+        y_r = y0 + STEP_PX - RISER_PX
+        for x in range(s0, s1):
+            for y in range(y0, y_r):
+                r = y - y0
+                # one calm plane, a shade cooler at its back under the riser above, lightest at its
+                # nose; wear in sparse two-texel scuffs and a few granite grains of the same value
+                c = C('slate', 5) if r >= 4 else (C('slate_warm', 4) if r >= 1 else C('slate', 3))
+                cell = hsh(seed, (x + (y // 2) % 2) // 2, y // 2, k)
+                if cell > 0.9:
+                    c = C('slate_warm', 4) if r >= 4 else C('slate', 4)      # sparse wear
+                elif cell < 0.12 and r >= 4:
+                    c = C('slate_warm', 5)
+                a[y, x] = c
+            a[y_r - 1, x] = C('snow', 5) if hsh(seed, x // 4, k, 4) > 0.55 else C('slate', 5)   # the nose
+            for y in range(y_r, min(yf, y0 + STEP_PX)):
+                rr = y - y_r
+                a[y, x] = C('slate_cool', 1) if rr == 0 else C('slate_cool', 0)
+        # snow in the tread's back corners
+        for side in (0, 1):
+            wl = 10 + int(round(6 * hsh(seed, k, side)))
+            for dx in range(wl):
+                x = s0 + dx if side == 0 else s1 - 1 - dx
+                h = int(round(2 + (wl - dx) * 0.6))
+                for r in range(min(h, STEP_PX - RISER_PX - 2)):
+                    a[y0 + r, x] = C('snow', 5) if r == 0 else (C('snow', 4) if dx < wl - 2 else C('snow_cool', 4))
+        # the trodden path up the middle: packed snow, its edges ragged, footprints in it
+        for y in range(y0, y_r):
+            wob = 2.5 * math.sin((y + k * 7) / 9.0)
+            hw = 14 + 2 * hsh(seed, y // 3, k, 5)
+            for x in range(int(mid - hw + wob), int(mid + hw + wob)):
+                if s0 <= x < s1:
+                    a[y, x] = C('snow_cool', 4) if hsh(seed, x // 2, y // 2, 6) > 0.18 else C('snow', 4)
+            if y == y_r - 1:
+                for x in range(int(mid - hw + wob), int(mid + hw + wob)):
+                    if s0 <= x < s1:
+                        a[y, x] = C('snow', 5)
+        for j, fx in enumerate((-8, 3, -3, 8)):
+            fy = y0 + 2 + (j % 2) * 5
+            if fy + 2 < y_r - 1:
+                x = int(mid + fx)
+                a[fy:fy + 3, x:x + 2] = C('snow_cool', 3)
 
 
 def _stair_steps(sc, stair, seed):
@@ -2042,10 +2164,11 @@ def _lead_mask(H, W, seed, width=(5.0, 9.0), close=(), ends=True):
     rng = np.random.default_rng(seed)
     yy = np.arange(H)
     cx = W / 2.0 + 1.6 * np.sin(yy / 11.0 + rng.uniform(0, 6)) + 0.8 * np.sin(yy / 4.3 + rng.uniform(0, 6))
-    w = width[0] + (width[1] - width[0]) * (0.5 + 0.5 * np.sin(yy / 9.0 + rng.uniform(0, 6)))
+    w = width[0] + (width[1] - width[0]) * (0.5 + 0.5 * np.sin(yy / 13.0 + rng.uniform(0, 6)))
     if ends:
-        taper = np.clip(np.minimum(yy + 1, H - yy) / 9.0, 0, 1)
-        w = w * taper
+        # (round 5) wide through its middle, tapering gradually to a rounded end, not a sliver
+        t = (yy + 0.5) / H
+        w = np.maximum(0.0, w * np.sin(math.pi * t) ** 0.45 + 1.0) * (np.minimum(yy, H - 1 - yy) >= 1)
     for (c0, c1) in close:
         w[c0:c1] = 0
     w = ndi.uniform_filter1d(w, 3)
@@ -2080,7 +2203,19 @@ def _paint_lead(a, m, seed):
     shade = m & np.roll(lip, 1, 0) & (dist <= 2)                         # the lip's shadow on the water
     a[shade] = C('slate_cool', 0)
     a[north] = C('snow', 5)
-    del seed
+    # small shelves of ice overhanging the water here and there, their shade on it
+    rng = np.random.default_rng(seed + 9)
+    edge = m & ~ndi.binary_erosion(m)
+    ys, xs = np.nonzero(edge)
+    for k in range(max(1, len(ys) // 18)):
+        j = int(rng.integers(0, len(ys)))
+        cy, cx = ys[j], xs[j]
+        r = rng.uniform(1.4, 2.6)
+        bump = ((Y - cy) ** 2 + (X - cx) ** 2 <= r * r) & m
+        a[bump] = C('snow_cool', 4)
+        a[bump & ~np.roll(bump, 1, 0)] = C('snow', 5)
+        under = np.roll(bump, 1, 0) & m & ~bump
+        a[under] = C('slate_cool', 0)
 
 
 def lead(kind='run', seed=137):
@@ -2091,16 +2226,26 @@ def lead(kind='run', seed=137):
         H, W = 2 * 24 + 6, 3 * 24 + 6
         a = np.full((H, W), -1, np.int32)
         Y, X = np.mgrid[0:H, 0:W]
-        nz = ndi.gaussian_filter(np.random.default_rng(seed).random((H, W)), 3.0)
+        nz = ndi.gaussian_filter(np.random.default_rng(seed).random((H, W)), 4.0)
         nz = (nz - nz.mean()) / (nz.std() + 1e-9)
-        d = ((X - W / 2) / (W / 2 - 3)) ** 2 + ((Y - H / 2) / (H / 2 - 3)) ** 2 + 0.12 * nz
-        # the pool under the fall: open where the water lands (its north half), the ice shelf grown
-        # over its south half with a ragged edge, rime from the spray on the shelf
-        open_ = (d < 0.8) & (Y < H * 0.52 + 4 * np.sin(X / 7.0) + 2 * nz)
-        _paint_lead(a, open_, seed)
-        shelf = (d < 1.0) & ~open_ & (a < 0)
-        g = K.vhash((X + Y // 4) // 4, Y // 3, seed + 5)
-        a[shelf] = np.where(g[shelf] > 0.8, C('snow', 5), np.where(g[shelf] > 0.3, C('snow_cool', 4), C('sky_cool', 5)))
+        d = ((X - W / 2) / (W / 2 - 3)) ** 2 + ((Y - H / 2) / (H / 2 - 3)) ** 2 + 0.1 * nz
+        # (round 5) the plunge pool: an irregular open hole in the ice shelf where the fall lands,
+        # a little north of the shelf's middle; a lit rim of ice round it (lit north and west, in
+        # shade south and east), its interior dark and deepest at the middle; rime on the shelf
+        dh = ((X - W * 0.48) / (W * 0.3)) ** 2 + ((Y - H * 0.42) / (H * 0.3)) ** 2 + 0.18 * nz
+        hole = dh < 1.0
+        dist = ndi.distance_transform_edt(hole)
+        a[hole] = np.where(dist[hole] <= 1, C('sky_cool', 2), np.where(dist[hole] <= 3, C('slate', 2), C('slate_cool', 1)))
+        a[hole & (dist > 5)] = C('slate_cool', 0)
+        rim = ndi.binary_dilation(hole, iterations=2) & ~hole
+        lit_side = (X - W * 0.48) / (W * 0.3) + (Y - H * 0.42) / (H * 0.3) < 0
+        a[rim] = np.where(lit_side[rim], C('snow', 5), C('sky_cool', 4))
+        sh_ = np.roll(rim & lit_side, 1, 0) & hole
+        a[sh_] = C('slate_cool', 0)                                          # the rim's shadow inside
+        shelf = (d < 1.0) & (a < 0)
+        gs = ndi.gaussian_filter(np.random.default_rng(seed + 5).random((H, W)), 2.0)
+        gs = (gs - gs.mean()) / (gs.std() + 1e-9)
+        a[shelf] = np.where(gs[shelf] > 0.9, C('snow', 5), np.where(gs[shelf] > -0.7, C('snow_cool', 4), C('sky_cool', 5)))
         return _pic(a)
     if kind in ('strip', 'strip_long'):
         # laid over a one-cell channel of the kit's water: the shelf ice grown in from both sides
@@ -2118,10 +2263,10 @@ def lead(kind='run', seed=137):
         H, W = 24, 16
         m = _lead_mask(H, W, seed, (3.0, 5.0))
     else:
-        H = {'short': 48, 'run': 72, 'long': 96}[kind]
+        H = {'short': 72, 'run': 96, 'long': 120}[kind]
         W = 24
         close = ((44, 52),) if kind == 'long' else ()
-        m = _lead_mask(H, W, seed + H, (5.0, 10.0), close=close)
+        m = _lead_mask(H, W, seed + H, (7.0, 12.0), close=close)
     a = np.full((H, W), -1, np.int32)
     _paint_lead(a, m, seed)
     return _pic(a)
