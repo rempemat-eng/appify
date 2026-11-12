@@ -14,7 +14,13 @@ extends GdUnitTestSuite
 ##
 ## The model mirrors the game's own code paths (Dialogue.talk, RestoreSite.interact, SealLever.interact,
 ## PressurePlate.press, Camp._on_died, Door and Zones.go_to); fights are assumed won, since losing
-## changes nothing but where the player stands.
+## changes nothing but where the player stands, and the Glint.
+##
+## Glint from fights and the downed player's cache (core/glint_cache.gd, 11 Nov): clearing a camp pays for
+## each of its creatures once, and "going down" is something the player can do wherever a camp still
+## stands in the zone they are in. The model plays the worst case: the player goes down again and again
+## until a cache would take nothing more, and never gets a cache back (it lies behind a fight they keep
+## losing). If the story still finishes from every such state, no cache can strand anyone.
 
 const WalkGrid := preload("res://tools/walk_grid.gd")
 const ZONES := ["woodland", "crossroads", "undercroft"]
@@ -73,10 +79,13 @@ func _scan_node(n: Node, zone: String, origin: Vector2, conds: Array) -> void:
 		thing = {"kind": "plate", "flag": n.flag, "shape": (n.get_node("Shape") as CollisionShape2D).shape}
 	elif n is Camp:
 		var homes := []
+		var pays := []
 		for c in n.get_children():
 			if c is Node2D:
 				homes.append(at + (c as Node2D).position)
-		thing = {"kind": "camp", "id": n.camp_id, "homes": homes}
+			if c.has_signal("died"):
+				pays.append(["%s/%s" % [n.camp_id, c.name], Camp.kind_of(c)])
+		thing = {"kind": "camp", "id": n.camp_id, "homes": homes, "pays": pays}
 	elif n is Door:
 		var cond: Variant = JSON.parse_string(n.only_if) if n.only_if != "" else null
 		thing = {"kind": "door", "to": n.target_zone, "spawn": n.target_spawn, "if": cond,
@@ -174,6 +183,8 @@ func _do(thing: Dictionary) -> void:
 			SaveGame.set_flag(thing.flag)
 		"camp":
 			if not SaveGame.has_flag("camp_cleared:" + thing.id):
+				for pay: Array in thing.pays:
+					GlintCache.pay_once(pay[0], pay[1])          # as world/camp.gd does for each creature freed
 				SaveGame.set_flag("camp_cleared:" + thing.id)
 				Quests.notify("camp:" + thing.id)
 		"door":
@@ -219,6 +230,8 @@ func test_the_story_holds_in_every_order() -> void:
 	var back := {}                   ## key -> keys that lead to it
 	var problems := []
 	var negative_glint := ""
+	var defeats := 0
+	var most_lost := 0
 	var silent_hud := ""
 	var i := 0
 	while i < order.size() and order.size() < MAX_STATES:
@@ -247,6 +260,31 @@ func test_the_story_holds_in_every_order() -> void:
 			if not back.has(next):
 				back[next] = []
 			back[next].append(key)
+		# going down, wherever a camp still stands here: the worst case, to the last cache, none recovered
+		SaveGame.data = states[key].duplicate(true)
+		var fight_here := false
+		for t in _things[zone].size():
+			var thing: Dictionary = _things[zone][t]
+			if thing.kind == "camp" and can[t] and not SaveGame.has_flag("camp_cleared:" + thing.id) \
+					and thing.conds.all(func(c: Variant) -> bool: return Quests.check(c)):
+				fight_here = true
+		if fight_here:
+			var lost := 0
+			while GlintCache.amount_for(int(SaveGame.data.glint), GlintCache.floor_glint()) > 0:
+				lost += GlintCache.drop(zone, Vector2.ZERO)
+			SaveGame.data.caches = []                        # never recovered
+			SaveGame.data.spawn = "start"
+			if lost > 0:
+				defeats += 1
+				most_lost = maxi(most_lost, lost)
+				var after := _key(SaveGame.data)
+				if not states.has(after):
+					states[after] = SaveGame.data.duplicate(true)
+					order.append(after)
+					parent[after] = [key, "go down in %s until nothing more is taken (%d Glint lost for good)" % [zone, lost]]
+				if not back.has(after):
+					back[after] = []
+				back[after].append(key)
 	assert_int(order.size()).override_failure_message("the walk did not finish within %d states" % MAX_STATES).is_less(MAX_STATES)
 
 	# which states can still reach a state where `test` holds
@@ -274,6 +312,14 @@ func test_the_story_holds_in_every_order() -> void:
 		for key: String in order:
 			if not to_end.has(key):
 				problems.append("stranded: after [%s] the build's quests can no longer all be finished" % _route(key, parent))
+				break
+	# 1b. said outright for the restores: from every state, also after the worst defeats, each restore of
+	# this build can still be paid
+	for id: String in Village.sites:
+		var can_pay: Dictionary = can_reach.call(func() -> bool: return Village.is_restored(id))
+		for key: String in order:
+			if not can_pay.has(key):
+				problems.append("the restore '%s' (%d Glint) can no longer be paid after [%s]" % [id, Village.cost(id), _route(key, parent)])
 				break
 	# 2. whatever starts can finish, from every state where it is active
 	var started := {}
@@ -324,6 +370,8 @@ func test_the_story_holds_in_every_order() -> void:
 	for known: String in SILENT:
 		if _shown.has(known):
 			problems.append("\"%s\" is listed as a line that cannot show, but it shows" % known)
-	print("story model: %d states, %d quests can start (%s)" % [order.size(), started.size(), ", ".join(started.keys())])
+	print("story model: %d states, %d quests can start (%s); %d states where going down costs Glint, at most %d lost at once" % [
+		order.size(), started.size(), ", ".join(started.keys()), defeats, most_lost])
+	assert_int(defeats).override_failure_message("the model never found a defeat that costs Glint: the cache rule is not exercised").is_greater(0)
 	SaveGame.reset()
 	assert_array(problems).is_empty()

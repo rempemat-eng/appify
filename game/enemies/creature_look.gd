@@ -209,6 +209,7 @@ func _draw_tells() -> void:
 				var rise := 0.0 if _reduced() else fmod(enemy.elapsed * 9.0 + float(j) * 3.0, 6.0)
 				var mote := f * (rx + metre * t) + side_wobble(f, j) + Vector2(0, -2.0 - rise)
 				tells.draw_rect(Rect2(_px(mote), Vector2(3, 3)), Color(DUST, 0.85 - 0.15 * float(j)))
+	Glance.draw(tells, Vector2(0, -rx * 2.2), enemy.glance_t)   # an arrow that did no harm (enemies/glance.gd)
 	if _glint > 0.0:
 		var a := _glint / GLINT_TIME
 		var at := _px(head + Vector2(0, -6))

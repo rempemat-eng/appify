@@ -58,6 +58,9 @@ var _hooked: Node = null
 var _said: PackedStringArray = []
 var _grid: WalkGrid
 var _grid_zone: Node = null
+var _boss_attacks := 0          # the Thornback pilot (`_boss_turn`): wind-ups seen, the one last rolled for
+var _boss_rolled_for := -1
+var _boss_last := ""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -341,6 +344,19 @@ func run(c: String) -> String:
 			return await fight(float(a[1]) if a.size() > 1 else 90.0)
 		"down":
 			return await down(float(a[1]) if a.size() > 1 else 40.0)
+		"caches":
+			# walks over every cache of Glint lying in this zone (where the player went down: core/glint_cache.gd)
+			for i in 8:
+				var lying := GlintCache.in_zone(SaveGame.data.zone)
+				if lying.is_empty():
+					break
+				var problem := await goto(Vector2(float(lying[0].x), float(lying[0].y)), 10.0)
+				await get_tree().create_timer(0.3, true).timeout
+				if problem != "" and not GlintCache.in_zone(SaveGame.data.zone).is_empty():
+					return "the cache at (%d, %d): %s" % [int(lying[0].x), int(lying[0].y), problem]
+			if not GlintCache.in_zone(SaveGame.data.zone).is_empty():
+				return "a cache is still lying here"
+			out("CACHES picked up; Glint %d" % int(SaveGame.data.glint))
 		"hurt":
 			return await down(float(a[1]) if a.size() > 1 else 40.0, true)
 		"expect":
@@ -387,6 +403,12 @@ func expect(a: PackedStringArray) -> String:
 			return "" if p.hp > 0 and p.hp < p.max_hp else "hp is %d of %d" % [p.hp, p.max_hp]
 		"glint":
 			return "" if int(SaveGame.data.glint) == int(a[2]) else "Glint is %d" % int(SaveGame.data.glint)
+		"cached":
+			# the Glint lying in caches, everywhere (`expect cached 5`)
+			var lying := 0
+			for cache: Dictionary in SaveGame.data.caches:
+				lying += int(cache.glint)
+			return "" if lying == int(a[2]) else "%d Glint lies in %d caches" % [lying, (SaveGame.data.caches as Array).size()]
 		"restored":
 			return "" if Village.is_restored(a[2]) else "it is not restored"
 		"notrestored":
@@ -568,6 +590,9 @@ func fight(limit: float) -> String:
 	var g := grid()
 	g.forget()
 	var ground := g.reachable(p.global_position)   # enemies behind a closed wall are not this fight's
+	_boss_attacks = 0
+	_boss_rolled_for = -1
+	_boss_last = ""
 	var left := n0
 	while now() - start < limit and SaveGame.data.zone == zone:
 		if _downs != seen_downs:
@@ -597,6 +622,9 @@ func fight(limit: float) -> String:
 				near = e
 		if near == null:
 			break
+		if near is Thornback:
+			rolls += await _boss_turn(p, near as Thornback)
+			continue
 		aim_at(near.global_position + Vector2(0, -24))
 		var threat := _threat(p)
 		if threat != null and not p.is_rolling():
@@ -641,6 +669,64 @@ func fight(limit: float) -> String:
 	if now() - start >= limit:
 		return "%d enemies were still near after %.0fs" % [left, limit]
 	return ""
+
+## One turn of the fight against the Thornback (bosses/thornback.gd), which the general pilot above loses:
+## it now charges a player who stays close and heals 3 s after the player has left its arena. Rolls across
+## a charge as it commits or arrives, away from a slam, across a thorn; keeps 170 to 320 texels off and
+## inside the arena (outside it its arrows glance); shoots when it is standing still. Returns the rolls.
+func _boss_turn(p: Node2D, b: Thornback) -> int:
+	var st := b.state
+	if st == "windup" and _boss_last != "windup":
+		_boss_attacks += 1
+	_boss_last = st
+	var to := p.global_position - b.global_position
+	var d := to.length()
+	var want := Vector2.ZERO
+	if st == "windup" and b.attack == "charge" and d < 150.0 and b.elapsed >= b.windup_time - 0.12:
+		want = to.normalized().rotated(1.4)
+	elif st == "act" and b.attack == "charge" and d < 135.0:
+		want = b.aim.rotated(1.5708 if b.aim.cross(to) > 0.0 else -1.5708)
+	elif st == "windup" and b.attack == "slam" and d < 130.0 and b.elapsed >= b.windup_time - 0.3:
+		want = to.normalized()
+	else:
+		for th: Node in b.thorns:
+			if is_instance_valid(th):
+				var rel: Vector2 = p.global_position + Vector2(0, -4) - (th as Node2D).global_position
+				var dir: Vector2 = th.get("direction")
+				if rel.length() < 55.0 and rel.dot(dir) > 0.0 and absf(dir.cross(rel)) < 24.0:
+					want = dir.rotated(1.5708 if dir.cross(rel) > 0.0 else -1.5708)
+	var arena := Rect2(b.arena.position + b._zone_origin(), b.arena.size)   # texels in the zone, made global
+	var centre := arena.get_center() if arena.size != Vector2.ZERO else b.global_position
+	if want != Vector2.ZERO and _boss_attacks != _boss_rolled_for and p.roll_charges > 0 and not p.is_rolling():
+		if arena.size != Vector2.ZERO and not arena.grow(-20.0).has_point(p.global_position + want * 100.0):
+			want = -want if arena.grow(-20.0).has_point(p.global_position - want * 100.0) else (centre - p.global_position).normalized()
+		if b.attack != "volley":
+			_boss_rolled_for = _boss_attacks
+		hold(want)
+		await _sleep(0.03)
+		await tap(KEY_SPACE)
+		await _sleep(0.3)
+		hold(Vector2.ZERO)
+		return 1
+	aim_at(b.global_position + Vector2(0, -24))
+	var move := Vector2.ZERO
+	var safe := arena.grow(-45.0)
+	if arena.size != Vector2.ZERO and (not safe.has_point(p.global_position) or not b.player_in_arena()):
+		move = (centre - p.global_position).normalized()      # never leave the arena: walk back in
+	elif d < 170.0 and st != "stagger":
+		move = to.normalized()
+		if arena.size != Vector2.ZERO and not safe.has_point(p.global_position + move * 30.0):
+			# cornered: slip along the wall, towards the roomier side
+			var l := move.rotated(1.5708)
+			var r := move.rotated(-1.5708)
+			move = l if (centre - p.global_position).dot(l) > 0.0 else r
+	elif d > 320.0:
+		move = -to.normalized()
+	hold(move)
+	if move == Vector2.ZERO and not p.is_shooting() and not p.is_rolling():
+		await click()
+	await _sleep(0.04)
+	return 0
 
 func _near_a_door(at: Vector2) -> bool:
 	var doors := Zones.current.get_node_or_null("Doors")
