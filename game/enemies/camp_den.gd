@@ -7,7 +7,7 @@ extends LoopFx
 const DEN := "den"
 const CLUMP := "clump"
 ## Foot pivot inside each cropped drawing (den.py CROPS).
-const PIVOT := {"den": Vector2(56, 52), "clump": Vector2(24, 26)}
+const PIVOT := {"den": Vector2(68, 86), "clump": Vector2(24, 26)}
 
 var kind := DEN
 var camp: Camp

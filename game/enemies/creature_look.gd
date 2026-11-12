@@ -89,6 +89,10 @@ func _process(delta: float) -> void:
 	if enemy.state == "windup":
 		speed = sprite.duration("telegraph") / enemy.windup_time()
 	_play()
+	if sprite.clip == "move" and sprite.walk_speed() > 0.0:
+		# the stride matches the ground covered: the walk plays at velocity / walk_speed, so the
+		# planted feet do not slide (12 Nov audit, B3/K3)
+		speed = clampf(enemy.velocity.length() / sprite.walk_speed(), 0.25, 4.0)
 	sprite.advance(delta * speed)
 	sprite.modulate = Color(1.6, 1.6, 1.6) if _flash > 0.0 else Color.WHITE
 	queue_redraw()
