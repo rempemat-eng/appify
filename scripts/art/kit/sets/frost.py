@@ -547,7 +547,7 @@ def prop_jobs():
         ('frost_pine', [('heavy', lambda: pine('heavy')), ('light', lambda: pine('light')), ('laden', lambda: pine('laden'))], dict(
             name='Snowy pine', purpose='grow', role='tree', cells=(4, 2), fp=B._fp(2, 1),
             collision={'shape': 'rect', 'rect': [-5.0, -4.0, 10, 4]}, shadow=(30, 6), composition='cluster',
-            forbids=NATURE, size_class='tree (the woodland\'s pine: 79 world px)', eastward='12 (the pines, 3 A)', fn='pine',
+            forbids=NATURE, size_class='conifer (the woodland\'s pine, 79 world px)', eastward='12 (the pines, 3 A)', fn='pine',
             note='The woodland\'s pine (approved 9 Nov, PR #446) with snow lying on its boughs: heavy, light, or laden after a fall.')),
         ('frost_boulder', [('a', lambda: boulder(0)), ('b', lambda: boulder(1))], dict(
             name='Snowy boulder', purpose='mark', role='rock', cells=(3, 2), fp=B._fp(2, 1),
@@ -564,7 +564,7 @@ def prop_jobs():
             name="Ice-cutter's sledge", purpose='work', role='story', cells=(4, 2), fp=B._fp(4, 1),
             collision={'shape': 'rect', 'rect': [-13.0, -6.0, 26, 6]}, shadow=(28, 4), composition='edge',
             requires=[_rel('near', 'water', 4, 'drawn up on the tarn\'s shore, where the ice is cut')], forbids=NATURE,
-            size_class='cart (52 to 89 tall, 67 to 126 wide)', eastward='04 (the stall cart), 17 (the farm cart)', fn='sledge',
+            size_class='pile (a low sledge under its load of ice blocks: the load is what stands)', eastward='04 (the stall cart), 17 (the farm cart)', fn='sledge',
             note='A plank sledge on curled runners, three blocks of lake ice roped on it and the bow saw leaning on it.')),
     ]
 

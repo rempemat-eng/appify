@@ -115,7 +115,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "cart (52 to 89 tall, 67 to 126 wide)",
+  "size_class": "pile (a low sledge under its load of ice blocks: the load is what stands)",
   "eastward_ref": "04 (the stall cart), 17 (the farm cart)",
   "painter": {
    "module": "scripts.art.kit.sets.frost",

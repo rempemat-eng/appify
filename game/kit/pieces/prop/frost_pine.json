@@ -117,7 +117,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "tree (the woodland's pine: 79 world px)",
+  "size_class": "conifer (the woodland's pine, 79 world px)",
   "eastward_ref": "12 (the pines, 3 A)",
   "painter": {
    "module": "scripts.art.kit.sets.frost",
