@@ -1576,3 +1576,386 @@ class CheckerDither(unittest.TestCase):
         from scripts.review import checker_dither as CD
         p = os.path.join(REPO_ROOT, 'game', 'kit', 'props', 'art', 'act1', 'coast_net_rack.png')
         self.assertEqual(CD.check(_png(p), H, 'act1/coast_net_rack'), [])
+
+
+# ------------------------------------------------------------------------------------------
+# Matt's 12 Nov Frostline misses (forms.py, kit_overlap.py; calibration F1 to F13)
+SNOW = (236, 238, 242)
+LEAF = (60, 120, 50)
+
+
+def _crown(w=110, h=200):
+    a = np.zeros((h, w, 4), np.uint8)
+    a[..., :3] = LEAF
+    a[..., 3] = 255
+    rng = np.random.default_rng(3)
+    a[..., 1] = np.clip(a[..., 1].astype(int) + rng.integers(-10, 10, (h, w)), 0, 255)
+    return a
+
+
+def _chips(a, shape_of):
+    """Twenty snow chips laid on the crown on a loose grid."""
+    k = 0
+    for y in range(10, a.shape[0] - 12, 36):
+        for x in range(8, a.shape[1] - 12, 24):
+            m = shape_of(k)
+            hh, ww = m.shape
+            a[y:y + hh, x:x + ww, :3][m] = SNOW
+            k += 1
+    return a
+
+
+def _wedge(k):
+    w = np.array([6, 5, 3, 2])
+    return np.array([[c < w[r] for c in range(6)] for r in range(4)])
+
+
+def _clump(k):
+    # an irregular load: a bump in the middle row, a ragged underside, different from chip to chip
+    m = np.zeros((4, 6), bool)
+    m[0, 1:4 + k % 2] = True
+    m[1, 0:6] = True
+    m[2, 1 + k % 3:5] = True
+    m[3, 2:4] = True
+    return m
+
+
+class Forms(unittest.TestCase):
+    def test_stamped_snow_chips_trip(self):
+        from scripts.review import forms as F
+        a = _chips(_crown(), _wedge)
+        fs = F.snow_stamp(a[..., :3], a[..., 3] > 0, H, 'kit/frost_pine')
+        self.assertEqual([f.detector for f in fs], ['detail.snow_stamp'])
+
+    def test_varied_snow_loads_pass(self):
+        from scripts.review import forms as F
+        a = _chips(_crown(), _clump)
+        self.assertEqual(F.snow_stamp(a[..., :3], a[..., 3] > 0, H, 'kit/frost_pine'), [])
+
+    def test_stamped_chips_on_a_screen_trip(self):
+        from scripts.review import forms as F
+        s = np.zeros((300, 260, 4), np.uint8)
+        s[..., :3] = SNOW
+        s[..., 3] = 255
+        s[40:240, 60:170] = _chips(_crown(), _wedge)
+        fs = F.snow_stamp_screen(s, H, np.zeros(s.shape[:2], bool))
+        self.assertEqual([f.detector for f in fs], ['detail.snow_stamp'])
+
+    def _tree(self, h):
+        a = np.zeros((h + 30, 90, 4), np.uint8)
+        a[:h, :, :3] = LEAF
+        a[:h, :, 3] = 255
+        a[h:, 38:52, :3] = (110, 70, 40)
+        a[h:, 38:52, 3] = 255
+        return a
+
+    def test_a_pole_of_a_tree_trips(self):
+        from scripts.review import forms as F
+        a = self._tree(240)                       # 270 tall, 90 wide: 3.0
+        fs = F.tree_pole(a[..., :3], a[..., 3] > 0, H, 'kit/frost_spruce')
+        self.assertEqual([f.detector for f in fs], ['logic.tree_pole'])
+
+    def test_an_approved_proportion_passes(self):
+        from scripts.review import forms as F
+        a = self._tree(180)                       # 210 tall, 90 wide: 2.33, as the approved birch
+        self.assertEqual(F.tree_pole(a[..., :3], a[..., 3] > 0, H, 'kit/frost_spruce'), [])
+        b = self._tree(240)
+        self.assertEqual(F.tree_pole(b[..., :3], b[..., 3] > 0, H, 'kit/frost_snow_pole'), [],
+                         'only trees are judged')
+
+    def _deck(self, upright):
+        a = np.zeros((60, 120, 4), np.uint8)
+        a[..., :3] = (150, 100, 60)
+        a[..., 3] = 255
+        if upright:
+            a[:, ::7, :3] = (70, 45, 25)          # boards standing the full face
+        else:
+            a[::6, :, :3] = (70, 45, 25)          # boards across the walk, a top plane
+        return a
+
+    def test_a_deck_drawn_front_on_trips(self):
+        from scripts.review import forms as F
+        a = self._deck(True)
+        fs = F.deck_upright(a[..., :3], a[..., 3] > 0, H, 'kit/frost_footbridge')
+        self.assertEqual([f.detector for f in fs], ['logic.deck_upright'])
+
+    def test_a_deck_seen_from_above_passes(self):
+        from scripts.review import forms as F
+        a = self._deck(False)
+        self.assertEqual(F.deck_upright(a[..., :3], a[..., 3] > 0, H, 'kit/frost_footbridge'), [])
+        b = self._deck(True)
+        self.assertEqual(F.deck_upright(b[..., :3], b[..., 3] > 0, H, 'crossroads/fence_0'), [],
+                         'only bridges and decks are judged')
+
+    def test_a_brick_grid_rock_face_trips(self):
+        from scripts.review import forms as F
+        a = np.zeros((114, 144, 4), np.uint8)
+        a[..., :3] = (120, 122, 130)
+        a[..., 3] = 255
+        for r, y in enumerate(range(0, 114, 14)):
+            a[y:y + 2, :, :3] = 30
+            for x in range((r % 2) * 12, 144, 24):
+                a[y:y + 14, x:x + 2, :3] = 30
+        fs = F.masonry_rock(a[..., :3], a[..., 3] > 0, H, 'kit/frost_rockface_plain')
+        self.assertIn('detail.masonry_rock', [f.detector for f in fs])
+        self.assertEqual(F.masonry_rock(a[..., :3], a[..., 3] > 0, H, 'brackens/wall_drystone_ew_a'), [],
+                         'worked stone may be coursed')
+
+    def test_pillow_stones_trip(self):
+        from scripts.review import forms as F
+        a = np.zeros((114, 144, 4), np.uint8)
+        a[..., :3] = 40
+        a[..., 3] = 255
+        yy, xx = np.mgrid[0:114, 0:144]
+        for cy in range(10, 114, 22):
+            for cx in range(12, 144, 24):
+                d = ((yy - cy) / 10.0) ** 2 + ((xx - cx) / 11.0) ** 2
+                lit = np.clip(170 - 40 * ((yy - cy + 4) ** 2 + (xx - cx + 4) ** 2) / 120.0, 90, 170)
+                a[..., :3][d < 1] = lit[d < 1, None].astype(np.uint8)
+        fs = F.masonry_rock(a[..., :3], a[..., 3] > 0, H, 'kit/frost_rockface_plain')
+        self.assertIn('detail.masonry_rock', [f.detector for f in fs])
+
+    def test_irregular_rock_passes(self):
+        from scripts.review import forms as F
+        rng = np.random.default_rng(5)
+        field = ndi.gaussian_filter(rng.normal(0, 1, (114, 144)), 9)
+        field = (field - field.min()) / (field.max() - field.min())
+        a = np.zeros((114, 144, 4), np.uint8)
+        a[..., :3] = (70 + 100 * field)[..., None].astype(np.uint8)
+        a[..., 3] = 255
+        self.assertEqual(F.masonry_rock(a[..., :3], a[..., 3] > 0, H, 'kit/frost_crag_a'), [])
+
+    def _stair(self, tread, riser, steps=7, bond=False):
+        T = tread + riser
+        a = np.zeros((T * steps, 120, 4), np.uint8)
+        a[..., 3] = 255
+        for k in range(steps):
+            y = k * T
+            a[y:y + tread, :, :3] = 170
+            a[y + tread:y + T, :, :3] = 60
+            if bond:
+                for x in range(20 + (k % 2) * 20, 110, 40):
+                    a[y:y + T, x:x + 1, :3] = 20
+        return a
+
+    def test_a_ladder_of_strips_trips(self):
+        from scripts.review import forms as F
+        a = self._stair(13, 3)
+        fs = F.stair_read(a[..., :3], a[..., 3] > 0, H, 'kit/frost_rock_stair')
+        self.assertEqual([f.detector for f in fs], ['detail.stair_read'])
+        self.assertIn('ladder', fs[0].message)
+
+    def test_a_brick_bond_stair_trips(self):
+        from scripts.review import forms as F
+        a = self._stair(9, 7, bond=True)
+        fs = F.stair_read(a[..., :3], a[..., 3] > 0, H, 'kit/frost_rock_stair')
+        self.assertEqual(['wall' in f.message for f in fs], [True])
+
+    def test_treads_and_risers_pass(self):
+        from scripts.review import forms as F
+        a = self._stair(9, 7)                     # Eastward's stairs: risers 43 to 53 % of the pitch
+        self.assertEqual(F.stair_read(a[..., :3], a[..., 3] > 0, H, 'kit/frost_rock_stair'), [])
+
+    def test_a_rectangular_fall_trips(self):
+        from scripts.review import forms as F
+        al = np.ones((111, 96), bool)
+        self.assertEqual([f.detector for f in F.fall_slab(al, H, 'kit/frost_icefall')], ['detail.fall_slab'])
+
+    def test_a_fall_over_a_lip_passes(self):
+        from scripts.review import forms as F
+        al = np.zeros((111, 96), bool)
+        for y in range(111):
+            w = 30 + int(12 * np.sin(y / 9.0)) + y // 6
+            al[y, 48 - w // 2 - (y % 7 == 0):48 + w // 2] = True
+        self.assertEqual(F.fall_slab(al, H, 'kit/frost_icefall'), [])
+
+    def _winter(self, ice_rows=None, rim=0):
+        s = np.zeros((300, 300, 4), np.uint8)
+        s[..., :3] = SNOW
+        s[..., 3] = 255
+        s[:, 100:180, :3] = (63, 99, 149)         # open water
+        if ice_rows:
+            s[ice_rows, 100:180, :3] = (150, 180, 215)
+        if rim:
+            s[:, 100:100 + rim, :3] = (150, 180, 215)
+            s[:, 180 - rim:180, :3] = (150, 180, 215)
+        return s
+
+    def test_a_frozen_section_beside_open_water_trips(self):
+        from scripts.review import forms as F
+        s = self._winter(ice_rows=slice(0, 130))
+        fs = F.water_state(s, H, np.zeros(s.shape[:2], bool))
+        self.assertEqual([f.detector for f in fs], ['logic.water_state'])
+
+    def test_open_water_with_shore_ice_passes(self):
+        from scripts.review import forms as F
+        s = self._winter(rim=12)
+        self.assertEqual(F.water_state(s, H, np.zeros(s.shape[:2], bool)), [])
+        s2 = self._winter(ice_rows=slice(0, 130))
+        s2[..., :3] = np.where((s2[..., :3] == SNOW).all(-1)[..., None], np.array(GRASS, np.uint8), s2[..., :3])
+        self.assertEqual(F.water_state(s2, H, np.zeros(s2.shape[:2], bool)), [], 'judged in winter scenes only')
+
+
+class KitOverlap(unittest.TestCase):
+    def _items(self, dx):
+        hut = np.ones((120, 200), bool)
+        tree = np.ones((240, 80), bool)
+        return [('col_hut', 'house', 0, 0, hut), ('spruce', 'tree', dx, -100, tree), ('pine', 'tree', dx + 40, -90, tree)]
+
+    def test_a_tree_over_the_house_trips(self):
+        from scripts.review import kit_overlap as K
+        with patch.object(K, 'layout', return_value=self._items(150)):
+            fs = K.check('frostline')
+        self.assertEqual(sorted((f.detector, f.severity) for f in fs),
+                         [('logic.tree_overlap', 'fault'), ('logic.tree_overlap', 'fault'), ('logic.tree_overlap', 'polish')])
+
+    def test_trees_clear_of_the_house_pass(self):
+        from scripts.review import kit_overlap as K
+        with patch.object(K, 'layout', return_value=self._items(240)):
+            fs = K.check('frostline')
+        self.assertEqual([f.severity for f in fs], ['polish'], 'two crowns overlapping is advice only')
+
+
+class FormsThroughTheGate(unittest.TestCase):
+    """#481 audit B1: a picture trimmed to its opaque box (alpha > 0.97) takes the ground branch of
+    assets.review_rgba; the name-keyed form checks must still judge it."""
+
+    def _dets(self, rgba, subject):
+        fs, _ = A.review_rgba(rgba, subject, '', 'woodland')
+        return [f.detector for f in fs if f.severity in ('fault', 'blocker')]
+
+    def test_a_fully_opaque_rectangular_icefall_trips(self):
+        a = np.zeros((111, 96, 4), np.uint8)
+        a[..., :3] = (210, 228, 240)
+        a[:, ::9, :3] = (150, 180, 215)
+        a[..., 3] = 255
+        self.assertIn('detail.fall_slab', self._dets(a, 'kit/frost_icefall'))
+
+    def test_a_fully_opaque_brick_grid_rock_face_trips(self):
+        a = np.zeros((114, 144, 4), np.uint8)
+        a[..., :3] = (120, 122, 130)
+        a[..., 3] = 255
+        for r, y in enumerate(range(0, 114, 14)):
+            a[y:y + 2, :, :3] = 30
+            for x in range((r % 2) * 12, 144, 24):
+                a[y:y + 14, x:x + 2, :3] = 30
+        self.assertIn('detail.masonry_rock', self._dets(a, 'kit/x_rockface'))
+
+    def test_a_fully_opaque_ground_picture_is_not_judged_by_name_checks(self):
+        a = np.zeros((114, 144, 4), np.uint8)
+        a[..., :3] = GRASS
+        a[..., 3] = 255
+        dets = self._dets(a, 'woodland/ground')
+        self.assertFalse({'detail.fall_slab', 'detail.masonry_rock', 'detail.stair_read'} & set(dets))
+
+
+class FormNames(unittest.TestCase):
+    def test_whole_name_parts_only(self):
+        from scripts.review import forms as F
+        self.assertTrue(F.is_tree('kit/frost_pine_squat'))
+        self.assertTrue(F.is_tree('woodland/oak_13'))
+        self.assertTrue(F.is_tree('kit/lombardy_poplar') and F.is_tree('kit/cypress_b'))
+        for name in ('kit/brackens_fire_ring_cold', 'commons/washing_line', 'kit/cloak', 'kit/frost_snow_pole'):
+            self.assertFalse(F.is_tree(name), name)
+        self.assertTrue(F.named('kit/frost_rockface_plain_b', F.ROCK_WORDS))
+        self.assertTrue(F.named('kit/rock_face_west', F.ROCK_WORDS))
+        self.assertFalse(F.named('kit/shadow_frost_crag__b', F.ROCK_WORDS), 'shadow pictures are not rock')
+        self.assertFalse(F.named('kit/surface_cracks', F.ROCK_WORDS))
+        self.assertTrue(F.named('kit/log_steps_3', F.STAIR_WORDS))
+        self.assertTrue(F.named('kit/waterfall_2_tall', F.FALL_WORDS))
+        self.assertFalse(F.named('kit/landfall_marker', F.FALL_WORDS))
+
+
+class KitOverlapReading(unittest.TestCase):
+    """kit_overlap reads a plan, the props index (role, variant, foot, res:// path) and the pictures."""
+
+    def test_a_tiny_plan(self):
+        import io as _io
+        from scripts.review import kit_overlap as K
+
+        def png(w, h):
+            b = _io.BytesIO()
+            Image.new('RGBA', (w, h), (90, 90, 90, 255)).save(b, 'PNG')
+            return b.getvalue()
+        files = {
+            'game/kit/zones/tiny.json': json.dumps({'pieces': [
+                {'id': 'hut', 'piece': 'hut', 'at': [300, 300]},
+                {'id': 'fir_1', 'piece': 'fir', 'at': [250, 260], 'variant': 'tall'},
+                {'id': 'bench', 'piece': 'bench', 'at': [280, 290]}]}).encode(),
+            'game/kit/props/index.json': json.dumps({
+                'hut': {'role': 'house', 'variants': {'still': {'png': 'res://kit/props/art/hut.png', 'foot': [50, 40]}}},
+                'fir': {'role': 'tree', 'foot': [0, 0], 'variants': {
+                    'still': {'png': 'res://kit/props/art/missing.png'},
+                    'tall': {'png': 'res://kit/props/art/fir.png', 'foot': [10, 60]}}},
+                'bench': {'role': 'prop', 'variants': {'still': {'png': 'res://kit/props/art/hut.png'}}}}).encode(),
+            'game/kit/props/art/hut.png': png(100, 40),
+            'game/kit/props/art/fir.png': png(20, 60),
+        }
+        with patch.object(K, 'reader', return_value=lambda rel: files[rel]):
+            items = K.layout('tiny')
+            fs = K.check('tiny')
+        self.assertEqual([(i[0], i[1], i[2], i[3], i[4].shape) for i in items],
+                         [('hut', 'house', 250, 260, (40, 100)), ('fir_1', 'tree', 240, 200, (60, 20))])
+        # the fir (x 240..260, y 200..260) meets the hut (x 250..350, y 260..300) only at its foot row: no overlap
+        self.assertEqual(fs, [])
+        files['game/kit/zones/tiny.json'] = files['game/kit/zones/tiny.json'].replace(b'[250, 260]', b'[270, 290]')
+        with patch.object(K, 'reader', return_value=lambda rel: files[rel]):
+            fs = K.check('tiny')
+        self.assertEqual([(f.detector, f.severity) for f in fs], [('logic.tree_overlap', 'fault')])
+
+
+class CalibrationOpenFaults(unittest.TestCase):
+    def test_only_f4_to_f6_are_open_and_each_says_why(self):
+        with open(os.path.join(os.path.dirname(A.__file__), 'calibration_set.json')) as f:
+            cal = json.load(f)
+        opened = {f['id']: f['open'] for f in cal['faults'] if f.get('open')}
+        self.assertEqual(sorted(opened), ['F4', 'F5', 'F6'],
+                         'an "open" fault leaves the recall gate: only Claude A or Matt may add one, with its measurements')
+        for fid, why in opened.items():
+            self.assertIsInstance(why, str)
+            self.assertRegex(why, r'\d', f'{fid}: the reason must give what was measured')
+
+
+class FormNamesRound2(unittest.TestCase):
+    """#481 audit round 2: walk frames, terrain code maps, animation sheets, landing stages."""
+
+    def _brick_face(self):
+        a = np.zeros((114, 144, 4), np.uint8)
+        a[..., :3] = (120, 122, 130)
+        a[..., 3] = 255
+        for r, y in enumerate(range(0, 114, 14)):
+            a[y:y + 2, :, :3] = 30
+            for x in range((r % 2) * 12, 144, 24):
+                a[y:y + 14, x:x + 2, :3] = 30
+        return a
+
+    def test_a_walk_frame_is_not_a_stair(self):
+        from scripts.review import forms as F
+        for name in ('props/cat_step1', 'props/heron_e_step2', 'props/lamb_left_step1'):
+            self.assertFalse(F.named(name, F.STAIR_WORDS), name)
+        for name in ('kit/log_steps_3', 'kit/frost_rock_stair', 'x/step_2', 'x/stair2'):
+            self.assertTrue(F.named(name, F.STAIR_WORDS), name)
+
+    def test_an_opaque_terrain_code_map_named_face_is_not_judged_as_rock(self):
+        a = self._brick_face()
+        for subject in ('terrain/over_lawn_over_earth_face', 'game/kit/terrain/fill_earth_face'):
+            fs, _ = A.review_rgba(a, subject, '', 'woodland')
+            self.assertNotIn('detail.masonry_rock', [f.detector for f in fs], subject)
+        fs, _ = A.review_rgba(a, 'kit/earth_face_cutout', '', 'woodland')
+        self.assertIn('detail.masonry_rock', [f.detector for f in fs], 'the same picture as a prop is judged')
+
+    def test_a_character_sheet_is_not_a_stair(self):
+        from scripts.review import forms as F
+        for subject in ('sheets/stair_up_S', 'game/assets/characters/bramble/sheets/powered_stair_down_N'):
+            self.assertFalse(F.named(subject, F.STAIR_WORDS), subject)
+
+    def test_a_landing_stage_is_a_deck_and_a_pier_ladder_is_not(self):
+        from scripts.review import forms as F
+        self.assertTrue(F.named('kit/riverside_landing_stage', F.BRIDGE_WORDS))
+        a = np.zeros((60, 120, 4), np.uint8)
+        a[..., :3] = (150, 100, 60)
+        a[..., 3] = 255
+        a[:, ::7, :3] = (70, 45, 25)
+        self.assertEqual([f.detector for f in F.deck_upright(a[..., :3], a[..., 3] > 0, H, 'kit/riverside_landing_stage')],
+                         ['logic.deck_upright'])
+        self.assertEqual(F.deck_upright(a[..., :3], a[..., 3] > 0, H, 'props/pier_ladder'), [])

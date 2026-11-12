@@ -477,6 +477,9 @@ def review_screen(native: np.ndarray, H: float, biome: str = '', subject: str = 
     fs += flat_lines(native, H, ignore)
     fs += falloff(native, H, ignore, biome)
     fs += debug_overlay(native, H, ignore)
+    # Matt's 12 Nov Frostline misses: stamped snow chips on crowns, one water body frozen and open (forms.py)
+    from . import forms as F
+    fs += F.check_screen(native, H, ignore)
     if experimental:
         # image-only shadow and mesh guesses: too many false positives on Eastward to gate on
         # (calibrate.py); the scene gate checks shadows from the zone's own data instead
