@@ -120,7 +120,7 @@
         72
       ],
       "scene": "res://zones/frostline/fells_ibex_camp.tscn",
-      "why": "The ring is shut (step fells): two rushers and a shooter of Codex's slice enemies in the woodland creatures' looks (enemies/creature_dresser.gd, no den) until the ibex are drawn"
+      "why": "The ring is shut (step fells): two rushers and a shooter of Codex's slice enemies in the woodland creatures' looks (enemies/creature_dresser.gd, no den) until the ibex are drawn. The scene's root is a plain node holding the Camp, so the kit plan holds it as a `scene` actor and the editor's export keeps it"
     }
   ],
   "spawns": [

@@ -136,7 +136,7 @@ func test_from_the_arrival_every_talk_area_the_camp_and_the_door_can_be_walked_t
 		var talk := zone.get_node(path) as Interactable
 		var r := ((talk.get_node("Shape") as CollisionShape2D).shape as CircleShape2D).radius
 		assert_bool(reached.call(talk.global_position, r)).override_failure_message("%s cannot be walked to" % path).is_true()
-	for e in zone.get_node("Actors/FellsIbexCamp").get_children():
+	for e in zone.get_node("Actors/FellsIbexCamp/Camp").get_children():
 		if e is CharacterBody2D:
 			assert_bool(reached.call((e as Node2D).global_position, 40.0)).override_failure_message(
 				"the ibex at %s cannot be walked to" % str((e as Node2D).global_position)).is_true()
@@ -159,7 +159,7 @@ func test_the_loaf_the_ring_and_the_ibex_play_out_here_and_the_snout_waits_for_t
 	# the people and the camp the quests name stand in the zone
 	assert_str(String(zone.get_node("Actors/HutWarden").get("speaker_id"))).is_equal("hut_warden")
 	assert_str(String(zone.get_node("Actors/IceCutter").get("speaker_id"))).is_equal("ice_cutter")
-	assert_str(String(zone.get_node("Actors/FellsIbexCamp").get("camp_id"))).is_equal("fells_ibex")
+	assert_str(String(zone.get_node("Actors/FellsIbexCamp/Camp").get("camp_id"))).is_equal("fells_ibex")
 	assert_str(Dialogue.lines_for("hut_warden")[0]).starts_with("Bread!")
 	Quests.notify("talk:hut_warden")
 	assert_str(Quests.state("a1_bread_for_the_bothy")).is_equal("done")
