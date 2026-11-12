@@ -1914,3 +1914,48 @@ class CalibrationOpenFaults(unittest.TestCase):
         for fid, why in opened.items():
             self.assertIsInstance(why, str)
             self.assertRegex(why, r'\d', f'{fid}: the reason must give what was measured')
+
+
+class FormNamesRound2(unittest.TestCase):
+    """#481 audit round 2: walk frames, terrain code maps, animation sheets, landing stages."""
+
+    def _brick_face(self):
+        a = np.zeros((114, 144, 4), np.uint8)
+        a[..., :3] = (120, 122, 130)
+        a[..., 3] = 255
+        for r, y in enumerate(range(0, 114, 14)):
+            a[y:y + 2, :, :3] = 30
+            for x in range((r % 2) * 12, 144, 24):
+                a[y:y + 14, x:x + 2, :3] = 30
+        return a
+
+    def test_a_walk_frame_is_not_a_stair(self):
+        from scripts.review import forms as F
+        for name in ('props/cat_step1', 'props/heron_e_step2', 'props/lamb_left_step1'):
+            self.assertFalse(F.named(name, F.STAIR_WORDS), name)
+        for name in ('kit/log_steps_3', 'kit/frost_rock_stair', 'x/step_2', 'x/stair2'):
+            self.assertTrue(F.named(name, F.STAIR_WORDS), name)
+
+    def test_an_opaque_terrain_code_map_named_face_is_not_judged_as_rock(self):
+        a = self._brick_face()
+        for subject in ('terrain/over_lawn_over_earth_face', 'game/kit/terrain/fill_earth_face'):
+            fs, _ = A.review_rgba(a, subject, '', 'woodland')
+            self.assertNotIn('detail.masonry_rock', [f.detector for f in fs], subject)
+        fs, _ = A.review_rgba(a, 'kit/earth_face_cutout', '', 'woodland')
+        self.assertIn('detail.masonry_rock', [f.detector for f in fs], 'the same picture as a prop is judged')
+
+    def test_a_character_sheet_is_not_a_stair(self):
+        from scripts.review import forms as F
+        for subject in ('sheets/stair_up_S', 'game/assets/characters/bramble/sheets/powered_stair_down_N'):
+            self.assertFalse(F.named(subject, F.STAIR_WORDS), subject)
+
+    def test_a_landing_stage_is_a_deck_and_a_pier_ladder_is_not(self):
+        from scripts.review import forms as F
+        self.assertTrue(F.named('kit/riverside_landing_stage', F.BRIDGE_WORDS))
+        a = np.zeros((60, 120, 4), np.uint8)
+        a[..., :3] = (150, 100, 60)
+        a[..., 3] = 255
+        a[:, ::7, :3] = (70, 45, 25)
+        self.assertEqual([f.detector for f in F.deck_upright(a[..., :3], a[..., 3] > 0, H, 'kit/riverside_landing_stage')],
+                         ['logic.deck_upright'])
+        self.assertEqual(F.deck_upright(a[..., :3], a[..., 3] > 0, H, 'props/pier_ladder'), [])

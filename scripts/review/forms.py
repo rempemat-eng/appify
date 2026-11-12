@@ -37,14 +37,20 @@ from . import detail as D
 # name is split into whole word parts (letters only: "frost_pine_squat_2" is frost, pine, squat), and
 # a check runs when one part is one of its words, so "fir" never matches fire_ring nor "oak" cloak.
 # A piece named outside these words (a stair called *_climb) is not judged by them: the auditors are.
+# Not judged by name at all (#481 audit round 2): shadow pictures; the kit's terrain code maps
+# (kit/terrain over_*, fill_*: palette-coded masks, not art); and character animation sheets
+# (characters/*/sheets, judged by cast.py: a "stair_up_S" sheet is a body climbing, not a stair).
 TREE_WORDS = frozenset(('pine', 'spruce', 'fir', 'larch', 'conifer', 'yew', 'cedar', 'cypress', 'poplar',
                         'oak', 'beech', 'birch', 'willow', 'ash', 'alder', 'rowan', 'tree', 'krummholz'))
-BRIDGE_WORDS = frozenset(('bridge', 'footbridge', 'deck', 'jetty', 'boardwalk', 'pier'))
+BRIDGE_WORDS = frozenset(('bridge', 'footbridge', 'deck', 'jetty', 'boardwalk', 'pier', 'landing_stage'))
+NOT_DECK = frozenset(('ladder',))     # a pier's ladder stands upright by design: it is not the deck
 # natural rock only: worked stone (walls, standing stones, stairs, chimneys) may be coursed
 ROCK_WORDS = frozenset(('rockface', 'crag', 'cliff', 'scarp', 'escarpment', 'ledge', 'outcrop', 'headwall',
                         'bluff', 'tor', 'face'))
 STAIR_WORDS = frozenset(('stair', 'stairs', 'steps', 'step'))
 FALL_WORDS = frozenset(('icefall', 'waterfall', 'fall', 'falls', 'cascade'))
+# two-word names, joined when both parts are present
+COMPOUNDS = {('rock', 'face'): 'rockface', ('landing', 'stage'): 'landing_stage'}
 
 
 def _base(subject: str) -> str:
@@ -52,17 +58,36 @@ def _base(subject: str) -> str:
 
 
 def name_parts(subject: str) -> set:
-    """The whole word parts of an asset's name ('kit/frost_rock_face_b' -> frost, rock, face, b)."""
-    parts = {w for w in re.split(r'[^a-z]+', _base(subject).lower()) if w}
-    if {'rock', 'face'} <= parts:
-        parts.add('rockface')
+    """The whole word parts of an asset's name ('kit/frost_rock_face_b' -> frost, rock, face, b). A
+    "step" with a digit straight after it is a walk frame (cat_step1, heron_e_step2), not a stair."""
+    raw = [w for w in re.split(r'[^a-z0-9]+', _base(subject).lower()) if w]
+    parts = set()
+    for r in raw:
+        if re.fullmatch(r'step\d+', r):
+            continue
+        parts |= {w for w in re.split(r'[^a-z]+', r) if w}
+    for (x, y), joined in COMPOUNDS.items():
+        if {x, y} <= parts:
+            parts.add(joined)
     return parts
 
 
+def judged_by_name(subject: str) -> bool:
+    """False for the pictures no name check judges: shadows, terrain code maps, animation sheets."""
+    path = [p for p in subject.lower().replace('\\', '/').split('/') if p]
+    base = _base(subject).lower()
+    if 'shadow' in name_parts(subject):
+        return False
+    if 'terrain' in path and (base.startswith('over_') or base.startswith('fill_')):
+        return False
+    if 'sheets' in path or 'characters' in path:
+        return False
+    return True
+
+
 def named(subject: str, words) -> bool:
-    """The asset's name holds one of the words, and it is not a shadow picture."""
-    parts = name_parts(subject)
-    return 'shadow' not in parts and bool(parts & words)
+    """The asset's name holds one of the words, and it is a picture name checks judge."""
+    return judged_by_name(subject) and bool(name_parts(subject) & words)
 
 
 def _bbox(m):
@@ -206,7 +231,7 @@ def _vertical_runs(m: np.ndarray) -> np.ndarray:
 
 
 def deck_upright(rgb, alpha, H, subject) -> list[Finding]:
-    if not named(subject, BRIDGE_WORDS):
+    if not named(subject, BRIDGE_WORDS) or name_parts(subject) & NOT_DECK:
         return []
     fam = D.family_map(rgb)
     L = lum(rgb).astype(float)
