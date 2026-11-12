@@ -443,7 +443,16 @@ Props and structures are built into a scene each by `python3 -m scripts.art.kit.
 - the picture as a `Sprite2D` offset so the foot is the origin (y-sorted by it), with `variant` choosing another picture;
 - the solid box as a `StaticBody2D` on the walls layer.
 
-The ground draws the pieces' cast shadows itself, in ramp steps (core two tones down, the outer 2 world px one tone), in the shader and in `compose.shadows` alike. A tree's shadow is its crown's silhouette squashed and sheared down-right (`props.crown_shadow`, saved as `art/shadow_<id>.png`). Other pieces cast an ellipse.
+The ground draws the pieces' cast shadows itself, in ramp steps (core two tones down, the outer 2 world px one tone), in the shader and in `compose.shadows` alike. A tree's shadow is its crown's silhouette squashed and sheared down-right (`props.crown_shadow`, saved as `art/shadow_<id>.png`), and a house casts its volume (`props.volume_shadow`).
+
+Every other piece whose `rendering.cast_shadow` has `shape: ellipse` casts by **the footprint rule** (`props.footprint_shadow`, 12 Nov, from the Frostline audit's Z4). The light comes from the upper left, so:
+
+- **Contact.** A contact shadow exactly as wide as the footprint, with its west end at the footprint's west edge, as deep as the solid box (3 texels at least). The footprint is the x extent of the picture's base band (its lowest 6 texels above the foot), widened to the solid box where that is wider, never past the picture.
+- **Cast.** The picture's own silhouette, thrown east and down by the projection the painted zones use: a texel h above the foot lands 0.46 h east and 0.22 h down (`scripts/art/biomes/woodland.json` `shadow.project`, the bakes' `compose.SHADOW`). So a tall thing casts further than a low one.
+- **Nothing west.** The union is cut at the footprint's west edge.
+- **Ramp steps.** The core is two steps down and the outer rim one (3 texels, or 6 on a large shadow).
+
+The mask is saved as `art/shadow_<id>.png`, with its offset from the foot, and the ground lays it like a crown's. The ellipse's `size` and `dir` are no longer read. The sets had written full widths there and the woodland half widths, and both renderers drew them as radii, centred on the foot. On main that made them a median 2.5 times the footprint (up to 5.4), reaching a median 16.5 texels west of it (up to 141). `test_kit.FootprintShadows` measures every such mask against the footprint.
 
 **Not yet:** the `function` block wiring an `Interactable`, `Door`, `RestoreSite` or `Conditional`, and lights and looping effects from `rendering`.
 

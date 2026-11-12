@@ -55,6 +55,77 @@ def crown_shadow(png_res: str, foot, out_name: str):
     return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(x0), int(y0)]}
 
 
+# the footprint shadow rule (Frostline audit Z4, 12 Nov; house-style 6, eastward-edges 7): light from
+# the upper left, so a prop's shadow is a contact shadow the size of its footprint plus its own
+# silhouette cast east and down by the same projection the bakes use (CAST, compose.SHADOW's, from the biome:
+# a texel h above the foot lands kx h east and ky h down), and nothing reaches west of its west edge.
+BASE_BAND = 6            # the picture's lowest rows above the foot that stand on the ground (2 world px)
+# the projection the painted zones' objects cast by (scripts/art/biomes/woodland.json and meadow.json
+# shadow.project, read by compose.SHADOW): one rule for the bake and the live ground
+CAST = tuple(json.load(open(os.path.join(ROOT, 'scripts', 'art', 'biomes', 'woodland.json')))['shadow']['project'])
+
+
+def footprint(png_res: str, foot, rect=None) -> dict:
+    """What a piece stands on, in texels from the foot: the x extent of the picture's base band
+    (its lowest BASE_BAND opaque rows above the foot, or its lowest rows if it floats), widened to
+    the solid box where that is wider, never past the picture; and the depth (the box's, or the base
+    band's)."""
+    from PIL import Image
+    a = np.asarray(Image.open(os.path.join(ROOT, 'game', png_res[len('res://'):])).convert('RGBA'))[..., 3] > 0
+    fx, fy = foot
+    ys, xs = np.nonzero(a)
+    band = (ys < fy) & (ys >= fy - BASE_BAND)
+    if not band.any():
+        band = ys >= ys.max() - BASE_BAND + 1
+    x0, x1 = xs[band].min() - fx, xs[band].max() + 1.0 - fx
+    if rect is not None:
+        x0, x1 = min(x0, rect[0]), max(x1, rect[0] + rect[2])
+    x0, x1 = max(x0, xs.min() - fx), min(x1, xs.max() + 1.0 - fx)
+    depth = rect[3] if rect is not None else float(BASE_BAND)
+    return {'x0': float(x0), 'x1': float(x1), 'depth': float(depth)}
+
+
+def footprint_shadow(png_res: str, foot, out_name: str, rect=None):
+    """A prop's shadow by the footprint rule: a contact ellipse exactly as wide as the footprint
+    (west end at its west edge) and as deep as it, and the picture's silhouette projected east and
+    down (CAST, as the bakes cast it); their union, cut at the footprint's west edge, the
+    core two ramp steps down and the outer rim one. Written as an R8 mask with its offset from the
+    foot, like a crown's; TerrainGround and compose.shadows lay it."""
+    from PIL import Image
+    from scipy import ndimage as ndi
+    kx, ky = CAST
+    a = np.asarray(Image.open(os.path.join(ROOT, 'game', png_res[len('res://'):])).convert('RGBA'))[..., 3] > 0
+    fx, fy = foot
+    fp = footprint(png_res, foot, rect)
+    w = fp['x1'] - fp['x0']
+    rx = w / 2.0
+    ry = float(np.clip(fp['depth'] / 2.0, 3.0, max(3.0, 0.3 * w)))
+    cx, cy = (fp['x0'] + fp['x1']) / 2.0, -ry + 1.0
+    ys, xs = np.nonzero(a)
+    h = np.maximum(0.0, fy - ys - 0.5)
+    px = np.round(xs + 0.5 - fx + kx * h).astype(int)
+    py = np.round(ky * h - np.maximum(0.0, ys + 0.5 - fy)).astype(int)
+    X0 = int(np.floor(fp['x0'])) - 1
+    Y0 = int(min(py.min(), np.floor(cy - ry))) - 3
+    X1 = int(max(px.max(), np.ceil(fp['x1']))) + 4
+    Y1 = int(max(py.max(), np.ceil(cy + ry))) + 4
+    m = np.zeros((Y1 - Y0, X1 - X0), bool)
+    ok = (px >= X0) & (px < X1)
+    m[py[ok] - Y0, px[ok] - X0] = True
+    k = 7                                                      # close the projected texels into one shape
+    m = ndi.binary_dilation(m, iterations=k)
+    m = ndi.binary_fill_holes(m)
+    m = ndi.binary_erosion(m, iterations=k)
+    Y, X = np.mgrid[Y0:Y1, X0:X1] + 0.5
+    m |= ((X - cx) / rx) ** 2 + ((Y - cy) / ry) ** 2 <= 1.0  # the contact under the footprint
+    m &= X >= fp['x0']                                         # nothing west of the west edge
+    rim = 6 if m.sum() > 600 else 3
+    core = ndi.binary_erosion(m, iterations=rim)
+    out = np.where(core, 2, np.where(m, 1, 0)).astype(np.uint8)
+    Image.fromarray(out, 'L').save(os.path.join(OUT, 'art', out_name))
+    return {'png': 'res://kit/props/art/' + out_name, 'offset': [X0, Y0]}
+
+
 def _set_looks() -> dict:
     """{piece id: look} for the prop sets' buildings (scripts/art/kit/sets/looks.py)."""
     from scripts.art.kit.sets import looks as LK
@@ -130,8 +201,12 @@ def entry(p: dict) -> dict:
         rect = [-radius, -radius, 2 * radius, 2 * radius]
     cs = r.get('cast_shadow') or {}
     shadow = None
-    if cs.get('shape') == 'ellipse' and cs.get('size'):
-        shadow = {'size': [int(round(v * D)) for v in cs['size']], 'dir': [int(round(v * D)) for v in cs.get('dir', [0, 0])]}
+    if cs.get('shape') == 'ellipse' and p.get('variants'):
+        # by the footprint rule (footprint_shadow): the authored ellipse's size and dir are not read,
+        # since half the sets wrote full widths and the woodland half widths, and both renderers drew
+        # them as radii, centred, so they ran 2.5 times the footprint and reached west (Z4, 12 Nov)
+        v0 = p['variants'][0]
+        shadow = {'mask': footprint_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'], rect), 'kind': 'footprint'}
     if (p['kind'] == 'structure' or p['id'] in _set_looks()) and p.get('variants'):
         # a building drawn by the house builder (houses.py), from a zone plan's look or a set's:
         # its volume's shadow, and only that one

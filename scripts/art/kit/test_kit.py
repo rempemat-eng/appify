@@ -1629,6 +1629,84 @@ class CrownMaskConsumers(unittest.TestCase):
         self.assertTrue((DB.regions(self._plan(self.OTHER, self.TREE), H, W)['shadow'] == tree).all())
 
 
+class FootprintShadows(unittest.TestCase):
+    """The footprint shadow rule (Frostline audit Z4, 12 Nov; props.footprint_shadow): every prop
+    that casts a plain shadow casts it from its footprint, lit from the upper left. Measured on the
+    masks the live ground and compose.shadows lay, against the footprint measured here from the
+    picture (its base band) and the solid box: the contact covers the footprint, nothing reaches west
+    of it, and the cast reaches no further east or down than the projection of the picture's height.
+    On main before the rule the ellipses ran a median 2.5 times the footprint (up to 5.4) and reached
+    a median 16.5 texels west of it (up to 141)."""
+
+    @classmethod
+    def setUpClass(cls):
+        from PIL import Image
+        from scripts.art.kit import props as PR
+        cls.PR = PR
+        cls.idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
+        cls.pieces = {}
+        for f in S.piece_files():
+            p = json.load(open(f))
+            cs = (p.get('rendering') or {}).get('cast_shadow') or {}
+            e = cls.idx.get(p['id'])
+            # a tree casts its crown (crown_shadow) and a house its volume (volume_shadow): not this rule
+            if cs.get('shape') == 'ellipse' and p.get('variants') and e and e.get('role') != 'tree' \
+                    and (e.get('shadow') or {}).get('kind') != 'volume':
+                cls.pieces[p['id']] = p
+        cls.Image = Image
+
+    def _png(self, res):
+        return np.asarray(self.Image.open(os.path.join(S.ROOT, 'game', res[len('res://'):])))
+
+    def test_no_plain_ellipse_shadow_is_left(self):
+        self.assertGreater(len(self.pieces), 100)
+        for k, e in self.idx.items():
+            sh = e.get('shadow') or {}
+            self.assertNotIn('size', sh, '%s still casts a centred ellipse' % k)
+
+    def test_every_footprint_shadow_sits_on_its_footprint_and_falls_east_and_down(self):
+        kx, ky = self.PR.CAST
+        for k, p in sorted(self.pieces.items()):
+            e = self.idx[k]
+            sh = e['shadow']
+            self.assertEqual(sh.get('kind'), 'footprint', k)
+            m = self._png(sh['mask']['png']) > 0
+            ox, oy = sh['mask']['offset']
+            ys, xs = np.nonzero(m)
+            v0 = p['variants'][0]
+            foot = v0.get('foot') or e['foot']
+            a = self._png(v0['png'])[..., 3] > 0
+            pys, pxs = np.nonzero(a)
+            band = (pys < foot[1]) & (pys >= foot[1] - self.PR.BASE_BAND)
+            if not band.any():
+                band = pys >= pys.max() - self.PR.BASE_BAND + 1
+            west = pxs[band].min() - foot[0]
+            east = pxs[band].max() + 1 - foot[0]
+            rect = e.get('collision')
+            if rect:
+                west, east = min(west, rect[0]), max(east, rect[0] + rect[2])
+            west, east = max(west, pxs.min() - foot[0]), min(east, pxs.max() + 1 - foot[0])
+            height = foot[1] - pys.min()
+            w = east - west
+            # nothing west of the footprint's west edge
+            self.assertGreaterEqual(xs.min() + ox, np.floor(west), '%s reaches west' % k)
+            # the contact covers the footprint: some row within the footprint's depth is shaded from
+            # its west edge to its east edge, to within one texel at each end
+            depth = rect[3] if rect else self.PR.BASE_BAND
+            spans = []
+            for y in range(-int(np.ceil(depth)), 1):
+                if 0 <= y - oy < m.shape[0] and m[y - oy].any():
+                    c = np.nonzero(m[y - oy])[0] + ox
+                    spans.append((c.min(), c.max() + 1))
+            self.assertTrue(any(a <= west + 1 and b >= east - 1 for a, b in spans), '%s: no contact across its footprint' % k)
+            # the cast reaches no further east than the projected height (and the closing pass),
+            # nor further down
+            self.assertLessEqual(xs.max() + 1 + ox, max(east, pxs.max() + 1 - foot[0]) + kx * height + 3, '%s runs east' % k)
+            self.assertLessEqual(ys.max() + 1 + oy, ky * height + max(4, w * 0.3) + 3, '%s runs down' % k)
+            # two ramp steps: a rim of one and, where there is room, a core of two
+            self.assertTrue(set(np.unique(self._png(sh['mask']['png']))) <= {0, 1, 2}, k)
+
+
 class FencesAndFarm(unittest.TestCase):
     """The fence cells close loops, the farmyard pieces carry what the enclosure rules read, the
     farm study built from kit pieces passes every check, and the pictures are what the painters
