@@ -121,10 +121,19 @@
       "see": "#279"
     }
   },
+  "fights": {
+    "mossling": 2,
+    "creature": 3,
+    "boss": 10,
+    "note": "in the game since 11 Nov (Matt, 10 Nov): paid once per creature for the life of the save, never again when a camp comes back; today's build has 3 mosslings, 5 Undercroft creatures and the Thornback, 31 Glint in all"
+  },
   "defeat": {
-    "cache_share_since_home": 0.2,
-    "no_cache_on_first_defeat_in_chapter": true,
-    "no_cache_at_boss_checkpoint": true
+    "cache_share_of_carried": 0.2,
+    "never_below": 0,
+    "why_no_floor": "the story model plays every order with the worst defeats (test/story/test_story_model.gd): the forge, the Ferns' door and the apothecary stay affordable without one",
+    "kept_until_picked_up": true,
+    "a_second_defeat": "adds a second cache; the first is never touched",
+    "note": "in the game since 11 Nov (core/glint_cache.gd). The 25 Oct proposal's first-defeat and boss-checkpoint exemptions are not built"
   },
   "pacing": {
     "rule": "a region's quests, chests, bosses and fights pay about 1.3 x what its buildings cost",

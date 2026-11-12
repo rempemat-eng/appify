@@ -1,16 +1,43 @@
 class_name SliceEnemy
 extends CharacterBody2D
 ## C61 independent actor: LimboAI HSM, shared attack reservations, no save/reward writes.
+##
+## Home, health and waking (Matt, 10 Nov; the same rules as the mossling, actors/enemy.gd):
+##   - No healing on the walk home; HOME_HEAL_TIME after it is home again it is at full health.
+##   - A hit wakes it when the archer is within WAKE of it and inside its leash, and its idle camp mates
+##     within ALERT of it with it, if the archer is inside their leash. A hit on the walk home turns it round.
+##     A rusher woken that way runs in at RUN_IN times its speed until its first wind-up (a proposal).
+##   - It can only be hurt by someone it can come for (`can_come_for`). From anywhere else the arrow
+##     glances off (enemies/glance.gd). Hurt by the player (a glance does not count), it keeps coming
+##     across its leash for Enemy.PROVOKED_TIME after the last hit, every role, the toad too (Claude A,
+##     11 Nov: stepping in and out over the leash line beat every creature); the give-up below still applies.
+##   - It steers round solids (enemies/steer.gd), gives up a walk home that takes too long (it is put at
+##     home, no fade) and an approach that gains no ground for CHASE_GIVE_UP (it walks home, deaf to
+##     shots on that walk; at home it answers a shot again).
+##   - For ARRIVAL_GRACE after a zone becomes ready it does not notice the player by nearness (the
+##     Undercroft's first rusher reached the start 1.8 s after every load and every time the player got up).
 signal died
 signal committed
 signal released
+signal glanced
 const DENSITY := 3.0
 const LEASH := 140.0 * DENSITY
+const NOTICE := 100.0 * DENSITY     ## it notices the player this near
+const WAKE := 110.0 * DENSITY       ## a hit wakes it when the archer is this near
+const ALERT := NOTICE               ## idle camp mates this near wake with it
+const HOME_HEAL_TIME := 3.0
+const LEASH_GIVE_UP := 3.0
+const LEASH_SPEED := 48.0 * DENSITY
+const ARRIVAL_GRACE := 2.5
+const RUN_IN := 1.6
+const CHASE_GIVE_UP := 2.5
+const GAIN := 12.0
 @export_enum("rusher", "shooter", "shield", "elite") var role := "rusher"
 var slots: SliceAttackSlots
 var target: Node2D
 var home := Vector2.ZERO
 var hp := 4
+var max_hp := 4
 var dead := false
 var state := "idle"
 var elapsed := 0.0
@@ -19,6 +46,17 @@ var hsm: LimboHSM
 var shot: SliceEnemyShot
 var _struck := false
 var _reserved := false
+var steer := EnemySteer.new()
+var glance_t := 0.0
+var _home_t := 0.0
+var _leash_t := 0.0
+var _leash_budget := 0.0
+var _grace := 0.0
+var _run_in := false
+var _closest := INF
+var _stuck_t := 0.0
+var _gave_up := false
+var _pursue := 0.0            ## hurt by the player: it keeps coming across its leash this long (Enemy.PROVOKED_TIME)
 
 func windup_time() -> float:
 	return 0.65 if role == "elite" else 0.95
@@ -29,7 +67,10 @@ func reach() -> float:
 func _ready() -> void:
 	add_to_group("enemy")
 	home = global_position
-	hp = 12 if role == "elite" else (8 if role == "shield" else 4)
+	max_hp = 12 if role == "elite" else (8 if role == "shield" else 4)
+	hp = max_hp
+	wall_min_slide_angle = 0.0   # slide along a wall met at any angle
+	Zones.zone_changed.connect(_on_zone_ready)
 	collision_layer = 4
 	collision_mask = 1
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
@@ -59,10 +100,27 @@ func _ready() -> void:
 	hsm.initialize(self)
 	hsm.set_active(true)
 
+func _on_zone_ready(_zone: Zone) -> void:
+	_grace = ARRIVAL_GRACE
+
 func _changed(current: LimboState, _previous: LimboState) -> void:
 	state = str(current.name)
 	elapsed = 0.0
 	velocity = Vector2.ZERO
+	steer.reset()
+	_closest = INF
+	_stuck_t = 0.0
+	if state != "approach":
+		_run_in = false
+	if state == "leash":
+		_pursue = 0.0
+	if state != "leash":
+		_gave_up = false             # deaf only on the walk home from an approach it gave up
+	if state == "idle":
+		_home_t = 0.0
+	elif state == "leash":
+		_leash_t = 0.0
+		_leash_budget = LEASH_GIVE_UP + 2.0 * global_position.distance_to(home) / LEASH_SPEED
 	queue_redraw()
 
 func _physics_process(delta: float) -> void:
@@ -75,7 +133,17 @@ func _physics_process(delta: float) -> void:
 func step(delta: float) -> void:
 	if dead:
 		return
-	if state != "idle" and state != "leash" and _outside_leash():
+	glance_t = maxf(glance_t - delta, 0.0)
+	_grace = maxf(_grace - delta, 0.0)
+	_pursue = maxf(_pursue - delta, 0.0)
+	# hurt by the player, it keeps coming across its leash for Enemy.PROVOKED_TIME (Claude A's call, 11 Nov:
+	# the leash-line dance beat every creature); the give-up in "approach" still applies
+	var pursuing := _pursue > 0.0 and is_instance_valid(target)
+	# a committed wind-up and its strike finish even across the leash (Matt, 11 Nov: stepping over the
+	# line as it wound up beat it every time); the recovery after it turns for home
+	var committed := state == "windup" or state == "attack"
+	if state != "idle" and state != "leash" and _outside_leash() and not pursuing \
+			and (not committed or not is_instance_valid(target)):
 		_cancel_attack()
 		hsm.dispatch(&"leash")
 	hsm.update(maxf(delta, 0.0))
@@ -84,11 +152,24 @@ func step(delta: float) -> void:
 func _outside_leash() -> bool:
 	return not is_instance_valid(target) or global_position.distance_to(home) > LEASH or home.distance_to(target.global_position) > LEASH
 
+## True when it can come for someone standing at `at`: inside its leash, and, while it is idle or walking
+## home, near enough to notice a shot from.
+func can_come_for(at: Vector2) -> bool:
+	if _pursue > 0.0 and state != "idle" and state != "leash":
+		return true                  # coming for the archer across its leash: they can strike back
+	if (_gave_up and state == "leash") or home.distance_to(at) > LEASH or global_position.distance_to(home) > LEASH:
+		return false
+	return (state != "idle" and state != "leash") or global_position.distance_to(at) <= WAKE
+
 func _update_state(delta: float) -> void:
 	elapsed += delta
 	match state:
 		"idle":
-			if is_instance_valid(target) and not _outside_leash() and global_position.distance_to(target.global_position) < 100.0 * DENSITY:
+			if hp < max_hp:
+				_home_t += delta
+				if _home_t >= HOME_HEAL_TIME:
+					hp = max_hp
+			if _grace <= 0.0 and is_instance_valid(target) and not _outside_leash() and global_position.distance_to(target.global_position) < NOTICE:
 				hsm.dispatch(&"approach")
 		"approach":
 			var distance := global_position.distance_to(target.global_position)
@@ -99,8 +180,20 @@ func _update_state(delta: float) -> void:
 				hsm.dispatch(&"windup")
 			elif role == "shooter" and distance < 45.0 * DENSITY:
 				velocity = -facing * 30.0 * DENSITY
+			elif distance > reach() or (role != "shooter" and not _can_commit()):
+				# no ground gained for too long (circling a pocket, pushing at a solid): go home
+				if distance < _closest - GAIN:
+					_closest = distance
+					_stuck_t = 0.0
+				else:
+					_stuck_t += delta
+					if _stuck_t >= CHASE_GIVE_UP:
+						_gave_up = true
+						hsm.dispatch(&"leash")
+						return
+				velocity = steer.direction(self, facing, delta, target.global_position) * 34.0 * DENSITY * (RUN_IN if _run_in else 1.0)
 			else:
-				velocity = facing * 34.0 * DENSITY if distance > reach() else facing.orthogonal() * 16.0 * DENSITY
+				velocity = facing.orthogonal() * 16.0 * DENSITY
 		"windup":
 			velocity = Vector2.ZERO  # direction locks at commitment; no tracking during tell
 			if elapsed >= windup_time():
@@ -134,29 +227,44 @@ func _update_state(delta: float) -> void:
 				_cancel_attack()
 				hsm.dispatch(&"approach")
 		"leash":
-			if global_position.distance_to(home) <= 4.0:
+			# no healing on the way; a walk that cannot get round what is in the way is given up cleanly
+			_leash_t += delta
+			if global_position.distance_to(home) <= 4.0 or _leash_t > _leash_budget:
 				global_position = home
 				hsm.dispatch(&"idle")
 			else:
-				velocity = global_position.direction_to(home) * 48.0 * DENSITY
+				velocity = steer.direction(self, global_position.direction_to(home), delta, home) * LEASH_SPEED
 
 func _can_commit() -> bool:
 	if role != "shooter":
-		return true
+		# a striker needs a clear way: a low solid between stops its lunge (Matt, 11 Nov: it walks round)
+		return EnemySteer.line_clear(self, target.global_position)
 	# Prevent off-screen fire, including when the scene is placed on a large map.
 	var screen := get_viewport_rect()
 	var point := get_global_transform_with_canvas().origin
 	if not screen.has_point(point):
 		return false
-	var query := PhysicsRayQueryParameters2D.create(global_position, target.global_position, 1)
-	return get_world_2d().direct_space_state.intersect_ray(query).is_empty()
+	# the same sight the player's arrow has: low solids (a bench, a stump, water) do not block it
+	return not Arrow.walled_off(get_world_2d().direct_space_state, global_position, target.global_position)
 
-func take_hit(amount: int, dir: Vector2, _knockback: float = 200.0) -> void:
+## Returns whether the hit counted (false when it glanced off).
+func take_hit(amount: int, dir: Vector2, _knockback: float = 200.0) -> bool:
 	if dead or amount <= 0:
-		return
+		return false
+	var archer: Node2D = target if is_instance_valid(target) else null
+	if archer != null and not can_come_for(archer.global_position):
+		glance_t = Glance.TIME
+		Glance.clink(global_position)
+		glanced.emit()
+		queue_redraw()
+		return false
+	if archer != null and (state == "idle" or state == "leash"):
+		_wake(archer.global_position)
 	# Incoming travel direction opposes the shield's facing on a frontal hit.
 	var guarded := role == "shield" and dir.normalized().dot(facing) < -0.5 and state != "recover"
 	hp -= maxi(1, ceili(float(amount) * (0.5 if guarded else 1.0)))
+	if archer != null:
+		_pursue = Enemy.PROVOKED_TIME
 	if hp <= 0:
 		dead = true
 		_cancel_attack()
@@ -168,6 +276,27 @@ func take_hit(amount: int, dir: Vector2, _knockback: float = 200.0) -> void:
 		var tween := create_tween()
 		tween.tween_property(self, "scale", Vector2(0.1, 0.1), 0.25)
 		tween.tween_callback(queue_free)
+	return true
+
+## Woken by a hit: it comes for the archer, and so do its idle camp mates near enough to hear it.
+func _wake(at: Vector2) -> void:
+	_grace = 0.0
+	_run_in = role == "rusher"
+	hsm.dispatch(&"approach")
+	var camp := get_parent()
+	if camp == null:
+		return
+	for mate in camp.get_children():
+		if mate != self and mate.has_method("hear_alert") and global_position.distance_to((mate as Node2D).global_position) <= ALERT:
+			mate.hear_alert(at)
+
+## A camp mate was hit: wake too, when idle and the archer is inside its leash.
+func hear_alert(at: Vector2) -> void:
+	if dead or state != "idle" or home.distance_to(at) > LEASH:
+		return
+	_grace = 0.0
+	_run_in = role == "rusher"
+	hsm.dispatch(&"approach")
 
 func _cancel_attack() -> void:
 	if is_instance_valid(shot):
@@ -194,6 +323,7 @@ func _draw() -> void:
 			draw_circle(Vector2(0, -15), 23.0, ink)
 			draw_line(Vector2(-24, -28), Vector2(-12, -45), ink, 9.0)
 			draw_line(Vector2(24, -28), Vector2(12, -45), ink, 9.0)
+	Glance.draw(self, Vector2(0, -54), glance_t)
 	if state == "windup":
 		var colour := Color(1.0, 0.65, 0.15, 0.85)
 		if role == "shooter":

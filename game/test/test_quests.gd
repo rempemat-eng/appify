@@ -88,7 +88,7 @@ func test_sample_quest_in_the_woodland_scene() -> void:
 	assert_bool(sign.wants_talk()).is_true()
 	await sign.interact()
 	assert_str(Quests.state(Q)).is_equal("done")
-	assert_int(SaveGame.data.glint).is_equal(40)
+	assert_int(SaveGame.data.glint).is_equal(46)      # the sign's 40 and 2 a mossling
 	# the camp stays cleared when the zone loads again
 	assert_bool(Zones.go_to("woodland", "start")).is_true()
 	await get_tree().process_frame
