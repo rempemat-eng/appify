@@ -13647,8 +13647,8 @@
   ],
   "deck": null,
   "foot": [
-   37,
-   30
+   36,
+   29
   ],
   "footprint": [
    [
@@ -13708,8 +13708,8 @@
   "variants": {
    "still": {
     "foot": [
-     37,
-     30
+     36,
+     29
     ],
     "png": "res://kit/props/art/frost/frost_bench.png"
    }
@@ -13727,8 +13727,8 @@
   ],
   "deck": null,
   "foot": [
-   25,
-   32
+   23,
+   34
   ],
   "footprint": [
    [
@@ -13777,15 +13777,15 @@
   "variants": {
    "a": {
     "foot": [
-     25,
-     32
+     23,
+     34
     ],
     "png": "res://kit/props/art/frost/frost_boulder_a.png"
    },
    "b": {
     "foot": [
-     24,
-     36
+     22,
+     39
     ],
     "png": "res://kit/props/art/frost/frost_boulder_b.png"
    }
@@ -13803,8 +13803,8 @@
   ],
   "deck": null,
   "foot": [
-   46,
-   56
+   37,
+   59
   ],
   "footprint": [
    [
@@ -13877,8 +13877,8 @@
   "variants": {
    "still": {
     "foot": [
-     46,
-     56
+     37,
+     59
     ],
     "png": "res://kit/props/art/frost/frost_boulder_large.png"
    }
@@ -13968,7 +13968,7 @@
    "toppled": {
     "foot": [
      22,
-     19
+     20
     ],
     "png": "res://kit/props/art/frost/frost_cairn_toppled.png"
    }
@@ -13983,7 +13983,7 @@
    "frames": 8,
    "offset": [
     54,
-    -313
+    -310
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/frost/frost_col_hut_loop.png"
@@ -13998,8 +13998,8 @@
   ],
   "deck": null,
   "foot": [
-   108,
-   315
+   109,
+   312
   ],
   "footprint": [
    [
@@ -14155,8 +14155,8 @@
   "variants": {
    "still": {
     "foot": [
-     108,
-     315
+     109,
+     312
     ],
     "png": "res://kit/props/art/frost/frost_col_hut.png"
    }
@@ -14174,8 +14174,8 @@
   ],
   "deck": null,
   "foot": [
-   49,
-   96
+   91,
+   107
   ],
   "footprint": [
    [
@@ -14243,7 +14243,16 @@
   "painted": false,
   "requires": [],
   "role": "rock",
-  "shadow": null,
+  "shadow": {
+   "dir": [
+    7,
+    7
+   ],
+   "size": [
+    79,
+    12
+   ]
+  },
   "size_cells": [
    7,
    3
@@ -14255,15 +14264,15 @@
   "variants": {
    "a": {
     "foot": [
-     49,
-     96
+     91,
+     107
     ],
     "png": "res://kit/props/art/frost/frost_crag_a.png"
    },
    "b": {
     "foot": [
-     73,
-     94
+     92,
+     104
     ],
     "png": "res://kit/props/art/frost/frost_crag_b.png"
    }
@@ -14281,8 +14290,8 @@
   ],
   "deck": null,
   "foot": [
-   18,
-   17
+   20,
+   16
   ],
   "footprint": [
    [
@@ -14330,8 +14339,8 @@
   "variants": {
    "still": {
     "foot": [
-     18,
-     17
+     20,
+     16
     ],
     "png": "res://kit/props/art/frost/frost_fire_ring.png"
    }
@@ -14397,8 +14406,8 @@
   ],
   "deck": null,
   "foot": [
-   17,
-   70
+   27,
+   62
   ],
   "footprint": [
    [
@@ -14422,7 +14431,7 @@
   ],
   "function": {},
   "kind": "prop",
-  "name": "Skis and shovel",
+  "name": "Ice saw, axe and shovel",
   "painted": false,
   "requires": [
    {
@@ -14454,8 +14463,8 @@
   "variants": {
    "still": {
     "foot": [
-     17,
-     70
+     27,
+     62
     ],
     "png": "res://kit/props/art/frost/frost_hut_tools.png"
    }
@@ -14711,12 +14720,26 @@
    "owner": null
   },
   "variants": {
+   "low": {
+    "foot": [
+     42,
+     90
+    ],
+    "png": "res://kit/props/art/frost/frost_krummholz_low.png"
+   },
    "still": {
     "foot": [
      61,
      108
     ],
-    "png": "res://kit/props/art/frost/frost_krummholz.png"
+    "png": "res://kit/props/art/frost/frost_krummholz_still.png"
+   },
+   "wide": {
+    "foot": [
+     68,
+     125
+    ],
+    "png": "res://kit/props/art/frost/frost_krummholz_wide.png"
    }
   },
   "z_sort": "foot"
@@ -14778,8 +14801,8 @@
   ],
   "deck": null,
   "foot": [
-   33,
-   89
+   29,
+   88
   ],
   "footprint": [
    [
@@ -14839,8 +14862,8 @@
   "variants": {
    "still": {
     "foot": [
-     33,
-     89
+     29,
+     88
     ],
     "png": "res://kit/props/art/frost/frost_noticeboard.png"
    }
@@ -15179,6 +15202,20 @@
     ],
     "png": "res://kit/props/art/frost/frost_rockface_plain.png"
    },
+   "plain_b": {
+    "foot": [
+     72,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rockface_plain_b.png"
+   },
+   "plain_c": {
+    "foot": [
+     72,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rockface_plain_c.png"
+   },
    "west": {
     "foot": [
      72,
@@ -15315,6 +15352,20 @@
      107
     ],
     "png": "res://kit/props/art/frost/frost_rockface_short_plain.png"
+   },
+   "plain_b": {
+    "foot": [
+     48,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rockface_short_plain_b.png"
+   },
+   "plain_c": {
+    "foot": [
+     48,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rockface_short_plain_c.png"
    },
    "west": {
     "foot": [
@@ -15691,7 +15742,7 @@
   "deck": null,
   "foot": [
    40,
-   38
+   37
   ],
   "footprint": [
    [
@@ -15752,7 +15803,7 @@
    "still": {
     "foot": [
      40,
-     38
+     37
     ],
     "png": "res://kit/props/art/frost/frost_woodpile.png"
    }

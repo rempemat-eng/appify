@@ -15,13 +15,13 @@ piece_id = "frost_col_hut"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-108, -315)
+offset = Vector2(-109, -312)
 
 [node name="Flow" type="Sprite2D" parent="."]
 script = ExtResource("3")
 texture = ExtResource("4")
 centered = false
-offset = Vector2(54, -313)
+offset = Vector2(54, -310)
 hframes = 8
 fps = 6
 

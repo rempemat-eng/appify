@@ -13,7 +13,7 @@ piece_id = "frost_boulder_large"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-46, -56)
+offset = Vector2(-37, -59)
 
 [node name="Solid" type="StaticBody2D" parent="."]
 collision_mask = 0

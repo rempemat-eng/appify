@@ -58,12 +58,12 @@
   {
    "at": [
     48,
-    552
+    528
    ],
    "facing": "s",
    "id": "rockface_short",
    "piece": "frost_rockface_short",
-   "variant": "east"
+   "variant": "plain"
   },
   {
    "at": [
@@ -73,7 +73,7 @@
    "facing": "s",
    "id": "rockface_short_2",
    "piece": "frost_rockface_short",
-   "variant": "west"
+   "variant": "plain_b"
   },
   {
    "at": [
@@ -93,17 +93,17 @@
    "facing": "s",
    "id": "rockface",
    "piece": "frost_rockface",
-   "variant": "plain"
+   "variant": "plain_c"
   },
   {
    "at": [
     480,
-    552
+    528
    ],
    "facing": "s",
    "id": "rockface_short_3",
    "piece": "frost_rockface_short",
-   "variant": "both"
+   "variant": "plain"
   },
   {
    "at": [
@@ -123,17 +123,17 @@
    "facing": "s",
    "id": "rockface_2",
    "piece": "frost_rockface",
-   "variant": "east"
+   "variant": "plain_b"
   },
   {
    "at": [
     840,
-    504
+    528
    ],
    "facing": "s",
    "id": "rockface_short_4",
    "piece": "frost_rockface_short",
-   "variant": "both"
+   "variant": "plain_c"
   },
   {
    "at": [
@@ -143,17 +143,17 @@
    "facing": "s",
    "id": "rockface_3",
    "piece": "frost_rockface",
-   "variant": "west"
+   "variant": "plain"
   },
   {
    "at": [
     1080,
-    552
+    528
    ],
    "facing": "s",
    "id": "rockface_short_5",
    "piece": "frost_rockface_short",
-   "variant": "both"
+   "variant": "plain_b"
   },
   {
    "at": [
@@ -517,18 +517,18 @@
   },
   {
    "at": [
-    168,
-    1080
+    180,
+    1056
    ],
    "facing": "s",
    "id": "krummholz",
    "piece": "frost_krummholz",
-   "variant": "still"
+   "variant": "wide"
   },
   {
    "at": [
-    288,
-    1080
+    300,
+    1056
    ],
    "facing": "s",
    "id": "pine_squat_2",
@@ -547,8 +547,8 @@
   },
   {
    "at": [
-    312,
-    600
+    420,
+    672
    ],
    "facing": "s",
    "id": "pine_3",
@@ -557,7 +557,7 @@
   },
   {
    "at": [
-    384,
+    456,
     624
    ],
    "facing": "s",
@@ -577,8 +577,8 @@
   },
   {
    "at": [
-    1092,
-    624
+    1080,
+    600
    ],
    "facing": "s",
    "id": "spruce_5",
@@ -587,8 +587,8 @@
   },
   {
    "at": [
-    1032,
-    672
+    1020,
+    696
    ],
    "facing": "s",
    "id": "pine_4",
@@ -597,8 +597,8 @@
   },
   {
    "at": [
-    1092,
-    744
+    1068,
+    768
    ],
    "facing": "s",
    "id": "pine_squat_4",
@@ -667,18 +667,18 @@
   },
   {
    "at": [
-    780,
-    1080
+    804,
+    1056
    ],
    "facing": "s",
    "id": "krummholz_2",
    "piece": "frost_krummholz",
-   "variant": "still"
+   "variant": "low"
   },
   {
    "at": [
-    696,
-    1080
+    732,
+    1032
    ],
    "facing": "s",
    "id": "spruce_8",
@@ -713,17 +713,17 @@
    "facing": "s",
    "id": "krummholz_3",
    "piece": "frost_krummholz",
-   "variant": "still"
+   "variant": "low"
   },
   {
    "at": [
-    708,
-    384
+    684,
+    432
    ],
    "facing": "s",
    "id": "krummholz_4",
    "piece": "frost_krummholz",
-   "variant": "still"
+   "variant": "wide"
   },
   {
    "at": [
@@ -737,8 +737,8 @@
   },
   {
    "at": [
-    1032,
-    384
+    1044,
+    360
    ],
    "facing": "s",
    "id": "krummholz_5",
@@ -747,21 +747,21 @@
   },
   {
    "at": [
-    360,
-    384
+    372,
+    336
    ],
    "facing": "s",
    "id": "krummholz_6",
    "piece": "frost_krummholz",
-   "variant": "still"
+   "variant": "low"
   }
  ],
  "rows": [
-  "ccccccccccc.a.ccccccccccccccccccccccccccccccccc",
-  "ccccccccc.c.a.cccccccc..ccccccccccccccccccccccc",
-  "cccccc.cc.c.a.c.........ccccccccccccccccccccccc",
+  "ccccccccccc..accccccccccccccccccccccccccccccccc",
+  "ccccccccc.c..aaccccccc..ccccccccccccccccccccccc",
+  "cccccc.cc.c.aac.........ccccccccccccccccccccccc",
   ".......cc...a.c.........ccccccccccccccccccccccc",
-  "............a...........ccccccccccccccccccccccc",
+  "...........aa...........ccccccccccccccccccccccc",
   "......iiiiiiii................ccccccccccccccccc",
   ".....iiiiiiiiiii...................cccccccccccc",
   "....iiiiiiiiiiiii..................cccccccccccc",
@@ -773,35 +773,35 @@
   "........aaa..ii....bbbbbbb..........ccccccccccc",
   "........aaa.............bb................ccccc",
   "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaa.............bb.....................",
-  "........aaaaaaaaaaaaa...bb.....................",
-  "........aaaaaaaaaaaaa...bb.....................",
-  "........aaaaaaaaaaaaa...bb.....................",
+  ".........aaa............bb.....................",
+  ".........aaa............bb.....................",
+  ".........aaa............bb.....................",
+  "........aaaa............bb.....................",
+  "........aaaa............bb.....................",
+  "........aaaa............bb.....................",
+  "........aaaa............bb.....................",
+  "........aaaaa...........bb.....................",
+  ".........aaaaa..........bb.....................",
+  "...........aaaa.........bb.....................",
+  "............aaaa........bb.....................",
+  ".............aaa........bb.....................",
+  ".............aaaa.......bb.....................",
+  "..............aaaaa.....bb.....................",
+  "...............aaaaa....bb.....................",
+  "................aaaaa...bb.....................",
+  ".................aaa....bb.....................",
+  "................aaa.....bb.....................",
+  "...............aaaa.....bb.....................",
+  "................aaaa....bb.....................",
+  ".................aaaa...bb.....................",
+  "..................aaa...bb.....................",
+  "......bbbbbbbbbbbbaaabbbbb.....................",
+  "......bbbbbbbbbbbbaaabbbbb.....................",
   "..................aaa...bb.....................",
   "..................aaa...bb.....................",
-  "..................aaa...bb.....................",
-  "..................aaa...bb.....................",
-  "..................aaa...bb.....................",
-  "..................aaa...bb.....................",
-  "..................aaa...bb.....................",
-  "........bbbbbbbbbbaaabbbbb.....................",
-  "........bbbbbbbbbbaaabbbbb.....................",
-  "..................aaa...bb.....................",
-  "..................aaa...bb.....................",
-  "..................aaa...bb.....................",
-  "..................aaa...bb.....................",
-  "..................aaa...bb.....................",
+  "..................aaaa..bb.....................",
+  "...................aaa..bb.....................",
+  "..................aaaa..bb.....................",
   "..................aaa...bb....................."
  ],
  "spawns": {

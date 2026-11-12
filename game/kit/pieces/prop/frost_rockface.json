@@ -18,6 +18,24 @@
    ]
   },
   {
+   "id": "plain_b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_rockface_plain_b.png",
+   "foot": [
+    72,
+    107
+   ]
+  },
+  {
+   "id": "plain_c",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_rockface_plain_c.png",
+   "foot": [
+    72,
+    107
+   ]
+  },
+  {
    "id": "west",
    "weight": 0.6,
    "png": "res://kit/props/art/frost/frost_rockface_west.png",
@@ -50,7 +68,7 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "A south granite face 32 world px high with a snow lip, jointed facets, drifts at its foot; side bands where it jogs (west, east, both)."
+  "note": "A south granite face 32 world px high (Eastward 12's block cliff): stratified granite blocks with lit tops, shaded undersides, dark joints, snow on the ledges, a snow lip over the top and a stony foot; three plain looks that tile into one face, and ends (west, east, both) for a tier's real ends."
  },
  "geometry": {
   "size_px": [

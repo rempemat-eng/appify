@@ -49,7 +49,7 @@
         376,
         32
       ],
-      "why": "the cirque's step (brief 4: faces 32 in rock with snow lips): a granite face with a snow lip across the zone, jogging a cell at four places, climbed by the stair, the tarn's outlet frozen over it"
+      "why": "the cirque's step (brief 4: faces 32 in rock with snow lips): a granite face with a snow lip across the zone at one height, its blocks running on through the pieces, climbed by the stair between its cheeks, the tarn's outlet frozen over it"
     },
     {
       "id": "tarn",
@@ -60,7 +60,7 @@
         104,
         80
       ],
-      "why": "the tarn under the headwall, deep at its north and shelving to the south-east; frozen (the ice-cutter's trade), with one cut hole by her sledge, a rill coming in from the north gully and its outlet leaving the south-west shore: the Sleepwater's source"
+      "why": "the tarn under the headwall, deep at its north and shelving to the south-east; frozen (the ice-cutter's trade), with one cut hole by her sledge, a rill bending down from the north gully and its outlet leaving the south-west shore: the Sleepwater's source"
     },
     {
       "id": "outlet",
@@ -68,10 +68,10 @@
       "rect": [
         64,
         88,
-        104,
+        120,
         280
       ],
-      "why": "the Sleepwater leaving the tarn, 24 px wide: over the step as a frozen fall, south, a dog-leg east, south to the zone's south edge at x 144 to 168 (to meet the woodland's brook when the door is hooked up), under the hut spur's footbridge"
+      "why": "the Sleepwater leaving the tarn, 24 to 40 px wide: a short bend to the step's lip, over it as a frozen fall into a pool, then meandering south-east clear of the hut's roof (cut banks on the outside of its bends, point bars inside), south to the zone's south edge at x 144 to 168 (to meet the woodland's brook when the door is hooked up), under the hut spur's footbridge"
     },
     {
       "id": "ice_cut",

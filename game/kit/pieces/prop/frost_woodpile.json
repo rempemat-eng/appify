@@ -14,7 +14,7 @@
    "png": "res://kit/props/art/frost/frost_woodpile.png",
    "foot": [
     40,
-    38
+    37
    ]
   }
  ],
@@ -27,15 +27,15 @@
  },
  "geometry": {
   "size_px": [
-   73,
-   48
+   75,
+   45
   ],
   "size_cells": [
    3,
    1
   ],
   "z_sort": "foot",
-  "height_px": 48,
+  "height_px": 45,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,7 +47,7 @@
   },
   "foot": [
    40,
-   38
+   37
   ],
   "footprint": [
    [

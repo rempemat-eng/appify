@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://qstr652dv80u"
-path="res://.godot/imported/frost_krummholz.png-dd06906ba69f607be76650f0232a0a10.ctex"
+uid="uid://c7p4tptrpfai5"
+path="res://.godot/imported/frost_rockface_short_plain_c.png-7954db967bff4f61f408ab5f774333ec.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/props/art/frost/frost_krummholz.png"
-dest_files=["res://.godot/imported/frost_krummholz.png-dd06906ba69f607be76650f0232a0a10.ctex"]
+source_file="res://kit/props/art/frost/frost_rockface_short_plain_c.png"
+dest_files=["res://.godot/imported/frost_rockface_short_plain_c.png-7954db967bff4f61f408ab5f774333ec.ctex"]
 
 [params]
 

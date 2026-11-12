@@ -23,7 +23,7 @@
    "png": "res://kit/props/art/frost/frost_cairn_toppled.png",
    "foot": [
     22,
-    19
+    20
    ]
   },
   {
@@ -45,7 +45,7 @@
  },
  "geometry": {
   "size_px": [
-   57,
+   63,
    59
   ],
   "size_cells": [

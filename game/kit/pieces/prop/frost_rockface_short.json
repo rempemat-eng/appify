@@ -18,6 +18,24 @@
    ]
   },
   {
+   "id": "plain_b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_rockface_short_plain_b.png",
+   "foot": [
+    48,
+    107
+   ]
+  },
+  {
+   "id": "plain_c",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_rockface_short_plain_c.png",
+   "foot": [
+    48,
+    107
+   ]
+  },
+  {
    "id": "west",
    "weight": 0.6,
    "png": "res://kit/props/art/frost/frost_rockface_short_west.png",
