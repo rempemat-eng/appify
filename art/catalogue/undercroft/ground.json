@@ -34,7 +34,8 @@
  "reviewed": "2026-11-11",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-12",
+  "note": "Delta audit of PR #476 at 5dbd69dd (audit476_ground_r2.md, not committed), detail-auditor, 12 Nov, against 10227404~1. Only rubble_hall's ground shadow moved with the prop (foot 132,597 to 132,596): 57 texels changed in x 88..172, y 574..595, alpha 0, palette identical (77 colours, none new), nothing outside that box. 38 of the 57 lie under the rubble's new silhouette; the 19 visible ones are 15 shade texels east of and below the east chunk and its chips (y 587..593, x 143..172: shade east and down for upper-left light), 2 texels at (100..101, 590) one step darker in the same shade ramp, and 2 west fringe texels (88,594), (94,595) returned to floor tone, so no orphan or doubled shadow at the old spot. Rows 596..599 (wall-foot occlusion band) unchanged; the rubble's lowest row is now 599, above the kerb's lit top at 600, so it no longer covers the lip (S-1 fixed). Checked at 1x, 2x and 10x composited with rubble_hall.png: no seam or banding, contact shade reads as before. Earlier pass (d6b6c8eb) otherwise carries: ground band, moss counts, detail.no_falloff 0.32 rejected as a false positive (lit pools, falloff and wall-base occlusion are drawn; the void and kerbs read as even light). G-39 polish carried."
  }
 }
