@@ -46,7 +46,36 @@ func test_pack_caps_commitments_and_releases_on_loss_of_target() -> void:
 	assert_int(pool.count()).is_equal(2)
 	second._cancel_attack()
 
-func test_leash_cancels_tell_and_never_releases_a_hit() -> void:
+## Matt, 11 Nov: a committed wind-up and its strike finish even when the target steps over the leash line
+## (stepping out as it wound up beat every creature at its leash line). The recovery after it goes home.
+func test_a_committed_tell_finishes_across_the_leash_then_it_goes_home() -> void:
+	var pool: SliceAttackSlots = auto_free(SliceAttackSlots.new())
+	add_child(pool)
+	var target: Node2D = auto_free(Node2D.new())
+	add_child(target)
+	target.position = Vector2(30, 0)
+	var enemy := _enemy("rusher", pool, target)
+	assert_str(enemy.state).is_equal("windup")
+	var attacks := [0]
+	enemy.released.connect(func() -> void: attacks[0] += 1)
+	enemy.position = Vector2(200, 0)
+	target.position = Vector2(SliceEnemy.LEASH + 1.0, 0)
+	enemy.step(0.1)
+	assert_str(enemy.state).is_equal("windup")          # main: cancelled into the walk home
+	enemy.step(enemy.windup_time())
+	assert_str(enemy.state).is_equal("attack")
+	assert_int(attacks[0]).is_equal(1)
+	enemy.step(0.2)
+	assert_str(enemy.state).is_equal("recover")
+	enemy.step(0.01)
+	assert_str(enemy.state).is_equal("leash")           # the recovery turns for home
+	assert_int(pool.count()).is_equal(0)
+	enemy.position = enemy.home
+	enemy.step(0.01)
+	assert_str(enemy.state).is_equal("idle")
+
+## A tell whose target is gone altogether is still cancelled.
+func test_a_tell_whose_target_is_gone_is_cancelled() -> void:
 	var pool: SliceAttackSlots = auto_free(SliceAttackSlots.new())
 	add_child(pool)
 	var target: Node2D = auto_free(Node2D.new())
@@ -55,15 +84,11 @@ func test_leash_cancels_tell_and_never_releases_a_hit() -> void:
 	var enemy := _enemy("rusher", pool, target)
 	var attacks := [0]
 	enemy.released.connect(func() -> void: attacks[0] += 1)
-	enemy.position = Vector2(200, 0)
-	target.position = Vector2(SliceEnemy.LEASH + 1.0, 0)
+	enemy.target = null
 	enemy.step(1.0)
-	assert_str(enemy.state).is_equal("leash")
-	assert_int(pool.count()).is_equal(0)
+	assert_bool(enemy.state == "leash" or enemy.state == "idle").is_true()   # it was at home: idle at once
 	assert_int(attacks[0]).is_equal(0)
-	enemy.position = enemy.home
-	enemy.step(0.01)
-	assert_str(enemy.state).is_equal("idle")
+	assert_int(pool.count()).is_equal(0)
 
 func test_shield_front_halves_damage_and_back_is_open() -> void:
 	var pool: SliceAttackSlots = auto_free(SliceAttackSlots.new())

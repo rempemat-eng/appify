@@ -111,8 +111,11 @@ func _on_body(body: Node) -> void:
 	if is_low(body):
 		return                       # it flies over water, a drop, a bench or a stump
 	if body.is_in_group("enemy") and body.has_method("take_hit"):
-		body.take_hit(1, dir, KNOCKBACK)
-		struck.emit(body)
+		# an enemy says whether the hit counted; one that glanced off (enemies/glance.gd) is not reported as
+		# struck, so the camera does not shake for it as for a hit
+		var counted: Variant = body.take_hit(1, dir, KNOCKBACK)
+		if counted == null or bool(counted):
+			struck.emit(body)
 	queue_free()
 
 func _draw() -> void:

@@ -46,8 +46,8 @@ func finish() -> void:
 	queue_free()
 
 func _on_body(body: Node) -> void:
-	if finished:
-		return
+	if finished or Arrow.is_low(body):
+		return                               # it flies over a low solid, as the player's arrow does
 	if body.is_in_group("player"):
 		if body.has_method("take_damage"):
 			body.take_damage(1, direction)

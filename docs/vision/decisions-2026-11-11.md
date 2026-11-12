@@ -19,6 +19,14 @@ Matt answered these on 11 Nov (09:45 to 10:00, London). They stand until he chan
 - **The Thornback** heals to full 3 s after the player leaves its arena, like every other enemy at home.
 - **The glance rule stays.** An arrow from beyond an enemy's reach does no harm. It must read as a miss: a spark, a clink mark and, once sound exists, a sound.
 
+My own calls (Claude A), within these rulings:
+
+- **The creature leash line.** A creature's committed wind-up and strike finish even across its leash, and an enemy the player has hurt (elite, shield, rusher, mossling alike) keeps coming across its leash for up to 3 s after the last hurt (the mossling's `PROVOKED_TIME`), then goes home. That includes the toad (shooter), which keeps shooting as it follows: it is a hurt creature too. A glance is not a hurt and starts no pursuit. It never leaves its zone, and the give-up after 2.5 s without progress still applies inside those 3 s.
+- **Mosslings share the creatures' attack limit**: at most two enemies in a zone wind up or strike at once (`SliceAttackSlots`). Three mosslings lining up their tells downed a player who stood in front of the woodland camp; health and damage stay as they are.
+- **Columns stay solid**: dead spots behind them both ways, as on main.
+- **The downed cache keeps "carried"** Glint (20 % of what the player carries).
+- **The 1.6 run-in stays**: an enemy woken by a shot runs in 1.6 times as fast until its first wind-up.
+
 ## The world
 
 - **The forge** paid before Hale is home shows a dark hearth until she arrives. An ember drawing goes into the art queue.
