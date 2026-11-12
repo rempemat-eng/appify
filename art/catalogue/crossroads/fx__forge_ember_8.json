@@ -1,0 +1,43 @@
+{
+ "id": "crossroads/fx/forge_ember_8",
+ "file": "game/zones/crossroads/art/fx/forge_ember_8.png",
+ "sha256": "41bc0f899d99b6c564b572af9f46236fc426be201fd375a3f8fc9c949ad0e39d",
+ "kind": "forge_ember",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  432,
+  72
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": null,
+  "passed": null,
+  "group": "prop"
+ },
+ "findings": [],
+ "reviewed": "2026-11-12",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pass",
+  "date": "2026-11-12",
+  "note": "Round 2 of the #477 asset gate (head 51edcda1, sha256 41bc0f89...). E1 fixed: three coals are crust cracks with 3 to 4 px ember cores breathing over 3 tones, a warm ring and a 2 px glow on the hood lip at the peak; readable at 1x and 3x composited on smithy.png at the scene offsets. E2 fixed: a low heap clear of the hood fringe, top in shade under the overhang, ash spilling onto the coping. Detectors 0/0/0 (detail bar unmeasurable: too small, judged by eye). Not a fault here: the lit fire strip's bed sits lower than the coping, so the swap jumps; that belongs to forge_fire_8 under its own gate."
+ }
+}
