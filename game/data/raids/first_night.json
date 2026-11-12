@@ -1,0 +1,58 @@
+{
+  "_about": "The first night (docs/vision/vertical-slice.md beat 8; game-design.md 7.6 on claude-a/game-design-v2): the first prepared raid on Crossroads. core/raids.gd reads it. Positions are world px local to the zone, as in data/plans/crossroads.json; the lane and the gate pad are the plan's own (looked up by id). Every number marked placeholder is one to tune in play-tests; none is balanced. The purse is in data/balance/glint.json (raids.first_night).",
+  "id": "first_night",
+  "title": "The first night",
+  "zone": "crossroads",
+  "attention_if": { "flags": ["shard_home:woodland"] },
+  "announce_if": { "done": ["home_again"] },
+  "why_announce_if": "the raid comes from the lantern's light (attention), and is announced only once the homecoming quest is over, so beat 8 follows beat 7 (a decision for Matt)",
+  "postpones": 2,
+  "lane": "halt_road",
+  "pads": [
+    { "id": "pad_halt_street", "at": [140, 300], "why": "between the bakery and the herbalist's, where the halt road is a street: the first hurdle the shardstruck meet. Not in the plan yet: the plan's other first-night pad (pad_harbour_gate) stands on the harbour road, which no first-night wave walks (map follow-up for the plan's owner and Matt)" },
+    { "id": "pad_halt_gate", "plan": true, "why": "the plan's pad where the halt road meets the square" }
+  ],
+  "kinds": {
+    "hurdle_barricade": {
+      "name": "Hurdle barricade",
+      "from": "Hale's forge",
+      "needs": { "restored": ["forge"] },
+      "text": "Blocks the road until it is broken",
+      "hp": 10,
+      "hp_placeholder": true,
+      "span": 22,
+      "depth": 6
+    }
+  },
+  "prefill": "hurdle_barricade",
+  "lantern": { "hp": 12, "hp_placeholder": true, "reach": 30 },
+  "march_speed": 30,
+  "march_speed_placeholder": true,
+  "notice": 60,
+  "why_notice": "world px: nearer than this, with nothing solid between, a marching creature turns on the player (the camps notice at 100; a raider keeps to its road longer)",
+  "batter": { "damage": 1, "elite_damage": 2, "placeholder": true },
+  "first_wave_after": 2.0,
+  "wave_gap": 3.0,
+  "spawn_spacing": 1.0,
+  "waves": [
+    { "creatures": ["rusher", "rusher"], "why": "two boarlets: the hurdles take the first knocks" },
+    { "creatures": ["rusher", "shooter", "rusher"], "why": "a toad that spits over the hurdle at the archer" },
+    { "creatures": ["shield", "rusher", "elite"], "why": "a mossback and the horned elite last" }
+  ],
+  "waves_placeholder": true,
+  "repairs": [
+    { "id": "boards_on_a_window", "kind": "boards", "at": [525, 256], "size": [14, 14], "foot": 281, "why": "over the smithy's front window (smithy.png, right of the forge mouth); `foot` sorts it in front of the building" },
+    { "id": "cart_on_its_side", "kind": "cart", "at": [236, 338], "size": [24, 10], "foot": 342, "why": "south of the gate pad, off the walkway" }
+  ],
+  "reward": {
+    "flags": ["first_night_won"],
+    "offers": {
+      "id": "bell_tower",
+      "name": "The library's bell tower",
+      "cost": { "glint": 50 },
+      "if": { "flags": ["first_night_won"] },
+      "stage": 1,
+      "why": "the bell tower (game-design.md 7.2, the library's cupola; act 1's restore id bell_tower at the 50 Glint its mark's lines quote, docs/story/act1.md) is offered for stage 1. core/raids.gd adds it to Village.sites only while no plan defines bell_tower; its restore mark and its picture arrive with stage 1's map and art. Until then the offer is in Hale's lines"
+    }
+  }
+}

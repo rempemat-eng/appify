@@ -30,7 +30,7 @@ Total: about 60 to 90 minutes, matching 12.2's test (45 to 70 for a strong playe
 5. **Forge, not apothecary.** Reasons: (a) 12.2's test asks the player to upgrade a weapon, and gear is Bramble's first loop (fight, loot, upgrade); (b) the smith is the prologue's mover in 8.2 and 7.4 ("a smith from Crossroads (forge)"); (c) the apothecary brews from crops, which the slice only plants at its end, and 8.2 ties it to the circle's act-1 beat (the gardener's daughter, or Morel); (d) the forge's defence kind, the hurdle barricade, is what fills the first night's two pads. The apothecary is the first restore of act 1. The restore is paid at a "restore here" mark on the building, instantly, with no timer (7.3).
 6. **The Undercroft** is three rooms and the chamber in a row under the stone circle, reached by the hatch Hale unbars. Defeat here follows Matt's rule: the player keeps all gear, and a fifth of the Glint earned since last home drops as a cache at the spot, picked up again on the next run. The Thornback, a boar in a bramble shell, is freed: when its health runs out the bramble shell cracks and falls away and it lies down calm beside the shard. Cairn is a granite figure half sunk in the chamber wall; looking at him after the shard is taken makes his eye slits glow once. He stands up in act 1.
 7. **The homecoming.** Walking the shard home is the slice's emotional beat: the lantern lights, the well clears and the crater stops smoking (7.10, the village reacts to the story). The villager quest (*Home again*) is 12.2's "one villager" quest and repairs a second building in front of the player. Its seeds are the two beds 12.2 asks for; they grow by outings, not by clock.
-8. **The first night.** The lit lantern is the attention the raid comes from. It is announced when the player next comes home, can be postponed twice, and then begins the next time the player walks into town; the prepare screen is never timed. Losing costs nothing but brief repairs. **It is built last**, once Codex's enemies and the familiar's save land, and it moves to M2 if the slice runs long (12.2 allows this). The plan already holds its lane and two pads.
+8. **The first night.** The lit lantern is the attention the raid comes from. It is announced when the player next comes home, can be postponed twice, and then begins the next time the player walks into town; the prepare screen is never timed. Losing costs nothing but brief repairs. **Built 12 Nov** (below, "The first night as built"), after Codex's enemies, on the plan's lane and the existing woodland creatures.
 
 ## The quest chain (data)
 
@@ -127,8 +127,9 @@ does not place the later `circle_stones`/`cairn` interactions or
 `circle_trial` camp described in [Act 1](../story/act1.md#what-other-lanes-need-to-place).
 The scenario explicitly leaves those shards absent and `circle_awake` false.
 Do not substitute its earlier state-seeding tests for a manual route.
-The first-night raid, planting two beds and a first weapon upgrade in the
-older beat table are outside the accepted scenario's completion evidence.
+Planting two beds and a first weapon upgrade in the older beat table are
+outside the accepted scenario's completion evidence. The first-night raid has
+its own route and suite (below).
 
 Source references: [input bindings](../../game/core/inputs.gd),
 [player input](../../game/actors/player.gd),
@@ -138,6 +139,44 @@ Source references: [input bindings](../../game/core/inputs.gd),
 [lever](../../game/world/seal_lever.gd) and
 [restore consumer](../../game/world/restore_site.gd).
 
+## The first night as built (12 Nov)
+
+Beat 8 plays in Crossroads after *Home again*. `data/raids/first_night.json` holds it, `core/raids.gd` keeps
+it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Every number is a placeholder.
+
+1. **Attention.** The lit lantern (`shard_home:woodland`) draws the shardstruck. The raid is announced only
+   after *Home again* is done, so beat 8 follows beat 7.
+2. **Announced on the next walk into town.** This means walking into Crossroads from another zone. A load
+   or getting up after a defeat does not count, so an older save is never ambushed. The announcement is the
+   prepare screen itself. It is untimed and the player stands still behind it. It names the halt road and
+   shows the lane, with both pads holding Hale's hurdle barricade. Its buttons are "Ring the bell" and
+   "Not tonight (n left)". A pad tap cycles between the hurdle and empty, and the layout is remembered.
+3. **Postponed twice.** "Not tonight" puts it off until the next walk in. After two, the next walk in
+   brings the screen without "Not tonight". Moss mentions the camp while it is put off. Quitting on the
+   screen brings it back on the next start.
+4. **Three waves, one lane, two pads.** The waves come down the plan's `halt_road` and use the woodland's
+   creature roles: two boarlets; then a boarlet, a toad and a boarlet; then a mossback, a boarlet and the
+   horned elite. They march to the lantern and batter a standing hurdle, or the lantern itself, with
+   their own tells. A creature turns on the player when the player is near and nothing solid is between
+   them. The toad spits over a hurdle. Nobody targets Hale, Moss or any villager. Creatures are freed with
+   the camps' look and pay no fight Glint. The two pads are the plan's `pad_halt_gate`, where the road
+   meets the square, and `pad_halt_street`, a new pad in the raid's data between the bakery and the
+   herbalist's.
+5. **Win.** A purse of 30 Glint is paid once and `first_night_won` is set. The bell tower is offered as a
+   stage-1 restore (`bell_tower`, 50 Glint, act 1's id and price), and Hale says so. Its mark and its
+   picture come with stage 1.
+6. **Loss.** The night is lost when the lantern falls or the player goes down. Defeat keeps the usual
+   cache rule. Nothing is taken. Brief repairs show (boards on the smithy's window, a cart on its side)
+   until the next walk in, which clears them and offers the night again with both postponements back.
+   Walking out mid-night leaves it due. Quitting mid-night brings the screen back, from wave 1.
+
+Placeholders (art follow-ups): the hurdle, the lantern's health bar, the two repairs and the screen's lane
+map use the blockout's flat colours. There is no bell or horn sound yet.
+
+`test/test_raids.gd` holds the rules. `game/tools/routes/first_night.txt` plays the end of the slice with
+real input, from a save made just after *Home again* through the announcement, both postponements, a quit
+on the screen, the three waves and the win, to Hale's offer.
+
 ## Open for Matt
 
 1. The forge first (reasons in beat 5), with the apothecary as act 1's first restore.
@@ -145,3 +184,10 @@ Source references: [input bindings](../../game/core/inputs.gd),
 3. Restores are paid at a "restore here" mark on the building itself, not at the hut's workbench (7.3 allows either).
 4. The first night stays in the slice but is built last, after Codex's enemies; it moves to M2 if the slice runs long.
 5. The placeholder purse: 40, 10, 60 and 25 Glint in, 30 and 20 out.
+6. The first night (12 Nov), to confirm: the announcement waits for *Home again* to be done; the
+   announcement and the prepare screen are one screen; a lost night is offered again on the next walk in
+   with both postponements back; going down during the night loses it; walking out mid-night leaves it
+   due. The second pad is new, `pad_halt_street`, because the plan's other first-night pad
+   (`pad_harbour_gate`) stands on the harbour road, which no first-night wave walks. Either move that
+   pad in the plan or keep the new one. The purse is 30 Glint, and the bell tower is offered at act 1's
+   price of 50.

@@ -21,6 +21,9 @@ extends Node
 ##                           walked to is left in the zone
 ##   down [secs]             stand a few steps from the nearest enemy until downed, then get up
 ##   hurt [secs]             the same, but only until the first hit lands (hearts missing, not downed)
+##   button <name or text>   move the mouse onto a visible on-screen button (its node name, or the start of
+##                           its text) and click it, as a player would (the raid's prepare screen)
+##   defend [secs]           fight a raid's waves as they come until the night is over (core/raids.gd)
 ##   key <Name>              tap a key (Escape, E, Space, Enter, Down, ...)
 ##   hold <left|right|up|down|upleft|...> <secs>
 ##   aim x y, click, roll    the mouse at a world point, a left click, Space
@@ -32,6 +35,8 @@ extends Node
 ##       prompt <verb|none> | hp <n> | hurt (hearts missing) | glint <n> | restored <id> | notrestored <id> | enemies <n>
 ##       at x y <tol> | hud <text|none> | said <text> | banner <text|none> | paused <yes|no>
 ##       line <text|none> (the line on the dialogue box now)
+##       raid <state> (core/raids.gd: none, announced, postponed, pending, running, won, lost) | raidscreen <yes|no>
+##       defences <n> (hurdles standing) | repairs <yes|no> (the brief repairs after a lost night)
 ##   restart                 close the window as a player would; the runner starts the game again from the
 ##                           save and the route carries on at the next line
 ##   end                     pass (the end of the file passes too)
@@ -359,6 +364,10 @@ func run(c: String) -> String:
 			out("CACHES picked up; Glint %d" % int(SaveGame.data.glint))
 		"hurt":
 			return await down(float(a[1]) if a.size() > 1 else 40.0, true)
+		"button":
+			return await press_button(c.substr(7).strip_edges())
+		"defend":
+			return await defend(float(a[1]) if a.size() > 1 else 300.0)
 		"expect":
 			var problem := expect(a)
 			out(("  ok   %s" % c) if problem == "" else ("  MISS %s: %s" % [c, problem]))
@@ -433,6 +442,21 @@ func expect(a: PackedStringArray) -> String:
 			return "" if all.contains(rest.to_lower()) else "the last lines were: %s" % (" | ".join(_said) if _said.size() > 0 else "(nothing)")
 		"paused":
 			return "" if get_tree().paused == (a[2] == "yes") else "paused is %s" % get_tree().paused
+		"raid":
+			return "" if Raids.state() == a[2] else "the raid is %s" % Raids.state()
+		"raidscreen":
+			var screen := get_tree().get_first_node_in_group("raid_screen") as Control
+			var up := screen != null and screen.is_visible_in_tree()
+			return "" if up == (a[2] == "yes") else "the prepare screen is %s" % ("up" if up else "not up")
+		"defences":
+			var standing := 0
+			for b in get_tree().get_nodes_in_group("raid_defence"):
+				if b.has_method("standing") and b.standing():
+					standing += 1
+			return "" if standing == int(a[2]) else "%d hurdles stand" % standing
+		"repairs":
+			var shown := not get_tree().get_nodes_in_group("raid_repair").filter(func(n: Node) -> bool: return not n.is_queued_for_deletion()).is_empty()
+			return "" if shown == (a[2] == "yes") else "the repairs are %s" % ("shown" if shown else "not shown")
 		"line":
 			var box := get_tree().get_first_node_in_group("dialogue_box")
 			var line: String = box.shown_line() if box != null else ""
@@ -516,6 +540,67 @@ func goto(target: Vector2, tol: float, until_zone := "") -> String:
 	if changed:
 		return "a door took the player to %s on the way" % SaveGame.data.zone
 	return "%s: stopped %d texels short at %s" % ["the walk grid has no way there" if no_path else "did not arrive", int(dist), p.global_position.round()]
+
+## The visible button named `what` (its node name, or the start of its text, either case), or null.
+func _find_button(node: Node, what: String) -> BaseButton:
+	if node is BaseButton and (node as CanvasItem).is_visible_in_tree():
+		var b := node as BaseButton
+		var text := String(b.get("text")) if b.get("text") != null else ""
+		if String(b.name) == what or (text != "" and text.to_lower().begins_with(what.to_lower())):
+			return b
+	for c in node.get_children():
+		var found := _find_button(c, what)
+		if found != null:
+			return found
+	return null
+
+## Moves the mouse onto a button and clicks it with real mouse events, through the pixel screen's scale.
+func press_button(what: String) -> String:
+	var b := _find_button(get_tree().root, what)
+	if b == null:
+		return "no visible button '%s'" % what
+	var centre := b.get_global_rect().get_center()      # in the game's 960 x 540 art grid
+	var main := get_tree().current_scene
+	var screen := centre
+	if main != null and main.get("screen") != null:
+		screen = main.screen.position + centre * main.scale_k
+	var move := InputEventMouseMotion.new()
+	move.position = screen
+	move.global_position = screen
+	Input.parse_input_event(move)
+	Input.warp_mouse(screen)
+	await _sleep(0.1)
+	for down: bool in [true, false]:
+		var e := InputEventMouseButton.new()
+		e.button_index = MOUSE_BUTTON_LEFT
+		e.pressed = down
+		e.position = screen
+		e.global_position = screen
+		Input.parse_input_event(e)
+		await _sleep(0.08)
+	await _sleep(0.2)
+	out("BUTTON %s  raid=%s  %s" % [what, Raids.state(), status()])
+	return ""
+
+## Fights a raid's waves as they come, until the night is over (won or lost) or `limit` seconds pass.
+func defend(limit: float) -> String:
+	var start := now()
+	var anchor := player().global_position
+	while now() - start < limit and Raids.running():
+		if enemies().is_empty():
+			# between waves: back to where the defence began, out of the road
+			if player().global_position.distance_to(anchor) > 60.0 and player().is_inside_tree():
+				await goto(anchor, 40.0)
+			else:
+				await _sleep(0.3)
+			continue
+		var problem := await fight(maxf(limit - (now() - start), 1.0))
+		if problem != "" and Raids.running():
+			return problem
+	out("DEFEND %.1fs raid=%s  %s" % [now() - start, Raids.state(), status()])
+	if Raids.running():
+		return "the night was still on after %.0fs" % limit
+	return ""
 
 ## Presses E at the focus and on through every line. Fails when nothing is in reach.
 func talk(expected: String) -> String:

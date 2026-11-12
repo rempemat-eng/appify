@@ -1,0 +1,36 @@
+{
+  "hale": {
+    "name": "Hale",
+    "entries": [
+      {
+        "priority": 5,
+        "if": { "flags": ["first_night_won"], "not_restored": ["bell_tower"] },
+        "lines": [
+          "They broke on my hurdles and your bow. That's the first night held.",
+          "The library's bell used to warn the whole valley. Put it back in its cupola when the square reopens, and we'll hear the next lot coming."
+        ]
+      },
+      {
+        "priority": 5,
+        "if": { "flags": ["first_night_announced"], "not_flags": ["first_night_won"] },
+        "lines": [
+          "My hurdles are on both pads, across the halt road. They'll hold a while. The rest is your bow.",
+          "Ring when you're ready, not before."
+        ]
+      }
+    ]
+  },
+  "moss": {
+    "name": "Moss",
+    "entries": [
+      {
+        "priority": 11,
+        "if": { "flags": ["first_night_postponed"], "not_flags": ["first_night_won"] },
+        "lines": [
+          "Their camp's still out on the halt road. I can see their eyes from the stall at dusk.",
+          "Hale's hurdles are ready whenever you are."
+        ]
+      }
+    ]
+  }
+}

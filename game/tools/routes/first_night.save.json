@@ -1,0 +1,66 @@
+{
+ "caches": [],
+ "flags": {
+  "camp_cleared:meadow": true,
+  "camp_cleared:thornback": true,
+  "camp_cleared:undercroft_rooms": true,
+  "fern_home": true,
+  "forge_open": true,
+  "hale_walked_home": true,
+  "met_moss": true,
+  "seeds:valley": true,
+  "seen:opening": true,
+  "shard_home:woodland": true,
+  "shard_taken:woodland": true,
+  "thornback_freed": true,
+  "undercroft_open": true,
+  "undercroft_plate": true,
+  "undercroft_seal_open": true,
+  "visited:crossroads": true,
+  "visited:undercroft": true,
+  "visited:woodland": true,
+  "woodland_stones_done": true
+ },
+ "glint": 116,
+ "paid": {},
+ "player": {
+  "hp": 5,
+  "max_hp": 5
+ },
+ "quests": {
+  "cold_forge": {
+   "state": "done",
+   "step": 2
+  },
+  "home_again": {
+   "state": "done",
+   "step": 2
+  },
+  "road_to_crossroads": {
+   "state": "done",
+   "step": 2
+  },
+  "under_the_stones": {
+   "state": "done",
+   "step": 5
+  },
+  "woodland_stones": {
+   "state": "done",
+   "step": 2
+  }
+ },
+ "settings": {
+  "pixel_scale": "fill",
+  "reduced_motion": false
+ },
+ "spawn": "square",
+ "tracked": "home_again",
+ "version": 1,
+ "village": {
+  "restored": {
+   "fern_cottage": 1,
+   "forge": 1
+  }
+ },
+ "zone": "crossroads"
+}
