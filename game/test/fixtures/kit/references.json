@@ -5,7 +5,7 @@
    "id": "kitlab",
    "plan": "game/kit/zones/kitlab.json",
    "plan_sha256": "6acb44fb54d7b2ccc6e85eb62cf283af1d31f58208d7e78b2cc2bd940f5d2513",
-   "rgba_sha256": "e79e97a88ddcbda6bd58784d985eea31ab406b2f57c012ad3d39ca2ae33f2ff0",
+   "rgba_sha256": "b4b67297bc9a7d6e9f16486675b421c28a5f8990e3fc4ac4beec331f0d10a86f",
    "size": [
     960,
     552
@@ -29,7 +29,7 @@
    "id": "cell_positions",
    "plan": "game/test/fixtures/kit/cell_positions.json",
    "plan_sha256": "2001634d282fdd998a974682938f66fa6f3b3e13aeeb6b782f2f38a3a61c196a",
-   "rgba_sha256": "183b2c28dbed2f7045ca0ecd819733203b257df268d8eb3eb16662bd8afba3fc",
+   "rgba_sha256": "14439f1fb4ae58937a728ea32fb5feec2d49d6066e81c7d10f748986ad494202",
    "size": [
     96,
     96
@@ -41,7 +41,7 @@
    "id": "texel_positions",
    "plan": "game/test/fixtures/kit/texel_positions.json",
    "plan_sha256": "a5327a6d0b84203e2d5cc52a229d5a9d22c252c1c88ca5b552a4f706f2b0dd83",
-   "rgba_sha256": "183b2c28dbed2f7045ca0ecd819733203b257df268d8eb3eb16662bd8afba3fc",
+   "rgba_sha256": "14439f1fb4ae58937a728ea32fb5feec2d49d6066e81c7d10f748986ad494202",
    "size": [
     96,
     96
@@ -52,7 +52,7 @@
  "cell_texels": 24,
  "feature_pixels": {
   "dressing": 6390,
-  "shadows": 10725
+  "shadows": 12248
  },
  "negative": {
   "file": "three_materials_shifted_profile.png",
@@ -63,8 +63,12 @@
  "schema": "napattack.kit-render-fixtures/1",
  "source_sha256": {
   "art/house-palette.json": "e813dafe231c7b142a4dd4628f770e59d33a32b1345efb562c7b70325d93a607",
+  "game/kit/props/art/shadow_woodland_boulder__b1.png": "0a6663879cea0447199d658b973f8cb64e45d9a6379147a8588b0424c9e10819",
+  "game/kit/props/art/shadow_woodland_boulder__b4.png": "5dc9900ad4fd136ca6aa2b1b2c0cf8de89190f79975c2c67f59322978f9b31e6",
+  "game/kit/props/art/shadow_woodland_forest_bench.png": "767b2c4f9d723cf33dfa809b0950754087517075d404a90b6d93ecb30d5b8cfb",
   "game/kit/props/art/shadow_woodland_oak.png": "e9ab78ed9e778a2f1b86342439f97b731bf6ed13b2961dcbdc572e5d2bacca88",
-  "game/kit/props/index.json": "5e2e86baef3def998cca5449bcfb071be653ebb317f2219ad96c1cd13d23001a",
+  "game/kit/props/art/shadow_woodland_stump.png": "4f4d9c9e3fee1c471962cfd9ae35815c3235db0e376842196e7de0485875ddb2",
+  "game/kit/props/index.json": "836059dc87df2cab3a3159f21c8ce80a22eedbd4c8762b6dbe1fa5aeab1aa04a",
   "game/kit/terrain/decal_bankstone_0.png": "8d1222c1b4221595ff5761db4c38310958c9ccb5fe23c44ac85184f73a204888",
   "game/kit/terrain/decal_bankstone_1.png": "ff6e6e4534c777c8d97798f24621fc0d84997f2a871006fdd5c82c35cf6facb8",
   "game/kit/terrain/decal_bankstone_2.png": "e7c654f3980aeb16378897d9cc92e1274e784642a9bcf4da60db845da68ade6d",
@@ -125,10 +129,10 @@
   "game/kit/terrain/over_worn_over_drove.png": "8c7e1e7248cb22ee0dd22ca728df3a2cae5eab834080d789b371545a8cf55473",
   "game/kit/terrain/over_worn_over_path.png": "8c7e1e7248cb22ee0dd22ca728df3a2cae5eab834080d789b371545a8cf55473",
   "game/kit/terrain/palette.png": "72146f1ab0023d9fc70669932958c317347b4f01a0a4519810c48d2e43b5e07a",
-  "game/test/fixtures/kit/generate.py": "06d57a3e5d1a18961611f86b6a4bfa4bf7e1e3c6105358dc79b18e77bb349a25",
+  "game/test/fixtures/kit/generate.py": "d5488fccd22f9e4013bc371a047ee90049dcc5e5f2d644de66749b92a7cd3144",
   "scripts/art/house_palette.py": "17c1eae374e95e7bb3800f94e5fb38dbe53e7a35ab35eaa5ccb13209cd2ad667",
   "scripts/art/kit/build.py": "ef5b2c19402725aba22fd594ff00edbc24b9699fab44e6a31e2175889bd4e419",
-  "scripts/art/kit/compose.py": "bb23f57830a10e59049c87f7d7f07e5bc02c10dc7ebc99bfa3cc18a9f5be0997",
+  "scripts/art/kit/compose.py": "ffa62dfbe21f6d03e6b15a8b773353323de13a4a2cbf6715f1a040af247c2f5f",
   "scripts/art/kit/dressing.py": "2c3d80e0f06df646480803f92123512a239d629ba5737194de77c66251fffd3d",
   "scripts/art/kit/edges.py": "d21a95c0a07449fdb0df5bff52aa6c6630cebfc7bf0f7ecf6acc59f4cb5838d1",
   "scripts/art/native/accents.json": "4116ad6d7e32ef62efba5789a93b694d15b00db7dc8f23cf61b6f00c48a25b09",

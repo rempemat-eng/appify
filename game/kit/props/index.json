@@ -314,13 +314,18 @@
   ],
   "role": "marker",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -9,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_barrow_kerb.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -337,21 +342,42 @@
      9,
      22
     ],
-    "png": "res://kit/props/art/act1/barrow_kerb_a.png"
+    "png": "res://kit/props/art/act1/barrow_kerb_a.png",
+    "shadow": {
+     "offset": [
+      -9,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_barrow_kerb.png"
+    }
    },
    "b": {
     "foot": [
      10,
      18
     ],
-    "png": "res://kit/props/art/act1/barrow_kerb_b.png"
+    "png": "res://kit/props/art/act1/barrow_kerb_b.png",
+    "shadow": {
+     "offset": [
+      -10,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_barrow_kerb__b.png"
+    }
    },
    "c": {
     "foot": [
      8,
      23
     ],
-    "png": "res://kit/props/art/act1/barrow_kerb_c.png"
+    "png": "res://kit/props/art/act1/barrow_kerb_c.png",
+    "shadow": {
+     "offset": [
+      -8,
+      -6
+     ],
+     "png": "res://kit/props/art/shadow_barrow_kerb__c.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -412,13 +438,18 @@
   ],
   "role": "seat",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    90,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -45,
+     -7
+    ],
+    "png": "res://kit/props/art/shadow_brackens_bench.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -435,7 +466,14 @@
      47,
      46
     ],
-    "png": "res://kit/props/art/brackens/brackens_bench.png"
+    "png": "res://kit/props/art/brackens/brackens_bench.png",
+    "shadow": {
+     "offset": [
+      -45,
+      -7
+     ],
+     "png": "res://kit/props/art/shadow_brackens_bench.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -488,13 +526,18 @@
   ],
   "role": "marker",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    36,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -17,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_brackens_cairn.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -511,14 +554,28 @@
      17,
      47
     ],
-    "png": "res://kit/props/art/brackens/brackens_cairn_standing.png"
+    "png": "res://kit/props/art/brackens/brackens_cairn_standing.png",
+    "shadow": {
+     "offset": [
+      -17,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_brackens_cairn.png"
+    }
    },
    "toppled": {
     "foot": [
      19,
      22
     ],
-    "png": "res://kit/props/art/brackens/brackens_cairn_toppled.png"
+    "png": "res://kit/props/art/brackens/brackens_cairn_toppled.png",
+    "shadow": {
+     "offset": [
+      -19,
+      -7
+     ],
+     "png": "res://kit/props/art/shadow_brackens_cairn__toppled.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -579,13 +636,18 @@
   ],
   "role": "story",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    84,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -51,
+     -9
+    ],
+    "png": "res://kit/props/art/shadow_brackens_cart_broken.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -602,7 +664,14 @@
      51,
      42
     ],
-    "png": "res://kit/props/art/brackens/brackens_cart_broken.png"
+    "png": "res://kit/props/art/brackens/brackens_cart_broken.png",
+    "shadow": {
+     "offset": [
+      -51,
+      -9
+     ],
+     "png": "res://kit/props/art/shadow_brackens_cart_broken.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -701,13 +770,18 @@
   ],
   "role": "well",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    78,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -37,
+     -40
+    ],
+    "png": "res://kit/props/art/shadow_brackens_drove_well.png"
+   },
+   "rule": "block",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -724,7 +798,14 @@
      37,
      78
     ],
-    "png": "res://kit/props/art/brackens/brackens_drove_well.png"
+    "png": "res://kit/props/art/brackens/brackens_drove_well.png",
+    "shadow": {
+     "offset": [
+      -37,
+      -40
+     ],
+     "png": "res://kit/props/art/shadow_brackens_drove_well.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -944,13 +1025,18 @@
   ],
   "role": "ruin",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    84,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -51,
+     -89
+    ],
+    "png": "res://kit/props/art/shadow_brackens_fold_ruin.png"
+   },
+   "rule": "ruin",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -967,7 +1053,14 @@
      52,
      116
     ],
-    "png": "res://kit/props/art/brackens/brackens_fold_ruin.png"
+    "png": "res://kit/props/art/brackens/brackens_fold_ruin.png",
+    "shadow": {
+     "offset": [
+      -51,
+      -89
+     ],
+     "png": "res://kit/props/art/shadow_brackens_fold_ruin.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -1017,13 +1110,18 @@
   "requires": [],
   "role": "shrub",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    54,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -31,
+     -13
+    ],
+    "png": "res://kit/props/art/shadow_brackens_gorse.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -1040,14 +1138,28 @@
      32,
      38
     ],
-    "png": "res://kit/props/art/brackens/brackens_gorse_a.png"
+    "png": "res://kit/props/art/brackens/brackens_gorse_a.png",
+    "shadow": {
+     "offset": [
+      -31,
+      -13
+     ],
+     "png": "res://kit/props/art/shadow_brackens_gorse.png"
+    }
    },
    "b": {
     "foot": [
      25,
      33
     ],
-    "png": "res://kit/props/art/brackens/brackens_gorse_b.png"
+    "png": "res://kit/props/art/brackens/brackens_gorse_b.png",
+    "shadow": {
+     "offset": [
+      -25,
+      -10
+     ],
+     "png": "res://kit/props/art/shadow_brackens_gorse__b.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -1104,13 +1216,18 @@
   ],
   "role": "store",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    66,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -42,
+     -7
+    ],
+    "png": "res://kit/props/art/shadow_brackens_peat_stack.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -1127,7 +1244,14 @@
      42,
      25
     ],
-    "png": "res://kit/props/art/brackens/brackens_peat_stack.png"
+    "png": "res://kit/props/art/brackens/brackens_peat_stack.png",
+    "shadow": {
+     "offset": [
+      -42,
+      -7
+     ],
+     "png": "res://kit/props/art/shadow_brackens_peat_stack.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -1280,13 +1404,18 @@
   ],
   "role": "house",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    168,
-    24
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -88,
+     -66
+    ],
+    "png": "res://kit/props/art/shadow_brackens_shepherds_hut.png"
+   },
+   "rule": "building",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -1303,7 +1432,14 @@
      93,
      215
     ],
-    "png": "res://kit/props/art/brackens/brackens_shepherds_hut.png"
+    "png": "res://kit/props/art/brackens/brackens_shepherds_hut.png",
+    "shadow": {
+     "offset": [
+      -88,
+      -66
+     ],
+     "png": "res://kit/props/art/shadow_brackens_shepherds_hut.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -1372,13 +1508,18 @@
   ],
   "role": "boat",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    126,
-    18
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -66,
+     -13
+    ],
+    "png": "res://kit/props/art/shadow_coast_boat_beached.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -1395,7 +1536,14 @@
      67,
      53
     ],
-    "png": "res://kit/props/art/act1/coast_boat_beached.png"
+    "png": "res://kit/props/art/act1/coast_boat_beached.png",
+    "shadow": {
+     "offset": [
+      -66,
+      -13
+     ],
+     "png": "res://kit/props/art/shadow_coast_boat_beached.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -1512,13 +1660,18 @@
   ],
   "role": "beacon",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    30,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -6
+    ],
+    "png": "res://kit/props/art/shadow_coast_harbour_light.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -1535,7 +1688,14 @@
      15,
      159
     ],
-    "png": "res://kit/props/art/act1/coast_harbour_light.png"
+    "png": "res://kit/props/art/act1/coast_harbour_light.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -6
+     ],
+     "png": "res://kit/props/art/shadow_coast_harbour_light.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -1584,13 +1744,18 @@
   ],
   "role": "store",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    48,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -24,
+     -7
+    ],
+    "png": "res://kit/props/art/shadow_coast_lobster_pots.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -1607,14 +1772,28 @@
      24,
      38
     ],
-    "png": "res://kit/props/art/act1/coast_lobster_pots_a.png"
+    "png": "res://kit/props/art/act1/coast_lobster_pots_a.png",
+    "shadow": {
+     "offset": [
+      -24,
+      -7
+     ],
+     "png": "res://kit/props/art/shadow_coast_lobster_pots.png"
+    }
    },
    "b": {
     "foot": [
      32,
      20
     ],
-    "png": "res://kit/props/art/act1/coast_lobster_pots_b.png"
+    "png": "res://kit/props/art/act1/coast_lobster_pots_b.png",
+    "shadow": {
+     "offset": [
+      -32,
+      -9
+     ],
+     "png": "res://kit/props/art/shadow_coast_lobster_pots__b.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -1659,13 +1838,18 @@
   ],
   "role": "mooring",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -33,
+     -9
+    ],
+    "png": "res://kit/props/art/shadow_coast_mooring_bitt.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -1682,7 +1866,14 @@
      33,
      19
     ],
-    "png": "res://kit/props/art/act1/coast_mooring_bitt.png"
+    "png": "res://kit/props/art/act1/coast_mooring_bitt.png",
+    "shadow": {
+     "offset": [
+      -33,
+      -9
+     ],
+     "png": "res://kit/props/art/shadow_coast_mooring_bitt.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -1743,13 +1934,18 @@
   ],
   "role": "rack",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    132,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -62,
+     -9
+    ],
+    "png": "res://kit/props/art/shadow_coast_net_rack.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -1766,7 +1962,14 @@
      62,
      84
     ],
-    "png": "res://kit/props/art/act1/coast_net_rack.png"
+    "png": "res://kit/props/art/act1/coast_net_rack.png",
+    "shadow": {
+     "offset": [
+      -62,
+      -9
+     ],
+     "png": "res://kit/props/art/shadow_coast_net_rack.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -1816,13 +2019,18 @@
   "requires": [],
   "role": "seat",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    96,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -42,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_commons_bench.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -1839,7 +2047,14 @@
      43,
      37
     ],
-    "png": "res://kit/props/art/commons/bench.png"
+    "png": "res://kit/props/art/commons/bench.png",
+    "shadow": {
+     "offset": [
+      -42,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_commons_bench.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -1900,13 +2115,18 @@
   ],
   "role": "cart",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    108,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -34,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_commons_cart.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -1923,7 +2143,14 @@
      45,
      54
     ],
-    "png": "res://kit/props/art/commons/cart.png"
+    "png": "res://kit/props/art/commons/cart.png",
+    "shadow": {
+     "offset": [
+      -34,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_commons_cart.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -1965,13 +2192,18 @@
   "requires": [],
   "role": "chopping_block",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    36,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -22,
+     -11
+    ],
+    "png": "res://kit/props/art/shadow_commons_chopping_block.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -1988,7 +2220,14 @@
      22,
      40
     ],
-    "png": "res://kit/props/art/commons/chopping_block.png"
+    "png": "res://kit/props/art/commons/chopping_block.png",
+    "shadow": {
+     "offset": [
+      -22,
+      -11
+     ],
+     "png": "res://kit/props/art/shadow_commons_chopping_block.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2030,13 +2269,18 @@
   "requires": [],
   "role": "signpost",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    18,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -11,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_commons_fingerpost_esw.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2053,7 +2297,14 @@
      26,
      92
     ],
-    "png": "res://kit/props/art/commons/fingerpost_esw.png"
+    "png": "res://kit/props/art/commons/fingerpost_esw.png",
+    "shadow": {
+     "offset": [
+      -11,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_commons_fingerpost_esw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2095,13 +2346,18 @@
   "requires": [],
   "role": "signpost",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    18,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -11,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_commons_fingerpost_nes.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2118,7 +2374,14 @@
      11,
      92
     ],
-    "png": "res://kit/props/art/commons/fingerpost_nes.png"
+    "png": "res://kit/props/art/commons/fingerpost_nes.png",
+    "shadow": {
+     "offset": [
+      -11,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_commons_fingerpost_nes.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2160,13 +2423,18 @@
   "requires": [],
   "role": "signpost",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    18,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -11,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_commons_fingerpost_nesw.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2183,7 +2451,14 @@
      26,
      92
     ],
-    "png": "res://kit/props/art/commons/fingerpost_nesw.png"
+    "png": "res://kit/props/art/commons/fingerpost_nesw.png",
+    "shadow": {
+     "offset": [
+      -11,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_commons_fingerpost_nesw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2225,13 +2500,18 @@
   "requires": [],
   "role": "signpost",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    18,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -11,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_commons_fingerpost_new.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2248,7 +2528,14 @@
      26,
      92
     ],
-    "png": "res://kit/props/art/commons/fingerpost_new.png"
+    "png": "res://kit/props/art/commons/fingerpost_new.png",
+    "shadow": {
+     "offset": [
+      -11,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_commons_fingerpost_new.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2290,13 +2577,18 @@
   "requires": [],
   "role": "signpost",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    18,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -11,
+     -10
+    ],
+    "png": "res://kit/props/art/shadow_commons_fingerpost_nsw.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2313,7 +2605,14 @@
      26,
      92
     ],
-    "png": "res://kit/props/art/commons/fingerpost_nsw.png"
+    "png": "res://kit/props/art/commons/fingerpost_nsw.png",
+    "shadow": {
+     "offset": [
+      -11,
+      -10
+     ],
+     "png": "res://kit/props/art/shadow_commons_fingerpost_nsw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2366,13 +2665,18 @@
   ],
   "role": "marker",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    60,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -25,
+     -4
+    ],
+    "png": "res://kit/props/art/shadow_commons_notice_board.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2389,7 +2693,14 @@
      31,
      79
     ],
-    "png": "res://kit/props/art/commons/notice_board.png"
+    "png": "res://kit/props/art/commons/notice_board.png",
+    "shadow": {
+     "offset": [
+      -25,
+      -4
+     ],
+     "png": "res://kit/props/art/shadow_commons_notice_board.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2442,13 +2753,18 @@
   ],
   "role": "centrepiece",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    48,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -24,
+     -7
+    ],
+    "png": "res://kit/props/art/shadow_commons_pump.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2465,7 +2781,14 @@
      24,
      72
     ],
-    "png": "res://kit/props/art/commons/pump.png"
+    "png": "res://kit/props/art/commons/pump.png",
+    "shadow": {
+     "offset": [
+      -24,
+      -7
+     ],
+     "png": "res://kit/props/art/shadow_commons_pump.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2522,13 +2845,18 @@
   ],
   "role": "marker",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    60,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -30,
+     -7
+    ],
+    "png": "res://kit/props/art/shadow_commons_shrine.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2545,7 +2873,14 @@
      32,
      106
     ],
-    "png": "res://kit/props/art/commons/shrine.png"
+    "png": "res://kit/props/art/commons/shrine.png",
+    "shadow": {
+     "offset": [
+      -30,
+      -7
+     ],
+     "png": "res://kit/props/art/shadow_commons_shrine.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2614,13 +2949,18 @@
   ],
   "role": "stall",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    132,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -67,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_commons_stall_cloth.png"
+   },
+   "rule": "building",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2637,7 +2977,14 @@
      69,
      115
     ],
-    "png": "res://kit/props/art/commons/stall_cloth.png"
+    "png": "res://kit/props/art/commons/stall_cloth.png",
+    "shadow": {
+     "offset": [
+      -67,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_commons_stall_cloth.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2706,13 +3053,18 @@
   ],
   "role": "stall",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    132,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -67,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_commons_stall_produce.png"
+   },
+   "rule": "building",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2729,7 +3081,14 @@
      69,
      115
     ],
-    "png": "res://kit/props/art/commons/stall_produce.png"
+    "png": "res://kit/props/art/commons/stall_produce.png",
+    "shadow": {
+     "offset": [
+      -67,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_commons_stall_produce.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2791,13 +3150,18 @@
   "requires": [],
   "role": "washing_line",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    108,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -57,
+     -4
+    ],
+    "png": "res://kit/props/art/shadow_commons_washing_line.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2814,7 +3178,14 @@
      62,
      67
     ],
-    "png": "res://kit/props/art/commons/washing_line.png"
+    "png": "res://kit/props/art/commons/washing_line.png",
+    "shadow": {
+     "offset": [
+      -57,
+      -4
+     ],
+     "png": "res://kit/props/art/shadow_commons_washing_line.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -2864,13 +3235,18 @@
   "requires": [],
   "role": "store",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    78,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -39,
+     -7
+    ],
+    "png": "res://kit/props/art/shadow_commons_woodpile.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -2887,7 +3263,14 @@
      43,
      58
     ],
-    "png": "res://kit/props/art/commons/woodpile.png"
+    "png": "res://kit/props/art/commons/woodpile.png",
+    "shadow": {
+     "offset": [
+      -39,
+      -7
+     ],
+     "png": "res://kit/props/art/shadow_commons_woodpile.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -8087,13 +8470,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    105,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -17,
+     -13
+    ],
+    "png": "res://kit/props/art/shadow_farm_calf.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -8110,7 +8498,14 @@
      29,
      36
     ],
-    "png": "res://kit/props/art/farm/farm_calf.png"
+    "png": "res://kit/props/art/farm/farm_calf.png",
+    "shadow": {
+     "offset": [
+      -17,
+      -13
+     ],
+     "png": "res://kit/props/art/shadow_farm_calf.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -8159,13 +8554,18 @@
   ],
   "role": "churns",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    30,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -16,
+     -7
+    ],
+    "png": "res://kit/props/art/shadow_farm_churns.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -8182,7 +8582,14 @@
      16,
      41
     ],
-    "png": "res://kit/props/art/farm/farm_churns.png"
+    "png": "res://kit/props/art/farm/farm_churns.png",
+    "shadow": {
+     "offset": [
+      -16,
+      -7
+     ],
+     "png": "res://kit/props/art/shadow_farm_churns.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -8265,13 +8672,18 @@
   ],
   "role": "coop",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    90,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -37,
+     -18
+    ],
+    "png": "res://kit/props/art/shadow_farm_coop.png"
+   },
+   "rule": "building",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -8288,7 +8700,14 @@
      50,
      119
     ],
-    "png": "res://kit/props/art/farm/farm_coop.png"
+    "png": "res://kit/props/art/farm/farm_coop.png",
+    "shadow": {
+     "offset": [
+      -37,
+      -18
+     ],
+     "png": "res://kit/props/art/shadow_farm_coop.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -8363,13 +8782,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    177,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -38,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_farm_cow.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -8386,7 +8810,14 @@
      52,
      60
     ],
-    "png": "res://kit/props/art/farm/farm_cow.png"
+    "png": "res://kit/props/art/farm/farm_cow.png",
+    "shadow": {
+     "offset": [
+      -38,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_farm_cow.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -8439,13 +8870,18 @@
   ],
   "role": "sacks",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    54,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -26,
+     -7
+    ],
+    "png": "res://kit/props/art/shadow_farm_feed_sacks.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -8462,7 +8898,14 @@
      26,
      33
     ],
-    "png": "res://kit/props/art/farm/farm_feed_sacks.png"
+    "png": "res://kit/props/art/farm/farm_feed_sacks.png",
+    "shadow": {
+     "offset": [
+      -26,
+      -7
+     ],
+     "png": "res://kit/props/art/shadow_farm_feed_sacks.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -8533,13 +8976,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    96,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -15,
+     -13
+    ],
+    "png": "res://kit/props/art/shadow_farm_goat.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -8556,7 +9004,14 @@
      27,
      45
     ],
-    "png": "res://kit/props/art/farm/farm_goat.png"
+    "png": "res://kit/props/art/farm/farm_goat.png",
+    "shadow": {
+     "offset": [
+      -15,
+      -13
+     ],
+     "png": "res://kit/props/art/shadow_farm_goat.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -8627,13 +9082,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    96,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -23,
+     -13
+    ],
+    "png": "res://kit/props/art/shadow_farm_goat_b.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -8650,7 +9110,14 @@
      26,
      45
     ],
-    "png": "res://kit/props/art/farm/farm_goat_b.png"
+    "png": "res://kit/props/art/farm/farm_goat_b.png",
+    "shadow": {
+     "offset": [
+      -23,
+      -13
+     ],
+     "png": "res://kit/props/art/shadow_farm_goat_b.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -8712,13 +9179,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    18,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -5,
+     -10
+    ],
+    "png": "res://kit/props/art/shadow_farm_hen_brown.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -8735,7 +9207,14 @@
      14,
      25
     ],
-    "png": "res://kit/props/art/farm/farm_hen_brown.png"
+    "png": "res://kit/props/art/farm/farm_hen_brown.png",
+    "shadow": {
+     "offset": [
+      -5,
+      -10
+     ],
+     "png": "res://kit/props/art/shadow_farm_hen_brown.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -8797,13 +9276,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    18,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -8,
+     -9
+    ],
+    "png": "res://kit/props/art/shadow_farm_hen_speckled.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -8820,7 +9304,14 @@
      17,
      25
     ],
-    "png": "res://kit/props/art/farm/farm_hen_speckled.png"
+    "png": "res://kit/props/art/farm/farm_hen_speckled.png",
+    "shadow": {
+     "offset": [
+      -8,
+      -9
+     ],
+     "png": "res://kit/props/art/shadow_farm_hen_speckled.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -8882,13 +9373,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    18,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -5,
+     -10
+    ],
+    "png": "res://kit/props/art/shadow_farm_hen_white.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -8905,7 +9401,14 @@
      14,
      25
     ],
-    "png": "res://kit/props/art/farm/farm_hen_white.png"
+    "png": "res://kit/props/art/farm/farm_hen_white.png",
+    "shadow": {
+     "offset": [
+      -5,
+      -10
+     ],
+     "png": "res://kit/props/art/shadow_farm_hen_white.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -8980,13 +9483,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    144,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -27,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_farm_horse.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -9003,7 +9511,14 @@
      54,
      79
     ],
-    "png": "res://kit/props/art/farm/farm_horse.png"
+    "png": "res://kit/props/art/farm/farm_horse.png",
+    "shadow": {
+     "offset": [
+      -27,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_farm_horse.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -9060,13 +9575,18 @@
   ],
   "role": "muck_heap",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    78,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -30,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_farm_muck_heap.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -9083,7 +9603,14 @@
      31,
      42
     ],
-    "png": "res://kit/props/art/farm/farm_muck_heap.png"
+    "png": "res://kit/props/art/farm/farm_muck_heap.png",
+    "shadow": {
+     "offset": [
+      -30,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_farm_muck_heap.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -9154,13 +9681,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    120,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -26,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_farm_pig.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -9177,7 +9709,14 @@
      33,
      33
     ],
-    "png": "res://kit/props/art/farm/farm_pig.png"
+    "png": "res://kit/props/art/farm/farm_pig.png",
+    "shadow": {
+     "offset": [
+      -26,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_farm_pig.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -9226,13 +9765,18 @@
   ],
   "role": "scarecrow",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -4
+    ],
+    "png": "res://kit/props/art/shadow_farm_scarecrow.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -9249,7 +9793,14 @@
      29,
      79
     ],
-    "png": "res://kit/props/art/farm/farm_scarecrow.png"
+    "png": "res://kit/props/art/farm/farm_scarecrow.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -4
+     ],
+     "png": "res://kit/props/art/shadow_farm_scarecrow.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -9320,13 +9871,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    54,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -17,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_farm_sheep.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -9343,7 +9899,14 @@
      29,
      37
     ],
-    "png": "res://kit/props/art/farm/farm_sheep.png"
+    "png": "res://kit/props/art/farm/farm_sheep.png",
+    "shadow": {
+     "offset": [
+      -17,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_farm_sheep.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -9414,13 +9977,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    54,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -27,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_farm_sheep_graze.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -9437,7 +10005,14 @@
      29,
      35
     ],
-    "png": "res://kit/props/art/farm/farm_sheep_graze.png"
+    "png": "res://kit/props/art/farm/farm_sheep_graze.png",
+    "shadow": {
+     "offset": [
+      -27,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_farm_sheep_graze.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -9508,13 +10083,18 @@
   ],
   "role": "stock",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    54,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -21,
+     -10
+    ],
+    "png": "res://kit/props/art/shadow_farm_sheep_lie.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -9531,7 +10111,14 @@
      27,
      29
     ],
-    "png": "res://kit/props/art/farm/farm_sheep_lie.png"
+    "png": "res://kit/props/art/farm/farm_sheep_lie.png",
+    "shadow": {
+     "offset": [
+      -21,
+      -10
+     ],
+     "png": "res://kit/props/art/shadow_farm_sheep_lie.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -9622,13 +10209,18 @@
   ],
   "role": "shelter",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    126,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -60,
+     -42
+    ],
+    "png": "res://kit/props/art/shadow_farm_shelter.png"
+   },
+   "rule": "building",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -9645,7 +10237,14 @@
      63,
      115
     ],
-    "png": "res://kit/props/art/farm/farm_shelter.png"
+    "png": "res://kit/props/art/farm/farm_shelter.png",
+    "shadow": {
+     "offset": [
+      -60,
+      -42
+     ],
+     "png": "res://kit/props/art/shadow_farm_shelter.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -9722,13 +10321,18 @@
   ],
   "role": "sty",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    108,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -53,
+     -33
+    ],
+    "png": "res://kit/props/art/shadow_farm_sty.png"
+   },
+   "rule": "building",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -9745,7 +10349,14 @@
      57,
      115
     ],
-    "png": "res://kit/props/art/farm/farm_sty.png"
+    "png": "res://kit/props/art/farm/farm_sty.png",
+    "shadow": {
+     "offset": [
+      -53,
+      -33
+     ],
+     "png": "res://kit/props/art/shadow_farm_sty.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -9860,13 +10471,18 @@
   ],
   "role": "water_butt",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    36,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -14,
+     -7
+    ],
+    "png": "res://kit/props/art/shadow_farm_water_butt.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -9883,7 +10499,14 @@
      14,
      46
     ],
-    "png": "res://kit/props/art/farm/farm_water_butt.png"
+    "png": "res://kit/props/art/farm/farm_water_butt.png",
+    "shadow": {
+     "offset": [
+      -14,
+      -7
+     ],
+     "png": "res://kit/props/art/shadow_farm_water_butt.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -9936,13 +10559,18 @@
   ],
   "role": "barrow",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    66,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -24,
+     -10
+    ],
+    "png": "res://kit/props/art/shadow_farm_wheelbarrow.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -9959,7 +10587,14 @@
      33,
      29
     ],
-    "png": "res://kit/props/art/farm/farm_wheelbarrow.png"
+    "png": "res://kit/props/art/farm/farm_wheelbarrow.png",
+    "shadow": {
+     "offset": [
+      -24,
+      -10
+     ],
+     "png": "res://kit/props/art/shadow_farm_wheelbarrow.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10001,13 +10636,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -5,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_e.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10024,7 +10664,14 @@
      5,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_e_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_e_plain.png",
+    "shadow": {
+     "offset": [
+      -5,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_e.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10066,13 +10713,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -6,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_es.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10089,7 +10741,14 @@
      6,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_es_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_es_plain.png",
+    "shadow": {
+     "offset": [
+      -6,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_es.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10131,13 +10790,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_esw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10154,7 +10818,14 @@
      12,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_esw_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_esw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_esw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10196,13 +10867,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_ew.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10219,14 +10895,28 @@
      12,
      43
     ],
-    "png": "res://kit/props/art/fence/fence_picket_ew_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_ew_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_ew.png"
+    }
    },
    "post": {
     "foot": [
      12,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_ew_post.png"
+    "png": "res://kit/props/art/fence/fence_picket_ew_post.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_ew__post.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10273,13 +10963,18 @@
   ],
   "role": "gate",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    66,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -35,
+     -10
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_gate_ew.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10296,14 +10991,28 @@
      35,
      96
     ],
-    "png": "res://kit/props/art/fence/fence_picket_gate_ew_open.png"
+    "png": "res://kit/props/art/fence/fence_picket_gate_ew_open.png",
+    "shadow": {
+     "offset": [
+      -35,
+      -10
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_gate_ew.png"
+    }
    },
    "shut": {
     "foot": [
      35,
      62
     ],
-    "png": "res://kit/props/art/fence/fence_picket_gate_ew_shut.png"
+    "png": "res://kit/props/art/fence/fence_picket_gate_ew_shut.png",
+    "shadow": {
+     "offset": [
+      -35,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_gate_ew__shut.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10350,13 +11059,18 @@
   ],
   "role": "gate",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -34
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_gate_ns.png"
+   },
+   "rule": "gate_ns",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10373,21 +11087,42 @@
      4,
      92
     ],
-    "png": "res://kit/props/art/fence/fence_picket_gate_ns_open_e.png"
+    "png": "res://kit/props/art/fence/fence_picket_gate_ns_open_e.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -34
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_gate_ns.png"
+    }
    },
    "open_w": {
     "foot": [
      59,
      92
     ],
-    "png": "res://kit/props/art/fence/fence_picket_gate_ns_open_w.png"
+    "png": "res://kit/props/art/fence/fence_picket_gate_ns_open_w.png",
+    "shadow": {
+     "offset": [
+      -59,
+      -33
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_gate_ns__open_w.png"
+    }
    },
    "shut": {
     "foot": [
      4,
      92
     ],
-    "png": "res://kit/props/art/fence/fence_picket_gate_ns_shut.png"
+    "png": "res://kit/props/art/fence/fence_picket_gate_ns_shut.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -31
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_gate_ns__shut.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10429,13 +11164,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_n.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10452,7 +11192,14 @@
      4,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_n_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_n_plain.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_n.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10494,13 +11241,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -5,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_ne.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10517,7 +11269,14 @@
      5,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_ne_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_ne_plain.png",
+    "shadow": {
+     "offset": [
+      -5,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_ne.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10559,13 +11318,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -6,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_nes.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10582,7 +11346,14 @@
      6,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_nes_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_nes_plain.png",
+    "shadow": {
+     "offset": [
+      -6,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_nes.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10624,13 +11395,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_nesw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10647,7 +11423,14 @@
      12,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_nesw_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_nesw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_nesw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10689,13 +11472,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_new.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10712,7 +11500,14 @@
      12,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_new_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_new_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_new.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10754,13 +11549,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -3,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_ns.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10777,14 +11577,28 @@
      3,
      50
     ],
-    "png": "res://kit/props/art/fence/fence_picket_ns_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_ns_plain.png",
+    "shadow": {
+     "offset": [
+      -3,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_ns.png"
+    }
    },
    "post": {
     "foot": [
      4,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_ns_post.png"
+    "png": "res://kit/props/art/fence/fence_picket_ns_post.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_ns__post.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10826,13 +11640,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_nsw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10849,7 +11668,14 @@
      12,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_nsw_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_nsw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_nsw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10891,13 +11717,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_nw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10914,7 +11745,14 @@
      12,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_nw_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_nw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_nw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -10956,13 +11794,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_s.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -10979,7 +11822,14 @@
      4,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_s_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_s_plain.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_s.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11021,13 +11871,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_sw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11044,7 +11899,14 @@
      12,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_sw_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_sw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_sw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11086,13 +11948,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_picket_w.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11109,7 +11976,14 @@
      12,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_picket_w_plain.png"
+    "png": "res://kit/props/art/fence/fence_picket_w_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_picket_w.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11151,13 +12025,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -5,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_e.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11174,7 +12053,14 @@
      5,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_e_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_e_plain.png",
+    "shadow": {
+     "offset": [
+      -5,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_e.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11216,13 +12102,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -7,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_es.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11239,7 +12130,14 @@
      7,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_es_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_es_plain.png",
+    "shadow": {
+     "offset": [
+      -7,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_es.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11281,13 +12179,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_esw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11304,7 +12207,14 @@
      12,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_esw_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_esw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_esw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11346,13 +12256,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -2
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_ew.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11369,14 +12284,28 @@
      12,
      52
     ],
-    "png": "res://kit/props/art/fence/fence_rail_ew_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_ew_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -2
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_ew.png"
+    }
    },
    "post": {
     "foot": [
      12,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_ew_post.png"
+    "png": "res://kit/props/art/fence/fence_rail_ew_post.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_ew__post.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11423,13 +12352,18 @@
   ],
   "role": "gate",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    66,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -36,
+     -9
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_gate_ew.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11446,14 +12380,28 @@
      36,
      105
     ],
-    "png": "res://kit/props/art/fence/fence_rail_gate_ew_open.png"
+    "png": "res://kit/props/art/fence/fence_rail_gate_ew_open.png",
+    "shadow": {
+     "offset": [
+      -36,
+      -9
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_gate_ew.png"
+    }
    },
    "shut": {
     "foot": [
      36,
      68
     ],
-    "png": "res://kit/props/art/fence/fence_rail_gate_ew_shut.png"
+    "png": "res://kit/props/art/fence/fence_rail_gate_ew_shut.png",
+    "shadow": {
+     "offset": [
+      -36,
+      -11
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_gate_ew__shut.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11500,13 +12448,18 @@
   ],
   "role": "gate",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -5,
+     -63
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_gate_ns.png"
+   },
+   "rule": "gate_ns",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11523,21 +12476,42 @@
      5,
      99
     ],
-    "png": "res://kit/props/art/fence/fence_rail_gate_ns_open_e.png"
+    "png": "res://kit/props/art/fence/fence_rail_gate_ns_open_e.png",
+    "shadow": {
+     "offset": [
+      -5,
+      -63
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_gate_ns.png"
+    }
    },
    "open_w": {
     "foot": [
      59,
      99
     ],
-    "png": "res://kit/props/art/fence/fence_rail_gate_ns_open_w.png"
+    "png": "res://kit/props/art/fence/fence_rail_gate_ns_open_w.png",
+    "shadow": {
+     "offset": [
+      -59,
+      -32
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_gate_ns__open_w.png"
+    }
    },
    "shut": {
     "foot": [
      5,
      99
     ],
-    "png": "res://kit/props/art/fence/fence_rail_gate_ns_shut.png"
+    "png": "res://kit/props/art/fence/fence_rail_gate_ns_shut.png",
+    "shadow": {
+     "offset": [
+      -5,
+      -32
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_gate_ns__shut.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11579,13 +12553,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_n.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11602,7 +12581,14 @@
      4,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_n_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_n_plain.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_n.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11644,13 +12630,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_ne.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11667,7 +12658,14 @@
      4,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_ne_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_ne_plain.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_ne.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11709,13 +12707,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -5,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_nes.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11732,7 +12735,14 @@
      5,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_nes_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_nes_plain.png",
+    "shadow": {
+     "offset": [
+      -5,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_nes.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11774,13 +12784,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_nesw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11797,7 +12812,14 @@
      12,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_nesw_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_nesw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_nesw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11839,13 +12861,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_new.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11862,7 +12889,14 @@
      12,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_new_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_new_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_new.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11904,13 +12938,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     1,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_ns.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11927,14 +12966,28 @@
      2,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_ns_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_ns_plain.png",
+    "shadow": {
+     "offset": [
+      1,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_ns.png"
+    }
    },
    "post": {
     "foot": [
      4,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_ns_post.png"
+    "png": "res://kit/props/art/fence/fence_rail_ns_post.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_ns__post.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -11976,13 +13029,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_nsw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -11999,7 +13057,14 @@
      12,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_nsw_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_nsw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_nsw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12041,13 +13106,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_nw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12064,7 +13134,14 @@
      12,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_nw_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_nw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_nw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12106,13 +13183,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_s.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12129,7 +13211,14 @@
      4,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_s_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_s_plain.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_s.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12163,13 +13252,18 @@
   ],
   "role": "stile",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_stile_ew.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12186,7 +13280,14 @@
      13,
      56
     ],
-    "png": "res://kit/props/art/fence/fence_rail_stile_ew_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_stile_ew_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_stile_ew.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12220,13 +13321,18 @@
   ],
   "role": "stile",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -11,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_stile_ns.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12243,7 +13349,14 @@
      11,
      65
     ],
-    "png": "res://kit/props/art/fence/fence_rail_stile_ns_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_stile_ns_plain.png",
+    "shadow": {
+     "offset": [
+      -11,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_stile_ns.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12285,13 +13398,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_sw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12308,7 +13426,14 @@
      12,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_sw_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_sw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_sw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12350,13 +13475,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_rail_w.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12373,7 +13503,14 @@
      12,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_rail_w_plain.png"
+    "png": "res://kit/props/art/fence/fence_rail_w_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_rail_w.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12415,13 +13552,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -7,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_e.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12438,7 +13580,14 @@
      7,
      57
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_e_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_e_plain.png",
+    "shadow": {
+     "offset": [
+      -7,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_e.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12480,13 +13629,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_es.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12503,7 +13657,14 @@
      4,
      57
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_es_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_es_plain.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_es.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12545,13 +13706,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_esw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12568,7 +13734,14 @@
      12,
      57
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_esw_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_esw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_esw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12610,13 +13783,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_ew.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12633,14 +13811,28 @@
      12,
      51
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_ew_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_ew_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_ew.png"
+    }
    },
    "post": {
     "foot": [
      12,
      57
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_ew_post.png"
+    "png": "res://kit/props/art/fence/fence_wattle_ew_post.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_ew__post.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12687,13 +13879,18 @@
   ],
   "role": "gate",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    66,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -35,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_gate_ew.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12710,14 +13907,28 @@
      35,
      100
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_gate_ew_open.png"
+    "png": "res://kit/props/art/fence/fence_wattle_gate_ew_open.png",
+    "shadow": {
+     "offset": [
+      -35,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_gate_ew.png"
+    }
    },
    "shut": {
     "foot": [
      35,
      61
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_gate_ew_shut.png"
+    "png": "res://kit/props/art/fence/fence_wattle_gate_ew_shut.png",
+    "shadow": {
+     "offset": [
+      -35,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_gate_ew__shut.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12764,13 +13975,18 @@
   ],
   "role": "gate",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -59
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_gate_ns.png"
+   },
+   "rule": "gate_ns",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12787,21 +14003,42 @@
      4,
      91
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_open_e.png"
+    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_open_e.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -59
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_gate_ns.png"
+    }
    },
    "open_w": {
     "foot": [
      59,
      91
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_open_w.png"
+    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_open_w.png",
+    "shadow": {
+     "offset": [
+      -59,
+      -31
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_gate_ns__open_w.png"
+    }
    },
    "shut": {
     "foot": [
      4,
      91
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_shut.png"
+    "png": "res://kit/props/art/fence/fence_wattle_gate_ns_shut.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -31
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_gate_ns__shut.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12843,13 +14080,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_n.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12866,7 +14108,14 @@
      4,
      56
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_n_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_n_plain.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_n.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12908,13 +14157,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_ne.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12931,7 +14185,14 @@
      4,
      56
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_ne_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_ne_plain.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_ne.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -12973,13 +14234,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_nes.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -12996,7 +14262,14 @@
      4,
      56
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_nes_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_nes_plain.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_nes.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -13038,13 +14311,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_nesw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -13061,7 +14339,14 @@
      12,
      56
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_nesw_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_nesw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_nesw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -13103,13 +14388,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_new.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -13126,7 +14416,14 @@
      12,
      56
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_new_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_new_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_new.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -13168,13 +14465,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -4,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_ns.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -13191,14 +14493,28 @@
      4,
      54
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_ns_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_ns_plain.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_ns.png"
+    }
    },
    "post": {
     "foot": [
      4,
      56
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_ns_post.png"
+    "png": "res://kit/props/art/fence/fence_wattle_ns_post.png",
+    "shadow": {
+     "offset": [
+      -4,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_ns__post.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -13240,13 +14556,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_nsw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -13263,7 +14584,14 @@
      12,
      56
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_nsw_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_nsw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_nsw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -13305,13 +14633,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_nw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -13328,7 +14661,14 @@
      12,
      56
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_nw_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_nw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_nw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -13370,13 +14710,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -7,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_s.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -13393,7 +14738,14 @@
      7,
      57
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_s_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_s_plain.png",
+    "shadow": {
+     "offset": [
+      -7,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_s.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -13435,13 +14787,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_sw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -13458,7 +14815,14 @@
      12,
      57
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_sw_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_sw_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_sw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -13500,13 +14864,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -5
+    ],
+    "png": "res://kit/props/art/shadow_fence_wattle_w.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -13523,7 +14892,14 @@
      12,
      57
     ],
-    "png": "res://kit/props/art/fence/fence_wattle_w_plain.png"
+    "png": "res://kit/props/art/fence/fence_wattle_w_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -5
+     ],
+     "png": "res://kit/props/art/shadow_fence_wattle_w.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -13760,13 +15136,18 @@
   ],
   "role": "store",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    66,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -33,
+     -13
+    ],
+    "png": "res://kit/props/art/shadow_halt_churn_stand.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -13783,7 +15164,14 @@
      33,
      64
     ],
-    "png": "res://kit/props/art/act1/halt_churn_stand.png"
+    "png": "res://kit/props/art/act1/halt_churn_stand.png",
+    "shadow": {
+     "offset": [
+      -33,
+      -13
+     ],
+     "png": "res://kit/props/art/shadow_halt_churn_stand.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -13919,13 +15307,18 @@
   ],
   "role": "lamp",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    18,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -7,
+     -4
+    ],
+    "png": "res://kit/props/art/shadow_halt_platform_lamp.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -13942,7 +15335,14 @@
      10,
      135
     ],
-    "png": "res://kit/props/art/act1/halt_platform_lamp.png"
+    "png": "res://kit/props/art/act1/halt_platform_lamp.png",
+    "shadow": {
+     "offset": [
+      -7,
+      -4
+     ],
+     "png": "res://kit/props/art/shadow_halt_platform_lamp.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -13991,13 +15391,18 @@
   ],
   "role": "signal",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -11,
+     -6
+    ],
+    "png": "res://kit/props/art/shadow_halt_semaphore.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -14014,7 +15419,14 @@
      11,
      137
     ],
-    "png": "res://kit/props/art/act1/halt_semaphore.png"
+    "png": "res://kit/props/art/act1/halt_semaphore.png",
+    "shadow": {
+     "offset": [
+      -11,
+      -6
+     ],
+     "png": "res://kit/props/art/shadow_halt_semaphore.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -14067,13 +15479,18 @@
   ],
   "role": "notice",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    48,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -21,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_halt_timetable_board.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -14090,7 +15507,14 @@
      29,
      93
     ],
-    "png": "res://kit/props/art/act1/halt_timetable_board.png"
+    "png": "res://kit/props/art/act1/halt_timetable_board.png",
+    "shadow": {
+     "offset": [
+      -21,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_halt_timetable_board.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -14246,13 +15670,18 @@
   ],
   "role": "hive",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    30,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -14,
+     -13
+    ],
+    "png": "res://kit/props/art/shadow_hive_skep.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -14269,7 +15698,14 @@
      14,
      50
     ],
-    "png": "res://kit/props/art/act1/hive_skep.png"
+    "png": "res://kit/props/art/act1/hive_skep.png",
+    "shadow": {
+     "offset": [
+      -14,
+      -13
+     ],
+     "png": "res://kit/props/art/shadow_hive_skep.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -14318,13 +15754,18 @@
   ],
   "role": "hive",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    36,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -16,
+     -10
+    ],
+    "png": "res://kit/props/art/shadow_hive_wbc.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -14341,7 +15782,14 @@
      19,
      63
     ],
-    "png": "res://kit/props/art/act1/hive_wbc.png"
+    "png": "res://kit/props/art/act1/hive_wbc.png",
+    "shadow": {
+     "offset": [
+      -16,
+      -10
+     ],
+     "png": "res://kit/props/art/shadow_hive_wbc.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -14538,13 +15986,18 @@
   ],
   "role": "story",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    78,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -44,
+     -12
+    ],
+    "png": "res://kit/props/art/shadow_mill_fence_broken.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -14561,7 +16014,14 @@
      44,
      47
     ],
-    "png": "res://kit/props/art/act1/mill_fence_broken.png"
+    "png": "res://kit/props/art/act1/mill_fence_broken.png",
+    "shadow": {
+     "offset": [
+      -44,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_mill_fence_broken.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -14727,13 +16187,18 @@
   ],
   "role": "store",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    90,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -58,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_mill_millstones.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -14750,7 +16215,14 @@
      58,
      55
     ],
-    "png": "res://kit/props/art/act1/mill_millstones.png"
+    "png": "res://kit/props/art/act1/mill_millstones.png",
+    "shadow": {
+     "offset": [
+      -58,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_mill_millstones.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -15435,13 +16907,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_e.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -15458,7 +16935,14 @@
      12,
      47
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_e_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_e_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_e.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -15500,13 +16984,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_es.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -15523,7 +17012,14 @@
      13,
      48
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_es_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_es_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_es.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -15565,13 +17061,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_esw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -15588,7 +17089,14 @@
      13,
      48
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_esw_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_esw_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_esw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -15630,13 +17138,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_ew.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -15653,14 +17166,28 @@
      13,
      47
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_ew_a.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_ew_a.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_ew.png"
+    }
    },
    "b": {
     "foot": [
      13,
      47
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_ew_b.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_ew_b.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_ew__b.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -15707,13 +17234,18 @@
   ],
   "role": "gate",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    66,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -36,
+     -13
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_gate_ew.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -15730,7 +17262,14 @@
      38,
      62
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_gate_ew_shut.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_gate_ew_shut.png",
+    "shadow": {
+     "offset": [
+      -36,
+      -13
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_gate_ew.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -15777,13 +17316,18 @@
   ],
   "role": "gate",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -29
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_gate_ns.png"
+   },
+   "rule": "gate_ns",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -15800,21 +17344,42 @@
      13,
      90
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_open_e.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_open_e.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -50
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_gate_ns__open_e.png"
+    }
    },
    "open_w": {
     "foot": [
      56,
      90
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_open_w.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_open_w.png",
+    "shadow": {
+     "offset": [
+      -56,
+      -37
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_gate_ns__open_w.png"
+    }
    },
    "shut": {
     "foot": [
      13,
      90
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_shut.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_gate_ns_shut.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -29
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_gate_ns.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -15856,13 +17421,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_n.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -15879,7 +17449,14 @@
      13,
      55
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_n_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_n_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_n.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -15921,13 +17498,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -12,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_ne.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -15944,7 +17526,14 @@
      13,
      54
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_ne_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_ne_plain.png",
+    "shadow": {
+     "offset": [
+      -12,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_ne.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -15986,13 +17575,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_nes.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -16009,7 +17603,14 @@
      13,
      54
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_nes_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_nes_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_nes.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16051,13 +17652,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_nesw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -16074,7 +17680,14 @@
      13,
      54
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_nesw_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_nesw_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_nesw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16116,13 +17729,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_new.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -16139,7 +17757,14 @@
      13,
      54
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_new_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_new_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_new.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16181,13 +17806,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_ns.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -16204,7 +17834,14 @@
      13,
      55
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_ns_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_ns_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_ns.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16246,13 +17883,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_nsw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -16269,7 +17911,14 @@
      13,
      54
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_nsw_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_nsw_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_nsw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16311,13 +17960,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_nw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -16334,7 +17988,14 @@
      13,
      54
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_nw_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_nw_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_nw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16376,13 +18037,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_s.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -16399,7 +18065,14 @@
      13,
      48
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_s_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_s_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_s.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16433,13 +18106,18 @@
   ],
   "role": "stile",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_stile_ew.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -16456,7 +18134,14 @@
      13,
      47
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_stile_ew_steps.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_stile_ew_steps.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_stile_ew.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16498,13 +18183,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_sw.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -16521,7 +18211,14 @@
      13,
      48
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_sw_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_sw_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_sw.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16563,13 +18260,18 @@
   "requires": [],
   "role": "boundary",
   "shadow": {
-   "dir": [
-    3,
-    3
-   ],
-   "size": [
-    27,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_wall_drystone_w.png"
+   },
+   "rule": "boundary",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -16586,7 +18288,14 @@
      13,
      47
     ],
-    "png": "res://kit/props/art/brackens/wall_drystone_w_plain.png"
+    "png": "res://kit/props/art/brackens/wall_drystone_w_plain.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_wall_drystone_w.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -17535,13 +19244,18 @@
   "requires": [],
   "role": "rock",
   "shadow": {
-   "dir": [
-    6,
-    -3
-   ],
-   "size": [
-    21,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -19,
+     -11
+    ],
+    "png": "res://kit/props/art/shadow_woodland_boulder.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -17558,42 +19272,84 @@
      24.0,
      32.0
     ],
-    "png": "res://kit/props/art/woodland_boulder_0.png"
+    "png": "res://kit/props/art/woodland_boulder_0.png",
+    "shadow": {
+     "offset": [
+      -19,
+      -11
+     ],
+     "png": "res://kit/props/art/shadow_woodland_boulder.png"
+    }
    },
    "b1": {
     "foot": [
      25.5,
      32.0
     ],
-    "png": "res://kit/props/art/woodland_boulder_1.png"
+    "png": "res://kit/props/art/woodland_boulder_1.png",
+    "shadow": {
+     "offset": [
+      -20,
+      -11
+     ],
+     "png": "res://kit/props/art/shadow_woodland_boulder__b1.png"
+    }
    },
    "b2": {
     "foot": [
      28.5,
      35.0
     ],
-    "png": "res://kit/props/art/woodland_boulder_2.png"
+    "png": "res://kit/props/art/woodland_boulder_2.png",
+    "shadow": {
+     "offset": [
+      -26,
+      -11
+     ],
+     "png": "res://kit/props/art/shadow_woodland_boulder__b2.png"
+    }
    },
    "b3": {
     "foot": [
      31.5,
      38.0
     ],
-    "png": "res://kit/props/art/woodland_boulder_3.png"
+    "png": "res://kit/props/art/woodland_boulder_3.png",
+    "shadow": {
+     "offset": [
+      -25,
+      -11
+     ],
+     "png": "res://kit/props/art/shadow_woodland_boulder__b3.png"
+    }
    },
    "b4": {
     "foot": [
      36.0,
      44.0
     ],
-    "png": "res://kit/props/art/woodland_boulder_4.png"
+    "png": "res://kit/props/art/woodland_boulder_4.png",
+    "shadow": {
+     "offset": [
+      -29,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_woodland_boulder__b4.png"
+    }
    },
    "b5": {
     "foot": [
      42.0,
      50.0
     ],
-    "png": "res://kit/props/art/woodland_boulder_5.png"
+    "png": "res://kit/props/art/woodland_boulder_5.png",
+    "shadow": {
+     "offset": [
+      -38,
+      -12
+     ],
+     "png": "res://kit/props/art/shadow_woodland_boulder__b5.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -17647,13 +19403,18 @@
   "requires": [],
   "role": "shrub",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    61,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -59,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_woodland_bramble.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -17670,7 +19431,14 @@
      61.0,
      47.0
     ],
-    "png": "res://zones/woodland/art/bramble.png"
+    "png": "res://zones/woodland/art/bramble.png",
+    "shadow": {
+     "offset": [
+      -59,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_woodland_bramble.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -17724,13 +19492,18 @@
   "requires": [],
   "role": "shrub",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    52,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -46,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_woodland_bramble_b.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -17747,7 +19520,14 @@
      50.0,
      48.0
     ],
-    "png": "res://zones/woodland/art/bramble_b.png"
+    "png": "res://zones/woodland/art/bramble_b.png",
+    "shadow": {
+     "offset": [
+      -46,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_woodland_bramble_b.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -17801,13 +19581,18 @@
   "requires": [],
   "role": "shrub",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    55,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -39,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_woodland_bush.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -17824,7 +19609,14 @@
      46.0,
      61.0
     ],
-    "png": "res://zones/woodland/art/bush.png"
+    "png": "res://zones/woodland/art/bush.png",
+    "shadow": {
+     "offset": [
+      -39,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_woodland_bush.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -17878,13 +19670,18 @@
   "requires": [],
   "role": "shrub",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    45,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -32,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_woodland_bush_b.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -17901,7 +19698,14 @@
      37.0,
      54.0
     ],
-    "png": "res://zones/woodland/art/bush_b.png"
+    "png": "res://zones/woodland/art/bush_b.png",
+    "shadow": {
+     "offset": [
+      -32,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_woodland_bush_b.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -17955,13 +19759,18 @@
   "requires": [],
   "role": "shrub",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    63,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -46,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_woodland_bush_c.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -17978,7 +19787,14 @@
      54.0,
      57.0
     ],
-    "png": "res://zones/woodland/art/bush_c.png"
+    "png": "res://zones/woodland/art/bush_c.png",
+    "shadow": {
+     "offset": [
+      -46,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_woodland_bush_c.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -18098,13 +19914,18 @@
   ],
   "role": "seat",
   "shadow": {
-   "dir": [
-    6,
-    -3
-   ],
-   "size": [
-    49,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -50,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_woodland_forest_bench.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -18121,7 +19942,14 @@
      54.0,
      51.0
     ],
-    "png": "res://zones/woodland/art/forest_bench.png"
+    "png": "res://zones/woodland/art/forest_bench.png",
+    "shadow": {
+     "offset": [
+      -50,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_woodland_forest_bench.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -18251,13 +20079,18 @@
   "requires": [],
   "role": "shrub",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    47,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -33,
+     -13
+    ],
+    "png": "res://kit/props/art/shadow_woodland_holly.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -18274,7 +20107,14 @@
      40.0,
      74.0
     ],
-    "png": "res://zones/woodland/art/holly.png"
+    "png": "res://zones/woodland/art/holly.png",
+    "shadow": {
+     "offset": [
+      -33,
+      -13
+     ],
+     "png": "res://kit/props/art/shadow_woodland_holly.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -18328,13 +20168,18 @@
   "requires": [],
   "role": "shrub",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    52,
-    15
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -38,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_woodland_holly_b.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -18351,7 +20196,14 @@
      40.0,
      77.0
     ],
-    "png": "res://zones/woodland/art/holly_b.png"
+    "png": "res://zones/woodland/art/holly_b.png",
+    "shadow": {
+     "offset": [
+      -38,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_woodland_holly_b.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -18386,13 +20238,18 @@
   ],
   "role": "ruin",
   "shadow": {
-   "dir": [
-    3,
-    -3
-   ],
-   "size": [
-    32,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -37,
+     -14
+    ],
+    "png": "res://kit/props/art/shadow_woodland_lintel.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -18409,7 +20266,14 @@
      45.0,
      35.0
     ],
-    "png": "res://zones/woodland/art/lintel.png"
+    "png": "res://zones/woodland/art/lintel.png",
+    "shadow": {
+     "offset": [
+      -37,
+      -14
+     ],
+     "png": "res://kit/props/art/shadow_woodland_lintel.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -18479,13 +20343,18 @@
   "requires": [],
   "role": "log",
   "shadow": {
-   "dir": [
-    6,
-    -3
-   ],
-   "size": [
-    92,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -86,
+     -10
+    ],
+    "png": "res://kit/props/art/shadow_woodland_mossy_log.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -18502,7 +20371,14 @@
      91.0,
      54.0
     ],
-    "png": "res://zones/woodland/art/mossy_log.png"
+    "png": "res://zones/woodland/art/mossy_log.png",
+    "shadow": {
+     "offset": [
+      -86,
+      -10
+     ],
+     "png": "res://kit/props/art/shadow_woodland_mossy_log.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -18755,13 +20631,18 @@
   ],
   "role": "marker",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    27,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -13,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_woodland_standing_stone.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -18778,7 +20659,14 @@
      27.0,
      102.0
     ],
-    "png": "res://zones/woodland/art/standing_stone.png"
+    "png": "res://zones/woodland/art/standing_stone.png",
+    "shadow": {
+     "offset": [
+      -13,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_woodland_standing_stone.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -18826,13 +20714,18 @@
   ],
   "role": "marker",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    25,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -18,
+     -9
+    ],
+    "png": "res://kit/props/art/shadow_woodland_standing_stone_b.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -18849,7 +20742,14 @@
      25.0,
      78.0
     ],
-    "png": "res://zones/woodland/art/standing_stone_b.png"
+    "png": "res://zones/woodland/art/standing_stone_b.png",
+    "shadow": {
+     "offset": [
+      -18,
+      -9
+     ],
+     "png": "res://kit/props/art/shadow_woodland_standing_stone_b.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -18897,13 +20797,18 @@
   ],
   "role": "marker",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    25,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -17,
+     -9
+    ],
+    "png": "res://kit/props/art/shadow_woodland_standing_stone_broken.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -18920,7 +20825,14 @@
      25.0,
      69.0
     ],
-    "png": "res://zones/woodland/art/standing_stone_broken.png"
+    "png": "res://zones/woodland/art/standing_stone_broken.png",
+    "shadow": {
+     "offset": [
+      -17,
+      -9
+     ],
+     "png": "res://kit/props/art/shadow_woodland_standing_stone_broken.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -18968,13 +20880,18 @@
   ],
   "role": "marker",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    30,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -17,
+     -9
+    ],
+    "png": "res://kit/props/art/shadow_woodland_standing_stone_lean.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -18991,7 +20908,14 @@
      30.0,
      84.0
     ],
-    "png": "res://zones/woodland/art/standing_stone_lean.png"
+    "png": "res://zones/woodland/art/standing_stone_lean.png",
+    "shadow": {
+     "offset": [
+      -17,
+      -9
+     ],
+     "png": "res://kit/props/art/shadow_woodland_standing_stone_lean.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -19047,13 +20971,18 @@
   ],
   "role": "marker",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    36,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -29,
+     -8
+    ],
+    "png": "res://kit/props/art/shadow_woodland_standing_stone_low.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -19070,7 +20999,14 @@
      37.0,
      66.0
     ],
-    "png": "res://zones/woodland/art/standing_stone_low.png"
+    "png": "res://zones/woodland/art/standing_stone_low.png",
+    "shadow": {
+     "offset": [
+      -29,
+      -8
+     ],
+     "png": "res://kit/props/art/shadow_woodland_standing_stone_low.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -19118,13 +21054,18 @@
   ],
   "role": "marker",
   "shadow": {
-   "dir": [
-    9,
-    -3
-   ],
-   "size": [
-    27,
-    12
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -16,
+     -9
+    ],
+    "png": "res://kit/props/art/shadow_woodland_standing_stone_runes.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -19141,7 +21082,14 @@
      26.0,
      75.0
     ],
-    "png": "res://zones/woodland/art/standing_stone_runes.png"
+    "png": "res://zones/woodland/art/standing_stone_runes.png",
+    "shadow": {
+     "offset": [
+      -16,
+      -9
+     ],
+     "png": "res://kit/props/art/shadow_woodland_standing_stone_runes.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -19262,13 +21210,18 @@
   ],
   "role": "ruin",
   "shadow": {
-   "dir": [
-    3,
-    -3
-   ],
-   "size": [
-    17,
-    6
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -18,
+     -13
+    ],
+    "png": "res://kit/props/art/shadow_woodland_stone_top.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -19285,7 +21238,14 @@
      24.0,
      23.0
     ],
-    "png": "res://zones/woodland/art/stone_top.png"
+    "png": "res://zones/woodland/art/stone_top.png",
+    "shadow": {
+     "offset": [
+      -18,
+      -13
+     ],
+     "png": "res://kit/props/art/shadow_woodland_stone_top.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -19331,13 +21291,18 @@
   "requires": [],
   "role": "stump",
   "shadow": {
-   "dir": [
-    6,
-    -3
-   ],
-   "size": [
-    24,
-    9
+   "kind": "footprint",
+   "mask": {
+    "offset": [
+     -34,
+     -9
+    ],
+    "png": "res://kit/props/art/shadow_woodland_stump.png"
+   },
+   "rule": "silhouette",
+   "sun": [
+    0.46,
+    0.22
    ]
   },
   "size_cells": [
@@ -19354,7 +21319,14 @@
      43.0,
      57.0
     ],
-    "png": "res://zones/woodland/art/stump.png"
+    "png": "res://zones/woodland/art/stump.png",
+    "shadow": {
+     "offset": [
+      -34,
+      -9
+     ],
+     "png": "res://kit/props/art/shadow_woodland_stump.png"
+    }
    }
   },
   "z_sort": "foot"

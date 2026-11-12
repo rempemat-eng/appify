@@ -283,6 +283,18 @@ func pieces() -> Array:
 			stack.append(c)
 	return out
 
+const SUN := "res://data/sun.json"
+static var _sun := Vector2.INF
+
+## The one sun (game/data/sun.json, read by the Python bake and the kit's masks too): a texel h above
+## the ground casts its shadow sun().x * h east and sun().y * h south. The pieces' masks are baked for
+## it (KitPiece.shadow warns when they were made for another); a day-night cycle would vary it here.
+static func sun() -> Vector2:
+	if _sun == Vector2.INF:
+		var d = JSON.parse_string(FileAccess.get_file_as_string(SUN))
+		_sun = Vector2(float(d.cast[0]), float(d.cast[1]))
+	return _sun
+
 ## Cast shadows on the ground from the pieces' ellipses, as ramp steps the shader applies (the
 ## house shadow: core two tones down, its outer 2 world px one tone; scripts/art/kit/compose.py
 ## draws the same).

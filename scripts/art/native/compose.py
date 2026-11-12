@@ -15,6 +15,8 @@ import numpy as np
 from PIL import Image
 from scipy import ndimage as ndi
 
+from scripts.art.sun import CAST as SUN
+
 from . import ctx
 from . import raster as pk
 from .palette import NAMED_ONLY
@@ -37,7 +39,10 @@ TUFT_SIZES = tuple(_ST.get('lawn', {}).get('tuft_sizes', (0.8, 1.4)))
 CALM_BAND = _ST.get('lawn', {}).get('calm_band', 4.0)
 BUSH_MASTER = 'zones_props_bush.png'
 
-SHADOW = tuple(ctx.BIOME['shadow']['project'])   # one projection for every object, in world units
+# one projection for every object, in world units: the one sun (game/data/sun.json, scripts/art/sun.py),
+# which the kit's prop masks and the live ground read too. The biomes' shadow.project still carry the same
+# numbers (test_kit.Sun holds them to the sun) but are no longer read.
+SHADOW = tuple(SUN)
 
 
 # ------------------------------------------------------------------------------------------------

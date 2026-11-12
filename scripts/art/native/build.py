@@ -34,7 +34,7 @@ def tag(d: float) -> str:
 
 def inputs(scene: str, biome: str) -> list:
     """Every file the render reads: the kit's code and data, the biome, the plan, the house
-    palette and the house rule."""
+    palette, the house rule and the sun."""
     files = []
     for base, _dirs, names in os.walk(HERE):
         if '__pycache__' in base:
@@ -45,7 +45,9 @@ def inputs(scene: str, biome: str) -> list:
     files += [os.path.join(ROOT, 'scripts', 'art', 'biomes', biome + '.json'),
               os.path.join(ROOT, 'art', 'scenes', scene + '.json'),
               os.path.join(ROOT, 'art', 'house-palette.json'),
-              os.path.join(ROOT, 'scripts', 'art', 'house_palette.py')]
+              os.path.join(ROOT, 'scripts', 'art', 'house_palette.py'),
+              # the one sun (compose.SHADOW reads it)
+              os.path.join(ROOT, 'scripts', 'art', 'sun.py'), os.path.join(ROOT, 'game', 'data', 'sun.json')]
     return sorted(f for f in files if os.path.exists(f))
 
 
