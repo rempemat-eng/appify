@@ -14041,6 +14041,13 @@
     ],
     "png": "res://kit/props/art/frost/frost_pine_heavy.png"
    },
+   "laden": {
+    "foot": [
+     53,
+     239
+    ],
+    "png": "res://kit/props/art/frost/frost_pine_laden.png"
+   },
    "light": {
     "foot": [
      53,

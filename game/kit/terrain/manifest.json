@@ -577,6 +577,23 @@
    ],
    "face": null,
    "hash": "ef3f8e9d623cb0c1"
+  },
+  {
+   "id": "moraine",
+   "material_id": 15,
+   "priority": 16,
+   "fill": "fill_moraine.png",
+   "walkable": true,
+   "surface": "rock",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "1f138b4050a045c9"
   }
  ],
  "transitions": [
@@ -1024,10 +1041,10 @@
    "hash": "797c68549d93db37"
   },
   {
-   "id": "snow_over_scree",
+   "id": "snow_over_moraine",
    "upper": "snow",
-   "lower": "scree",
-   "png": "over_snow_over_scree.png",
+   "lower": "moraine",
+   "png": "over_snow_over_moraine.png",
    "variants": 1,
    "dressing": {
     "density": 0.35,
@@ -1044,7 +1061,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "362e2a0563b8ea81"
+   "hash": "a925890c243deffd"
   },
   {
    "id": "snow_over_snow_trod",

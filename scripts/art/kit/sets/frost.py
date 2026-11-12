@@ -205,6 +205,8 @@ def icicles(a: np.ndarray, row: np.ndarray, seed: int, rate=0.35, length=(2, 6))
 # the ground
 # ================================================================================================
 SNOW_FILL = ('lawn', {'seed': 1401, 'fam': 'snow', 'base': 3, 'lush': 0.3, 'flowers': 0.0, 'grain': 0.4, 'mottle': 5.0})
+MORAINE_FILL = ('dirt', {'seed': 1403, 'fam': 'stone', 'cell': 11.0, 'stones': 3.5, 'joints': 0.55, 'lit': 0.6, 'blades': 0.05,
+                         'soft_joints': True})
 TROD_FILL = ('dirt', {'seed': 1402, 'fam': 'snow', 'cell': 14.0, 'stones': 0.3, 'joints': 0.72, 'lit': 0.5, 'blades': 0.1,
                       'soft_joints': True})
 
@@ -246,10 +248,13 @@ def terrain_pieces():
                  'The cirque\'s floor: lying snow, calm, soft cool hollows and lit drifts, dead grass blades through it.'),
         _terrain('snow_trod', 'Trodden snow', 14, 22, 'snow', True, TROD_FILL, 0.9,
                  'The Col Path trodden into the snow: packed clods of snow, a few stones kicked up.'),
+        _terrain('moraine', 'Moraine', 15, 16, 'rock', False, MORAINE_FILL, 1.0,
+                 'The High Fells\' moraine: grey granite stones and grit, wind-scoured of snow (the valley\'s scree is '
+                 'warm earth).'),
     ]
     tr = [
         _transition('snow', 'snow_trod', 'sunken', None, 'The snow\'s soft lip over the trodden path.'),
-        _transition('snow', 'scree', 'sunken', STONES, 'Snow lying over the moraine\'s stones.'),
+        _transition('snow', 'moraine', 'sunken', STONES, 'Snow lying over the moraine\'s stones.'),
         _transition('snow', 'water', 'bank', STONES, 'The tarn\'s shore under snow.'),
     ]
     return t, tr
@@ -281,6 +286,11 @@ def _fill_into(cv, m, fill):
 def paint_snow(cv, m, seed=0, **_kw):
     """The snow's painted ground for a future bake hook: its periodic fill laid by world position."""
     _fill_into(cv, m, SNOW_FILL)
+
+
+def paint_moraine(cv, m, seed=0, **_kw):
+    """The moraine's painted ground for a future bake hook: its periodic fill laid by world position."""
+    _fill_into(cv, m, MORAINE_FILL)
 
 
 def paint_snow_trod(cv, m, seed=0, **_kw):
@@ -411,8 +421,8 @@ def pine(load='heavy', seed=41):
     if load == 'light':
         Yg = np.mgrid[0:H, 0:p.W][0]
         where = Yg < H * 0.62
-    snow_on(p.a, seed, depth=(2, 4) if load == 'heavy' else (1, 3), mound=0.6 if load == 'heavy' else 0.4,
-            where=where, inner=True)
+    depth, mound = {'heavy': ((2, 4), 0.6), 'light': ((1, 3), 0.4), 'laden': ((3, 6), 0.8)}[load]
+    snow_on(p.a, seed + (7 if load == 'laden' else 0), depth=depth, mound=mound, where=where, inner=True)
     V.tidy(p.a)
     return p
 
@@ -534,11 +544,11 @@ def prop_jobs():
             eastward='12 (the stone hut: 2.5 A to the ridge, 3 A wide)', fn='col_hut',
             note='The hut warden\'s bothy on the Col Path: rubble granite under slate, snow on the roof and banked at its '
                  'foot, icicles off the eave, a warm window; the stove\'s smoke loops (8 frames) over the still.')),
-        ('frost_pine', [('heavy', lambda: pine('heavy')), ('light', lambda: pine('light'))], dict(
+        ('frost_pine', [('heavy', lambda: pine('heavy')), ('light', lambda: pine('light')), ('laden', lambda: pine('laden'))], dict(
             name='Snowy pine', purpose='grow', role='tree', cells=(4, 2), fp=B._fp(2, 1),
             collision={'shape': 'rect', 'rect': [-5.0, -4.0, 10, 4]}, shadow=(30, 6), composition='cluster',
             forbids=NATURE, size_class='tree (the woodland\'s pine: 79 world px)', eastward='12 (the pines, 3 A)', fn='pine',
-            note='The woodland\'s pine (approved 9 Nov, PR #446) with snow lying on its boughs, heavy or light.')),
+            note='The woodland\'s pine (approved 9 Nov, PR #446) with snow lying on its boughs: heavy, light, or laden after a fall.')),
         ('frost_boulder', [('a', lambda: boulder(0)), ('b', lambda: boulder(1))], dict(
             name='Snowy boulder', purpose='mark', role='rock', cells=(3, 2), fp=B._fp(2, 1),
             collision={'shape': 'rect', 'rect': [-8.0, -6.0, 16, 6]}, shadow=(16, 4), composition='cluster',

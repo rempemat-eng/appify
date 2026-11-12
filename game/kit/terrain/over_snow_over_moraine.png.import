@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://t1xhka0xv2ai"
-path="res://.godot/imported/over_snow_over_scree.png-14bfaa6cc5784177aebe947731b9af60.ctex"
+uid="uid://2yscfv7k3cg8"
+path="res://.godot/imported/over_snow_over_moraine.png-2dbcdccb6cf54af14838ce8d338e1bbe.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/terrain/over_snow_over_scree.png"
-dest_files=["res://.godot/imported/over_snow_over_scree.png-14bfaa6cc5784177aebe947731b9af60.ctex"]
+source_file="res://kit/terrain/over_snow_over_moraine.png"
+dest_files=["res://.godot/imported/over_snow_over_moraine.png-2dbcdccb6cf54af14838ce8d338e1bbe.ctex"]
 
 [params]
 

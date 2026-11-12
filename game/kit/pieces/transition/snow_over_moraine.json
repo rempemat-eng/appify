@@ -1,7 +1,7 @@
 {
  "schema": "napattack.piece/1",
- "id": "snow_over_scree",
- "name": "Snow over scree",
+ "id": "snow_over_moraine",
+ "name": "Snow over moraine",
  "kind": "transition",
  "biomes": [
   "frostline"
@@ -16,7 +16,7 @@
  },
  "transition": {
   "upper": "snow",
-  "lower": "scree",
+  "lower": "moraine",
   "painter": {
    "module": "scripts.art.kit.edges",
    "fn": "sunken",

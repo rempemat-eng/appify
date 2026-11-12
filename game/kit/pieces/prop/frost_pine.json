@@ -25,6 +25,15 @@
     53,
     239
    ]
+  },
+  {
+   "id": "laden",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_pine_laden.png",
+   "foot": [
+    53,
+    239
+   ]
   }
  ],
  "approval": {
@@ -32,7 +41,7 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The woodland's pine (approved 9 Nov, PR #446) with snow lying on its boughs, heavy or light."
+  "note": "The woodland's pine (approved 9 Nov, PR #446) with snow lying on its boughs: heavy, light, or laden after a fall."
  },
  "geometry": {
   "size_px": [
