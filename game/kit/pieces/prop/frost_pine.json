@@ -9,30 +9,12 @@
  "version": 1,
  "variants": [
   {
-   "id": "heavy",
+   "id": "still",
    "weight": 1.0,
-   "png": "res://kit/props/art/frost/frost_pine_heavy.png",
+   "png": "res://kit/props/art/frost/frost_pine.png",
    "foot": [
-    53,
-    239
-   ]
-  },
-  {
-   "id": "light",
-   "weight": 0.6,
-   "png": "res://kit/props/art/frost/frost_pine_light.png",
-   "foot": [
-    53,
-    239
-   ]
-  },
-  {
-   "id": "laden",
-   "weight": 0.6,
-   "png": "res://kit/props/art/frost/frost_pine_laden.png",
-   "foot": [
-    53,
-    239
+    47,
+    236
    ]
   }
  ],
@@ -41,19 +23,19 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The woodland's pine (approved 9 Nov, PR #446) with snow lying on its boughs: heavy, light, or laden after a fall."
+  "note": "The woodland pine's painter with snow as shelves on its tiers (thick west, thinning east)."
  },
  "geometry": {
   "size_px": [
-   107,
-   240
+   96,
+   237
   ],
   "size_cells": [
    4,
    2
   ],
   "z_sort": "foot",
-  "height_px": 240,
+  "height_px": 237,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -64,8 +46,8 @@
    ]
   },
   "foot": [
-   53,
-   239
+   47,
+   236
   ],
   "footprint": [
    [
@@ -96,15 +78,7 @@
  },
  "rendering": {
   "cast_shadow": {
-   "shape": "ellipse",
-   "size": [
-    30,
-    6
-   ],
-   "dir": [
-    1,
-    1
-   ]
+   "shape": "none"
   },
   "contact_ao": true
  },
@@ -118,10 +92,10 @@
  },
  "audit": {
   "size_class": "conifer (the woodland's pine, 79 world px)",
-  "eastward_ref": "12 (the pines, 3 A)",
+  "eastward_ref": "22 (the tiered pines)",
   "painter": {
    "module": "scripts.art.kit.sets.frost",
-   "fn": "pine",
+   "fn": "conifer",
    "args": {}
   },
   "seeded_from": "scripts/art/kit/sets/frost.py",

@@ -12,38 +12,29 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The tarn's shore under snow."
+  "note": "A snow cornice over a granite bank, shore ice on the open water."
  },
  "transition": {
   "upper": "snow",
   "lower": "water",
   "painter": {
    "module": "scripts.art.kit.edges",
-   "fn": "bank",
-   "args": {}
+   "fn": "cornice_bank",
+   "args": {
+    "rim": "ice"
+   }
   },
   "variants": 1,
   "shape": "lower",
-  "dressing": {
-   "density": 0.35,
-   "south": [
-    "pebble_0",
-    "pebble_1"
-   ],
-   "north": [
-    "pebble_1",
-    "pebble_2"
-   ],
-   "side": [
-    "pebble_0"
-   ]
-  }
+  "dressing": null
  },
  "audit": {
   "painter": {
    "module": "scripts.art.kit.edges",
-   "fn": "bank",
-   "args": {}
+   "fn": "cornice_bank",
+   "args": {
+    "rim": "ice"
+   }
   },
   "eastward_ref": "Eastward 22 and 23 (snow over the trod and the shore)"
  }

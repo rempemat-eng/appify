@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ckvka2hix35ok"
-path="res://.godot/imported/frost_pine_heavy.png-71dc13e7a43b929c0e463eb840daa591.ctex"
+uid="uid://7fom4xalfwrd"
+path="res://.godot/imported/frost_woodpile.png-545c4eafe7cd4f6a03c50f511ee8059e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/props/art/frost/frost_pine_heavy.png"
-dest_files=["res://.godot/imported/frost_pine_heavy.png-71dc13e7a43b929c0e463eb840daa591.ctex"]
+source_file="res://kit/props/art/frost/frost_woodpile.png"
+dest_files=["res://.godot/imported/frost_woodpile.png-545c4eafe7cd4f6a03c50f511ee8059e.ctex"]
 
 [params]
 

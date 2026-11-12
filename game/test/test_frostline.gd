@@ -78,15 +78,22 @@ func test_the_tarn_the_hut_and_the_zone_edge_stop_the_player_and_the_trod_does_n
 	var space := zone.get_world_2d().direct_space_state
 	var cell := 24.0
 	var rows: Array = _plan().rows
-	# the tarn's middle, every water cell with water all round it
+	# the tarn's ice and its open water (the ice-cut, the inflow, the outlet), every cell with its own kind
+	# all round it, except under the footbridge's deck
+	var deck := Rect2(Vector2(19.5 * cell - 60, 40 * cell - 48), Vector2(120, 48))
 	var wet := 0
 	for y in range(1, rows.size() - 1):
 		for x in range(1, String(rows[y]).length() - 1):
-			if rows[y][x] == "a" and rows[y - 1][x] == "a" and rows[y + 1][x] == "a" and rows[y][x - 1] == "a" and rows[y][x + 1] == "a":
+			var k: String = rows[y][x]
+			if k not in ["a", "i"] or deck.has_point(Vector2(x + 0.5, y + 0.5) * cell):
+				continue
+			if rows[y - 1][x] == k and rows[y + 1][x] == k and rows[y][x - 1] == k and rows[y][x + 1] == k:
 				wet += 1
 				assert_bool(_stands(space, Vector2(x + 0.5, y + 0.5) * cell)).override_failure_message(
-					"the player stands in the tarn at cell %d, %d" % [x, y]).is_false()
-	assert_int(wet).is_greater(30)
+					"the player stands in the tarn or its water at cell %d, %d" % [x, y]).is_false()
+	assert_int(wet).is_greater(60)
+	# the footbridge carries the hut spur over the outlet
+	assert_bool(_stands(space, Vector2(19.5 * cell, 940.0))).override_failure_message("the footbridge's deck is not walkable").is_true()
 	# every trodden cell is open (no piece stands on the Col Path)
 	var blocked: Array[Vector2i] = []
 	for y in rows.size():
@@ -99,11 +106,17 @@ func test_the_tarn_the_hut_and_the_zone_edge_stop_the_player_and_the_trod_does_n
 	for dx in [-90, -45, 0, 45, 90]:
 		assert_bool(_stands(space, hut.position + Vector2(dx, -30))).override_failure_message(
 			"the player stands inside the Col hut at %d" % dx).is_false()
-	assert_bool(_stands(space, hut.position + Vector2(-10, 40))).is_true()
+	assert_bool(_stands(space, hut.position + Vector2(-10, 36))).is_true()
 	# the zone's edge: nobody walks off the ground
 	var size := Vector2(String(rows[0]).length(), rows.size()) * cell
 	for p in [Vector2(-12, 600), Vector2(size.x + 12, 600), Vector2(600, -12), Vector2(300, size.y + 14)]:
 		assert_bool(_stands(space, p)).override_failure_message("the player stands off the ground at %s" % str(p)).is_false()
+	# the cirque's step: the face stops the player across the zone (rows 18 to 21) except on its stair
+	var open_cols: Array[int] = []
+	for x in String(rows[0]).length():
+		if _stands(space, Vector2(x + 0.5, 20.0) * cell):
+			open_cols.append(x)
+	assert_array(open_cols).override_failure_message("the face is open at columns %s" % str(open_cols)).is_equal([22, 23, 24, 25, 26])
 
 # --- reach --------------------------------------------------------------------------------------
 func test_from_the_arrival_every_talk_area_the_camp_and_the_door_can_be_walked_to() -> void:
@@ -179,3 +192,19 @@ func test_the_loaf_the_ring_and_the_ibex_play_out_here_and_the_snout_waits_for_t
 	Quests.notify("talk:hut_warden")
 	Zones.table.erase("ice_caves")
 	assert_str(Quests.current_step("a1_under_the_snout").get("id", "")).is_equal("cutter")
+
+## A save holding a quest whose zone is not built is shelved on load, and only then (core/quests.gd
+## shelve_unbuilt, deferred until Zones has read its table): the logic audit of #478, item 9.
+func test_a_quest_is_shelved_only_while_its_zone_is_not_built() -> void:
+	_finish_slice()
+	SaveGame.data.quests["a1_bread_for_the_bothy"] = {"state": "active", "step": 1}
+	SaveGame.data.tracked = "a1_bread_for_the_bothy"
+	Quests.shelve_unbuilt()
+	assert_str(Quests.state("a1_bread_for_the_bothy")).is_equal("active")
+	Zones.table.erase("frostline")
+	Quests.shelve_unbuilt()
+	assert_str(Quests.state("a1_bread_for_the_bothy")).is_equal("none")
+	assert_str(String(SaveGame.data.tracked)).is_equal("")
+	var before: Dictionary = SaveGame.data.quests.duplicate(true)
+	Quests.shelve_unbuilt()
+	assert_dict(SaveGame.data.quests).is_equal(before)

@@ -1,0 +1,112 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "frost_fire_ring",
+ "name": "Cold fire ring under snow",
+ "kind": "prop",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/frost/frost_fire_ring.png",
+   "foot": [
+    16,
+    16
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "The fallen climbers' camp: a ring of granite under snow, soot only where scraped."
+ },
+ "geometry": {
+  "size_px": [
+   31,
+   26
+  ],
+  "size_cells": [
+   2,
+   2
+  ],
+  "z_sort": "foot",
+  "height_px": 26,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -5.0,
+    -6.0,
+    10,
+    6
+   ]
+  },
+  "foot": [
+   16,
+   16
+  ],
+  "footprint": [
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "mark",
+  "role": "story",
+  "composition": "free",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "none"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "campfire (a fire ring of stones 1.5 m across)",
+  "eastward_ref": "05 and 37 (the camp fires)",
+  "painter": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "fire_ring",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/frost.py",
+  "todo": []
+ }
+}

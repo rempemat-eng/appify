@@ -13636,19 +13636,99 @@
   },
   "z_sort": "ground"
  },
+ "frost_bench": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -27.0,
+   -9.0,
+   54,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   33,
+   30
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Granite bench",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "beside the Col Path, looking at the view",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "seat",
+  "shadow": {
+   "dir": [
+    3,
+    3
+   ],
+   "size": [
+    30,
+    4
+   ]
+  },
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     33,
+     30
+    ],
+    "png": "res://kit/props/art/frost/frost_bench.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "frost_boulder": {
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -24.0,
    -18.0,
-   48,
-   18
+   -15.0,
+   36,
+   15
   ],
   "deck": null,
   "foot": [
-   27,
-   38
+   25,
+   32
   ],
   "footprint": [
    [
@@ -13672,18 +13752,18 @@
   ],
   "function": {},
   "kind": "prop",
-  "name": "Snowy boulder",
+  "name": "Granite boulder",
   "painted": false,
   "requires": [],
   "role": "rock",
   "shadow": {
    "dir": [
-    3,
-    3
+    2,
+    4
    ],
    "size": [
-    48,
-    12
+    20,
+    6
    ]
   },
   "size_cells": [
@@ -13697,17 +13777,110 @@
   "variants": {
    "a": {
     "foot": [
-     27,
-     38
+     25,
+     32
     ],
     "png": "res://kit/props/art/frost/frost_boulder_a.png"
    },
    "b": {
     "foot": [
-     28,
-     38
+     24,
+     36
     ],
     "png": "res://kit/props/art/frost/frost_boulder_b.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_boulder_large": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -36.0,
+   -27.0,
+   78,
+   27
+  ],
+  "deck": null,
+  "foot": [
+   46,
+   56
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Granite boulder cluster",
+  "painted": false,
+  "requires": [],
+  "role": "rock",
+  "shadow": {
+   "dir": [
+    4,
+    5
+   ],
+   "size": [
+    43,
+    9
+   ]
+  },
+  "size_cells": [
+   5,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     46,
+     56
+    ],
+    "png": "res://kit/props/art/frost/frost_boulder_large.png"
    }
   },
   "z_sort": "foot"
@@ -13723,8 +13896,8 @@
   ],
   "deck": null,
   "foot": [
-   17,
-   62
+   22,
+   44
   ],
   "footprint": [
    [
@@ -13748,7 +13921,7 @@
   ],
   "function": {},
   "kind": "prop",
-  "name": "Snowy cairn",
+  "name": "Granite cairn",
   "painted": false,
   "requires": [
    {
@@ -13761,12 +13934,12 @@
   "role": "marker",
   "shadow": {
    "dir": [
-    3,
+    2,
     3
    ],
    "size": [
-    36,
-    9
+    16,
+    4
    ]
   },
   "size_cells": [
@@ -13778,12 +13951,26 @@
    "owner": null
   },
   "variants": {
+   "small": {
+    "foot": [
+     16,
+     29
+    ],
+    "png": "res://kit/props/art/frost/frost_cairn_small.png"
+   },
    "standing": {
     "foot": [
-     17,
-     62
+     22,
+     44
     ],
     "png": "res://kit/props/art/frost/frost_cairn_standing.png"
+   },
+   "toppled": {
+    "foot": [
+     22,
+     19
+    ],
+    "png": "res://kit/props/art/frost/frost_cairn_toppled.png"
    }
   },
   "z_sort": "foot"
@@ -13795,8 +13982,8 @@
    "fps": 6.0,
    "frames": 8,
    "offset": [
-    80,
-    -267
+    54,
+    -313
    ],
    "reduced_motion": "hold:0",
    "strip": "res://kit/props/art/frost/frost_col_hut_loop.png"
@@ -13811,8 +13998,8 @@
   ],
   "deck": null,
   "foot": [
-   106,
-   269
+   108,
+   315
   ],
   "footprint": [
    [
@@ -13949,12 +14136,12 @@
   "role": "house",
   "shadow": {
    "dir": [
-    3,
-    3
+    10,
+    9
    ],
    "size": [
-    192,
-    27
+    112,
+    15
    ]
   },
   "size_cells": [
@@ -13968,10 +14155,694 @@
   "variants": {
    "still": {
     "foot": [
-     106,
-     269
+     108,
+     315
     ],
     "png": "res://kit/props/art/frost/frost_col_hut.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_crag": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -72.0,
+   -42.0,
+   144,
+   42
+  ],
+  "deck": null,
+  "foot": [
+   49,
+   96
+  ],
+  "footprint": [
+   [
+    -3,
+    -2
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Headwall crag",
+  "painted": false,
+  "requires": [],
+  "role": "rock",
+  "shadow": null,
+  "size_cells": [
+   7,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "a": {
+    "foot": [
+     49,
+     96
+    ],
+    "png": "res://kit/props/art/frost/frost_crag_a.png"
+   },
+   "b": {
+    "foot": [
+     73,
+     90
+    ],
+    "png": "res://kit/props/art/frost/frost_crag_b.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_fire_ring": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": [
+   -15.0,
+   -18.0,
+   30,
+   18
+  ],
+  "deck": null,
+  "foot": [
+   16,
+   16
+  ],
+  "footprint": [
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Cold fire ring under snow",
+  "painted": false,
+  "requires": [],
+  "role": "story",
+  "shadow": null,
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     16,
+     16
+    ],
+    "png": "res://kit/props/art/frost/frost_fire_ring.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_footbridge": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": [
+   -60.0,
+   -48.0,
+   120.0,
+   48.0
+  ],
+  "foot": [
+   60,
+   65
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Plank footbridge over the outlet",
+  "painted": false,
+  "requires": [
+   {
+    "note": "spans the tarn's outlet, three cells wide, west to east",
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "role": "bridge",
+  "shadow": null,
+  "size_cells": [
+   5,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     60,
+     65
+    ],
+    "png": "res://kit/props/art/frost/frost_footbridge.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "frost_hut_tools": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -9.0,
+   30,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   17,
+   70
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Skis and shovel",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 4,
+    "note": "the warden's yard: by the Col hut it serves",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "story",
+  "shadow": {
+   "dir": [
+    2,
+    3
+   ],
+   "size": [
+    16,
+    4
+   ]
+  },
+  "size_cells": [
+   2,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     17,
+     70
+    ],
+    "png": "res://kit/props/art/frost/frost_hut_tools.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_ice_stack": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -30.0,
+   -15.0,
+   60,
+   15
+  ],
+  "deck": null,
+  "foot": [
+   39,
+   37
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Cut ice blocks",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 4,
+    "note": "stacked on the shore by the ice-cut",
+    "rel": "near",
+    "what": "water"
+   }
+  ],
+  "role": "story",
+  "shadow": {
+   "dir": [
+    3,
+    4
+   ],
+   "size": [
+    33,
+    6
+   ]
+  },
+  "size_cells": [
+   3,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     39,
+     37
+    ],
+    "png": "res://kit/props/art/frost/frost_ice_stack.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_icefall": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -48.0,
+   -96.0,
+   96,
+   96
+  ],
+  "deck": null,
+  "foot": [
+   48,
+   107
+  ],
+  "footprint": [
+   [
+    -2,
+    -4
+   ],
+   [
+    -2,
+    -3
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -4
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Frozen fall",
+  "painted": false,
+  "requires": [],
+  "role": "rock",
+  "shadow": null,
+  "size_cells": [
+   4,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     48,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_icefall.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_krummholz": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -27.0,
+   -12.0,
+   54,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   61,
+   108
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Krummholz",
+  "painted": false,
+  "requires": [],
+  "role": "tree",
+  "shadow": {
+   "mask": {
+    "offset": [
+     -59,
+     -34
+    ],
+    "png": "res://kit/props/art/shadow_frost_krummholz.png"
+   }
+  },
+  "size_cells": [
+   4,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     61,
+     108
+    ],
+    "png": "res://kit/props/art/frost/frost_krummholz.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_lost_hat": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   7,
+   12
+  ],
+  "footprint": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Lost hat",
+  "painted": false,
+  "requires": [],
+  "role": "story",
+  "shadow": null,
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     7,
+     12
+    ],
+    "png": "res://kit/props/art/frost/frost_lost_hat.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_noticeboard": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -24.0,
+   -6.0,
+   48,
+   6
+  ],
+  "deck": null,
+  "foot": [
+   33,
+   89
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Warden's noticeboard",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "where the Col Path comes up",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "sign",
+  "shadow": {
+   "dir": [
+    2,
+    3
+   ],
+   "size": [
+    26,
+    4
+   ]
+  },
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     33,
+     89
+    ],
+    "png": "res://kit/props/art/frost/frost_noticeboard.png"
    }
   },
   "z_sort": "foot"
@@ -13987,8 +14858,8 @@
   ],
   "deck": null,
   "foot": [
-   53,
-   239
+   47,
+   236
   ],
   "footprint": [
    [
@@ -14019,7 +14890,7 @@
   "shadow": {
    "mask": {
     "offset": [
-     -37,
+     -39,
      -73
     ],
     "png": "res://kit/props/art/shadow_frost_pine.png"
@@ -14034,26 +14905,423 @@
    "owner": null
   },
   "variants": {
-   "heavy": {
+   "still": {
     "foot": [
-     53,
-     239
+     47,
+     236
     ],
-    "png": "res://kit/props/art/frost/frost_pine_heavy.png"
+    "png": "res://kit/props/art/frost/frost_pine.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_pine_squat": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -12.0,
+   30,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   49,
+   175
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
    },
-   "laden": {
-    "foot": [
-     53,
-     239
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Wind-cropped pine",
+  "painted": false,
+  "requires": [],
+  "role": "tree",
+  "shadow": {
+   "mask": {
+    "offset": [
+     -39,
+     -54
     ],
-    "png": "res://kit/props/art/frost/frost_pine_laden.png"
+    "png": "res://kit/props/art/shadow_frost_pine_squat.png"
+   }
+  },
+  "size_cells": [
+   4,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     49,
+     175
+    ],
+    "png": "res://kit/props/art/frost/frost_pine_squat.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_rock_stair": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   60,
+   107
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Granite stair",
+  "painted": false,
+  "requires": [],
+  "role": "rock_steps",
+  "shadow": null,
+  "size_cells": [
+   5,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     60,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rock_stair.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "frost_rockface": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -72.0,
+   -96.0,
+   144,
+   96
+  ],
+  "deck": null,
+  "foot": [
+   72,
+   107
+  ],
+  "footprint": [
+   [
+    -3,
+    -4
+   ],
+   [
+    -3,
+    -3
+   ],
+   [
+    -3,
+    -2
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -4
+   ],
+   [
+    -2,
+    -3
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -4
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -4
+   ],
+   [
+    2,
+    -3
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    2,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
    },
-   "light": {
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Granite face",
+  "painted": false,
+  "requires": [],
+  "role": "rock",
+  "shadow": null,
+  "size_cells": [
+   6,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "both": {
     "foot": [
-     53,
-     239
+     72,
+     107
     ],
-    "png": "res://kit/props/art/frost/frost_pine_light.png"
+    "png": "res://kit/props/art/frost/frost_rockface_both.png"
+   },
+   "east": {
+    "foot": [
+     72,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rockface_east.png"
+   },
+   "plain": {
+    "foot": [
+     72,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rockface_plain.png"
+   },
+   "west": {
+    "foot": [
+     72,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rockface_west.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_rockface_short": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -48.0,
+   -96.0,
+   96,
+   96
+  ],
+  "deck": null,
+  "foot": [
+   48,
+   107
+  ],
+  "footprint": [
+   [
+    -2,
+    -4
+   ],
+   [
+    -2,
+    -3
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -4
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Granite face, short",
+  "painted": false,
+  "requires": [],
+  "role": "rock",
+  "shadow": null,
+  "size_cells": [
+   4,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "both": {
+    "foot": [
+     48,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rockface_short_both.png"
+   },
+   "east": {
+    "foot": [
+     48,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rockface_short_east.png"
+   },
+   "plain": {
+    "foot": [
+     48,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rockface_short_plain.png"
+   },
+   "west": {
+    "foot": [
+     48,
+     107
+    ],
+    "png": "res://kit/props/art/frost/frost_rockface_short_west.png"
    }
   },
   "z_sort": "foot"
@@ -14070,7 +15338,7 @@
   "deck": null,
   "foot": [
    38,
-   38
+   36
   ],
   "footprint": [
    [
@@ -14107,7 +15375,7 @@
   "requires": [
    {
     "cells": 4,
-    "note": "drawn up on the tarn's shore, where the ice is cut",
+    "note": "drawn up on the tarn's shore, by the ice-cut",
     "rel": "near",
     "what": "water"
    }
@@ -14115,16 +15383,16 @@
   "role": "story",
   "shadow": {
    "dir": [
-    3,
-    3
+    4,
+    4
    ],
    "size": [
-    84,
-    12
+    43,
+    6
    ]
   },
   "size_cells": [
-   4,
+   5,
    2
   ],
   "snap": "cell",
@@ -14135,9 +15403,358 @@
    "still": {
     "foot": [
      38,
-     38
+     36
     ],
     "png": "res://kit/props/art/frost/frost_sledge.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_snag": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -9.0,
+   -9.0,
+   18,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   23,
+   155
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Dead pine",
+  "painted": false,
+  "requires": [],
+  "role": "tree",
+  "shadow": {
+   "mask": {
+    "offset": [
+     -25,
+     -48
+    ],
+    "png": "res://kit/props/art/shadow_frost_snag.png"
+   }
+  },
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     23,
+     155
+    ],
+    "png": "res://kit/props/art/frost/frost_snag.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_snow_pole": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -4.5,
+   -4.5,
+   9,
+   6
+  ],
+  "deck": null,
+  "foot": [
+   11,
+   92
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Snow pole",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 2,
+    "note": "marking the Col Path where drifts cover it",
+    "rel": "near",
+    "what": "route"
+   }
+  ],
+  "role": "marker",
+  "shadow": {
+   "dir": [
+    1,
+    2
+   ],
+   "size": [
+    7,
+    3
+   ]
+  },
+  "size_cells": [
+   1,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     11,
+     92
+    ],
+    "png": "res://kit/props/art/frost/frost_snow_pole.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_spruce": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -12.0,
+   30,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   43,
+   284
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Snowy spruce",
+  "painted": false,
+  "requires": [],
+  "role": "tree",
+  "shadow": {
+   "mask": {
+    "offset": [
+     -33,
+     -87
+    ],
+    "png": "res://kit/props/art/shadow_frost_spruce.png"
+   }
+  },
+  "size_cells": [
+   3,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     43,
+     284
+    ],
+    "png": "res://kit/props/art/frost/frost_spruce.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_stone": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -9.0,
+   -9.0,
+   18,
+   9
+  ],
+  "deck": null,
+  "foot": [
+   15,
+   18
+  ],
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Granite stone",
+  "painted": false,
+  "requires": [],
+  "role": "rock",
+  "shadow": {
+   "dir": [
+    1,
+    2
+   ],
+   "size": [
+    10,
+    3
+   ]
+  },
+  "size_cells": [
+   2,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     15,
+     18
+    ],
+    "png": "res://kit/props/art/frost/frost_stone.png"
+   }
+  },
+  "z_sort": "foot"
+ },
+ "frost_woodpile": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -33.0,
+   -12.0,
+   66,
+   12
+  ],
+  "deck": null,
+  "foot": [
+   40,
+   38
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {},
+  "kind": "prop",
+  "name": "Warden's woodpile",
+  "painted": false,
+  "requires": [
+   {
+    "cells": 4,
+    "note": "the warden's yard: by the Col hut it serves",
+    "rel": "within",
+    "what": "house"
+   }
+  ],
+  "role": "store",
+  "shadow": {
+   "dir": [
+    3,
+    4
+   ],
+   "size": [
+    36,
+    6
+   ]
+  },
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     40,
+     38
+    ],
+    "png": "res://kit/props/art/frost/frost_woodpile.png"
    }
   },
   "z_sort": "foot"

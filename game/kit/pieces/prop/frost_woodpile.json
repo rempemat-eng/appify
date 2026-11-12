@@ -1,0 +1,124 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "frost_woodpile",
+ "name": "Warden's woodpile",
+ "kind": "prop",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/frost/frost_woodpile.png",
+   "foot": [
+    40,
+    38
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "Split logs between two stakes, cut ends south, snow on top and at the west end."
+ },
+ "geometry": {
+  "size_px": [
+   73,
+   48
+  ],
+  "size_cells": [
+   3,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 48,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -11.0,
+    -4.0,
+    22,
+    4
+   ]
+  },
+  "foot": [
+   40,
+   38
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "store",
+  "role": "store",
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "within",
+    "what": "house",
+    "cells": 4,
+    "note": "the warden's yard: by the Col hut it serves"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    12.1,
+    2.0
+   ],
+   "dir": [
+    1.1,
+    1.2
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "woodpile",
+  "eastward_ref": "17 (stacked logs)",
+  "painter": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "woodpile",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/frost.py",
+  "todo": []
+ }
+}

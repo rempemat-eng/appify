@@ -1,7 +1,7 @@
 {
  "schema": "napattack.piece/1",
  "id": "frost_boulder",
- "name": "Snowy boulder",
+ "name": "Granite boulder",
  "kind": "prop",
  "biomes": [
   "frostline"
@@ -13,8 +13,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/frost/frost_boulder_a.png",
    "foot": [
-    27,
-    38
+    25,
+    32
    ]
   },
   {
@@ -22,8 +22,8 @@
    "weight": 0.6,
    "png": "res://kit/props/art/frost/frost_boulder_b.png",
    "foot": [
-    28,
-    38
+    24,
+    36
    ]
   }
  ],
@@ -32,11 +32,11 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The woodland's boulders with a cap of snow: the boulder field below the High Fells."
+  "note": "A granite boulder of two or three facetted masses, a snow cap on its top plane, a west drift."
  },
  "geometry": {
   "size_px": [
-   57,
+   43,
    39
   ],
   "size_cells": [
@@ -48,15 +48,15 @@
   "collision": {
    "shape": "rect",
    "rect": [
-    -8.0,
     -6.0,
-    16,
-    6
+    -5.0,
+    12,
+    5
    ]
   },
   "foot": [
-   27,
-   38
+   25,
+   32
   ],
   "footprint": [
    [
@@ -89,12 +89,12 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    16,
-    4
+    6.6,
+    2.0
    ],
    "dir": [
-    1,
-    1
+    0.6,
+    1.2
    ]
   },
   "contact_ao": true
@@ -108,7 +108,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "boulder (the woodland's boulders)",
+  "size_class": "boulder (a Frostline granite boulder)",
   "eastward_ref": "13 (the boulder, 0.35 x 0.42 A)",
   "painter": {
    "module": "scripts.art.kit.sets.frost",

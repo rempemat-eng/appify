@@ -12,39 +12,42 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "Snow lying over the moraine's stones."
+  "note": "Snow thinning over the moraine, stones breaking through."
  },
  "transition": {
   "upper": "snow",
   "lower": "moraine",
   "painter": {
    "module": "scripts.art.kit.edges",
-   "fn": "sunken",
-   "args": {
-    "fray": true
-   }
+   "fn": "snow_fray",
+   "args": {}
   },
   "variants": 1,
   "shape": "lower",
   "dressing": {
-   "density": 0.35,
+   "density": 0.85,
    "south": [
-    "pebble_0",
-    "pebble_1"
+    "bankstone_0",
+    "bankstone_1",
+    "pebble_2",
+    "pebble_3"
    ],
    "north": [
-    "pebble_1",
-    "pebble_2"
+    "bankstone_1",
+    "bankstone_2",
+    "pebble_1"
    ],
    "side": [
-    "pebble_0"
+    "bankstone_0",
+    "pebble_2",
+    "pebble_3"
    ]
   }
  },
  "audit": {
   "painter": {
    "module": "scripts.art.kit.edges",
-   "fn": "sunken",
+   "fn": "snow_fray",
    "args": {}
   },
   "eastward_ref": "Eastward 22 and 23 (snow over the trod and the shore)"

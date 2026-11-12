@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dubdjtrgyfwy3"
-path="res://.godot/imported/frost_pine_laden.png-65351214cc0c8f55d73e0260a46ce386.ctex"
+uid="uid://vsc5wdj1htg6"
+path="res://.godot/imported/frost_bench.png-43a067fd68af3e88e7dedc1736eadc82.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/props/art/frost/frost_pine_laden.png"
-dest_files=["res://.godot/imported/frost_pine_laden.png-65351214cc0c8f55d73e0260a46ce386.ctex"]
+source_file="res://kit/props/art/frost/frost_bench.png"
+dest_files=["res://.godot/imported/frost_bench.png-43a067fd68af3e88e7dedc1736eadc82.ctex"]
 
 [params]
 

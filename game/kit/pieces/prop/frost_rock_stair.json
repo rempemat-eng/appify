@@ -1,0 +1,79 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "frost_rock_stair",
+ "name": "Granite stair",
+ "kind": "prop",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/frost/frost_rock_stair.png",
+   "foot": [
+    60,
+    107
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "Six granite steps up the face with snow-dusted treads: the Col Path's way up the cirque's step."
+ },
+ "geometry": {
+  "size_px": [
+   120,
+   114
+  ],
+  "size_cells": [
+   5,
+   5
+  ],
+  "z_sort": "ground",
+  "height_px": 114,
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   60,
+   107
+  ],
+  "footprint": []
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "climb",
+  "role": "rock_steps",
+  "composition": "axis"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "none"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "stair (40 world px wide: a stair is at least 34)",
+  "eastward_ref": "12 (the stairs)",
+  "painter": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "rock_stair",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/frost.py",
+  "todo": []
+ }
+}

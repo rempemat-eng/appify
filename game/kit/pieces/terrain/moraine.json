@@ -12,23 +12,16 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The High Fells' moraine: grey granite stones and grit, wind-scoured of snow (the valley's scree is warm earth)."
+  "note": "The High Fells' moraine: cold grey granite grit with stones of three sizes, old snow in their lee."
  },
  "terrain": {
   "material_id": 15,
   "priority": 16,
   "fill": {
    "module": "scripts.art.kit.fills",
-   "fn": "dirt",
+   "fn": "moraine",
    "args": {
-    "seed": 1403,
-    "fam": "stone",
-    "cell": 11.0,
-    "stones": 3.5,
-    "joints": 0.55,
-    "lit": 0.6,
-    "blades": 0.05,
-    "soft_joints": true
+    "seed": 1403
    }
   },
   "walkable": true,
@@ -56,16 +49,9 @@
  "audit": {
   "painter": {
    "module": "scripts.art.kit.fills",
-   "fn": "dirt",
+   "fn": "moraine",
    "args": {
-    "seed": 1403,
-    "fam": "stone",
-    "cell": 11.0,
-    "stones": 3.5,
-    "joints": 0.55,
-    "lit": 0.6,
-    "blades": 0.05,
-    "soft_joints": true
+    "seed": 1403
    }
   },
   "size_class": "ground",

@@ -1,0 +1,124 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "frost_bench",
+ "name": "Granite bench",
+ "kind": "prop",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/frost/frost_bench.png",
+   "foot": [
+    33,
+    30
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "A granite slab on two blocks, the snow brushed off half the seat."
+ },
+ "geometry": {
+  "size_px": [
+   60,
+   40
+  ],
+  "size_cells": [
+   3,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 40,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -9.0,
+    -3.0,
+    18,
+    3
+   ]
+  },
+  "foot": [
+   33,
+   30
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "rest",
+  "role": "seat",
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 2,
+    "note": "beside the Col Path, looking at the view"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    9.9,
+    1.5
+   ],
+   "dir": [
+    0.9,
+    0.9
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "bench (37 to 68 tall, 70 to 107 wide)",
+  "eastward_ref": "12 and 38 (the bench)",
+  "painter": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "bench",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/frost.py",
+  "todo": []
+ }
+}

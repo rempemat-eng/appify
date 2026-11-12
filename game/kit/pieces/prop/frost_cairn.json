@@ -1,7 +1,7 @@
 {
  "schema": "napattack.piece/1",
  "id": "frost_cairn",
- "name": "Snowy cairn",
+ "name": "Granite cairn",
  "kind": "prop",
  "biomes": [
   "frostline"
@@ -13,8 +13,26 @@
    "weight": 1.0,
    "png": "res://kit/props/art/frost/frost_cairn_standing.png",
    "foot": [
-    17,
-    62
+    22,
+    44
+   ]
+  },
+  {
+   "id": "toppled",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_cairn_toppled.png",
+   "foot": [
+    22,
+    19
+   ]
+  },
+  {
+   "id": "small",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_cairn_small.png",
+   "foot": [
+    16,
+    29
    ]
   }
  ],
@@ -23,19 +41,19 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The Brackens' cairn under snow: a waymark on the Col Path."
+  "note": "A granite waymark with snow on each ring: standing, toppled east, or a small marker."
  },
  "geometry": {
   "size_px": [
-   35,
-   63
+   57,
+   59
   ],
   "size_cells": [
    2,
    2
   ],
   "z_sort": "foot",
-  "height_px": 63,
+  "height_px": 59,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -46,8 +64,8 @@
    ]
   },
   "foot": [
-   17,
-   62
+   22,
+   44
   ],
   "footprint": [
    [
@@ -91,12 +109,12 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    12,
-    3
+    5.5,
+    1.5
    ],
    "dir": [
-    1,
-    1
+    0.5,
+    0.9
    ]
   },
   "contact_ao": true

@@ -12,22 +12,16 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The cirque's floor: lying snow, calm, soft cool hollows and lit drifts, dead grass blades through it."
+  "note": "The cirque's floor: lying snow, a calm plane in three tones laid by the wind in long soft drifts."
  },
  "terrain": {
   "material_id": 13,
   "priority": 31,
   "fill": {
    "module": "scripts.art.kit.fills",
-   "fn": "lawn",
+   "fn": "snow",
    "args": {
-    "seed": 1401,
-    "fam": "snow",
-    "base": 3,
-    "lush": 0.3,
-    "flowers": 0.0,
-    "grain": 0.4,
-    "mottle": 5.0
+    "seed": 1401
    }
   },
   "walkable": true,
@@ -55,15 +49,9 @@
  "audit": {
   "painter": {
    "module": "scripts.art.kit.fills",
-   "fn": "lawn",
+   "fn": "snow",
    "args": {
-    "seed": 1401,
-    "fam": "snow",
-    "base": 3,
-    "lush": 0.3,
-    "flowers": 0.0,
-    "grain": 0.4,
-    "mottle": 5.0
+    "seed": 1401
    }
   },
   "size_class": "ground",

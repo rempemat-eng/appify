@@ -1,0 +1,60 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "ice",
+ "name": "Lake ice",
+ "kind": "terrain",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "The tarn frozen over: clear blue ice under wind-laid white, cracks. Kept off (the white ice breaks)."
+ },
+ "terrain": {
+  "material_id": 16,
+  "priority": 12,
+  "fill": {
+   "module": "scripts.art.kit.fills",
+   "fn": "ice",
+   "args": {
+    "seed": 1404
+   }
+  },
+  "walkable": false,
+  "surface": "water",
+  "route": false,
+  "water": null,
+  "swatch": [
+   96,
+   96
+  ],
+  "paint": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "paint_ice",
+   "args": {}
+  }
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false,
+  "nav_cost": 9.0
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.kit.fills",
+   "fn": "ice",
+   "args": {
+    "seed": 1404
+   }
+  },
+  "size_class": "ground",
+  "eastward_ref": "Eastward 22 to 24 (the snowfield, the trodden path); refs local only"
+ }
+}

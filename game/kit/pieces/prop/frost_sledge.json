@@ -14,7 +14,7 @@
    "png": "res://kit/props/art/frost/frost_sledge.png",
    "foot": [
     38,
-    38
+    36
    ]
   }
  ],
@@ -23,19 +23,19 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "A plank sledge on curled runners, three blocks of lake ice roped on it and the bow saw leaning on it."
+  "note": "Curled runners shod with iron, three blocks of lake ice lashed on, the bow saw leaning on it."
  },
  "geometry": {
   "size_px": [
-   77,
-   44
+   85,
+   43
   ],
   "size_cells": [
-   4,
+   5,
    2
   ],
   "z_sort": "foot",
-  "height_px": 44,
+  "height_px": 43,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,7 +47,7 @@
   },
   "foot": [
    38,
-   38
+   36
   ],
   "footprint": [
    [
@@ -78,7 +78,7 @@
     "rel": "near",
     "what": "water",
     "cells": 4,
-    "note": "drawn up on the tarn's shore, where the ice is cut"
+    "note": "drawn up on the tarn's shore, by the ice-cut"
    }
   ],
   "forbids": [
@@ -96,12 +96,12 @@
   "cast_shadow": {
    "shape": "ellipse",
    "size": [
-    28,
-    4
+    14.3,
+    2.0
    ],
    "dir": [
-    1,
-    1
+    1.3,
+    1.2
    ]
   },
   "contact_ao": true
@@ -116,7 +116,7 @@
  },
  "audit": {
   "size_class": "pile (a low sledge under its load of ice blocks: the load is what stands)",
-  "eastward_ref": "04 (the stall cart), 17 (the farm cart)",
+  "eastward_ref": "04, 17",
   "painter": {
    "module": "scripts.art.kit.sets.frost",
    "fn": "sledge",

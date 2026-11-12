@@ -12,23 +12,16 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The Col Path trodden into the snow: packed clods of snow, a few stones kicked up."
+  "note": "The Col Path trodden into the snow: a packed plane a tone cooler, worn patches, bootprints."
  },
  "terrain": {
   "material_id": 14,
   "priority": 22,
   "fill": {
    "module": "scripts.art.kit.fills",
-   "fn": "dirt",
+   "fn": "snow_trod",
    "args": {
-    "seed": 1402,
-    "fam": "snow",
-    "cell": 14.0,
-    "stones": 0.3,
-    "joints": 0.72,
-    "lit": 0.5,
-    "blades": 0.1,
-    "soft_joints": true
+    "seed": 1402
    }
   },
   "walkable": true,
@@ -56,16 +49,9 @@
  "audit": {
   "painter": {
    "module": "scripts.art.kit.fills",
-   "fn": "dirt",
+   "fn": "snow_trod",
    "args": {
-    "seed": 1402,
-    "fam": "snow",
-    "cell": 14.0,
-    "stones": 0.3,
-    "joints": 0.72,
-    "lit": 0.5,
-    "blades": 0.1,
-    "soft_joints": true
+    "seed": 1402
    }
   },
   "size_class": "ground",
