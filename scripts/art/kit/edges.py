@@ -589,5 +589,158 @@ def tier_side(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0),
     return ops.encode((slice(T0, T1), slice(T0, T1)))
 
 
+# ------------------------------------------------------------------------------------------------
+# the Frostline's edges (scripts/art/kit/sets/frost.py; the detail audit of #478, F-G4 to F-G6)
+# ------------------------------------------------------------------------------------------------
+def _north_lip(k: int, m2: np.ndarray) -> np.ndarray:
+    """The lower material's texels under a north lip, read from the cells (upper north of the
+    horizontal cell line, lower south of it) and kept near that line, as bank does, so a vertical
+    edge's lumps never cast a lip's bands into a neighbour's border strip."""
+    q = [bool((k >> b) & 1) for b in range(4)]
+    xs_ = np.arange(N) + 0.5
+    left = (xs_ < MID)[None, :]
+    nb_cfg = np.where(left, q[0] and not q[2], q[1] and not q[3]).astype(bool)
+    yy_ = np.arange(N)[:, None] + 0.5
+    return m2 & nb_cfg & (yy_ > MID - 5) & (yy_ < MID + 10)
+
+
+def _south_lip(k: int, m2: np.ndarray) -> np.ndarray:
+    """The upper material's texels over a south edge (upper north of the horizontal cell line, lower
+    south), near that line."""
+    q = [bool((k >> b) & 1) for b in range(4)]
+    xs_ = np.arange(N) + 0.5
+    left = (xs_ < MID)[None, :]
+    cfg = np.where(left, q[0] and not q[2], q[1] and not q[3]).astype(bool)
+    yy_ = np.arange(N)[:, None] + 0.5
+    return ~m2 & cfg & (yy_ > MID - 10) & (yy_ < MID + 5)
+
+
+def snow_lip(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0)) -> np.ndarray:
+    """Snow (upper) over a trod packed into it: under a north lip the snow hangs a texel over the
+    trod and casts two rows of cool shade on it; on the trod's south side the snow's first row is
+    lit. No line along the sides (only a north lip shows a face)."""
+    m2 = soft_lower(k, prof)
+    snow = ~m2
+    ops = Ops(snow, fill_u, fill_l)
+    under = _north_lip(k, m2)
+    over = under & GD.down(snow, 1)
+    ops.own[over] = 0
+    sh = under & ~over & (GD.down(snow, 2) | GD.down(snow, 3))
+    ops.shift(sh, -1)
+    ops.shift(snow & GD.down(m2, 1), 1)
+    return ops.encode((slice(T0, T1), slice(T0, T1)))
+
+
+def snow_fray(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0)) -> np.ndarray:
+    """Snow (upper) thinning over a stone field: no closed outline (the step is a texel at most).
+    Where the snow ends to the south it keeps a lit lip row and a cool row under it, and a row of
+    shade on the stones below; its north edge's first row is lit. The stones that break through
+    its last texels are the edge dressing's."""
+    m2 = soft_lower(k, prof)
+    snow = ~m2
+    ops = Ops(snow, fill_u, fill_l)
+    over = _south_lip(k, m2)
+    south_end = over & GD.down(m2, -1)
+    ops.shift(south_end, -1)
+    ops.shift(over & GD.down(south_end, -1) & ~south_end, 1)
+    ops.shift(m2 & GD.down(snow, 1), -1)
+    ops.shift(snow & GD.down(m2, 1), 1)
+    return ops.encode((slice(T0, T1), slice(T0, T1)))
+
+
+def cornice_bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), rim: str = 'ice') -> np.ndarray:
+    """Snow (upper) over water or ice in a cold country, edges.bank's geometry with the Frostline's
+    materials. Under a north lip: the snow hangs over the shore as a cornice (a lit row, then a cool
+    row), a blue shade row on the face under it, a granite face (slate courses lit where a stone
+    begins, dark where it ends), a dark wet foot, a lit line where it meets the water or ice, and two
+    rows of shade on it. Every other shore: the snow's lip lit and, with rim 'ice', a rim of shore
+    ice two texels wide (lit on its land side) on the open water; with rim 'lip', a cool row."""
+    m2 = soft_lower(k, prof)
+    land = ~m2
+    ops = Ops(land, fill_u, fill_l)
+    rt = GD.runs_from_top(m2)
+    q = [bool((k >> b) & 1) for b in range(4)]
+    xs_ = np.arange(N) + 0.5
+    left = (xs_ < MID)[None, :]
+    nb_cfg = np.where(left, q[0] and not q[2], q[1] and not q[3]).astype(bool)
+    top_of_run = m2 & GD.down(land, 1)
+    col_bank = np.zeros_like(m2)
+    for d in range(0, 6):
+        col_bank |= GD.down(top_of_run, d) & m2
+    yy_ = np.arange(N)[:, None] + 0.5
+    col_bank &= (rt <= 9) & nb_cfg & (yy_ > MID - 5) & (yy_ < MID + 10)
+    xs = np.arange(N) + 0.5
+    t = np.clip(np.where(xs < MID, xs - T0, xs - T1).astype(int) + HALF, 0, CELL - 1)
+    pw, pe = _bank_marks(prof[3] + 16), _bank_marks(prof[1] + 16)
+    marks = np.where(xs < MID, pw[t], pe[t])[None, :].repeat(N, 0)
+    # rows under the lip: 1 the cornice's lit front, 2 its cool underside, 3 the blue shade on the
+    # face, 4 and 5 the granite, 6 its dark wet foot
+    sel = col_bank & (rt == 1)
+    ops.own[sel] = 0
+    ops.dl[sel] = 1
+    sel = col_bank & (rt == 2)
+    ops.own[sel] = 2
+    ops.ab[sel] = C('snow_cool', 3)
+    sel = col_bank & (rt == 3)
+    ops.own[sel] = 2
+    ops.ab[sel] = C('sky_cool', 2)
+    for r_ in (4, 5):
+        sel = col_bank & (rt == r_)
+        ops.own[sel] = 2
+        body = C('slate', 2) if r_ == 4 else C('slate_cool', 2)
+        ops.ab[sel] = np.where(marks[sel] > 0, C('slate', 4), np.where(marks[sel] < 0, C('slate_cool', 1), body))
+    sel = col_bank & (rt == 6)
+    ops.own[sel] = 2
+    ops.ab[sel] = C('slate_cool', 0)
+    ops.shift(col_bank & (rt == 7), 2)
+    ops.shift(col_bank & ((rt == 8) | (rt == 9)), -1)
+    nb = col_bank
+    yy2, xx2 = np.mgrid[0:N, 0:N]
+    away = ((yy2 >= T0 + CALM + 1) & (yy2 < T1 - CALM - 1) & (xx2 >= T0 + CALM + 1) & (xx2 < T1 - CALM - 1))
+    face = nb & (rt <= 6)
+    face_end = face & (GD.right(m2 & ~nb, 1) | GD.right(m2 & ~nb, -1)) & away & (rt >= 3)
+    ops.own[face_end] = 2
+    ops.ab[face_end] = C('slate_cool', 0)
+    cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    edge1 = m2 & ~nb & ndi.binary_dilation(land, structure=cross)
+    if rim == 'ice':
+        edge2 = m2 & ~nb & ~edge1 & ndi.binary_dilation(edge1 | (face & away), structure=cross)
+        ops.own[edge1] = 2
+        ops.ab[edge1] = C('sky_cool', 5)
+        ops.own[edge2] = 2
+        ops.ab[edge2] = C('snow_cool', 3)
+    else:
+        ops.shift(edge1, -1)
+    ops.shift(land & GD.down(m2, 1), 1)
+    return ops.encode((slice(T0, T1), slice(T0, T1)))
+
+
+def ice_edge(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0)) -> np.ndarray:
+    """Lake ice (upper) cut or melted back from open water: under a north edge the ice's thickness
+    shows (a lit cut edge, two rows of ice in shade, a dark wet line) and the water under it is in
+    shade; every other edge is a crisp lit rim of ice."""
+    m2 = soft_lower(k, prof)
+    ice_ = ~m2
+    ops = Ops(ice_, fill_u, fill_l)
+    rt = GD.runs_from_top(m2)
+    q = [bool((k >> b) & 1) for b in range(4)]
+    xs_ = np.arange(N) + 0.5
+    left = (xs_ < MID)[None, :]
+    nb_cfg = np.where(left, q[0] and not q[2], q[1] and not q[3]).astype(bool)
+    yy_ = np.arange(N)[:, None] + 0.5
+    col = m2 & (rt <= 6) & nb_cfg & (yy_ > MID - 5) & (yy_ < MID + 10)
+    for r_, code in ((1, C('sky_cool', 5)), (2, C('sky_cool', 3)), (3, C('sky_cool', 3)), (4, C('water_cool', 1))):
+        sel = col & (rt == r_)
+        ops.own[sel] = 2
+        ops.ab[sel] = code
+    ops.shift(col & ((rt == 5) | (rt == 6)), -1)
+    cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    rim_ = ice_ & ndi.binary_dilation(m2 & ~col, structure=cross)
+    ops.own[rim_] = 2
+    ops.ab[rim_] = C('sky_cool', 5)
+    return ops.encode((slice(T0, T1), slice(T0, T1)))
+
+
 PAINTERS = {'sunken': sunken, 'bank': bank, 'quay_wall': quay_wall, 'beach': beach, 'plain': plain, 'lip': lip, 'foot': foot,
-            'tier_side': tier_side}
+            'tier_side': tier_side, 'snow_lip': snow_lip, 'snow_fray': snow_fray, 'cornice_bank': cornice_bank,
+            'ice_edge': ice_edge}

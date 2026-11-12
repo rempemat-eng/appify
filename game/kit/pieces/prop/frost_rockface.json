@@ -1,0 +1,237 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "frost_rockface",
+ "name": "Granite face",
+ "kind": "prop",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "plain",
+   "weight": 1.0,
+   "png": "res://kit/props/art/frost/frost_rockface_plain.png",
+   "foot": [
+    72,
+    107
+   ]
+  },
+  {
+   "id": "plain_b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_rockface_plain_b.png",
+   "foot": [
+    72,
+    107
+   ]
+  },
+  {
+   "id": "plain_c",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_rockface_plain_c.png",
+   "foot": [
+    72,
+    107
+   ]
+  },
+  {
+   "id": "west",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_rockface_west.png",
+   "foot": [
+    72,
+    107
+   ]
+  },
+  {
+   "id": "east",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_rockface_east.png",
+   "foot": [
+    72,
+    107
+   ]
+  },
+  {
+   "id": "both",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_rockface_both.png",
+   "foot": [
+    72,
+    107
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "A south granite face 32 world px high (Eastward 12's block cliff): stratified granite blocks with lit tops, shaded undersides, dark joints, snow on the ledges, a snow lip over the top and a stony foot; three plain looks that tile into one face, and ends (west, east, both) for a tier's real ends."
+ },
+ "geometry": {
+  "size_px": [
+   144,
+   114
+  ],
+  "size_cells": [
+   6,
+   5
+  ],
+  "z_sort": "foot",
+  "height_px": 114,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -24.0,
+    -32.0,
+    48,
+    32
+   ]
+  },
+  "foot": [
+   72,
+   107
+  ],
+  "footprint": [
+   [
+    -3,
+    -4
+   ],
+   [
+    -3,
+    -3
+   ],
+   [
+    -3,
+    -2
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -4
+   ],
+   [
+    -2,
+    -3
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -4
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -4
+   ],
+   [
+    2,
+    -3
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    2,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "exclude",
+  "role": "rock",
+  "composition": "edge",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "none"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "unsized (a 32 world px face, one Frostline tier: size guide \"faces 32 in rock with snow lips\")",
+  "eastward_ref": "12 (the cliff faces)",
+  "painter": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "rockface",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/frost.py",
+  "todo": []
+ }
+}

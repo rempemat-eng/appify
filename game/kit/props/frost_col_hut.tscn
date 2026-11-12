@@ -1,0 +1,33 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://world/terrain/kit_piece.gd" id="1"]
+[ext_resource type="Script" path="res://world/loop_fx.gd" id="3"]
+[ext_resource type="Texture2D" path="res://kit/props/art/frost/frost_col_hut_loop.png" id="4"]
+[ext_resource type="Texture2D" path="res://kit/props/art/frost/frost_col_hut.png" id="2"]
+
+[sub_resource type="RectangleShape2D" id="solid"]
+size = Vector2(204, 78)
+
+[node name="FrostColHut" type="Node2D"]
+script = ExtResource("1")
+piece_id = "frost_col_hut"
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2")
+centered = false
+offset = Vector2(-109, -312)
+
+[node name="Flow" type="Sprite2D" parent="."]
+script = ExtResource("3")
+texture = ExtResource("4")
+centered = false
+offset = Vector2(54, -310)
+hframes = 8
+fps = 6
+
+[node name="Solid" type="StaticBody2D" parent="."]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Solid"]
+position = Vector2(0, -39)
+shape = SubResource("solid")
