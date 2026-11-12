@@ -1,0 +1,4 @@
+{
+ "_about": "The one sun every object's cast shadow is projected by (docs/world-editor.md, 'The sun'): a texel h above the ground lands cast[0] h east and cast[1] h south, in texels. Read by scripts/art/sun.py (the painted zones' bake, native compose.SHADOW, and the kit's prop masks, props.footprint_shadow) and by the live ground (TerrainGround.sun()). Trees' crown masks and houses' volumes do not read it yet (open: one sun is Matt's call, eastward-edges 11.6).",
+ "cast": [0.46, 0.22]
+}

@@ -22,7 +22,7 @@ NAME = 'Mossback tortoise'
 HEIGHT = 41
 BAND = (36, 52)
 ONE_BODY = True
-DETACHED_OK = ('shard', 'shardglow', 'cream', 'gold', 'tell')
+DETACHED_OK = ('shard', 'shardglow', 'cream', 'gold', 'tell', 'soil', 'dirt', 'lamp')
 SCALE = 1.22
 
 
@@ -88,7 +88,7 @@ def build(f, facing, P):
     zs = 20
     shm = shell_m & (f.Y < lip_y + 4.5)
     f.add(shm, 'shell', z=zs, rl=2.4, rs=3.4, vgrad=0.5, line='hard', cast=(1, 2, 1), deep=True,
-          tonemap=C.planes(f, shm, C.px(f, _scutes_at(*[v * f.scale for v in R.p(sc3)])), dark=0.6), tag='shell')
+          tonemap=C.planes(f, shm, C.px(f, _scutes_at(*[v * f.scale for v in R.p(sc3)], calm=(facing == 'S'))), dark=0.6), tag='shell')
     # the shell's rim: marginal plates along its lower edge, notched, one tone darker, and a stub of
     # tail at the back
     rim_y = lip_y + 4.5
@@ -111,34 +111,50 @@ def build(f, facing, P):
           tonemap=C.px(f, _tufts))
     # the shard in the crown, in the moss
     C.shard(f, R, add3(sc3, (-1.0, 9.0, 1.0)), (-0.1, 1.0, 0.2), 8.0, P, 22)
-    # the stomp's dust ring (attack): a flat ring around the front feet
+    # the stomp's dust (attack; 10 Nov K1, 12 Nov K1r): round earth-toned puffs thrown out along the
+    # forefeet's ground line, rising and breaking up over the four drawings, with a few pebbles.
+    # Near the camera they sit in front of the feet, over only their bottom rows; the far side's
+    # go behind the legs and show beside the shell. From behind (N) the forefeet are the far pair.
     if P.get('dust') is not None and P['dust'] < 1:
         t = P['dust']
-        cx = (feet[0][0] + feet[1][0]) / 2
-        cy = (feet[0][1] + feet[1][1]) / 2
-        r = 6 + 10 * t
-        ring = f.ell(cx, cy, r, r * 0.35) & ~f.ell(cx, cy, r - 2.2, r * 0.35 - 1.2)
-        f.add(ring & (f.Y < 6), 'scale', z=58, flat=2, line=None)   # earth-coloured dust (a bright ring read as light from the east)
+        for i in (0, 1):
+            fx, fy = feet[i]
+            far = R.far(hips[i][2]) or facing == 'N'
+            gy = (max(q[1] for q in feet) if facing == 'N' else fy) + (1.4 if not far else 0.0)
+            if facing in 'EW':
+                pts = [(fx + 5.5, gy, 2.3), (fx - 5.0, gy, 2.0), (fx + 1.0, gy + 0.6, 1.6)]
+                drift = 1.0
+            else:
+                s_ = 1 if fx > 0 else -1
+                ox = 11.0 if facing == 'N' else 3.0
+                pts = [(fx + (ox + 2.5) * s_, gy, 2.3), (fx + (ox - 1.0) * s_, gy + 0.6, 1.8)]
+                drift = 0.6 * s_
+            if far:
+                pts = pts[:2]
+            C.puffs(f, pts, t, 'soil', z=(5 if far else 58), drift=drift, rise=1.2,
+                    pebbles=() if far else [(fx + 2.0, gy - 0.5), (fx - 2.0, gy - 0.3)])
     if P.get('stars') is not None:
         x, y = R.p(add3(sc3, (0, 15, 0)))
-        C.stars(f, x, y, P['stars'])
+        C.stars(f, x, y, P['stars'], tip=f.anchors.get('shard'))
 
 
 _FIELD = {}
+BIG_S = 1.4         # S: the plates face-on, larger and fewer (10 Nov audit, N1)
 
 
-def _scute_field():
+def _scute_field(big=1.0):
     """Seams and lit rims of the shell plates on a fixed grid (computed once): an offset grid of
-    cells, the seam where the nearest and second nearest centres are about equally far."""
-    if 'f' in _FIELD:
-        return _FIELD['f']
+    cells, the seam where the nearest and second nearest centres are about equally far.  big > 1
+    draws larger plates (the shell's front, seen face-on in S)."""
+    if big in _FIELD:
+        return _FIELD[big]
     V, U = np.mgrid[-100:60, -100:100].astype(float) + 0.5
     d1 = np.full(U.shape, 1e9)
     d2 = np.full(U.shape, 1e9)
     near = np.zeros(U.shape + (2,))
     for j in range(-18, 12):
         for i in range(-12, 13):
-            cx, cy = i * 9.0 + (4.5 if j % 2 else 0.0), j * 6.0
+            cx, cy = (i * 9.0 + (4.5 if j % 2 else 0.0)) * big, j * 6.0 * big
             d = np.hypot((U - cx) / 1.1, V - cy)
             m2 = d < d1
             d2 = np.where(m2, d1, np.minimum(d2, d))
@@ -146,18 +162,21 @@ def _scute_field():
             d1 = np.where(m2, d, d1)
     seam = d2 - d1 < 1.1
     rim = ~seam & (d2 - d1 < 2.4) & (near[..., 0] + near[..., 1] < 0)
-    _FIELD['f'] = (seam, rim)
-    return _FIELD['f']
+    _FIELD[big] = (seam, rim)
+    return _FIELD[big]
 
 
-def _scutes_at(ox, oy):
-    """Shell plates fixed to the shell (origin at its projected centre), so they move with it."""
+def _scutes_at(ox, oy, calm=False):
+    """Shell plates fixed to the shell (origin at its projected centre), so they move with it.
+    calm (the S facing, where the shell's front fills the drawing): the lit rim steps up only on
+    the lit and mid planes and the seams step down only out of the light, so the plates follow the
+    form instead of reading as grain (10 Nov audit, N1)."""
     def tm(X, Y, t):
-        seam_f, rim_f = _scute_field()
+        seam_f, rim_f = _scute_field(BIG_S if calm else 1.0)
         iu = np.clip(np.floor(X - ox).astype(int) + 100, 0, seam_f.shape[1] - 1)
         iv = np.clip(np.floor(Y - oy).astype(int) + 100, 0, seam_f.shape[0] - 1)
-        seam = seam_f[iv, iu] & (t >= 1)
-        rim = rim_f[iv, iu] & (t >= 1) & (t < 4)
+        seam = seam_f[iv, iu] & (t >= 1) & ((t <= 2) if calm else True)
+        rim = rim_f[iv, iu] & ((t >= 2) if calm else (t >= 1)) & (t < 4)
         out = t.copy()
         out[seam] = t[seam] - 1
         out[rim] = t[rim] + 1

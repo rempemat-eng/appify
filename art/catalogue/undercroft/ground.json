@@ -1,7 +1,7 @@
 {
  "id": "undercroft/ground",
  "file": "game/zones/undercroft/art/ground.png",
- "sha256": "0a7b1de481ece2579bc8a032adeeeb76d033e2a59712fb363744a0577aa0be85",
+ "sha256": "1da9db5034d03ec9f5bb36f10f2d67b12fa3384aa0fdf0c276b4be246ea0ccd4",
  "kind": "ground",
  "biome": "cellar",
  "H": 74.0,
@@ -31,11 +31,11 @@
    "fix": "light the room from its sources: pools under lamps and openings, falloff into corners, a dark occlusion band along every wall base and under objects, warm light against cool shade (art-style.md, Eastward: light as a material)"
   }
  ],
- "reviewed": "2026-11-08",
+ "reviewed": "2026-11-11",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pass",
-  "date": "2026-11-08",
-  "note": "docs/reviews/2026-11-08-undercroft-woodland-placed.md, Round 10, PR #440 at 017c1986. G-35 fixed: lamplit off the floor reaches at most 0.70 H from a flame (round 8: 6.72 H); 0 lamplit kerb texels beyond 0.8 H (round 8: 1,889). G-36 fixed: the lit top edge's commonest colour is 27 to 33 % (4 to 10 colours), and the 67 x 13 kerb strip's 19 to 42 % (round 8: 35 to 93 %), so it also meets round 8's 45 % strip target. G-37 fixed: rung islands under 12 texels are 3.4 to 4.0 % of each pool's lit texels (round 8: 37 to 41 %), all on the rim; a strict 2 x 2 checker covers 1.4 to 2.7 % (round 8: 8.7 to 11.8 %); the one dithered band is 11 to 14 px wide along rays from the foot; the steps cross flags (34 to 43 % of step edges on joints; 43 to 52 flags a pool hold two rungs). G-38 fixed: middle band (0.65 to 1.05 H) median C 0.035 at all eight torches (round 8: 0.018 to 0.020), band-mean C 0.025 to 0.040 per 0.1 H, hue of the mean walking 61, 53, 43, 37, 21, 350, 318, 293 below torch 1; reads as falloff at 1x. Round 8's passes hold: heart 0.51 to 0.81 H2 (torch 7's 0.81 accepted, 55 texels over), C 0.066, hue of mean 66 to 68.5, blurred L 0.531 to 0.539; reach 1.14 to 1.31 H; area 1.95 to 2.26 H2; no shelf; wall +0.052 to +0.068 L within 0.3 H, no checker. G-39 (polish): lamplit_dusk 3 is the body of all three per-flag variants at rung 3 and one at rung 4, so 56 % of the middle band's flags share one flat body colour (shade 35 %, heart 47 %) and its commonest colour covers 28 to 43 %. detail.no_falloff 0.324 rejected as a false positive again (floor flattened: 0.283)."
+  "date": "2026-11-12",
+  "note": "Delta audit of PR #476 at 5dbd69dd (audit476_ground_r2.md, not committed), detail-auditor, 12 Nov, against 10227404~1. Only rubble_hall's ground shadow moved with the prop (foot 132,597 to 132,596): 57 texels changed in x 88..172, y 574..595, alpha 0, palette identical (77 colours, none new), nothing outside that box. 38 of the 57 lie under the rubble's new silhouette; the 19 visible ones are 15 shade texels east of and below the east chunk and its chips (y 587..593, x 143..172: shade east and down for upper-left light), 2 texels at (100..101, 590) one step darker in the same shade ramp, and 2 west fringe texels (88,594), (94,595) returned to floor tone, so no orphan or doubled shadow at the old spot. Rows 596..599 (wall-foot occlusion band) unchanged; the rubble's lowest row is now 599, above the kerb's lit top at 600, so it no longer covers the lip (S-1 fixed). Checked at 1x, 2x and 10x composited with rubble_hall.png: no seam or banding, contact shade reads as before. Earlier pass (d6b6c8eb) otherwise carries: ground band, moss counts, detail.no_falloff 0.32 rejected as a false positive (lit pools, falloff and wall-base occlusion are drawn; the void and kerbs read as even light). G-39 polish carried."
  }
 }

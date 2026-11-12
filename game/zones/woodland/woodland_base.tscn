@@ -903,7 +903,7 @@ centered = false
 offset = Vector2(-40, -74)
 
 [node name="wood-38" type="Sprite2D" parent="Objects"]
-position = Vector2(636, 1584)
+position = Vector2(672, 1584)
 texture = ExtResource("t_bramble")
 centered = false
 offset = Vector2(-61, -47)
@@ -1508,7 +1508,7 @@ position = Vector2(359.985, 1551)
 shape = SubResource("r135")
 
 [node name="s_wood-38" type="CollisionShape2D" parent="LowWalls"]
-position = Vector2(636.015, 1575)
+position = Vector2(672.015, 1575)
 shape = SubResource("r136")
 
 [node name="s_wood-40" type="CollisionShape2D" parent="LowWalls"]

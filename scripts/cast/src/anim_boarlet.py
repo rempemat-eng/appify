@@ -6,7 +6,7 @@ import anim_critter as AC
 import boarlet  # its ramps (for the checks) and SCALE
 
 STRIDE = 4.0
-GAIT = dict(fFR=7.5, fFL=7.5, fHR=-6.5, fHL=-6.5)
+GAIT = dict(fFR=7.5, fFL=7.5, fHR=-6.5, fHL=-6.5, plant=True)   # plant: the stance hoof stays put (B3)
 WALK_SPEED = round(4 * STRIDE / 0.56 * boarlet.SCALE, 1)
 
 
