@@ -85,12 +85,15 @@ func _draw() -> void:
 	var vertical := s.y >= s.x
 	var rise := 24.0                    # the rails stand this high above the ground (texels)
 	if vertical:
-		# posts down the span, rails between them, raised by `rise`
-		for i in 3:
-			var y := r.position.y + (s.y - 6.0) * float(i) / 2.0
-			draw_rect(Rect2(Vector2(-4, y - rise), Vector2(8, rise + 6)), POST)
-		for k in 2:
-			draw_rect(Rect2(Vector2(-3, r.position.y - rise + 6 + k * 10), Vector2(6, s.y)), wood)
+		# across an east-west road: three hurdle panels down the span, each two posts and two rails
+		var panels := 3
+		var step := s.y / panels
+		for i in panels:
+			var y := r.position.y + step * (i + 1) - 4.0
+			for x: float in [-10.0, 6.0]:
+				draw_rect(Rect2(Vector2(x, y - rise), Vector2(4, rise + 4)), POST)
+			for k in 2:
+				draw_rect(Rect2(Vector2(-12, y - rise + 4 + k * 9), Vector2(24, 5)), wood)
 	else:
 		for i in 3:
 			var x := r.position.x + (s.x - 6.0) * float(i) / 2.0

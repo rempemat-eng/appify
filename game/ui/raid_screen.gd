@@ -1,5 +1,5 @@
 class_name RaidScreen
-extends PanelContainer
+extends Control
 ## The raid's prepare screen (game-design.md 7.6, step 1; docs/vision/vertical-slice.md beat 8). It is the
 ## announcement too: it opens when Raids asks (core/raids.gd prepare_requested), shows what is coming and
 ## down which road, and the pads with what stands on them, every pad filled from the start (Hale's hurdle
@@ -33,24 +33,29 @@ var _later: Button
 var _pad_buttons: Dictionary = {}      ## pad id -> Button
 var _pad_x: Dictionary = {}            ## pad id -> x on the map
 var _dim: ColorRect
+var _panel: PanelContainer
 var _row := float(UiStyle.TOUCH)
 
 func _ready() -> void:
 	add_to_group("raid_screen")
 	add_to_group(&"pause_screen_layout")
 	visible = false
+	# the whole art grid: clicks on the world do nothing while the screen is up; the panel sits in the middle
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	add_theme_stylebox_override("panel", UiStyle.panel(8))
 	_dim = ColorRect.new()
-	_dim.top_level = true
-	_dim.show_behind_parent = true
 	_dim.color = Color(UiStyle.INK, 0.45)
-	_dim.size = UiStyle.GRID
-	_dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	_dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_dim)
+	_panel = PanelContainer.new()
+	_panel.name = "Panel"
+	_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	_panel.add_theme_stylebox_override("panel", UiStyle.panel(8))
+	add_child(_panel)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 4)
-	add_child(box)
+	_panel.add_child(box)
 	_title.add_theme_font_size_override("font_size", UiStyle.SIZE * 2)
 	for l: Label in [_title, _sub, _text, _pads_line, _hint]:
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -75,9 +80,9 @@ func _ready() -> void:
 	_later = _button("Not tonight", _on_later)
 	_later.name = "NotTonight"
 	row.add_child(_later)
-	grow_horizontal = Control.GROW_DIRECTION_BOTH
-	grow_vertical = Control.GROW_DIRECTION_BOTH
-	set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
+	_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_panel.grow_vertical = Control.GROW_DIRECTION_BOTH
+	_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
 	Raids.changed.connect(func(st: String) -> void:
 		if visible and st != "announced":
 			close())
@@ -108,8 +113,8 @@ func open() -> void:
 	_build_pads()
 	_refresh()
 	visible = true
-	reset_size()
-	set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
+	_panel.reset_size()
+	_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
 	if player != null and "input_enabled" in player:
 		player.set("input_enabled", false)
 	_ring.grab_focus.call_deferred()
@@ -153,7 +158,6 @@ func _refresh() -> void:
 		var kind := Raids.pad_kind(id, def)
 		names.append("%d: %s" % [i + 1, String(def.get("kinds", {}).get(kind, {}).get("name", "empty")) if kind != "" else "empty"])
 		if _pad_buttons.has(id):
-			(_pad_buttons[id] as Button).text = str(i + 1)
 			(_pad_buttons[id] as Button).tooltip_text = String(pads[i].why)
 	_pads_line.text = "   ".join(names)
 	_hint.visible = Raids.kinds_owned(def).size() > 0
@@ -175,6 +179,18 @@ func _build_pads() -> void:
 		_pad_x[pad.id] = x
 		var b := _button("", _on_pad.bind(String(pad.id)))
 		b.name = "Pad_" + String(pad.id)
+		var frame := StyleBoxFlat.new()
+		frame.bg_color = Color(0, 0, 0, 0)
+		frame.border_color = UiStyle.DIM
+		frame.set_border_width_all(1)
+		var lit := frame.duplicate() as StyleBoxFlat
+		lit.border_color = UiStyle.TITLE
+		for st in ["normal", "disabled"]:
+			b.add_theme_stylebox_override(st, frame)
+		for st in ["hover", "pressed", "focus", "hover_pressed"]:
+			b.add_theme_stylebox_override(st, lit)
+		b.alignment = HORIZONTAL_ALIGNMENT_CENTER
+		b.vertical_icon_alignment = VERTICAL_ALIGNMENT_BOTTOM
 		b.custom_minimum_size = Vector2(_row, _row)
 		b.size = b.custom_minimum_size
 		b.position = Vector2(x - _row / 2.0, MAP.y / 2.0 - _row / 2.0)
@@ -213,8 +229,11 @@ func _draw_map() -> void:
 	_map.draw_rect(Rect2(Vector2(lx - 6, y - 22), Vector2(12, 9)), LAMP)
 	_map.draw_string(font, Vector2(lx - 26, y + 24), "Lantern", HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.SIZE, UiStyle.DIM)
 	var def := Raids.current()
+	var n := 0
 	for id: String in _pad_x:
 		var x: float = _pad_x[id]
+		n += 1
+		_map.draw_string(font, Vector2(x - 3, y + 24), str(n), HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.SIZE, UiStyle.DIM)
 		if Raids.pad_kind(id, def) != "":
 			for k in 2:
 				_map.draw_rect(Rect2(Vector2(x - 7 + k * 11, y - 9), Vector2(3, 16)), POST)
