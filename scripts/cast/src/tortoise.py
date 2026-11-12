@@ -111,26 +111,31 @@ def build(f, facing, P):
           tonemap=C.px(f, _tufts))
     # the shard in the crown, in the moss
     C.shard(f, R, add3(sc3, (-1.0, 9.0, 1.0)), (-0.1, 1.0, 0.2), 8.0, P, 22)
-    # the stomp's dust (attack): broken earth-toned puffs thrown out from the two forefeet,
-    # spreading and thinning over the four drawings, with a few pebbles; behind the legs on the
-    # far side, in front of them on the near side (10 Nov audit, K1: no flat ring)
+    # the stomp's dust (attack; 10 Nov K1, 12 Nov K1r): round earth-toned puffs thrown out along the
+    # forefeet's ground line, rising and breaking up over the four drawings, with a few pebbles.
+    # Near the camera they sit in front of the feet, over only their bottom rows; the far side's
+    # go behind the legs and show beside the shell. From behind (N) the forefeet are the far pair.
     if P.get('dust') is not None and P['dust'] < 1:
         t = P['dust']
         for i in (0, 1):
             fx, fy = feet[i]
-            far = R.far(hips[i][2])
+            far = R.far(hips[i][2]) or facing == 'N'
+            gy = (max(q[1] for q in feet) if facing == 'N' else fy) + (1.4 if not far else 0.0)
             if facing in 'EW':
-                pts = [(fx + 4.5, fy - 0.5, 2.0), (fx - 4.0, fy - 0.5, 1.7), (fx + 1.0, fy - 2.0, 1.4)]
+                pts = [(fx + 5.5, gy, 2.3), (fx - 5.0, gy, 2.0), (fx + 1.0, gy + 0.6, 1.6)]
+                drift = 1.0
             else:
                 s_ = 1 if fx > 0 else -1
-                pts = [(fx + 4.0 * s_, fy - 0.5, 2.0), (fx + 0.5 * s_, fy + 0.5, 1.6), (fx + 6.0 * s_, fy - 2.0, 1.3)]
+                ox = 11.0 if facing == 'N' else 3.0
+                pts = [(fx + (ox + 2.5) * s_, gy, 2.3), (fx + (ox - 1.0) * s_, gy + 0.6, 1.8)]
+                drift = 0.6 * s_
             if far:
                 pts = pts[:2]
-            C.puffs(f, pts, t, 'soil', z=(5 if far else 58), grow=2.4,
-                    pebbles=() if far else [(fx + 2.0, fy - 1.0), (fx - 2.0, fy - 0.5)])
+            C.puffs(f, pts, t, 'soil', z=(5 if far else 58), drift=drift, rise=1.2,
+                    pebbles=() if far else [(fx + 2.0, gy - 0.5), (fx - 2.0, gy - 0.3)])
     if P.get('stars') is not None:
         x, y = R.p(add3(sc3, (0, 15, 0)))
-        C.stars(f, x, y, P['stars'])
+        C.stars(f, x, y, P['stars'], tip=f.anchors.get('shard'))
 
 
 _FIELD = {}

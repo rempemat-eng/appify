@@ -5027,9 +5027,9 @@
        "path": "res://assets/animated/tortoise/attack_S_00.png",
        "file": "attack_S_00.png",
        "packed_bounds": [
-        61,
+        60,
         95,
-        99,
+        100,
         141
        ],
        "anchors": {
@@ -5063,10 +5063,10 @@
         "moss": 136,
         "shard": 55,
         "claw": 2,
-        "dust": 68
+        "dust": 66
        },
        "anchor_gap": {},
-       "sha256": "e4a53962f72673f26f0854e4c9c14c3c4f23b94c65b4f349e2c6f8f703437a86",
+       "sha256": "af00f4f117aae827aee2056a3a2094b6dde51e5fde680f9f069b40386c3e770f",
        "sheet": "sheets/attack_S.png",
        "region": [
         0,
@@ -5079,9 +5079,9 @@
        "path": "res://assets/animated/tortoise/attack_S_01.png",
        "file": "attack_S_01.png",
        "packed_bounds": [
-        60,
+        58,
         95,
-        100,
+        102,
         141
        ],
        "anchors": {
@@ -5115,10 +5115,10 @@
         "moss": 138,
         "shard": 51,
         "claw": 2,
-        "dust": 126
+        "dust": 82
        },
        "anchor_gap": {},
-       "sha256": "e58d01790d0363e4deef94000beeb84c1ad3ad9e9b98e43152301aa284a1a71c",
+       "sha256": "ba72ebfd3a5d2a143f8e1f0251b8a82eb027a70dfae0d1e7e616fe8f46ddef9b",
        "sheet": "sheets/attack_S.png",
        "region": [
         160,
@@ -5131,9 +5131,9 @@
        "path": "res://assets/animated/tortoise/attack_S_02.png",
        "file": "attack_S_02.png",
        "packed_bounds": [
-        60,
+        57,
         95,
-        100,
+        103,
         140
        ],
        "anchors": {
@@ -5167,10 +5167,10 @@
         "moss": 141,
         "shard": 51,
         "claw": 2,
-        "dust": 120
+        "dust": 64
        },
        "anchor_gap": {},
-       "sha256": "c26a1a476a5a06cd31cbb7d84ec13917913fd5997f71d97dc4361da83c558cfa",
+       "sha256": "7e43941a198f2d90437356bf69b8c011a68f9a3a85b07703d8c6d2e424d562ab",
        "sheet": "sheets/attack_S.png",
        "region": [
         320,
@@ -5183,9 +5183,9 @@
        "path": "res://assets/animated/tortoise/attack_S_03.png",
        "file": "attack_S_03.png",
        "packed_bounds": [
-        59,
+        56,
         95,
-        101,
+        105,
         140
        ],
        "anchors": {
@@ -5218,11 +5218,11 @@
         "shell": 558,
         "moss": 141,
         "shard": 51,
-        "claw": 3,
-        "dust": 156
+        "claw": 6,
+        "dust": 45
        },
        "anchor_gap": {},
-       "sha256": "26ec8f48cbe96f84cdf17092301bd2ae0617700784ee8d175bc70af367754856",
+       "sha256": "5ed24139d195e9f60fb8aab163efe1d3ce9eac8ad6371863349bed120fcba391",
        "sheet": "sheets/attack_S.png",
        "region": [
         480,
@@ -5244,9 +5244,9 @@
        "path": "res://assets/animated/tortoise/attack_N_00.png",
        "file": "attack_N_00.png",
        "packed_bounds": [
-        61,
+        51,
         97,
-        99,
+        109,
         139
        ],
        "anchors": {
@@ -5276,13 +5276,13 @@
         ]
        },
        "equipment": {
-        "shell": 563,
+        "shell": 576,
         "moss": 134,
         "shard": 46,
-        "dust": 57
+        "dust": 54
        },
        "anchor_gap": {},
-       "sha256": "55640cf1b5b5d2aa132c9db20ced18dab3e87f42665ee7dcd49a7be92fbad5ad",
+       "sha256": "a43c8de9a138a3f10998b215b72b9acefe1dd7967a9a45ba49cd9915c528067e",
        "sheet": "sheets/attack_N.png",
        "region": [
         0,
@@ -5295,9 +5295,9 @@
        "path": "res://assets/animated/tortoise/attack_N_01.png",
        "file": "attack_N_01.png",
        "packed_bounds": [
-        60,
+        48,
         96,
-        100,
+        112,
         139
        ],
        "anchors": {
@@ -5327,13 +5327,13 @@
         ]
        },
        "equipment": {
-        "shell": 519,
+        "shell": 564,
         "moss": 131,
         "shard": 51,
-        "dust": 133
+        "dust": 76
        },
        "anchor_gap": {},
-       "sha256": "3af380ee7a82402110a4f4d8c4de5e5570547e933645d5b53372a4dd59a23522",
+       "sha256": "ed25f96f5f06dba646eb2f69c45ec255b7257de34ddfc255edc9270cfaace480",
        "sheet": "sheets/attack_N.png",
        "region": [
         160,
@@ -5346,9 +5346,9 @@
        "path": "res://assets/animated/tortoise/attack_N_02.png",
        "file": "attack_N_02.png",
        "packed_bounds": [
-        60,
+        48,
         96,
-        100,
+        113,
         139
        ],
        "anchors": {
@@ -5378,13 +5378,13 @@
         ]
        },
        "equipment": {
-        "shell": 496,
+        "shell": 568,
         "moss": 134,
         "shard": 51,
-        "dust": 120
+        "dust": 62
        },
        "anchor_gap": {},
-       "sha256": "a9d12ee48a2f1a2fb4267bb63e49c3213c9c83b87547e45008e41a999cd207ff",
+       "sha256": "e62555b0afbb548b0c1dc4b6b4e61d987322e4220be296994d0ebd655aacfced",
        "sheet": "sheets/attack_N.png",
        "region": [
         320,
@@ -5397,9 +5397,9 @@
        "path": "res://assets/animated/tortoise/attack_N_03.png",
        "file": "attack_N_03.png",
        "packed_bounds": [
-        59,
+        46,
         96,
-        101,
+        114,
         139
        ],
        "anchors": {
@@ -5429,13 +5429,13 @@
         ]
        },
        "equipment": {
-        "shell": 477,
+        "shell": 569,
         "moss": 134,
         "shard": 51,
-        "dust": 158
+        "dust": 49
        },
        "anchor_gap": {},
-       "sha256": "6f52514b57102845809be0775bda5ddfafba7f0f32ac5e9d790118cbb3d065c2",
+       "sha256": "243bd6fd2cde7334b5d82c296aeb7e2473574a96d866785d3a184f8e30ade01b",
        "sheet": "sheets/attack_N.png",
        "region": [
         480,
@@ -5492,11 +5492,11 @@
         "shell": 648,
         "moss": 136,
         "shard": 54,
-        "claw": 3,
-        "dust": 41
+        "claw": 2,
+        "dust": 54
        },
        "anchor_gap": {},
-       "sha256": "06713989c63166e0c2ff2903f15cdf8f92ba6f4b88ba5444e48edc8a512c6a68",
+       "sha256": "c2489f00a06919521a48333a2b0fbd139956fc89063401cdfc5b0c555c6335bb",
        "sheet": "sheets/attack_E.png",
        "region": [
         0,
@@ -5541,14 +5541,14 @@
         ]
        },
        "equipment": {
-        "shell": 649,
+        "shell": 646,
         "moss": 138,
         "shard": 50,
-        "claw": 2,
-        "dust": 98
+        "claw": 4,
+        "dust": 67
        },
        "anchor_gap": {},
-       "sha256": "a63c7b2b738d642efbd7e435c311ca58f994a99acb2d05afcb5486cc86ca5713",
+       "sha256": "47edfa33d93bd8a35ac101efb9fa386f9ebb3594745bdd5d97399547a833fa62",
        "sheet": "sheets/attack_E.png",
        "region": [
         160,
@@ -5593,14 +5593,14 @@
         ]
        },
        "equipment": {
-        "shell": 630,
+        "shell": 639,
         "moss": 136,
         "shard": 48,
         "claw": 4,
-        "dust": 85
+        "dust": 45
        },
        "anchor_gap": {},
-       "sha256": "f34bf849d5028c7b9ec3ae4f241fab3588548633751a5add2817dfbef55beda9",
+       "sha256": "4a3dc8420f2ba1f3c1a2f9e1f57359eb390bc9a3aab8279362983997d2d2a6d6",
        "sheet": "sheets/attack_E.png",
        "region": [
         320,
@@ -5645,14 +5645,14 @@
         ]
        },
        "equipment": {
-        "shell": 619,
+        "shell": 641,
         "moss": 136,
         "shard": 48,
         "claw": 4,
-        "dust": 102
+        "dust": 42
        },
        "anchor_gap": {},
-       "sha256": "fd9e98e1afa48d59aaf0dcb1d13f72fe22ccb415faaf974c4d3eb515cb06958d",
+       "sha256": "ce603bfabe4844ddea5a5aa4835afceb61fafcca87258a4667b3a09ca53dbd76",
        "sheet": "sheets/attack_E.png",
        "region": [
         480,
@@ -5709,11 +5709,11 @@
         "shell": 648,
         "moss": 136,
         "shard": 59,
-        "claw": 3,
-        "dust": 41
+        "claw": 2,
+        "dust": 54
        },
        "anchor_gap": {},
-       "sha256": "a81b13af6276690130621de0c17f1a0869d712c2b78ebbda060c80289d3573c2",
+       "sha256": "4d6421ebfc3727549c1e22528441b8000c00c2869477775346a98990e5403e51",
        "sheet": "sheets/attack_W.png",
        "region": [
         0,
@@ -5758,14 +5758,14 @@
         ]
        },
        "equipment": {
-        "shell": 649,
+        "shell": 646,
         "moss": 138,
         "shard": 55,
-        "claw": 2,
-        "dust": 98
+        "claw": 4,
+        "dust": 66
        },
        "anchor_gap": {},
-       "sha256": "7a8afa94a4881e333e99b8afcd72788bc7f077d8106dc211ef29c7fccb0e724b",
+       "sha256": "eb0c932efa3fccc3001d4a82d52788d39eeea18282be58d7653d96358c8c169a",
        "sheet": "sheets/attack_W.png",
        "region": [
         160,
@@ -5810,14 +5810,14 @@
         ]
        },
        "equipment": {
-        "shell": 630,
+        "shell": 639,
         "moss": 136,
         "shard": 53,
         "claw": 4,
-        "dust": 85
+        "dust": 43
        },
        "anchor_gap": {},
-       "sha256": "c0b216662deee7b32858eff5e7f3187af11f5a695402c671c7df1ff2a5e18977",
+       "sha256": "1662f5fb2263c877ad22041c15a5dc25e4499af41413c81a77a50e7361b050ee",
        "sheet": "sheets/attack_W.png",
        "region": [
         320,
@@ -5862,14 +5862,14 @@
         ]
        },
        "equipment": {
-        "shell": 619,
+        "shell": 641,
         "moss": 136,
         "shard": 53,
         "claw": 4,
-        "dust": 102
+        "dust": 39
        },
        "anchor_gap": {},
-       "sha256": "9a907461aa5a01471e96b1bc5ef34c4e9e276703731af16e08d70d57210aeeea",
+       "sha256": "b5cc1786b50d35e15d1660f8b5089004e517e97187613b26b40aebf665301e3c",
        "sheet": "sheets/attack_W.png",
        "region": [
         480,
@@ -6812,111 +6812,7 @@
        "file": "stagger_S_01.png",
        "packed_bounds": [
         63,
-        95,
-        97,
-        140
-       ],
-       "anchors": {
-        "foot_R": [
-         -9.8,
-         2.1
-        ],
-        "foot_L": [
-         9.8,
-         2.1
-        ],
-        "hind_R": [
-         -9.8,
-         -5.4
-        ],
-        "hind_L": [
-         9.8,
-         -5.4
-        ],
-        "strike": [
-         -0.0,
-         1.3
-        ],
-        "shard": [
-         -3.1,
-         -38.7
-        ]
-       },
-       "equipment": {
-        "shell": 561,
-        "moss": 139,
-        "shard": 54,
-        "claw": 5,
-        "gold": 6
-       },
-       "anchor_gap": {},
-       "sha256": "79c66519247386a0de0a0a1940712c7d23748c4389fa90a7e1e62eaddc3048dd",
-       "sheet": "sheets/stagger_S.png",
-       "region": [
-        160,
-        0,
-        160,
-        144
-       ]
-      },
-      {
-       "path": "res://assets/animated/tortoise/stagger_S_02.png",
-       "file": "stagger_S_02.png",
-       "packed_bounds": [
-        62,
-        95,
-        97,
-        140
-       ],
-       "anchors": {
-        "foot_R": [
-         -10.4,
-         2.1
-        ],
-        "foot_L": [
-         9.2,
-         2.1
-        ],
-        "hind_R": [
-         -10.4,
-         -5.4
-        ],
-        "hind_L": [
-         9.2,
-         -5.4
-        ],
-        "strike": [
-         -0.6,
-         1.3
-        ],
-        "shard": [
-         -3.7,
-         -38.7
-        ]
-       },
-       "equipment": {
-        "shell": 566,
-        "moss": 140,
-        "shard": 52,
-        "claw": 5,
-        "gold": 6
-       },
-       "anchor_gap": {},
-       "sha256": "e2fb33aef653e6bece2aafa92e63cbbe7527d22fb3ee096acc7f53da5970b74f",
-       "sheet": "sheets/stagger_S.png",
-       "region": [
-        320,
-        0,
-        160,
-        144
-       ]
-      },
-      {
-       "path": "res://assets/animated/tortoise/stagger_S_03.png",
-       "file": "stagger_S_03.png",
-       "packed_bounds": [
-        63,
-        95,
+        84,
         97,
         140
        ],
@@ -6951,76 +6847,76 @@
         "moss": 139,
         "shard": 55,
         "claw": 5,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "1785805a67adc8b67858a1aaf5b56216d0da01412ff8016ba04308dcb69f1237",
+       "sha256": "da9b14162323928dc0d6e783b509f2b238cd474fb27c90437232e0b7d49aff54",
        "sheet": "sheets/stagger_S.png",
        "region": [
-        480,
+        160,
         0,
         160,
         144
        ]
       },
       {
-       "path": "res://assets/animated/tortoise/stagger_S_04.png",
-       "file": "stagger_S_04.png",
+       "path": "res://assets/animated/tortoise/stagger_S_02.png",
+       "file": "stagger_S_02.png",
        "packed_bounds": [
-        63,
-        95,
-        98,
+        62,
+        83,
+        97,
         140
        ],
        "anchors": {
         "foot_R": [
-         -9.2,
+         -10.4,
          2.1
         ],
         "foot_L": [
-         10.4,
+         9.2,
          2.1
         ],
         "hind_R": [
-         -9.2,
+         -10.4,
          -5.4
         ],
         "hind_L": [
-         10.4,
+         9.2,
          -5.4
         ],
         "strike": [
-         0.6,
+         -0.6,
          1.3
         ],
         "shard": [
-         -2.5,
+         -3.7,
          -38.7
         ]
        },
        "equipment": {
-        "shell": 568,
+        "shell": 566,
         "moss": 140,
-        "shard": 51,
+        "shard": 55,
         "claw": 5,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "5eb99e88490e2c31c780fa7a31865394e2e3441e8547e4c8c641b8b2aa09bc24",
+       "sha256": "1fda5b5452be5e30922d5270d6fc2db3a73eebb4e7ca485673e1794b61762580",
        "sheet": "sheets/stagger_S.png",
        "region": [
-        640,
+        320,
         0,
         160,
         144
        ]
       },
       {
-       "path": "res://assets/animated/tortoise/stagger_S_05.png",
-       "file": "stagger_S_05.png",
+       "path": "res://assets/animated/tortoise/stagger_S_03.png",
+       "file": "stagger_S_03.png",
        "packed_bounds": [
         63,
-        95,
+        85,
         97,
         140
        ],
@@ -7053,12 +6949,116 @@
        "equipment": {
         "shell": 561,
         "moss": 139,
-        "shard": 53,
+        "shard": 55,
         "claw": 5,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "6ad36dba005411115ff4ae4e2a62af8e23957d8645f962d45dd2ccd30f947b76",
+       "sha256": "a1e0396e26e04102715e7b03a0f30d7f20685fd2b14a606f7a4f58e51bc53b3f",
+       "sheet": "sheets/stagger_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/tortoise/stagger_S_04.png",
+       "file": "stagger_S_04.png",
+       "packed_bounds": [
+        63,
+        86,
+        98,
+        140
+       ],
+       "anchors": {
+        "foot_R": [
+         -9.2,
+         2.1
+        ],
+        "foot_L": [
+         10.4,
+         2.1
+        ],
+        "hind_R": [
+         -9.2,
+         -5.4
+        ],
+        "hind_L": [
+         10.4,
+         -5.4
+        ],
+        "strike": [
+         0.6,
+         1.3
+        ],
+        "shard": [
+         -2.5,
+         -38.7
+        ]
+       },
+       "equipment": {
+        "shell": 568,
+        "moss": 140,
+        "shard": 52,
+        "claw": 5,
+        "gold": 12
+       },
+       "anchor_gap": {},
+       "sha256": "436bcef25f7f15458796d3d8afcbfe6f9a5e4c91191446c7fda825faafda84e8",
+       "sheet": "sheets/stagger_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/tortoise/stagger_S_05.png",
+       "file": "stagger_S_05.png",
+       "packed_bounds": [
+        63,
+        84,
+        97,
+        140
+       ],
+       "anchors": {
+        "foot_R": [
+         -9.8,
+         2.1
+        ],
+        "foot_L": [
+         9.8,
+         2.1
+        ],
+        "hind_R": [
+         -9.8,
+         -5.4
+        ],
+        "hind_L": [
+         9.8,
+         -5.4
+        ],
+        "strike": [
+         -0.0,
+         1.3
+        ],
+        "shard": [
+         -3.1,
+         -38.7
+        ]
+       },
+       "equipment": {
+        "shell": 561,
+        "moss": 139,
+        "shard": 55,
+        "claw": 5,
+        "gold": 12
+       },
+       "anchor_gap": {},
+       "sha256": "b4aee4bebe736bc45e0c7fbf39ab21a5b322718797a0299e34be5d5d51372304",
        "sheet": "sheets/stagger_S.png",
        "region": [
         800,
@@ -7177,109 +7177,7 @@
        "file": "stagger_N_01.png",
        "packed_bounds": [
         63,
-        97,
-        97,
-        139
-       ],
-       "anchors": {
-        "foot_R": [
-         9.8,
-         -6.1
-        ],
-        "foot_L": [
-         -9.8,
-         -6.1
-        ],
-        "hind_R": [
-         9.8,
-         1.4
-        ],
-        "hind_L": [
-         -9.8,
-         1.4
-        ],
-        "strike": [
-         0.0,
-         -20.4
-        ],
-        "shard": [
-         3.1,
-         -37.2
-        ]
-       },
-       "equipment": {
-        "shell": 576,
-        "moss": 133,
-        "shard": 48,
-        "gold": 6
-       },
-       "anchor_gap": {},
-       "sha256": "27329fbb361b2e95cb6543910a6a3c38fd577e7a5def609c17a7df5c0a9f01ab",
-       "sheet": "sheets/stagger_N.png",
-       "region": [
-        160,
-        0,
-        160,
-        144
-       ]
-      },
-      {
-       "path": "res://assets/animated/tortoise/stagger_N_02.png",
-       "file": "stagger_N_02.png",
-       "packed_bounds": [
-        63,
-        95,
-        98,
-        139
-       ],
-       "anchors": {
-        "foot_R": [
-         10.4,
-         -6.1
-        ],
-        "foot_L": [
-         -9.2,
-         -6.1
-        ],
-        "hind_R": [
-         10.4,
-         1.4
-        ],
-        "hind_L": [
-         -9.2,
-         1.4
-        ],
-        "strike": [
-         0.6,
-         -20.4
-        ],
-        "shard": [
-         3.7,
-         -37.2
-        ]
-       },
-       "equipment": {
-        "shell": 582,
-        "moss": 132,
-        "shard": 49,
-        "gold": 6
-       },
-       "anchor_gap": {},
-       "sha256": "23535863a2701752a9c9dc096fdb6ef80f3eb8205a7e987eae021812e00b7ab7",
-       "sheet": "sheets/stagger_N.png",
-       "region": [
-        320,
-        0,
-        160,
-        144
-       ]
-      },
-      {
-       "path": "res://assets/animated/tortoise/stagger_N_03.png",
-       "file": "stagger_N_03.png",
-       "packed_bounds": [
-        63,
-        97,
+        86,
         97,
         139
        ],
@@ -7313,10 +7211,112 @@
         "shell": 576,
         "moss": 133,
         "shard": 50,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "b4fb459c2dc1ff2f23db155257db8fbdb5a5adab6d6e94c0803f575a8c0a42a9",
+       "sha256": "04e729f55ee081854d9a569f68feec3577e47dfb8fb5111794a5a5f7107537b8",
+       "sheet": "sheets/stagger_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/tortoise/stagger_N_02.png",
+       "file": "stagger_N_02.png",
+       "packed_bounds": [
+        63,
+        84,
+        98,
+        139
+       ],
+       "anchors": {
+        "foot_R": [
+         10.4,
+         -6.1
+        ],
+        "foot_L": [
+         -9.2,
+         -6.1
+        ],
+        "hind_R": [
+         10.4,
+         1.4
+        ],
+        "hind_L": [
+         -9.2,
+         1.4
+        ],
+        "strike": [
+         0.6,
+         -20.4
+        ],
+        "shard": [
+         3.7,
+         -37.2
+        ]
+       },
+       "equipment": {
+        "shell": 582,
+        "moss": 132,
+        "shard": 50,
+        "gold": 12
+       },
+       "anchor_gap": {},
+       "sha256": "bddc2c5d9b66d2d0fc22014ddffe0116b053f30bf3c3c05e506b2c431f5d369a",
+       "sheet": "sheets/stagger_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/tortoise/stagger_N_03.png",
+       "file": "stagger_N_03.png",
+       "packed_bounds": [
+        63,
+        87,
+        97,
+        139
+       ],
+       "anchors": {
+        "foot_R": [
+         9.8,
+         -6.1
+        ],
+        "foot_L": [
+         -9.8,
+         -6.1
+        ],
+        "hind_R": [
+         9.8,
+         1.4
+        ],
+        "hind_L": [
+         -9.8,
+         1.4
+        ],
+        "strike": [
+         0.0,
+         -20.4
+        ],
+        "shard": [
+         3.1,
+         -37.2
+        ]
+       },
+       "equipment": {
+        "shell": 576,
+        "moss": 133,
+        "shard": 50,
+        "gold": 12
+       },
+       "anchor_gap": {},
+       "sha256": "2d321c7cfa9b9ec948825c66260ae6cf2ebe846e21c70b2d878665d2ca4f8fb1",
        "sheet": "sheets/stagger_N.png",
        "region": [
         480,
@@ -7330,7 +7330,7 @@
        "file": "stagger_N_04.png",
        "packed_bounds": [
         62,
-        97,
+        88,
         97,
         139
        ],
@@ -7364,10 +7364,10 @@
         "shell": 580,
         "moss": 136,
         "shard": 48,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "8b122bbe64477b8c0858b52048d0d10eca6988853eeb83342c305893f9093d42",
+       "sha256": "0b1410dcd8d2e44b7421b61ae810ba1c4216e6adc5b028f42e6d1890f4fe51c0",
        "sheet": "sheets/stagger_N.png",
        "region": [
         640,
@@ -7381,7 +7381,7 @@
        "file": "stagger_N_05.png",
        "packed_bounds": [
         63,
-        96,
+        85,
         97,
         139
        ],
@@ -7414,11 +7414,11 @@
        "equipment": {
         "shell": 576,
         "moss": 133,
-        "shard": 47,
-        "gold": 6
+        "shard": 50,
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "620f1c484f1e172110c85b7243b3bae261cd4eabf3ef0a75ba79b42aec0164ac",
+       "sha256": "3646e6272f69d582ee22cf21620118128cd7c81f6f917896920f17c5ac0af776",
        "sheet": "sheets/stagger_N.png",
        "region": [
         800,
@@ -7537,7 +7537,7 @@
        "file": "stagger_E_01.png",
        "packed_bounds": [
         55,
-        96,
+        85,
         114,
         136
        ],
@@ -7572,10 +7572,10 @@
         "moss": 133,
         "shard": 54,
         "claw": 4,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "5ee81f2b6689cb5118c8b6eb39411b976e8bb2aff761277c8063afd8eec07135",
+       "sha256": "9d2c505abcc1333ea0022a2bb8e459dd009ee1dc11e63cc88fa280ea29c6ca7d",
        "sheet": "sheets/stagger_E.png",
        "region": [
         160,
@@ -7589,7 +7589,7 @@
        "file": "stagger_E_02.png",
        "packed_bounds": [
         55,
-        95,
+        84,
         114,
         136
        ],
@@ -7622,12 +7622,12 @@
        "equipment": {
         "shell": 653,
         "moss": 136,
-        "shard": 48,
+        "shard": 51,
         "claw": 4,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "8589ca7553b1d5085de8b91bcf013a85d155d9cd3b7b9f6028ae9047895775c0",
+       "sha256": "40e6e97917596b8f7e4155c5c87ab8ef4dcb46110216792d93de8266ac47765b",
        "sheet": "sheets/stagger_E.png",
        "region": [
         320,
@@ -7641,7 +7641,7 @@
        "file": "stagger_E_03.png",
        "packed_bounds": [
         55,
-        96,
+        86,
         114,
         136
        ],
@@ -7676,10 +7676,10 @@
         "moss": 133,
         "shard": 54,
         "claw": 4,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "09fbae3b2d351b2c116c3b9d2fcdb61b9b9af6aa97369575c804e1bf2063f0f4",
+       "sha256": "b4ac6edb11721de4f2c3d1ce88a03858ccfeef707d798fbfcb7d4f333e74e9f3",
        "sheet": "sheets/stagger_E.png",
        "region": [
         480,
@@ -7693,7 +7693,7 @@
        "file": "stagger_E_04.png",
        "packed_bounds": [
         55,
-        96,
+        87,
         114,
         136
        ],
@@ -7728,10 +7728,10 @@
         "moss": 133,
         "shard": 54,
         "claw": 4,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "852dd088b835a110495b3f25aa0d2aabcf66477dc1cbe58c47e21028b0a2b517",
+       "sha256": "8ab912401a941fcc9da75348bbdc5d2f9b38b9d2bb519afe4a3693b5d878e408",
        "sheet": "sheets/stagger_E.png",
        "region": [
         640,
@@ -7745,7 +7745,7 @@
        "file": "stagger_E_05.png",
        "packed_bounds": [
         55,
-        96,
+        85,
         114,
         136
        ],
@@ -7778,12 +7778,12 @@
        "equipment": {
         "shell": 652,
         "moss": 133,
-        "shard": 51,
+        "shard": 54,
         "claw": 4,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "92a8615b8522135112a4c35338e5c2a8d905a9de7edd5b00119c59a9895dae82",
+       "sha256": "9168d47c84ed1e9719e0606e9d768fb6dcac170dba4d7bdd09d953f1901e322c",
        "sheet": "sheets/stagger_E.png",
        "region": [
         800,
@@ -7903,7 +7903,7 @@
        "file": "stagger_W_01.png",
        "packed_bounds": [
         45,
-        96,
+        85,
         104,
         136
        ],
@@ -7938,10 +7938,10 @@
         "moss": 132,
         "shard": 59,
         "claw": 4,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "b6df6bfaeb909c7134b71eacf5c952d53d060c1e8026e1ce3b27766e4d9707dc",
+       "sha256": "d334d6c511a37512b3100b29680bf98bb386bf7f33e8f96d23246716f12dd0ea",
        "sheet": "sheets/stagger_W.png",
        "region": [
         160,
@@ -7955,7 +7955,7 @@
        "file": "stagger_W_02.png",
        "packed_bounds": [
         45,
-        95,
+        84,
         104,
         136
        ],
@@ -7988,12 +7988,12 @@
        "equipment": {
         "shell": 652,
         "moss": 132,
-        "shard": 56,
+        "shard": 59,
         "claw": 4,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "fdfd7df7879e6c2c184fa4bfaf1b99dcf505110bd265e1180b603d15c64b5427",
+       "sha256": "43b1f6cbc59cd4ccae2aecba6f0e9f026bb7c13caf1d0ec3d4d19a2f34c27e46",
        "sheet": "sheets/stagger_W.png",
        "region": [
         320,
@@ -8007,7 +8007,7 @@
        "file": "stagger_W_03.png",
        "packed_bounds": [
         45,
-        96,
+        86,
         104,
         136
        ],
@@ -8042,10 +8042,10 @@
         "moss": 132,
         "shard": 59,
         "claw": 4,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "984895dad628829274af186fb3ce6a83ef43cf8d460f928c9880403436b4b314",
+       "sha256": "2272d59e65cec783fc9147c73f0eb118df5423d491c3e764bb7aa10acd0b982b",
        "sheet": "sheets/stagger_W.png",
        "region": [
         480,
@@ -8059,7 +8059,7 @@
        "file": "stagger_W_04.png",
        "packed_bounds": [
         45,
-        96,
+        87,
         104,
         136
        ],
@@ -8094,10 +8094,10 @@
         "moss": 132,
         "shard": 59,
         "claw": 4,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "17ba37d82b4fda4023bd59c59ff9e4d0d55e22f379d019844d8dad8e12bec25c",
+       "sha256": "5c81136919b3a5a968e2cf3efc3167356507d21356d1f79f96ac7729a503c2ef",
        "sheet": "sheets/stagger_W.png",
        "region": [
         640,
@@ -8111,7 +8111,7 @@
        "file": "stagger_W_05.png",
        "packed_bounds": [
         45,
-        96,
+        85,
         104,
         136
        ],
@@ -8144,12 +8144,12 @@
        "equipment": {
         "shell": 652,
         "moss": 132,
-        "shard": 53,
+        "shard": 59,
         "claw": 4,
-        "gold": 6
+        "gold": 12
        },
        "anchor_gap": {},
-       "sha256": "c134eb027c4fe0bac2afa37ffd88321e13deef57cb5bbb529865ab151fe82d89",
+       "sha256": "1633d7f2008b6b984099173750e7c85f88aadc630575913e1f8808ea35c3d8ae",
        "sheet": "sheets/stagger_W.png",
        "region": [
         800,

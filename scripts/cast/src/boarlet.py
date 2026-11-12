@@ -64,7 +64,17 @@ def build(f, facing, P, look=None):
     feet = C.legs(f, R, PL, hips, foot_fwd, L['dark'], 10, r0=2.6, r1=1.6, hoof='crack')
     # tail
     tx, ty = R.p(add3(hind3, (-9.5, 3.0, 0.0)))
-    f.add(f.ell(tx, ty, 1.8, 1.6) | f.cap(tx, ty, tx - 1.5, ty - 3.0, 0.9), L['dark'], z=15 if facing != 'N' else 30, flat=1, line='hard')
+    if facing == 'N':
+        # from behind: a small curl (12 Nov audit, polish: the old blob read as a hole)
+        k_ = f.scale
+        tone_ = {'l': (L['dark'], 3), 'm': (L['dark'], 2), 'd': (L['dark'], 1)}
+        bx_, by_ = math.floor(tx * k_) - 2, math.floor(ty * k_) - 2
+        for j_, row_ in enumerate(_TAIL_N):
+            for c_, ch_ in enumerate(row_):
+                if ch_ in tone_:
+                    f.detail(f.pixels([((bx_ + c_) / k_, (by_ + j_) / k_)]), tone_[ch_], z=31)
+    else:
+        f.add(f.ell(tx, ty, 1.8, 1.6) | f.cap(tx, ty, tx - 1.5, ty - 3.0, 0.9), L['dark'], z=15, flat=1, line='hard')
     # body
     # one volume: the barrel and the heavy shoulder hump over the front legs (high in front)
     hd_ = P['head'] if facing in 'EW' else hd
@@ -93,7 +103,7 @@ def build(f, facing, P, look=None):
     # bristle ridge along the spine
     ridge = [(x, hind3[1] + (front3[1] - hind3[1]) * (x + 8.0) / 16.0 + 6.0 + 0.2 * (x + 10), lat) for x in (-10, -6, -2, 2, 6, 9)]
     if facing == 'N':
-        _mane_from_behind(f, R, ridge, L['dark'])
+        _mane_from_behind(f, R, ridge, L['dark'], L['coat'])
     else:
         C.thorns(f, R, ridge, (-0.3, 1.0, 0.0), L['ridge'] * (0.55 if facing in 'SN' else 1.0), 24, m=L['dark'])
     # head: drops and comes forward with P['head']
@@ -147,44 +157,61 @@ def build(f, facing, P, look=None):
         P2 = dict(P, fx=P['fx'] + 1)
         C.shard(f, R, add3(body3, (-6.0, 7.5, -0.8)), (-0.6, 0.8, -0.15), 8.0, P2, 24.8 if facing != 'S' else 20.5)
     # dust from the pawing hoof (telegraph) or the charge
-    # (10 Nov audit, B4): loose path-toned puffs kicked out behind the hind hooves, drawn under the
-    # body (z 5: nothing of the boar is ever covered), never cream blobs with an ink line
+    # kicked dust (10 Nov audit B4, 12 Nov B4r): round path-toned puffs that rise, drift back and
+    # break up, kicked out behind the hind hooves with a gap, under the body (z 5); in S and N
+    # beside the hind hooves, outside the body, where they show
     if P.get('dust') is not None and P['dust'] < 1:
         hx_, hy_ = feet[2]
+        hl = feet[3]
         if facing in 'EW':
-            pts = [(hx_ - 4.0, hy_ - 0.5, 1.3), (hx_ - 7.5, hy_ - 1.5, 1.0), (hx_ - 2.0, hy_ - 2.0, 0.8)]
+            pts = [(hx_ - 6.0, hy_, 2.2), (hx_ - 10.0, hy_ + 0.3, 1.8), (hx_ - 3.0, hy_ - 0.5, 1.4)]
+            C.puffs(f, pts, P['dust'], 'dirt', z=5, drift=-1.0)
         else:
-            hl = feet[3]
-            pts = [(hx_ + 3.5, hy_ - 1.0, 1.2), (hl[0] - 3.5, hl[1] - 1.0, 1.1), (hx_ + 6.0, hy_ - 2.0, 0.8)]
-        C.puffs(f, pts, P['dust'], 'dirt', z=5)
+            s_ = 1 if hx_ > hl[0] else -1
+            pts = [(hx_ + s_ * 6.5, hy_, 2.0), (hl[0] - s_ * 6.5, hl[1], 1.7)]
+            C.puffs(f, pts, P['dust'], 'dirt', z=5 if facing == 'S' else 30, drift=0.0)
     if P.get('stars') is not None:
         x, y = R.p(add3(head3, (-5.0, 8.0, 0.0)))       # over the brow, toward the light
-        C.stars(f, x, y, P['stars'])
+        C.stars(f, x, y, P['stars'], tip=f.anchors.get('shard'))
     f.anchor('strike', *R.p(add3(sn3, (4.0, 0.0, 0.0))))
 
 
-# a bristle tuft seen from behind, in screen pixels: '.' none, 'd' dark, 'm' mid, 'l' the lit
-# left edge (the light is upper left)
-_TUFT = (('.m.', 'lmd', 'l.d'), ('.m.', 'l.d'), ('.m..', 'lmd.', 'l..d'))
+# bristle tufts seen from behind, in screen pixels, rump (small) to ears (spikes): '.' none, 'l' the
+# lit upper-left pair (the coat's light tone, lighter than the coat beside it), 'm' the mane's mid,
+# 'd' its dark right side (the E/W mane's family, never ink)
+_TUFTS = (('l.', 'lm', 'md'),                                     # the rump: 2 px
+          ('.l.', 'llm', 'lmd', '.md'),
+          ('.l.', 'llm', 'lmd', 'lmd'),
+          ('.l..', 'llm.', 'lmmd', 'lmmd', '.mdd'),
+          ('.l..', 'llm.', 'lmmd', 'lmmd', '.mdd'),                 # the two between the ears stand
+          ('..l.', '.llm', 'llmd', 'lmmd', '.mdd'))                 # above the back as spikes
 
 
-def _mane_from_behind(f, R, ridge, m):
-    """From behind (N) the bristle ridge is a row of separate dark tufts running from the rump to
-    the ears, each with a lit left edge (10 Nov audit, B2: the thorn row projected end-on read
-    as a stitched zip).  Drawn as explicit pixels on the screen grid so every tuft keeps its
-    shape at the figure's scale."""
+def _mane_from_behind(f, R, ridge, m, coat):
+    """From behind (N) the bristle ridge is a row of six separate tufts from the rump to the ears,
+    growing from 2 px at the rump to 4 x 5 spikes that stand above the back between the ears, each
+    lit on its upper left (lighter than the coat) and dark on its right (10 Nov audit B2, 12 Nov
+    B2r).  Explicit pixels on the screen grid, so each tuft keeps its shape at the figure's scale."""
     k = f.scale
-    tone = {'d': (m, 0), 'm': (m, 1), 'l': (m, 3)}
+    tone = {'d': (m, 1), 'm': (m, 3), 'l': (coat, 4)}
     a, b = R.p(ridge[0]), R.p(ridge[-1])                    # the rump end and the ears end
-    a = (a[0] + (a[0] - b[0]) * 0.18, a[1] + (a[1] - b[1]) * 0.18)   # on down the rump toward the tail
-    pts = [(a[0] + (b[0] - a[0]) * t / 6.0, a[1] + (b[1] - a[1]) * t / 6.0) for t in range(7)]
-    for i, (x, y) in enumerate(pts):
-        sx, sy = math.floor(x * k) - 1 + (1 if i % 3 == 2 else 0) * -1, math.floor(y * k) - 2   # chevrons up the spine
-        rows = _TUFT[i % len(_TUFT)]
+    a = (a[0] + (a[0] - b[0]) * 0.15, a[1] + (a[1] - b[1]) * 0.15)
+    b = (b[0] + (b[0] - a[0]) * 0.32, b[1] + (b[1] - a[1]) * 0.32)   # on past the ears: the last two break the outline
+    n = len(_TUFTS)
+    for i, rows in enumerate(_TUFTS):
+        t = i / (n - 1.0)
+        x, y = a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t
+        w = max(len(r) for r in rows)
+        sx = math.floor(x * k) - w // 2 + (1 if i % 2 else 0)        # staggered a pixel either side of the spine
+        sy = math.floor(y * k) - len(rows) + 2
         for j, row in enumerate(rows):
             for c, ch in enumerate(row):
                 if ch in tone:
-                    f.detail(f.pixels([((sx + c) / k, (sy + j) / k)]), tone[ch], z=24.5)
+                    f.detail(f.pixels([((sx + c) / k, (sy + j) / k)]), tone[ch], z=24.5 if i < n - 2 else 40)
+
+
+# the tail seen from behind: a 2 px curl in the mane's dark tones with one lit pixel
+_TAIL_N = ('.lm.', 'm..d', 'd.m.', '.d..')
 
 
 def _bristles(X, Y, t):

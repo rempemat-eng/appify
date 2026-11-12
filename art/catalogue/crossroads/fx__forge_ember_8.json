@@ -1,7 +1,7 @@
 {
  "id": "crossroads/fx/forge_ember_8",
  "file": "game/zones/crossroads/art/fx/forge_ember_8.png",
- "sha256": "f5a7f0cc300e55f65394d28cff8ca697e2f9ed99e8e0493a8f40d0cfe170f540",
+ "sha256": "41bc0f899d99b6c564b572af9f46236fc426be201fd375a3f8fc9c949ad0e39d",
  "kind": "forge_ember",
  "biome": "valley",
  "H": 74.0,
@@ -33,7 +33,7 @@
   "group": "prop"
  },
  "findings": [],
- "reviewed": "2026-11-11",
+ "reviewed": "2026-11-12",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

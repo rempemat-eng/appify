@@ -290,43 +290,64 @@ def thorns(f, R, pts3, up3, length, z, m='thorn', tag=None):
 
 def dust(f, x, y, t, z=58):
     """A kicked-up dust puff at ground point (x, y), t 0..1 (finite: gone by 1)."""
-    puffs(f, [(x - 4, y, 1.0), (x - 7, y - 1, 0.8), (x - 2, y - 1, 0.7)], t, 'dirt', z=z)
+    puffs(f, [(x - 4, y, 1.4), (x - 7, y - 1, 1.1)], t, 'dirt', z=z)
 
 
-def puffs(f, pts, t, m='dirt', z=58, grow=2.2, pebbles=()):
-    """Kicked dust as loose unoutlined puffs in the ground's own tones 3 and 4 (no ink line, so
-    it never reads as a solid object): pts = [(x, y, size)], t 0..1 grows them, lifts them a
-    little and thins them to a broken scatter; gone by 1.  z: the puffs only show where nothing
-    nearer than z covers them.  pebbles = [(x, y)] two-pixel stones, kicked out early."""
+def puffs(f, pts, t, m='dirt', z=58, drift=-1.0, rise=1.5, pebbles=()):
+    """Kicked dust (12 Nov audit, B4r/K1r): separate round puffs in the ground's own ramp, no ink
+    line. pts = [(x, y, r)] in pivot space at the moment of the kick: each puff rises (rise px a
+    tenth of t) and drifts (drift: -1 back, +1 forward, 0 straight up), swells, then breaks up in
+    the last stretch (a bite out of it, then only fragments). A lit cap (tone 4; the first puff a
+    2 px crest in tone 5), the body (tone 3) and a shaded lower right (tone 2). z: the puffs show
+    only where nothing nearer than z covers them. pebbles = [(x, y)]: 2 px stones kicked out early."""
     if t is None or t >= 1:
         return
-    for i, (x, y, s) in enumerate(pts):
-        if t > 0.55 and i % 3 == 2:
-            continue                                           # thinning: the small puffs go first
-        r = s * (1.0 + 1.6 * t * grow / 2.2)
-        cy = y - 1.2 * t * s
-        m0 = f.ell(x, cy, r, r * 0.75)
-        if t > 0.7:
-            m0 = m0 & (f.Y < cy + 0.1 * r)                     # settling: only the top of the puff is left
-        top = m0 & (f.Y < cy - 0.25 * r) & (f.X < x + 0.3 * r)                 # the lit upper-left of the puff
-        f.detail(m0 & ~top, (m, 3), solid=False, z=z + i * 0.01, tag='dust')
-        f.detail(top, (m, 4), solid=False, z=z + i * 0.01, tag='dust')
+    k = f.scale
+    for i, (x0, y0, r0) in enumerate(pts):
+        tt = min(1.0, t + 0.08 * i)
+        r = r0 * (0.85 + 0.75 * tt)
+        cx = x0 + drift * (1.0 + 4.0 * tt) * (1 + 0.3 * i)
+        cy = y0 - r - rise * 10 * tt / k * 0.35 - 0.4 * i
+        rx, ry = r * (1.05 + 0.1 * math.sin(7 * tt + i)), r * (0.82 + 0.12 * math.cos(5 * tt + i))
+        body = f.ell(cx, cy, rx, ry)
+        if tt > 0.62:                                       # breaking up: a bite out of the far side
+            body = body & ~f.ell(cx + 0.8 * rx * (1 if i % 2 else -1), cy + 0.3 * ry, 0.7 * rx, 0.7 * ry)
+        if tt > 0.82:                                       # the end: only fragments of its top
+            body = body & (f.Y < cy) & ~f.ell(cx, cy - 0.2 * ry, 0.35 * rx, 0.6 * ry)
+        cap = body & (f.Y < cy - 0.3 * ry) & (f.X < cx + 0.35 * rx)
+        shade = body & ~cap & (f.Y > cy + 0.15 * ry) & (f.X > cx - 0.2 * rx)
+        f.detail(body & ~cap & ~shade, (m, 3), solid=False, z=z + i * 0.01, tag='dust')
+        f.detail(shade, (m, 2), solid=False, z=z + i * 0.01, tag='dust')
+        f.detail(cap, (m, 4), solid=False, z=z + i * 0.01, tag='dust')
+        if i == 0 and tt < 0.62:
+            px_, py_ = math.floor((cx - 0.3 * rx) * k) / k, math.floor((cy - ry) * k + 1) / k
+            f.detail(f.pixels([(px_, py_), (px_ + 1 / k, py_)]), (m, 5), solid=False, z=z + 0.02, tag='dust')
     if t < 0.6:
         for j, (x, y) in enumerate(pebbles):
             d = (1 if j % 2 else -1) * 3.0 * t
-            f.detail(f.rect(x + d, y - 2.0 * t, x + d + 1.6, y - 2.0 * t + 1.0), (m, 1), solid=False, z=z, tag='dust')
+            f.detail(f.rect(x + d, y - 2.0 * t, x + d + 2.0 / k, y - 2.0 * t + 1.0 / k), (m, 1), solid=False, z=z, tag='dust')
 
 
-def stars(f, x, y, t, z=60):
-    """Dazed: two small lamp-toned sparks circling over the head (stagger), each a pale core
-    with short arms in the lamp ramp, no ink line (10 Nov audit, K2: not flat plus glyphs)."""
+def stars(f, x, y, t, z=60, tip=None):
+    """Dazed: two small lamp-toned sparks circling over the head (stagger), each a 2 x 2 pale core
+    with 1 px arms in the lamp ramp, no ink line (10 Nov audit K2). tip: the shard's tip anchor
+    (screen pixels, as Fig.anchor stores it): the orbit then rides at least 4 px above the crystal
+    so a spark never lands on it (12 Nov audit, K2r)."""
     k = f.scale
+    if tip is not None:
+        tx = (-tip[0] if f.flip else tip[0]) / k
+        x, y = tx, min(y, (tip[1] - 4 - 2 * k - 3) / k)
     for i in range(2):
         a = 2 * math.pi * (t + i / 2)
         sx, sy = x + 6 * math.cos(a), y + 2.0 * math.sin(a) - (1 if i else 0)
         cx, cy = math.floor(sx * k) / k, math.floor(sy * k) / k
+        d = 1 / k
         f.detail(f.pixels([(cx, cy)]), ('lamp', 5), solid=False, z=z, tag='gold')
-        arms = [(cx - 1 / k, cy), (cx + 1 / k, cy)] if (i + int(t * 7)) % 2 == 0 else [(cx, cy - 1 / k), (cx, cy + 1 / k)]
+        f.detail(f.pixels([(cx + d, cy), (cx, cy + d), (cx + d, cy + d)]), ('lamp', 4), solid=False, z=z, tag='gold')
+        if (i + int(t * 7)) % 2 == 0:
+            arms = [(cx - d, cy), (cx + 2 * d, cy + d)]
+        else:
+            arms = [(cx + d, cy - d), (cx, cy + 2 * d)]
         f.detail(f.pixels(arms), ('lamp', 3), solid=False, z=z, tag='gold')
 
 

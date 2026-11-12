@@ -7,8 +7,8 @@ Writes game/zones/crossroads/art/fx/:
   chimney_smoke_8.png the smithy chimney's smoke, 8 drawings of 32 x 56, foot at the bottom centre
                       (the pot's top)
   forge_ember_8.png   the forge paid for before Hale is home (Matt, 11 Nov: a dark hearth until she
-                      arrives): "an ember under the ash", a banked bed of grey ash on the hearth with
-                      three coals breathing red through it, slowly; no flame, no sparks, no smoke.
+                      arrives): "an ember under the ash", a banked heap of grey ash on the hearth with
+                      three coals breathing red through cracks in it, slowly; no flame, no sparks, no smoke.
                       Same frame and foot as forge_fire_8.png
 
 Pixel art at the zone's density (1 texel per pixel), hard alpha, the kit's fire colours and three
@@ -76,53 +76,86 @@ def fire_frame(i):
 
 
 def ember_frame(i):
-    """The banked hearth: an ash mound lying on the hearth's stone top (the smithy picture's coping, row
-    53 of this frame), lit from
-    the upper left, a few charcoal lumps, and three embers under the ash that breathe out of phase
-    (deep red, then the ember orange, one reaching the flame tone at its peak), each warming one ash
-    pixel above it at its brightest. Whole pixels only, hard alpha."""
+    """The banked hearth (12 Nov audit, E1/E2): a heap of ash on the hearth's stone top, under the
+    hood. Its crest stands 6 px over the coping (rows 49 to 54 of this frame; the coping is rows 53
+    and 54, the hood's fringe ends at row 46, so 2 px stay clear under it), highest left of centre.
+    The two rows under the hood take the overhang's shade (ash 2 to 3); below them the west slope is
+    lit (ash 3 to 4, a 2 px ash-5 glint at its crest), the east slope falls to ash 2. Finer ash
+    drifts over the coping's front edge; three charcoal lumps are 2 x 2 with a lit top-left pixel.
+    Three coals glow through cracks in the crust, 3 to 5 px long and 2 deep: a dark crack with the
+    hottest colour at its bottom, stepping three tones over the cycle (ember, deep, flame), each
+    ringed by ash warmed to the path ramp's reds as it breathes; at the big coal's peak a warm pair
+    of pixels lights the hood's lower lip above it (lamp 1). Whole pixels only, hard alpha."""
     W, H = 54, 72
     img = np.zeros((H, W, 4), np.uint8)
-    base = 51                                      # the mound's lowest row sits on the coping (row 53)
-    lv = np.full((H, W), -1, int)                  # ash tone per pixel, -1 empty
-    for x in range(17, 51):
-        u = (x - 33.5) / 17.0
-        h = 3.2 * math.sqrt(max(0.0, 1 - u * u)) + 0.8 * math.sin(x * 1.7) * (1 - abs(u))
-        top = int(round(base - 1 - h))
-        for y in range(top, base + 2):
-            depth = y - top
-            # upper-left light: the top two rows on the left of the crest are lit, the right falls off
-            if depth == 0:
-                t = 5 if x < 30 else (4 if x < 42 else 3)
-            elif depth == 1:
-                t = 4 if x < 36 else 3
-            elif y >= base + 1:
-                t = 2
+    top_row, base = 49, 54                         # the crest row and the heap's lowest row (on the coping)
+
+    def put(x, y, c):
+        if 0 <= x < W and 0 <= y < H:
+            img[y, x, :3] = c
+            img[y, x, 3] = 255
+    # the heap's profile: highest left of centre, a long east slope, uneven by a pixel here and there
+    x0, x1, crest = 17, 51, 27
+    tops = {}
+    for x in range(x0, x1):
+        if x <= crest:
+            u = (crest - x) / (crest - x0)
+            h = 6.0 * (1 - u ** 1.6)
+        else:
+            u = (x - crest) / (x1 - 1 - crest)
+            h = 6.0 * (1 - u ** 1.15)
+        h += (0.6 if x % 7 == 3 else 0.0) - (0.6 if x % 9 == 5 else 0.0)
+        tops[x] = min(base - 1, max(top_row, int(round(base + 1 - h))))
+    for x, t0 in tops.items():
+        for y in range(t0, base + 1):
+            if y <= 50:
+                tone = 3 if x < crest - 2 else 2          # the overhang band under the hood
+            elif x < crest and y <= 52:
+                tone = 4 if y == t0 or y == t0 + 1 else 3  # the lit west slope
+            elif x < crest + 6:
+                tone = 3
             else:
-                t = 3 if x < 39 else 2
-            lv[y, x] = t
-    # the outline on the right and below only (as the fire's rim): the ash's darkest tone
-    op = lv >= 0
-    edge = op & ((~np.roll(op, -1, axis=1)) | (~np.roll(op, -1, axis=0)))
-    lv[edge] = 1
-    # charcoal lumps showing through: short dark runs with a lit grey top pixel
-    for x, y in ((21, 50), (29, 49), (38, 49), (45, 50)):
-        lv[y, x:x + 2] = 1
-        lv[y - 1, x] = 4
-    for t in range(6):
-        img[lv == t, :3] = ASH[t]
-        img[lv == t, 3] = 255
-    # the embers: three coals under the ash, a third of a cycle apart, breathing
-    for k, (x, y, big) in enumerate(((24, 51, False), (33, 50, True), (41, 51, False))):
+                tone = 2 if y < base else 2
+            put(x, y, ASH[tone])
+    # the outline: the darkest ash on the right and the lowest row only (never a full ink ring)
+    for x, t0 in tops.items():
+        put(x, base, ASH[1])
+        if x + 1 not in tops or tops[x + 1] > t0:
+            put(x, t0, ASH[1] if x > crest else ASH[2])
+    # the crest's glint on the lit slope
+    gx = crest - 3
+    gy = max(tops[gx], 51)
+    put(gx, gy, ASH[5])
+    put(gx + 1, gy, ASH[5])
+    # finer ash drifting over the coping's front edge (row 55 is the bricks' top course)
+    for x, y, t in ((20, 55, 3), (21, 55, 2), (33, 55, 2), (34, 55, 3), (35, 55, 2), (44, 55, 2), (45, 56, 2)):
+        put(x, y, ASH[t])
+    # charcoal: 2 x 2 lumps, a lit top-left pixel
+    for x, y in ((22, 52), (39, 52), (46, 53)):
+        put(x, y, ASH[3])
+        put(x + 1, y, ASH[0])
+        put(x, y + 1, ASH[1])
+        put(x + 1, y + 1, ASH[0])
+    # the coals: cracks in the crust, breathing out of phase
+    WARM = [ASH[2], (0x67, 0x5C, 0x5A), (0x88, 0x5C, 0x4B), (0xA8, 0x7C, 0x60)]   # ash 2, ash_warm 2, path 2, path 3
+    for k, (cx, cy, ln, big) in enumerate(((24, 51, 3, False), (30, 52, 5, True), (41, 52, 4, False))):
         b = 0.5 - 0.5 * math.cos(2 * math.pi * (i / N + k / 3.0))
-        core = EMBER if b < 0.3 else (DEEP if b < 0.8 or not big else FLAME)
-        img[y, x, :3] = core
-        img[y, x + 1, :3] = EMBER if b < 0.6 else DEEP
-        if big:                                    # the middle coal: a wider seam of fire under the crust
-            img[y + 1, x:x + 2, :3] = EMBER
-            img[y, x - 1, :3] = EMBER if b < 0.5 else DEEP
-        if b >= 0.8:                               # at its brightest it warms the ash just above
-            img[y - 1, x, :3] = (0x88, 0x5C, 0x4B)      # the house palette's path tone 2: ash warmed red
+        lvl = 0 if b < 0.34 else (1 if b < 0.72 else 2)
+        if not big:
+            lvl = min(lvl, 1) + (1 if b > 0.9 else 0)
+        hot = (EMBER, DEEP, FLAME)[lvl]
+        mid = (ASH[0], EMBER, DEEP)[lvl]
+        for d in range(ln):
+            put(cx + d, cy, ASH[0] if d in (0, ln - 1) else mid)       # the crack's dark lip, embers inside
+            put(cx + d, cy + 1, hot if 0 < d < ln - 1 or ln <= 3 else mid)
+        ring = WARM[min(3, lvl + (1 if big else 0))]
+        for d in range(-1, ln + 1):
+            put(cx + d, cy - 1, ring)                     # the ash warmed round the crack
+        put(cx - 1, cy, ring)
+        put(cx + ln, cy, ring)
+        if big and lvl == 2:                              # its light on the hood's lower lip
+            put(cx + 1, 46, (0x9B, 0x69, 0x12))
+            put(cx + 2, 46, (0x9B, 0x69, 0x12))
     return img
 
 
