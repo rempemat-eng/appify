@@ -1,0 +1,1782 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "highgarth",
+ "name": "Highgarth",
+ "size": "medium",
+ "size_note": "medium",
+ "target": [
+  14,
+  22
+ ],
+ "buildings_counted": 20,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "an old post town on the pass road: lodgings, stores and the lord's watch on the north pass; slate from its quarry, wool from the summer pastures and timber from the valley's larches go down to Cogsworth. Its trade over the pass stopped when the Starfall brought the rockfall down, and the lord sealed the pass: the road beyond waits for a later region",
+  "terrain": "a sheltered valley on the upper Cog inside the range: Garth Street along the valley floor, the temple on its plinth up the east slope, terraces stepping down to the river, snow on the peaks round it",
+  "fit": "an old post town on the pass road: Garth Street along the valley floor, the temple on its stone plinth up the slope, the farmhouses on the upper terraces, the paddies stepping down on stone walls; the watch keep faces the sealed pass",
+  "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   9,
+   27
+  ],
+  "levelled_footprints": 7
+ },
+ "footprint_px": [
+  7712,
+  648,
+  8192,
+  1332
+ ],
+ "fortification": null,
+ "style": {
+  "name": "old_japanese_post_town",
+  "after": "a mountain highway post town, in our own style: no real script, invented signs, no modern elements (no power lines, poles or vending machines)",
+  "forms": {
+   "machiya": "dark weathered timber townhouse, two storeys, wall to wall, lattice front, low deep eaves with a second small eave over the shopfront, hanging lanterns",
+   "honjin": "a post-town inn (lodgings for travellers on the pass road)",
+   "temple_hall": "the main hall: heavy tiled hipped roof, white plaster and timber frame, on a stone plinth",
+   "pagoda": "a five-storey pagoda, the landmark seen from the ways in; vermilion trim",
+   "watchkeep": "a small black keep on a battered stone base with a tarn in front, snow on its roofs: the lord's watch on the pass, smaller than Hearthold's keep",
+   "minka_thatched": "a steep thatched farmhouse built for snow, on the upper terraces",
+   "kura": "a storehouse with white plaster walls and a tiled roof",
+   "bathhouse": "the small hot spring bathhouse"
+  },
+  "colour": "dark roofs and timber, white plaster lines; vermilion only on the temple gate and the pagoda trim",
+  "ground": "grey stone paving on Garth Street, raked gravel in the temple court, moss, stone steps, snow above the town"
+ },
+ "features": {
+  "shrine_gates_px": [
+   [
+    8064,
+    900
+   ],
+   [
+    8064,
+    860
+   ],
+   [
+    8064,
+    820
+   ],
+   [
+    8064,
+    780
+   ],
+   [
+    8064,
+    740
+   ],
+   [
+    8064,
+    700
+   ],
+   [
+    8064,
+    660
+   ]
+  ]
+ },
+ "arrivals": [
+  {
+   "id": "highgarth-arr1",
+   "kind": "path",
+   "route": "the Garth Road",
+   "street": "highgarth-a1",
+   "entries_px": [
+    [
+     7849,
+     1447
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "highgarth-arr2",
+   "kind": "path",
+   "route": "the Northway",
+   "street": "highgarth-a2",
+   "entries_px": [],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "highgarth-s01",
+   "name": "Garth Street",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     7920.0,
+     1000.0
+    ],
+    [
+     7920.0,
+     1320.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "stone lantern",
+     "at_px": [
+      7892,
+      1018
+     ]
+    },
+    {
+     "kind": "stone lantern",
+     "at_px": [
+      7892,
+      1038
+     ]
+    },
+    {
+     "kind": "potted pine",
+     "at_px": [
+      7892,
+      1132
+     ]
+    },
+    {
+     "kind": "water barrel",
+     "at_px": [
+      7892,
+      1156
+     ]
+    },
+    {
+     "kind": "water barrel",
+     "at_px": [
+      7892,
+      1178
+     ]
+    },
+    {
+     "kind": "invented sign board",
+     "at_px": [
+      7892,
+      1198
+     ]
+    },
+    {
+     "kind": "potted pine",
+     "at_px": [
+      7892,
+      1214
+     ]
+    },
+    {
+     "kind": "water barrel",
+     "at_px": [
+      7892,
+      1226
+     ]
+    },
+    {
+     "kind": "hanging lantern",
+     "at_px": [
+      7892,
+      1276
+     ]
+    },
+    {
+     "kind": "hanging lantern",
+     "at_px": [
+      7948,
+      1024
+     ]
+    },
+    {
+     "kind": "stone lantern",
+     "at_px": [
+      7948,
+      1060
+     ]
+    },
+    {
+     "kind": "invented sign board",
+     "at_px": [
+      7948,
+      1102
+     ]
+    },
+    {
+     "kind": "noren curtain",
+     "at_px": [
+      7948,
+      1114
+     ]
+    }
+   ],
+   "connects": [
+    "highgarth-a1",
+    "highgarth-a2",
+    "highgarth-q01",
+    "highgarth-s02",
+    "highgarth-s03",
+    "highgarth-s04",
+    "highgarth-s06"
+   ]
+  },
+  {
+   "id": "highgarth-s02",
+   "name": "Quarry Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7940.0,
+     1132.0
+    ],
+    [
+     8172.0,
+     1132.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "highgarth-s01",
+    "highgarth-s05"
+   ]
+  },
+  {
+   "id": "highgarth-s03",
+   "name": "Mill Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7892.0,
+     1252.0
+    ],
+    [
+     7716.0,
+     1252.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "highgarth-s01"
+   ]
+  },
+  {
+   "id": "highgarth-s04",
+   "name": "Temple Steps",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7940.0,
+     1004.0
+    ],
+    [
+     8004.0,
+     1004.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "highgarth-c03",
+    "highgarth-s01"
+   ]
+  },
+  {
+   "id": "highgarth-s05",
+   "name": "High Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8124.0,
+     1132.0
+    ],
+    [
+     8124.0,
+     1332.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "highgarth-s02",
+    "highgarth-s06"
+   ]
+  },
+  {
+   "id": "highgarth-s06",
+   "name": "Terrace Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7940.0,
+     1324.0
+    ],
+    [
+     8124.0,
+     1324.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "highgarth-s01",
+    "highgarth-s05"
+   ]
+  },
+  {
+   "id": "highgarth-s07",
+   "name": "the shrine path",
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8064.0,
+     920.0
+    ],
+    [
+     8064.0,
+     648.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "highgarth-s12"
+   ]
+  },
+  {
+   "id": "highgarth-s08",
+   "name": "Keep Steps",
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     7872.0,
+     704.0
+    ],
+    [
+     7904.0,
+     704.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "highgarth-a2"
+   ]
+  },
+  {
+   "id": "highgarth-a1",
+   "name": "the Garth Road",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7848.5,
+     1446.7
+    ],
+    [
+     7839.7,
+     1426.4
+    ],
+    [
+     7836.0,
+     1428.0
+    ],
+    [
+     7836.0,
+     1340.0
+    ],
+    [
+     7908.0,
+     1340.0
+    ],
+    [
+     7908.0,
+     1252.0
+    ],
+    [
+     7905.0,
+     1250.0
+    ]
+   ],
+   "follows_route": "the Garth Road",
+   "connects": [
+    "highgarth-s01",
+    "highgarth-s03"
+   ]
+  },
+  {
+   "id": "highgarth-a2",
+   "name": "the Northway",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7905.0,
+     1190.0
+    ],
+    [
+     7928.7,
+     1114.6
+    ],
+    [
+     7934.3,
+     1071.5
+    ],
+    [
+     7932.3,
+     1052.7
+    ],
+    [
+     7895.9,
+     918.1
+    ],
+    [
+     7888.3,
+     858.8
+    ],
+    [
+     7883.8,
+     777.5
+    ],
+    [
+     7874.9,
+     719.3
+    ],
+    [
+     7839.8,
+     642.8
+    ],
+    [
+     7825.0,
+     600.0
+    ]
+   ],
+   "follows_route": "the Northway",
+   "connects": [
+    "highgarth-s01",
+    "highgarth-s08",
+    "highgarth-s12"
+   ]
+  },
+  {
+   "id": "highgarth-s12",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8060.0,
+     860.0
+    ],
+    [
+     7908.0,
+     860.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "highgarth-a2",
+    "highgarth-s07"
+   ]
+  },
+  {
+   "id": "highgarth-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8088.0,
+     1016.0
+    ],
+    [
+     8016.0,
+     1016.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "highgarth-s04"
+   ]
+  }
+ ],
+ "squares": [
+  {
+   "id": "highgarth-q01",
+   "name": "the post square",
+   "type": "square",
+   "cells": [
+    993,
+    145,
+    8,
+    7
+   ]
+  }
+ ],
+ "districts": [
+  {
+   "name": "Garth Street",
+   "centre_px": [
+    7920,
+    1150
+   ],
+   "declared": "the post road: machiya wall to wall, the two post inns, the post square",
+   "town": "Highgarth",
+   "id": "highgarth-d-garth-street",
+   "buildings": [
+    "highgarth-b004",
+    "highgarth-b005",
+    "highgarth-b012",
+    "highgarth-b013",
+    "highgarth-b014",
+    "highgarth-b015",
+    "highgarth-b018",
+    "highgarth-b019"
+   ],
+   "mix": {
+    "inn": 2,
+    "townhouse": 6
+   },
+   "function": "homes"
+  },
+  {
+   "name": "the temple",
+   "centre_px": [
+    8064,
+    990
+   ],
+   "declared": "the main hall, the pagoda and the gravel court on their plinth; the pine grove and the shrine path",
+   "town": "Highgarth",
+   "id": "highgarth-d-the-temple",
+   "buildings": [
+    "highgarth-b001",
+    "highgarth-b002",
+    "highgarth-b003",
+    "highgarth-b017"
+   ],
+   "mix": {
+    "public": 1,
+    "tower": 1,
+    "keep": 1,
+    "townhouse": 1
+   },
+   "function": "market and civic"
+  },
+  {
+   "name": "the upper terraces",
+   "centre_px": [
+    8150,
+    1200
+   ],
+   "declared": "thatched farmhouses and storehouses up the east slope; the slate quarry",
+   "town": "Highgarth",
+   "id": "highgarth-d-the-upper-terraces",
+   "buildings": [
+    "highgarth-b006",
+    "highgarth-b007",
+    "highgarth-b008",
+    "highgarth-b009",
+    "highgarth-b020"
+   ],
+   "mix": {
+    "farmhouse": 2,
+    "barn": 2,
+    "house": 1
+   },
+   "function": "crafts and work with homes"
+  },
+  {
+   "name": "Mill Lane",
+   "centre_px": [
+    7750,
+    1260
+   ],
+   "declared": "the sawmill by the Cog, the bathhouse and the moon-viewing terrace",
+   "town": "Highgarth",
+   "id": "highgarth-d-mill-lane",
+   "buildings": [
+    "highgarth-b010",
+    "highgarth-b011",
+    "highgarth-b016"
+   ],
+   "mix": {
+    "public": 1,
+    "mill": 1,
+    "townhouse": 1
+   },
+   "function": "market and civic with homes"
+  },
+  {
+   "id": "highgarth-d-the-temple-court",
+   "name": "the temple court",
+   "function": "edge: yards and pens",
+   "declared": "raked gravel, stone lanterns and the bell",
+   "box_px": [
+    8008,
+    936,
+    8120,
+    1064
+   ],
+   "buildings": [],
+   "town": "Highgarth"
+  },
+  {
+   "id": "highgarth-d-the-moon-viewing-terrace",
+   "name": "the moon-viewing terrace",
+   "function": "edge: yards and pens",
+   "declared": "facing the beam over the valley; the bathhouse's pools hold the moon's light",
+   "box_px": [
+    7712,
+    1272,
+    7760,
+    1320
+   ],
+   "buildings": [],
+   "town": "Highgarth"
+  },
+  {
+   "id": "highgarth-d-the-pine-grove",
+   "name": "the pine grove",
+   "function": "edge: yards and pens",
+   "declared": "the shrine's pines on the slope",
+   "box_px": [
+    7968,
+    864,
+    8056,
+    928
+   ],
+   "buildings": [],
+   "town": "Highgarth"
+  },
+  {
+   "id": "highgarth-d-the-slate-quarry",
+   "name": "the slate quarry",
+   "function": "docks and works yards",
+   "declared": "slate for the roofs of Cogsworth and the valley",
+   "box_px": [
+    8136,
+    1040,
+    8208,
+    1120
+   ],
+   "buildings": [],
+   "town": "Highgarth"
+  },
+  {
+   "id": "highgarth-d-the-folds",
+   "name": "the folds",
+   "function": "edge: yards and pens",
+   "declared": "sheepfolds below the summer pastures",
+   "box_px": [
+    7840,
+    860,
+    7940,
+    950
+   ],
+   "buildings": [],
+   "town": "Highgarth"
+  },
+  {
+   "id": "highgarth-d-the-terraced-paddies-and-fields",
+   "name": "the terraced paddies and fields",
+   "function": "edge: farms and gardens",
+   "declared": "rice and oats stepping down the valley on stone walls",
+   "box_px": [
+    7740,
+    1380,
+    8060,
+    1600
+   ],
+   "buildings": [],
+   "town": "Highgarth"
+  }
+ ],
+ "gathering_places": [
+  {
+   "name": "the post square",
+   "xy_px": [
+    7976,
+    1188
+   ]
+  },
+  {
+   "name": "the temple court",
+   "xy_px": [
+    8060,
+    1040
+   ]
+  },
+  {
+   "name": "the moon-viewing terrace",
+   "xy_px": [
+    7736,
+    1296
+   ]
+  }
+ ],
+ "size_table_px": {
+  "bathhouse": [
+   [
+    64,
+    96
+   ],
+   [
+    48,
+    64
+   ]
+  ],
+  "honjin": [
+   [
+    56,
+    104
+   ],
+   [
+    48,
+    80
+   ]
+  ],
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ],
+  "kura": [
+   [
+    32,
+    48
+   ],
+   [
+    32,
+    40
+   ]
+  ],
+  "machiya": [
+   [
+    24,
+    64
+   ],
+   [
+    40,
+    56
+   ]
+  ],
+  "mill": [
+   [
+    80,
+    104
+   ],
+   [
+    56,
+    72
+   ]
+  ],
+  "minka_thatched": [
+   [
+    56,
+    88
+   ],
+   [
+    48,
+    72
+   ]
+  ],
+  "pagoda": [
+   [
+    32,
+    40
+   ],
+   [
+    32,
+    40
+   ]
+  ],
+  "temple_hall": [
+   [
+    96,
+    128
+   ],
+   [
+    64,
+    80
+   ]
+  ],
+  "watchkeep": [
+   [
+    48,
+    64
+   ],
+   [
+    48,
+    64
+   ]
+  ]
+ },
+ "fronts": 20,
+ "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
+ "buildings": [
+  {
+   "id": "highgarth-b001",
+   "type": "public",
+   "form": "temple_hall",
+   "footprint_cells": [
+    1003,
+    118,
+    12,
+    8
+   ],
+   "rect_px": [
+    8024,
+    944,
+    96,
+    64
+   ],
+   "faces": "highgarth-s04",
+   "door_cells": [
+    1002,
+    124
+   ],
+   "purpose": "the chapel hall",
+   "occupants": "staff by day",
+   "district": "highgarth-d-the-temple",
+   "counted": true
+  },
+  {
+   "id": "highgarth-b002",
+   "type": "tower",
+   "form": "pagoda",
+   "footprint_cells": [
+    1011,
+    128,
+    4,
+    4
+   ],
+   "rect_px": [
+    8088,
+    1024,
+    32,
+    32
+   ],
+   "faces": "highgarth-c03",
+   "door_cells": [
+    1011,
+    127
+   ],
+   "purpose": "a tower",
+   "occupants": "offices and the Company",
+   "district": "highgarth-d-the-temple",
+   "counted": true
+  },
+  {
+   "id": "highgarth-b003",
+   "type": "keep",
+   "form": "watchkeep",
+   "footprint_cells": [
+    989,
+    84,
+    7,
+    7
+   ],
+   "rect_px": [
+    7912,
+    672,
+    56,
+    56
+   ],
+   "faces": "highgarth-s08",
+   "door_cells": [
+    988,
+    87
+   ],
+   "purpose": "the keep",
+   "occupants": "the lord, the household and the guard",
+   "district": "highgarth-d-the-temple",
+   "counted": true
+  },
+  {
+   "id": "highgarth-b004",
+   "type": "inn",
+   "form": "honjin",
+   "footprint_cells": [
+    980,
+    131,
+    7,
+    9
+   ],
+   "rect_px": [
+    7840,
+    1048,
+    56,
+    72
+   ],
+   "faces": "highgarth-s01",
+   "door_cells": [
+    987,
+    135
+   ],
+   "purpose": "the Drovers' inn",
+   "occupants": "the innkeeper, staff and guests",
+   "district": "highgarth-d-garth-street",
+   "counted": true
+  },
+  {
+   "id": "highgarth-b005",
+   "type": "inn",
+   "form": "honjin",
+   "footprint_cells": [
+    993,
+    154,
+    7,
+    10
+   ],
+   "rect_px": [
+    7944,
+    1232,
+    56,
+    80
+   ],
+   "faces": "highgarth-s01",
+   "door_cells": [
+    992,
+    159
+   ],
+   "purpose": "the Drovers' inn",
+   "occupants": "the innkeeper, staff and guests",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "company_foothold": "a buyer's room at the post inn"
+  },
+  {
+   "id": "highgarth-b006",
+   "type": "farmhouse",
+   "form": "minka_thatched",
+   "footprint_cells": [
+    1017,
+    144,
+    7,
+    9
+   ],
+   "rect_px": [
+    8136,
+    1152,
+    56,
+    72
+   ],
+   "faces": "highgarth-s05",
+   "door_cells": [
+    1016,
+    148
+   ],
+   "purpose": "a farmhouse",
+   "occupants": "a quarryman's household",
+   "district": "highgarth-d-the-upper-terraces",
+   "counted": true
+  },
+  {
+   "id": "highgarth-b007",
+   "type": "farmhouse",
+   "form": "minka_thatched",
+   "footprint_cells": [
+    1017,
+    154,
+    7,
+    9
+   ],
+   "rect_px": [
+    8136,
+    1232,
+    56,
+    72
+   ],
+   "faces": "highgarth-s05",
+   "door_cells": [
+    1016,
+    158
+   ],
+   "purpose": "a farmhouse",
+   "occupants": "a shepherd's household",
+   "district": "highgarth-d-the-upper-terraces",
+   "counted": true
+  },
+  {
+   "id": "highgarth-b008",
+   "type": "barn",
+   "form": "kura",
+   "footprint_cells": [
+    1009,
+    144,
+    5,
+    4
+   ],
+   "rect_px": [
+    8072,
+    1152,
+    40,
+    32
+   ],
+   "faces": "highgarth-s05",
+   "door_cells": [
+    1014,
+    146
+   ],
+   "purpose": "a barn and store",
+   "occupants": "the farm",
+   "district": "highgarth-d-the-upper-terraces",
+   "counted": true
+  },
+  {
+   "id": "highgarth-b009",
+   "type": "barn",
+   "form": "kura",
+   "footprint_cells": [
+    1009,
+    150,
+    5,
+    4
+   ],
+   "rect_px": [
+    8072,
+    1200,
+    40,
+    32
+   ],
+   "faces": "highgarth-s05",
+   "door_cells": [
+    1014,
+    152
+   ],
+   "purpose": "a barn and store",
+   "occupants": "the farm",
+   "district": "highgarth-d-the-upper-terraces",
+   "counted": true
+  },
+  {
+   "id": "highgarth-b010",
+   "type": "public",
+   "form": "bathhouse",
+   "footprint_cells": [
+    971,
+    158,
+    9,
+    6
+   ],
+   "rect_px": [
+    7768,
+    1264,
+    72,
+    48
+   ],
+   "faces": "highgarth-s03",
+   "door_cells": [
+    975,
+    157
+   ],
+   "purpose": "the school",
+   "occupants": "staff by day",
+   "district": "highgarth-d-mill-lane",
+   "counted": true
+  },
+  {
+   "id": "highgarth-b011",
+   "type": "mill",
+   "form": "mill",
+   "footprint_cells": [
+    964,
+    148,
+    11,
+    7
+   ],
+   "rect_px": [
+    7712,
+    1184,
+    88,
+    56
+   ],
+   "faces": "highgarth-s03",
+   "door_cells": [
+    969,
+    155
+   ],
+   "purpose": "the mill",
+   "occupants": "the miller and family",
+   "district": "highgarth-d-mill-lane",
+   "counted": true
+  },
+  {
+   "id": "highgarth-b012",
+   "type": "townhouse",
+   "form": "machiya",
+   "footprint_cells": [
+    981,
+    126,
+    6,
+    5
+   ],
+   "rect_px": [
+    7848,
+    1008,
+    48,
+    40
+   ],
+   "faces": "highgarth-s01",
+   "door_cells": [
+    987,
+    128
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a sawyer's household",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1
+  },
+  {
+   "id": "highgarth-b013",
+   "type": "townhouse",
+   "form": "machiya",
+   "footprint_cells": [
+    982,
+    140,
+    5,
+    6
+   ],
+   "rect_px": [
+    7856,
+    1120,
+    40,
+    48
+   ],
+   "faces": "highgarth-s01",
+   "door_cells": [
+    987,
+    143
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a weaver's household",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1
+  },
+  {
+   "id": "highgarth-b014",
+   "type": "townhouse",
+   "form": "machiya",
+   "footprint_cells": [
+    982,
+    146,
+    5,
+    5
+   ],
+   "rect_px": [
+    7856,
+    1168,
+    40,
+    40
+   ],
+   "faces": "highgarth-s01",
+   "door_cells": [
+    987,
+    148
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a drover's household",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 2,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1
+  },
+  {
+   "id": "highgarth-b015",
+   "type": "townhouse",
+   "form": "machiya",
+   "footprint_cells": [
+    982,
+    151,
+    5,
+    3
+   ],
+   "rect_px": [
+    7856,
+    1208,
+    40,
+    24
+   ],
+   "faces": "highgarth-s01",
+   "door_cells": [
+    987,
+    152
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a quarryman's household",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 2,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1
+  },
+  {
+   "id": "highgarth-b016",
+   "type": "townhouse",
+   "form": "machiya",
+   "footprint_cells": [
+    981,
+    158,
+    6,
+    6
+   ],
+   "rect_px": [
+    7848,
+    1264,
+    48,
+    48
+   ],
+   "faces": "highgarth-s01",
+   "door_cells": [
+    987,
+    161
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a shepherd's household",
+   "district": "highgarth-d-mill-lane",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 1,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1
+  },
+  {
+   "id": "highgarth-b017",
+   "type": "townhouse",
+   "form": "machiya",
+   "footprint_cells": [
+    993,
+    127,
+    5,
+    4
+   ],
+   "rect_px": [
+    7944,
+    1016,
+    40,
+    32
+   ],
+   "faces": "highgarth-s04",
+   "door_cells": [
+    995,
+    126
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a sawyer's household",
+   "district": "highgarth-d-the-temple",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 1,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1
+  },
+  {
+   "id": "highgarth-b018",
+   "type": "townhouse",
+   "form": "machiya",
+   "footprint_cells": [
+    993,
+    131,
+    6,
+    6
+   ],
+   "rect_px": [
+    7944,
+    1048,
+    48,
+    48
+   ],
+   "faces": "highgarth-s01",
+   "door_cells": [
+    992,
+    134
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a weaver's household",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 1,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1
+  },
+  {
+   "id": "highgarth-b019",
+   "type": "townhouse",
+   "form": "machiya",
+   "footprint_cells": [
+    993,
+    137,
+    6,
+    3
+   ],
+   "rect_px": [
+    7944,
+    1096,
+    48,
+    24
+   ],
+   "faces": "highgarth-s02",
+   "door_cells": [
+    996,
+    140
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a drover's household",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1
+  },
+  {
+   "id": "highgarth-b020",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1001,
+    143,
+    7,
+    12
+   ],
+   "rect_px": [
+    8008,
+    1144,
+    56,
+    96
+   ],
+   "faces": "highgarth-q01",
+   "door_cells": [
+    1000,
+    149
+   ],
+   "purpose": "a family house",
+   "occupants": "a quarryman's household",
+   "district": "highgarth-d-the-upper-terraces",
+   "counted": true
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "yard",
+   "name": "the temple court",
+   "box": [
+    8008,
+    936,
+    8120,
+    1064
+   ],
+   "why": "raked gravel, stone lanterns and the bell"
+  },
+  {
+   "kind": "plaza",
+   "name": "the moon-viewing terrace",
+   "box": [
+    7712,
+    1272,
+    7760,
+    1320
+   ],
+   "why": "facing the beam over the valley; the bathhouse's pools hold the moon's light"
+  },
+  {
+   "kind": "conifer",
+   "name": "the pine grove",
+   "box": [
+    7968,
+    864,
+    8056,
+    928
+   ],
+   "why": "the shrine's pines on the slope"
+  },
+  {
+   "kind": "yard",
+   "name": "the slate quarry",
+   "box": [
+    8136,
+    1040,
+    8208,
+    1120
+   ],
+   "why": "slate for the roofs of Cogsworth and the valley"
+  },
+  {
+   "kind": "yard",
+   "name": "the folds",
+   "box": [
+    7840,
+    860,
+    7940,
+    950
+   ],
+   "why": "sheepfolds below the summer pastures"
+  },
+  {
+   "kind": "field2",
+   "name": "the terraced paddies and fields",
+   "box": [
+    7740,
+    1380,
+    8060,
+    1600
+   ],
+   "plots": 5,
+   "why": "rice and oats stepping down the valley on stone walls"
+  }
+ ],
+ "game_layout": {
+  "arrival": "the Garth Road",
+  "first_view": "up the last bend into Garth Street, the post road: dark machiya wall to wall under their deep eaves, lanterns hung out, the pagoda on its plinth above the roofs, snow on the peaks",
+  "landmarks": [
+   {
+    "name": "the five-storey pagoda",
+    "xy": [
+     8104,
+     1040
+    ]
+   },
+   {
+    "name": "the lord's watch keep by its tarn",
+    "xy": [
+     7940,
+     700
+    ]
+   },
+   {
+    "name": "the post square and its gate",
+    "xy": [
+     7976,
+     1188
+    ]
+   },
+   {
+    "name": "the temple hall on its plinth",
+    "xy": [
+     8072,
+     976
+    ]
+   }
+  ],
+  "shortcuts_later": [
+   {
+    "what": "the shrine path past its last gate, to the sealed pass",
+    "xy": [
+     8064,
+     660
+    ],
+    "opens": "later, with the region north of the range (closed now)"
+   },
+   {
+    "what": "the quarry incline down to Terrace Lane",
+    "xy": [
+     8168,
+     1200
+    ],
+    "opens": "when the quarry works again"
+   }
+  ],
+  "quiet_corners": [
+   {
+    "what": "the pine grove above the temple, beside the busy post road",
+    "xy": [
+     8010,
+     896
+    ]
+   },
+   {
+    "what": "the moon-viewing terrace by the bathhouse",
+    "xy": [
+     7736,
+     1296
+    ]
+   }
+  ],
+  "first_screen_cells": [
+   [
+    961,
+    169,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.5,
+   3.8
+  ]
+ },
+ "ground": {
+  "centre": "grey stone paving on Garth Street, stone steps",
+  "yards": "raked gravel in the temple court, moss",
+  "edges": "terraced paddies on stone walls, sheepfolds, snow above the town",
+  "materials_cells": {
+   "slate flags": 1053,
+   "raked gravel": 265
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   949,
+   66,
+   91,
+   116
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "91#",
+   "91#",
+   "84#7.",
+   "~69#3.4g14.",
+   "~56#g.g3.5g4.5g.#5.#5.#",
+   "~43#25g3.4g4#.4#6.",
+   "~33#34g3.5g3#3.3#2.2#2.",
+   "~20#3g8#27g.3g2.11g2#5.#4.3#",
+   "~10#17g2#r29g5.10g9.#3.3#",
+   "~#26g3r29g4.11g8.#4.3#",
+   "~27g3r29g4.8g5.#4.2#4.2#.",
+   "~27g4r28g.g3.6g6.7#3.3#.",
+   "~27g4r29g5.4g8.4#.#2.#.#.#",
+   "~28g4r29g4.3g3.g6.8#3.#",
+   "2~27g4r25g2r3g3.3g5.g#8.#2.g3#",
+   "2~19g3.5g5r24g2r5g.3g4.2g2#10.3#.",
+   "2~18g3.7g4r24g2r6g.2g2.3g2.#7.#2.3#.",
+   "2~17g2.9g5r4g9.10g2r10g.3g10.#3.3#",
+   "2~17g.11g4r4g9.10g2r9g2.g2.2g#8.#2.3#",
+   "2~16g2.11g5r3g9.10g2r10g3.4g9.#.3#",
+   "2~16g.13g4r4g8.10g2r11g.6g7.#2.#2.",
+   "2~16g.13g8r8.10g2r19g10.#.",
+   "2~16g.14g7r8.10g2r19g2.g.g5.2#",
+   "2~31g4r2g9.10g2r19g2.#g2#4.2#",
+   "2~32g3r2g9.10g2r19g2.6#2.#.",
+   "2~32g3r2g9.10g2r19g2.g4#5.",
+   "2~2g~29g4r20g2r19g.4g#6.",
+   "3~g~24g.4g4rg9~10g2r20g.4g6.",
+   "3~g~24g.4g4rg9~10g2r20g2.2g.3g3.",
+   "3~g2~29g3rg9~10g2r19g6.6g",
+   "3~2g~29g3rg9~10g2r19g6.6g",
+   "3~2g~29g3r20g2r19g6.3g.g.",
+   "3~2g2~28g3r20g2r18g6.4g3.",
+   "3~3g~28g3r20g2r18g.g4.7g",
+   "3~3g~28g3r.19g2r31g",
+   "3~3g~28g3r.19g2r31g",
+   "3~4g~27g3r20g2r26g.4g",
+   "g3~.2g3~25g3r20g2r25g.g.3g",
+   "g3~4.2~25g3r20g2r31g",
+   "g3~6.~24g4r19g2r31g",
+   "g3~6.~.23g4r19.2r23g2.2g2.2g",
+   "g3~6.2~19g4.4r19.2r23g3.3g.g",
+   "g3~7.2~18g5.3r19.2r23g3.4g.",
+   "g4~7.2~4.13g5.3r4.15g2r24g2.5g",
+   "2g3~7.g~5.12g5.3r4.15g2r24g.6g",
+   "2g3~16.10g5.3r4.15g2r24g2.5g",
+   "2g3~17.9g5.3r4.15g2r24g2.4g.",
+   "2g3~4g13.9g5.3r4.15g2r29g2.",
+   "2g3~5g11.10g5.4r3.15g2r28g3.",
+   "2g3~5g11.10g5.4r3.15g2r28g3.",
+   "2g4~3g12.10g6.3r3.7g17.24g",
+   "3g3~2g13.10g6.4r2.7g17.24g",
+   "3g3~2g13.16g4r6g20.24g",
+   "3g3~3g12.16g4r5g21.24g",
+   "3g3~3g12.17g3r2g24.24g",
+   "3g3~3g13.16g4r7.2g16.24g",
+   "3g3~5g11.16g4r8.g16.24g",
+   "4g3~4g12.15g.3r8.g16.24g",
+   "4g3~5g12.14g.14r14.24g",
+   "4g3~6g11.14g.14r15.23g",
+   "4g3~7g10.8g7.14r15.23g",
+   "4g3~9g8.8g8.3r26.22g",
+   "4g3~9g6.10g8.4r25.22g",
+   "4g3~5g.4g5.10g8.4r25.22g",
+   "4g3~13g.11g9.3r33.14g",
+   "5g3~23g10.3r33.14g",
+   "5g3~23g10.3r33.14g",
+   "5g3~23g10.3r33.14g",
+   "5g3~2g#20g10.3r6.g12.3g.g9.14g",
+   "5g3~3#15g4.g10.3r6.2g9.7g9.14g",
+   "5g3~3#15g15.3r6.3g6.9g9.14g",
+   "g4.3~3#14g16.3r6.2g8.8g9.14g",
+   "4.g#4~15g15.4r6.2g9.7g9.14g",
+   "4.2#4~16g14.4r6.2g10.6g9.14g",
+   "3.3#4~15g15.4r30.17g",
+   "2.4#4~15g14.4r31.17g",
+   "2.4#4~16g13.4r31.17g",
+   ".4#g4~17g12.4r.7g11.3g3.23g",
+   "g4#2g4~17g10.4r2.6g25.16g",
+   "g5#g4~18g9.4r33.16g",
+   "g4#2g4~19g8.4r33.16g",
+   "g3#3g4~19g8.3r18.g15.16g",
+   "g3#2g.4~4g11.7g5.3r18.6g10.16g",
+   "g3#g2.5~3g11.7g5.3r18.6g10.16g",
+   "g2#2g2.g4~3g11.7g26.g15.16g",
+   "2#6g4~3g11.7g26.g15.16g",
+   "2#6g4~3g11.7g11.8g7.g15.16g",
+   "8g4~3g11.7g11.8g7.g12.19g",
+   "8g4~3g11.11g14.g7.6g10.16g",
+   "8g5~g24.3r10.14g10.16g",
+   "9g.3~25.3r10.14g10.16g",
+   "7g3.3~25.3r10.14g10.16g",
+   "7g3.3~2.7g9.g6.3r10.14g10.16g",
+   "#5g4.4~7.g9.g6.3r10.14g10.16g",
+   "#4g5.4~7.g9.g6.3r10.14g10.16g",
+   "4g7.3~7.g9.g6.3r10.14g10.16g",
+   "4g7.3~7.g9.g6.3r10.14g10.16g",
+   "7g4.3~7.g9.g6.3r10.14g4.22g",
+   "8g3.4~6.17g3r28.22g",
+   "9g3.3~7.16g3r28.22g",
+   "9g3.3~7.7g12r28.22g",
+   "9g3.3~8.6g12r8.14g6.22g",
+   "9g3.3~7.7g12r2g5.5g2.9g4.23g",
+   "8g4.3~6.8g6r8g5.4g4.8g4.23g",
+   "8g5.3~5.8g8r6g6.2g6.7g3.24g",
+   "10g3.3~4.9g11r4g4.4g2.g.35g",
+   "7g.3g2.3~4.9g13r4g2.5g.37g",
+   "7g2.3g.3~5.8g3r3g10rg.44g",
+   "7g2.4g3~7.6g3r5g10r44g",
+   "13g4~6.6g3r8g10r41g",
+   "14g3~.2g3.6g3r10g10r39g",
+   "14g3~12g3r13g8r38g",
+   "14g3~12g3r12g3.8r3.33g",
+   "14g4~11g3rgr15g7r23g2~10g",
+   "15g3~14g2r17g6r17g6~3g2~6g",
+   "15g3~12g4r18g6r13g3~17g"
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": [],
+ "theme": {
+  "tech": "older-made: timber, tile, slate and the water mill; the Garth Road only",
+  "waystone": {
+   "xy_px": [
+    7964,
+    1172
+   ],
+   "at": "on the post square",
+   "table_name": "Highgarth",
+   "status": "proposed",
+   "under": "a gate of timber posts on the post square"
+  },
+  "sightline": {
+   "kind": "moon-viewing terrace",
+   "street": null,
+   "name": "the moon-viewing terrace",
+   "from_px": [
+    7736,
+    1296
+   ],
+   "to_px": [
+    7619,
+    1405
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 0,
+   "bearing_deg": 137
+  },
+  "crater": {
+   "name": "the Seam crater",
+   "xy_px": [
+    8386,
+    2130
+   ],
+   "distance_px": 1219,
+   "effect": "the Starfall's tremor brought the rockfall down on the pass road; the lord sealed the pass, and the shrine path's last timber gate stands below the fallen rock",
+   "road": "the Garth Road",
+   "road_leaves_at_px": [
+    7849,
+    1447
+   ]
+  },
+  "moss": {
+   "where": "the post square",
+   "xy_px": [
+    7976,
+    1188
+   ]
+  },
+  "company": {
+   "foothold": "a buyer's room at the post inn",
+   "building": "highgarth-b005",
+   "xy_px": [
+    7972,
+    1272
+   ]
+  },
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}
