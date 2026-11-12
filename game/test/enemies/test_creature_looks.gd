@@ -131,3 +131,12 @@ func test_the_tell_holds_still_under_reduced_motion() -> void:
 	assert_float(look.sprite.rotation).is_equal(0.0)
 	SaveGame.data.settings["reduced_motion"] = false
 	enemy._cancel_attack()
+
+func test_the_walk_plays_at_speed_over_walk_speed_within_the_clamp() -> void:
+	# 12 Nov audit B3/K3: the move clip plays at velocity / walk_speed so the planted feet do not slide
+	assert_float(CreatureLook.walk_rate(37.1, 37.1)).is_equal_approx(1.0, 0.0001)
+	assert_float(CreatureLook.walk_rate(74.2, 37.1)).is_equal_approx(2.0, 0.0001)
+	assert_float(CreatureLook.walk_rate(1.0, 37.1)).is_equal_approx(0.25, 0.0001)      # clamped low
+	assert_float(CreatureLook.walk_rate(1000.0, 26.1)).is_equal_approx(4.0, 0.0001)    # clamped high
+	assert_float(CreatureLook.walk_rate(102.0, 0.0)).is_equal_approx(1.0, 0.0001)      # no walk speed: no scaling
+	assert_float(CreatureLook.walk_rate(102.0, -1.0)).is_equal_approx(1.0, 0.0001)

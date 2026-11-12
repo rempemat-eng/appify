@@ -54,3 +54,19 @@ func test_loop_fx_holds_still_under_reduced_motion() -> void:
 		await get_tree().process_frame
 	assert_int(fx.frame).is_equal(0)
 	SaveGame.data.settings["reduced_motion"] = false
+
+func test_a_forge_paid_before_hale_is_home_shows_the_banked_ember() -> void:
+	# Matt, 11 Nov: a dark hearth until she arrives. The scene holds the fire (restored and Hale home)
+	# and the banked ash with its ember (restored, Hale not yet home) as two exclusive conditions.
+	var scene: Node = auto_free(load("res://zones/crossroads/crossroads.tscn").instantiate())
+	var fire: Node = scene.get_node("Props/If_forge_fire")
+	var banked: Node = scene.get_node("Props/If_forge_fire_banked")
+	var fire_if: Dictionary = JSON.parse_string(fire.only_if)
+	var banked_if: Dictionary = JSON.parse_string(banked.only_if)
+	assert_array(fire_if["restored"]).contains(["forge"])
+	assert_array(fire_if["flags"]).contains(["hale_walked_home"])
+	assert_array(banked_if["restored"]).contains(["forge"])
+	assert_array(banked_if["not_flags"]).contains(["hale_walked_home"])
+	var ember: Sprite2D = banked.get_node("ForgeFireBanked")
+	assert_str(ember.texture.resource_path).is_equal("res://zones/crossroads/art/fx/forge_ember_8.png")
+	assert_int(ember.hframes).is_equal(8)
