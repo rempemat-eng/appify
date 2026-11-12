@@ -13,10 +13,10 @@ signal broke
 
 const DENSITY := 3.0
 const HIT_TINT := 0.12
-const WOOD := Color("#806850")         ## the blockout's building wood
+const WOOD := Color("#a88a64")         ## the blockout's building wood, one step lit
+const INK := Color("#1E1917")
 const POST := Color("#5a4632")
-const LIT := Color("#a88a64")
-const SHADOW := Color(0.0, 0.0, 0.0, 0.25)
+const LIT := Color("#d8c0a0")
 const PIP := Color("#f5d49c")
 const PIP_EMPTY := Color("#3a3030")
 
@@ -73,6 +73,11 @@ func _process(delta: float) -> void:
 		if _hit == 0.0:
 			queue_redraw()
 
+## A flat rectangle with a one-texel ink outline (UiStyle.INK, the house outline colour).
+func _ink_rect(r: Rect2, colour: Color) -> void:
+	draw_rect(r.grow(1.0), INK)
+	draw_rect(r, colour)
+
 func _draw() -> void:
 	var s := _size()
 	var r := Rect2(-s / 2.0, s)
@@ -82,19 +87,19 @@ func _draw() -> void:
 		draw_rect(Rect2(r.position + Vector2(s.x * 0.2, s.y * 0.7), Vector2(s.x * 0.8, 6)), WOOD)
 		return
 	var wood := LIT if _hit > 0.0 else WOOD
-	draw_rect(Rect2(r.position + Vector2(3, 3), s), SHADOW)
 	var vertical := s.y >= s.x
 	var rise := 24.0                    # the rails stand this high above the ground (texels)
 	if vertical:
-		# across an east-west road: hurdle panels down the span (one per 16 world px), each two posts and two rails
+		# across an east-west road: hurdle panels down the span (one per 16 world px), each two posts and two
+		# rails, outlined in the house ink so the placeholder reads on the brown road
 		var panels := maxi(1, roundi(s.y / 48.0))
 		var step := s.y / panels
 		for i in panels:
 			var y := r.position.y + step * (i + 1) - 4.0
-			for x: float in [-10.0, 6.0]:
-				draw_rect(Rect2(Vector2(x, y - rise), Vector2(4, rise + 4)), POST)
 			for k in 2:
-				draw_rect(Rect2(Vector2(-12, y - rise + 4 + k * 9), Vector2(24, 5)), wood)
+				_ink_rect(Rect2(Vector2(-13, y - rise + 4 + k * 9), Vector2(26, 5)), wood)
+			for x: float in [-11.0, 5.0]:
+				_ink_rect(Rect2(Vector2(x, y - rise), Vector2(6, rise + 4)), POST)
 	else:
 		for i in 3:
 			var x := r.position.x + (s.x - 6.0) * float(i) / 2.0
