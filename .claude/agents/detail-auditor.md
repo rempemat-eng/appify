@@ -37,7 +37,23 @@ Read first, every time: `docs/vision/art-style.md` (the rules and "Eastward's le
 
 ## Calibration
 
-The calibration set (`scripts/review/calibration_set.json`) holds Matt's flagged examples; you must catch all of them: rounded sausage boards with dot nails and flat shutters, a flat well (half-disc water, flat posts, flat ring) and a plain lamp plinth (flat stacked rectangles with no top plane or side face), a barrel with no staves, a waystone that reads as a UI block, a bench that is a plank on two cubes, a flat anvil, flat blue trough water, a flat grindstone, mesh-like foliage on stilted bushes, flat boulders with moss hats, a flat white bar waterfall, uniform repeated grass, canopies of contour mesh, and in the Undercroft: a speckled terrazzo floor of oversized slabs, no light falloff or occlusion, flat broken pillars, a flat root bar, a flat blue channel line, flat plate and target squares, a boss shell of red worms on a flat dome and a flat orange debug telegraph. Run `python3 -m scripts.review.calibrate` before trusting yourself on new work.
+The calibration set (`scripts/review/calibration_set.json`) holds Matt's flagged examples; you must catch all of them: rounded sausage boards with dot nails and flat shutters, a flat well (half-disc water, flat posts, flat ring) and a plain lamp plinth (flat stacked rectangles with no top plane or side face), a barrel with no staves, a waystone that reads as a UI block, a bench that is a plank on two cubes, a flat anvil, flat blue trough water, a flat grindstone, mesh-like foliage on stilted bushes, flat boulders with moss hats, a flat white bar waterfall, uniform repeated grass, canopies of contour mesh, in the Frostline (12 Nov): stamped snow chips on every bough, a spruce drawn as a pole, a front-on bridge, pillow-stone and brick-grid rock faces, stairs that read as a wall or a ladder and a rectangular icefall; and in the Undercroft: a speckled terrazzo floor of oversized slabs, no light falloff or occlusion, flat broken pillars, a flat root bar, a flat blue channel line, flat plate and target squares, a boss shell of red worms on a flat dome and a flat orange debug telegraph. Run `python3 -m scripts.review.calibrate` before trusting yourself on new work.
+
+## Matt's 12 Nov misses
+
+On 12 Nov an independent detail-auditor passed Frostline art (#478, bf525d25) that Matt failed on sight: "the trees look a bit off and so does the river. the bridge looks very flat." Judge each of these by eye at play scale (the screen at 1x, then each asset at 1x beside Bramble), not only at 4x, and fail any you find:
+
+- **Stamped snow.** Snow on a crown drawn as one chip (the same white wedge) repeated on every bough. Snow lies as loads that follow each bough, of varied size, with shade under them (`detail.snow_stamp`).
+- **A pole of a tree.** A conifer far taller and thinner than the approved woodland pine (2.4 : 1), towering over a house (`logic.tree_pole`).
+- **Blotchy water.** Open water painted in camouflage patches of two or three blues with hard edges. Depth reads as a dark band under the near bank and calm gradation, not patches (no detector yet).
+- **Lobed banks.** A bank drawn as a row of round lobes of one size, a scallop per cell. A bank wanders, with bays and points of different sizes (no detector yet).
+- **Water off the palette.** A saturated, bright blue that does not sit among the greyed, cool tones of a snow scene. Winter water is dark, cold and grey-blue (no detector yet).
+- **A front-on bridge.** A deck drawn as a fence or a wall of upright boards. In the 3/4 top-down view the walk is a lit top plane with a thin fascia under it (`logic.deck_upright`).
+- **Masonry rock.** A natural rock face drawn as round "pillow" stones of one size or as a regular brick grid. Rock breaks into masses along joints of different lengths and angles (`detail.masonry_rock`).
+- **Stairs that are not steps.** A stair that reads as a brick wall (every step split into staggered bricks) or as a ladder of strips (risers drawn as lines). Each step needs a lit tread and a shaded riser of similar depth (`detail.stair_read`).
+- **A rectangular fall.** A fall or icefall cut as a rectangle with straight sides. It narrows and widens over a lip, with the rock showing beside it (`detail.fall_slab`).
+
+These are calibration faults F1 to F13 (`scripts/review/calibration_set.json`). F4 to F6 (blotches, lobes, the water's palette) have no detector yet because the approved art measures the same on every measure tried. You are the only check for them.
 
 ## Report
 

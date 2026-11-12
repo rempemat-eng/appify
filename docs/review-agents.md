@@ -49,8 +49,10 @@ Everything else is refused with a message naming the asset and what to do: a `pe
 | `scale.py` | asset, scene | `logic.scale`: every placed picture's opaque box against its class in `sizes.json` (art px at density 3, checked against Eastward at the same character height), door openings and latches, storey, roof and windows of kit buildings, stair pitch, ground grain (speckle, blotches, cobbles and slabs, ripples), route widths, the cast's body heights (`python3 -m scripts.review.scale --markdown`, `--audit`) |
 | `cast.py` | characters | `cast.foot_slide`, `cast.walk_speed`, `cast.seam`, `cast.equipment`, `cast.end_pose`, `cast.light` (ported from the 25 Oct cast audits; `python3 -m scripts.review.cast [ids]`) |
 | `bands.py` | asset, scene | `detail.bar`: tones and shapes a patch against Eastward's prop, stone and foliage bands, both through the same JPEG pipe (`eastward_bands.json`, numbers only); `ground_plane`: a calm ground plane against Eastward's ground band (below) |
+| `forms.py` | asset, scene | Matt's 12 Nov misses: `detail.snow_stamp` (stamped snow chips on a crown, also on screens), `logic.tree_pole`, `logic.deck_upright` (a deck drawn front-on), `detail.masonry_rock` (pillow stones or a brick grid on natural rock), `detail.stair_read` (a ladder of strips or a brick wall), `detail.fall_slab` (a rectangular fall), `logic.water_state` (one water body frozen and open, on screens) |
+| `kit_overlap.py` | kit plan | `logic.tree_overlap`: a tree's opaque pixels over a house (fault) or over another tree (advice), from the plan and the pieces' pictures (`python3 -m scripts.review.kit_overlap [zone] [--commit <sha>]`) |
 
-Commands: `npm run review:asset`, `npm run review:scene`, `npm run check:review` (unit tests on synthetic pictures), `python3 -m scripts.review.calibrate --flagged <Matt's folder> --eastward <Eastward folder>` (recall and false positives; the pictures stay local).
+Commands: `npm run review:asset`, `npm run review:scene`, `npm run check:review` (unit tests on synthetic pictures), `python3 -m scripts.review.calibrate --flagged <Matt's folder> --eastward <Eastward folder> [--faults F]` (recall and false positives; the pictures stay local; `--faults` runs only the listed faults or id prefixes when some of Matt's pictures are not on the machine, and writes its table to `--out`, not over the full run's).
 
 ## Calibration (25 Oct)
 
@@ -84,6 +86,40 @@ Matt, 26 Oct 10:19, on the background of the cast-v2 Bramble video: "the lamp an
 - **The kit's edges** (`scripts/art/native/softedge.py`): `soft()` smooths a region at about half a world px and removes every one-texel spur, bite, speck and pinhole; `rim()` darkens the surface under the turf's north and west lip and lights the turf just south of it (art-style.md 7); `soil_marks()` lays clods, dips and cracks in drifts. Every path, worn patch, puddle, burnt lot, the green's ring, the crater and the talus at density 3 goes through them (screen.path_hd, screen.ground_detail_hd, town.build). Density 2 (the pilot golden) is unchanged.
 - **`logic.off_grid`** (`scene.check_grid`, scene gate): every structure and prop stands on the soft grid (8 world px, 24 texels at density 3): its foot on a multiple of 4 world px across and 8 down. Clutter (rubble, debris, fire, smoke, damage overlays, shadows, low plants) and what walks may sit anywhere. `python3 -m scripts.art.grid_snap --write <zone>` lays a plan on the grid (buildings, beds, the square, lots, places, roads and paths in whole cells; props' feet on cells; a building's door moves with it) and `--check` runs in `check:kit`. The terrain (tiers, faces, walls, the gate stair) comes from the region plan and its cliff core and is left as it is. The woodland's pictures are padded so their foot is the middle of the picture's bottom edge (the game places and sorts by that point).
 - **Style anchors**: `art/catalogue/kit/bench.json`, `kit/lantern.json` and `woodland/forest_bench.json` carry `style_anchor`; every asset sheet shows them beside its siblings. The lamp failed its own gate on its glowing glass: the light-direction and cylinder checks now leave out a light source's own pixels (`construct.glow`), and a lamp post's shaft is its post, not its lamp box.
+
+## Matt's 12 Nov misses (Frostline)
+
+On 12 Nov the independent detail-auditor passed Frostline art (#478 at bf525d25) that Matt failed on sight: "the trees look a bit off and so does the river. the bridge looks very flat. the river in the second photo and the frozen water fall also dont really seem right. why is one part frozen and the other isnt." Rounds 4 and 5 (0b122ffe, 0ef53b94) showed further misses. They are faults **F1 to F13** in `calibration_set.json`. Matt's three screenshots (`frost_hut_stream.png`, `frost_fall_step.png`, `frost_stair.png`) stay local. Their scales are pinned in `images`, because they are smoothed zooms that `core.to_native` cannot measure. The art is pinned to the commits (`file:game/kit/props/art/frost/<name>.png@<commit>`), and the tree placement to the plan at bf525d25 (route `kitplan`).
+
+| Fault | Route that catches it now |
+| --- | --- |
+| F1 snow drawn as one stamped chip on every bough | `detail.snow_stamp`: screen, and the pine, squat pine and spruce at bf525d25 (0.64 to 0.70 of chips are one wedge; line 0.4; the redraws 0.06 to 0.14) |
+| F2 a spruce absurdly tall and thin | `logic.tree_pole` (3.03 : 1; approved trees at most 2.42) |
+| F3 trees over the hut and each other | `logic.tree_overlap` on the plan (two trees cover the hut by 0.09 and 0.38) |
+| F7 the bridge drawn front-on | `logic.deck_upright` (17 board seams run 0.55 H down the face; line 8) |
+| F8 a frozen tarn and icefall beside open water | `logic.water_state` (screen; the frozen parts meet open water across 0.14 and 0.03 of their rim; line 0.3) |
+| F9 a wall of round pillow stones | `detail.masonry_rock` (one stone at a fixed pitch: 0.33 to 0.39; Eastward's faces 0.0) |
+| F10 the stair a brick wall | `detail.stair_read` (5 of 6 steps split by staggered joints) |
+| F11 the stair a ladder of strips | `detail.stair_read` (risers 34 % and 19 % of the pitch, line 38 %; Eastward 43 to 53 %), and `detail.flat` at 0ef53b94 |
+| F12 the face a regular brick grid | `detail.masonry_rock` (57 to 75 % of the joints ruled straight, 360 to 976 px a H²; line 50 %; passing rock 15 to 41 %) |
+| F13 the icefall a rectangle | `detail.fall_slab` (fills 0.99 of its box with straight sides; the approved falls 0.47 to 0.89) |
+| F4 blotchy camouflage water, F5 a uniform row of bank lobes, F6 over-saturated blue | **open**: no detector yet. Every measure tried gives approved art the same value (water tone patches 2.7 a H² here, 2.2 on the approved woodland ground; bank lobes' length spread 0.26 here, 0.27 on the woodland; the water's chroma 86 here, 102 on the approved woodland). The auditors judge them by eye (both agents' "Matt's 12 Nov misses") |
+
+`calibrate` lists an `open` fault apart and leaves it out of the recall gate, so the gap stays visible without failing the run. `check:review` (`CalibrationOpenFaults`) holds the open faults to F4, F5 and F6, each with its measurements; adding another is Claude A's or Matt's call. Before these checks, the existing detectors caught **1 of the 10** detectable faults (F11, through `detail.flat` on the round 5 stair). Now they catch **10 of 10**, with 3 open. Each line was set beside the art it must pass, and the constants in `forms.py` carry the numbers; where a line sits on a single measurement it says so (`PITCH_PEAK`, `STATE_CONTACT`). Every check only adds findings, and no existing threshold moved.
+
+**Keyed to names.** `tree_pole`, `deck_upright`, `masonry_rock`, `stair_read` and `fall_slab` judge an asset only when a whole part of its file name is one of their words (`forms.py`, "Names": pine, spruce, poplar ...; bridge, deck, jetty ...; rockface, crag, cliff, ledge, face ...; stair, steps ...; icefall, waterfall, fall, cascade). `fire_ring` is not a fir, and no `shadow_*` picture is rock. A piece named outside these words (a stair called `*_climb`, a fall called `*_spill`) is not judged by them, so an auditor must look at it by eye. They run before the asset gate's ground/sprite split (`assets.review_rgba`), so a picture trimmed to its opaque box is judged like a padded one (#481 audit, B1). `snow_stamp` and `water_state` read the picture, whatever its name.
+
+False positives, measured on main at e965cc73 (with #478's Frostline lab) plus this change:
+
+- **The calibration's clean set** gives the same false positives before and after: 5 on 6 clean screens and 21 on 22 clean props.
+- **Approved art:** the asset gate on all 189 reviewer-approved records present on main gives 16 fault findings before and after, none of them from a new check. The kit's six rendered approved props (boulder, fence, fern, mushroom ring, post, signpost) give none either.
+- **Every picture on main:** across all 638 pictures in `game/kit/props/art` and `game/zones/*/art`, shadows included, the new checks fire only on the Frostline lab's candidate pieces: 17 findings on 14 pieces. These are `fall_slab` on `frost_icefall`, `stair_read` on `frost_rock_stair` (risers 19 % of the pitch), and `masonry_rock` on all twelve `frost_rockface_*` pieces (a brick grid, with a fixed stone pitch as well on `_both`, `_east` and `_west`). They are the faults Matt failed (F11 to F13), still in the lab, so they stay faults. Nothing in CI runs the asset gate on kit props today. No piece may leave `candidate` (approval, a catalogue reviewer pass, placement outside a lab) while they stand.
+- **Screens:** the new screen checks fire on none of the 23 local Eastward shots, nor on the old web snow zones (`assets/zones/ridge`, `snowmelt`).
+- **Kit plans:** `kit_overlap` finds no fault in main's seven kit plans, the re-spaced `frostline` included. It gives 23 tree-over-tree advisories in the `woodland_kit` lab, a wood whose crowns overlap by design.
+
+The full calibration (all 38 faults of 25 Oct and after, with F1 to F13) could not be rerun when this was added: Matt's 25 Oct pictures are not on the machine that ran it, so `--faults F` ran the new faults only. The older faults' routes are unchanged (the change only adds checks), and `calibration_results.json` keeps the last full run's table.
+
+**Physical consistency is a logic check** (season, weather, water state): see the logic-auditor's "Matt's 12 Nov misses".
 
 ## Adding a detector
 

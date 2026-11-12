@@ -6,7 +6,14 @@
 Recall: every fault in calibration_set.json must be caught by at least one of its routes
 (screen: the image detectors on Matt's picture, boxed inside the fault; zone: the scene data
 checks on the Godot zone, boxed inside the fault's zone box; asset: the asset gate on the
-asset that draws it, with one of the listed detectors).
+asset that draws it, with one of the listed detectors; kitplan: kit_overlap on a kit zone's
+plan at a commit). A fault marked "open" has no detector yet: it is listed and counted apart,
+the auditors judge it by eye (docs/review-agents.md), and it does not fail the run.
+
+    --faults F1,F2 (or a prefix, F) runs only those faults: when some of Matt's pictures are not
+    on this machine, say so and run the faults whose pictures are.
+    A picture's scale (screen px a texel) may be pinned in "images" when core.to_native cannot
+    measure it (a smoothed, zoomed screenshot).
 
 False positives: every fault-level finding on art that is approved or is the reference counts
 as one: the image detectors on the pilot golden and on five clean daylight Eastward shots
@@ -106,8 +113,13 @@ def main(argv=None):
     ap.add_argument('--flagged', required=True)
     ap.add_argument('--eastward', required=True)
     ap.add_argument('--out', default=os.path.join(REPO, 'artifacts', 'review', 'calibration'))
+    ap.add_argument('--faults', default='', help='comma-separated fault ids or id prefixes to run (default: all)')
     a = ap.parse_args(argv)
     cal = json.load(open(os.path.join(HERE, 'calibration_set.json')))
+    if a.faults:
+        want = [w.strip() for w in a.faults.split(',') if w.strip()]
+        cal['faults'] = [f for f in cal['faults'] if any(f['id'] == w or f['id'].startswith(w) for w in want)]
+        print(f'running {len(cal["faults"])} faults: {", ".join(f["id"] for f in cal["faults"])}')
     H = cal['H']
     os.makedirs(a.out, exist_ok=True)
 
@@ -116,7 +128,7 @@ def main(argv=None):
     def screen(img):
         if img not in screens:
             im, off = crop_nonblack(Image.open(os.path.join(a.flagged, img)))
-            nat, s, org = to_native(im)
+            nat, s, org = to_native(im, cal.get('images', {}).get(img, {}).get('scale'))
             biome = cal.get('images', {}).get(img, {}).get('biome', '')
             rep = SC.review_screen(nat, H, biome=biome)
             screens[img] = rep['findings']
@@ -147,6 +159,15 @@ def main(argv=None):
             assets[ref] = A.review(p, zn, nm)['findings']
         return assets[ref]
 
+    plans = {}
+
+    def kitplan(ref):
+        if ref not in plans:
+            from . import kit_overlap as K
+            zn, _, commit = ref.partition('@')
+            plans[ref] = [x.to_json() for x in K.check(zn, commit or None)]
+        return plans[ref]
+
     rows = []
     for f in cal['faults']:
         caught = []
@@ -162,11 +183,19 @@ def main(argv=None):
             h = hit(asset(ref), dets, None)
             if h:
                 caught.append(('asset ' + ref, h['detector'], h['box']))
-        rows.append(dict(id=f['id'], what=f['what'], caught=bool(caught), by=caught))
-        mark = 'CAUGHT' if caught else 'MISSED'
+        for ref, dets in f.get('kitplan', {}).items():
+            h = hit(kitplan(ref), dets, None)
+            if h:
+                caught.append(('kitplan ' + ref, h['detector'], h['box']))
+        rows.append(dict(id=f['id'], what=f['what'], caught=bool(caught), by=caught, open=bool(f.get('open'))))
+        mark = 'CAUGHT' if caught else ('OPEN' if f.get('open') else 'MISSED')
         print(f'{f["id"]:4s} {mark:6s} {f["what"]:60s} ' + '; '.join(f'{r} {d}' for r, d, _ in caught))
-    recall = sum(r['caught'] for r in rows) / len(rows)
-    print(f'\nrecall {sum(r["caught"] for r in rows)}/{len(rows)} = {recall:.0%}')
+    gated = [r for r in rows if not r['open']]
+    recall = sum(r['caught'] for r in gated) / max(1, len(gated))
+    opened = [r for r in rows if r['open']]
+    print(f'\nrecall {sum(r["caught"] for r in gated)}/{len(gated)} = {recall:.0%}'
+          + (f'; {len(opened)} open (no detector yet, judged by eye): {", ".join(r["id"] for r in opened)}'
+             f', {sum(r["caught"] for r in opened)} of them caught anyway' if opened else ''))
 
     # false positives on clean art
     fp = {}
@@ -205,8 +234,9 @@ def main(argv=None):
     print(f'\nfalse positives: {sfp} on {nscreens} clean screens ({sfp / nscreens:.1f} a screen), '
           f'{pfp} on {nprops} clean props ({pfp / nprops:.2f} a prop; the detail bar is excluded: it measures, '
           'the reference sets it; checks that need a real alpha channel are not counted on cut crops)')
-    write_json(os.path.join(HERE, 'calibration_results.json'),
-               dict(recall=dict(caught=sum(r['caught'] for r in rows), total=len(rows), rows=rows),
+    # a partial run (--faults) writes beside its pictures, not over the full run's table
+    write_json(os.path.join(a.out if a.faults else HERE, 'calibration_results.json'),
+               dict(recall=dict(caught=sum(r['caught'] for r in gated), total=len(gated), open=len(opened), rows=rows),
                     false_positives=dict(screens=nscreens, screen_findings=sfp, props=nprops, prop_findings=pfp,
                                          detail={k: [f'{x["detector"]} {x["box"]}' for x in v] for k, v in fp.items()})))
     return 0 if recall == 1.0 else 1
