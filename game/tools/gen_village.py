@@ -50,6 +50,10 @@ LOOPS = {'forge_fire': ('fx/forge_fire_8.png', 8, 9.0)}
 # brings her home there is no flame and no smoke. The plan's own condition stays "restored" (the kit's
 # pictures and the review's stages read that; every stage after the first has Hale home, game.gd apply_stage).
 TENDED = {'forge_fire': {'flags': ['hale_walked_home']}}
+# ... and in that wait the hearth is not empty (Matt, 11 Nov: "a dark hearth until she arrives", the ember
+# drawing): the banked ash with its embers (tools/gen_village_fx.py), in the fire's own frame and foot,
+# shown while the fire is untended. id -> (strip, drawings, fps, the extra condition)
+BANKED = {'forge_fire': ('fx/forge_ember_8.png', 8, 3.0, {'not_flags': ['hale_walked_home']})}
 SMOKE = {'smithy': {'restored': ['forge'], 'flags': ['hale_walked_home']}}
 SMOKE_STRIP = ('fx/chimney_smoke_8.png', 8, 6.0, 32, 56)
 MARKER = {'people': 82.0, 'notice_board': 108.0, 'waystone': 108.0}
@@ -161,6 +165,14 @@ def build(plan: dict, kit: dict) -> str:
         parent = 'Props'
         if o.get('cond'):
             parent = s.wrap('Props', {'if': {**o['cond'], **TENDED.get(o['id'], {})}}, 'If_' + o['id'])
+        if o.get('png') and o['id'] in BANKED:
+            fx, fy = o['foot']
+            ox, oy = o['offset']
+            strip_png, n, fps, extra = BANKED[o['id']]
+            bp = s.wrap('Props', {'if': {**(o.get('cond') or {}), **extra}}, 'If_%s_banked' % o['id'])
+            s.node(pascal(o['id']) + 'Banked', 'Sprite2D', bp, {
+                'position': vec(fx, fy), 'texture': 'ExtResource("%s")' % tex(strip_png), 'centered': 'false',
+                'offset': vec(ox, oy), 'hframes': n, 'script': 'ExtResource("loopfx")', 'fps': fps})
         if o.get('png') and o['id'] in LOOPS:
             fx, fy = o['foot']
             ox, oy = o['offset']
