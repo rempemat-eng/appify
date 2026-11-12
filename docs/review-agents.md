@@ -100,17 +100,24 @@ On 12 Nov the independent detail-auditor passed Frostline art (#478 at bf525d25)
 | F8 a frozen tarn and icefall beside open water | `logic.water_state` (screen; the frozen parts meet open water across 0.14 and 0.03 of their rim; line 0.3) |
 | F9 a wall of round pillow stones | `detail.masonry_rock` (one stone at a fixed pitch: 0.33 to 0.39; Eastward's faces 0.0) |
 | F10 the stair a brick wall | `detail.stair_read` (5 of 6 steps split by staggered joints) |
-| F11 the stair a ladder of strips | `detail.stair_read` (risers 34 % and 19 % of the pitch; Eastward 43 to 53 %), and `detail.flat` at 0ef53b94 |
-| F12 the face a regular brick grid | `detail.masonry_rock` (ruled joints 360 to 975 px a H²; Eastward 4 to 15) |
+| F11 the stair a ladder of strips | `detail.stair_read` (risers 34 % and 19 % of the pitch, line 38 %; Eastward 43 to 53 %), and `detail.flat` at 0ef53b94 |
+| F12 the face a regular brick grid | `detail.masonry_rock` (57 to 75 % of the joints ruled straight, 360 to 976 px a H²; line 50 %; passing rock 15 to 41 %) |
 | F13 the icefall a rectangle | `detail.fall_slab` (fills 0.99 of its box with straight sides; the approved falls 0.47 to 0.89) |
 | F4 blotchy camouflage water, F5 a uniform row of bank lobes, F6 over-saturated blue | **open**: no detector yet. Every measure tried gives approved art the same value (water tone patches 2.7 a H² here, 2.2 on the approved woodland ground; bank lobes' length spread 0.26 here, 0.27 on the woodland; the water's chroma 86 here, 102 on the approved woodland). The auditors judge them by eye (both agents' "Matt's 12 Nov misses") |
 
-`calibrate` lists an `open` fault apart and leaves it out of the recall gate, so the gap stays visible without failing the run. Before these checks, the existing detectors caught **1 of the 10** detectable faults (F11, through `detail.flat` on the round 5 stair). Now they catch **10 of 10**, with 3 open. Each line was set beside the art it must pass. Every check only adds findings, and no existing threshold moved:
+`calibrate` lists an `open` fault apart and leaves it out of the recall gate, so the gap stays visible without failing the run. `check:review` (`CalibrationOpenFaults`) holds the open faults to F4, F5 and F6, each with its measurements; adding another is Claude A's or Matt's call. Before these checks, the existing detectors caught **1 of the 10** detectable faults (F11, through `detail.flat` on the round 5 stair). Now they catch **10 of 10**, with 3 open. Each line was set beside the art it must pass, and the constants in `forms.py` carry the numbers; where a line sits on a single measurement it says so (`PITCH_PEAK`, `STATE_CONTACT`). Every check only adds findings, and no existing threshold moved.
+
+**Keyed to names.** `tree_pole`, `deck_upright`, `masonry_rock`, `stair_read` and `fall_slab` judge an asset only when a whole part of its file name is one of their words (`forms.py`, "Names": pine, spruce, poplar ...; bridge, deck, jetty ...; rockface, crag, cliff, ledge, face ...; stair, steps ...; icefall, waterfall, fall, cascade). `fire_ring` is not a fir, and no `shadow_*` picture is rock. A piece named outside these words (a stair called `*_climb`, a fall called `*_spill`) is not judged by them, so an auditor must look at it by eye. They run before the asset gate's ground/sprite split (`assets.review_rgba`), so a picture trimmed to its opaque box is judged like a padded one (#481 audit, B1). `snow_stamp` and `water_state` read the picture, whatever its name.
+
+False positives, measured on main at e965cc73 (with #478's Frostline lab) plus this change:
 
 - **The calibration's clean set** gives the same false positives before and after: 5 on 6 clean screens and 21 on 22 clean props.
-- **Approved art on main:** the asset gate on all 195 reviewer-approved assets gives 16 fault findings before and after, none of them from a new check. Across all 351 sprites in `game/kit/props/art` and `game/zones/*/art`, the new asset checks fire on none.
-- **Screens:** the new screen checks fire on none of the 22 Eastward shots, nor on the old web snow zones (`assets/zones/ridge`, `snowmelt`).
-- **Kit plans:** `kit_overlap` finds no fault in main's six kit plans. It gives 23 tree-over-tree advisories in the `woodland_kit` lab, a wood whose crowns overlap by design.
+- **Approved art:** the asset gate on all 189 reviewer-approved records present on main gives 16 fault findings before and after, none of them from a new check. The kit's six rendered approved props (boulder, fence, fern, mushroom ring, post, signpost) give none either.
+- **Every picture on main:** across all 638 pictures in `game/kit/props/art` and `game/zones/*/art`, shadows included, the new checks fire only on the Frostline lab's candidate pieces: 17 findings on 14 pieces. These are `fall_slab` on `frost_icefall`, `stair_read` on `frost_rock_stair` (risers 19 % of the pitch), and `masonry_rock` on all twelve `frost_rockface_*` pieces (a brick grid, with a fixed stone pitch as well on `_both`, `_east` and `_west`). They are the faults Matt failed (F11 to F13), still in the lab, so they stay faults. Nothing in CI runs the asset gate on kit props today. No piece may leave `candidate` (approval, a catalogue reviewer pass, placement outside a lab) while they stand.
+- **Screens:** the new screen checks fire on none of the 23 local Eastward shots, nor on the old web snow zones (`assets/zones/ridge`, `snowmelt`).
+- **Kit plans:** `kit_overlap` finds no fault in main's seven kit plans, the re-spaced `frostline` included. It gives 23 tree-over-tree advisories in the `woodland_kit` lab, a wood whose crowns overlap by design.
+
+The full calibration (all 38 faults of 25 Oct and after, with F1 to F13) could not be rerun when this was added: Matt's 25 Oct pictures are not on the machine that ran it, so `--faults F` ran the new faults only. The older faults' routes are unchanged (the change only adds checks), and `calibration_results.json` keeps the last full run's table.
 
 **Physical consistency is a logic check** (season, weather, water state): see the logic-auditor's "Matt's 12 Nov misses".
 

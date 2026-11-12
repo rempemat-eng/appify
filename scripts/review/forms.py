@@ -4,7 +4,7 @@ Matt failed it on sight: "the trees look a bit off and so does the river. the br
 flat. the river in the second photo and the frozen water fall also dont really seem right. why
 is one part frozen and the other isnt."
 
-Each check answers one fault in calibration_set.json (F1 to F14) and was measured against the
+Each check answers one fault in calibration_set.json (F1 to F13) and was measured against the
 reviewer-approved art on main, the pilot golden and Eastward before its line was drawn (the
 numbers are beside each constant). They only add findings; no existing threshold moves.
 
@@ -33,18 +33,36 @@ from .core import Finding, hsv, lum, regions, slice_box
 from . import detail as D
 
 # ------------------------------------------------------------------------------------------
-# Names
-TREE_WORDS = ('pine', 'spruce', 'fir', 'larch', 'conifer', 'yew', 'cedar', 'oak', 'beech', 'birch',
-              'willow', 'ash', 'alder', 'rowan', 'tree', 'krummholz')
-BRIDGE_RE = re.compile(r'(^|_)(foot)?bridge|(^|_)(deck|jetty|boardwalk|pier|landing_stage)(_|$)')
+# Names. Every check here but snow_stamp and water_state is keyed to the asset's file name: a
+# name is split into whole word parts (letters only: "frost_pine_squat_2" is frost, pine, squat), and
+# a check runs when one part is one of its words, so "fir" never matches fire_ring nor "oak" cloak.
+# A piece named outside these words (a stair called *_climb) is not judged by them: the auditors are.
+TREE_WORDS = frozenset(('pine', 'spruce', 'fir', 'larch', 'conifer', 'yew', 'cedar', 'cypress', 'poplar',
+                        'oak', 'beech', 'birch', 'willow', 'ash', 'alder', 'rowan', 'tree', 'krummholz'))
+BRIDGE_WORDS = frozenset(('bridge', 'footbridge', 'deck', 'jetty', 'boardwalk', 'pier'))
 # natural rock only: worked stone (walls, standing stones, stairs, chimneys) may be coursed
-ROCK_RE = re.compile(r'(^|_)(rockface|rock_face|crag|cliff|scarp|escarpment|ledge|outcrop|headwall|bluff|tor|face)(_|$)')
-STAIR_RE = re.compile(r'(^|_)(stair|stairs|steps|step)(_|$)')
-FALL_RE = re.compile(r'(^|_)(icefall|waterfall|fall|falls|cascade)(_|$)')
+ROCK_WORDS = frozenset(('rockface', 'crag', 'cliff', 'scarp', 'escarpment', 'ledge', 'outcrop', 'headwall',
+                        'bluff', 'tor', 'face'))
+STAIR_WORDS = frozenset(('stair', 'stairs', 'steps', 'step'))
+FALL_WORDS = frozenset(('icefall', 'waterfall', 'fall', 'falls', 'cascade'))
 
 
 def _base(subject: str) -> str:
     return subject.split('/')[-1].split(':')[-1]
+
+
+def name_parts(subject: str) -> set:
+    """The whole word parts of an asset's name ('kit/frost_rock_face_b' -> frost, rock, face, b)."""
+    parts = {w for w in re.split(r'[^a-z]+', _base(subject).lower()) if w}
+    if {'rock', 'face'} <= parts:
+        parts.add('rockface')
+    return parts
+
+
+def named(subject: str, words) -> bool:
+    """The asset's name holds one of the words, and it is not a shadow picture."""
+    parts = name_parts(subject)
+    return 'shadow' not in parts and bool(parts & words)
 
 
 def _bbox(m):
@@ -53,14 +71,13 @@ def _bbox(m):
 
 
 def is_tree(subject: str) -> bool:
-    b = _base(subject)
-    return any(w in b for w in TREE_WORDS) and 'shadow' not in b
+    return named(subject, TREE_WORDS)
 
 
 # ------------------------------------------------------------------------------------------
 # Snow chips stamped on a crown
 STAMP_MIN = 12          # chips on one crown before a stamp can be judged
-STAMP_SHARE = 0.4       # share of chips that are the same tapering wedge. Measured: the bf525d25
+STAMP_SHARE = 0.4       # share of chips drawn as a tapering wedge (one side straight, rows narrowing). Measured: the bf525d25
 #                         pine 0.64, squat pine 0.70, spruce 0.68 (Matt's F1); their round 4/5
 #                         redraws 0.06 to 0.14; approved crowns carry no snow chips (0 chips)
 
@@ -113,8 +130,8 @@ def _stamp_finding(chips, subject, box):
     if n < STAMP_MIN or share < STAMP_SHARE:
         return []
     return [Finding('detail.snow_stamp', 'fault', box,
-                    f'{subject}: {w} of {n} snow chips on the crown are the same tapering wedge ({share:.0%}): '
-                    'one chip stamped on every bough (Matt, 12 Nov: "the trees look a bit off")',
+                    f'{subject}: {w} of {n} snow chips on the crown are tapering wedges ({share:.0%}): '
+                    'one chip shape stamped on every bough (Matt, 12 Nov: "the trees look a bit off")',
                     'lay snow as soft loads that follow each bough: lit caps of varied width and thickness, '
                     'sagging between needle tips, thicker on the upper, sheltered side, with blue shade under '
                     'them and gaps where branches shed it; no two the same', score=share, threshold=STAMP_SHARE,
@@ -189,7 +206,7 @@ def _vertical_runs(m: np.ndarray) -> np.ndarray:
 
 
 def deck_upright(rgb, alpha, H, subject) -> list[Finding]:
-    if not BRIDGE_RE.search(_base(subject)):
+    if not named(subject, BRIDGE_WORDS):
         return []
     fam = D.family_map(rgb)
     L = lum(rgb).astype(float)
@@ -213,13 +230,21 @@ def deck_upright(rgb, alpha, H, subject) -> list[Finding]:
 # Natural rock drawn as masonry
 GAP_SHARE = 0.62        # a joint is darker than 0.62 of the 0.5 H median around it
 JOINT_RUN = 0.12        # H: a joint pixel on a straight horizontal or vertical run this long is ruled
-GRID_SHARE = 0.5        # share of joint pixels on ruled runs. Faces Matt and Claude A failed: 0.50 to 0.71
-GRID_DENSITY = 250      # ruled joint px per H^2 of rock: failed faces 344 to 712 (bf525d25 plain 473);
-#                         approved and reference rock: boulder_52 83, standing stones 57 to 181,
-#                         the Frostline crags 17, Eastward's ledge faces 4 to 15
+GRID_SHARE = 0.5        # share of joint pixels on ruled runs, measured as the gate sees the piece (on neutral
+#                         grey): the brick-grid faces of rounds 4 and 5 (F12) 0.57 to 0.75, main's twelve
+#                         frost_rockface pieces 0.61 to 0.75; bf525d25's pillow faces 0.45 to 0.59 (the pitch
+#                         half below catches the two under 0.5). Passing rock: the Frostline crags 0.15 and
+#                         0.26, boulder_52 0.39, the standing stones 0.31 to 0.41 (Eastward's ledge faces,
+#                         JPEG crops, 0.24 to 0.37)
+GRID_DENSITY = 250      # ruled joint px per H^2 of rock, the same way: F12's faces 360 to 976. A boulder or a
+#                         standing stone's ruled outline also measures 198 to 604, so this line only keeps a
+#                         small, sparse part from tripping; the share above is what separates them
 PITCH_PEAK = 0.28       # autocorrelation of the rock's tone at a stone pitch of 0.15 to 0.7 H along the
 #                         face: the pillow face 0.39, its siblings 0.28 to 0.33; Eastward faces 0.0,
-#                         crags 0.0 to 0.10, boulder_52 0.23
+#                         crags 0.0 to 0.10, boulder_52 0.23. Tight: the line sits on the lowest failed
+#                         measurement (bf525d25 rockface_short_plain 0.28), so a face a hair more regular
+#                         than that would pass this half (the ruled-joint half may still catch it); lowering
+#                         it needs more passing faces than the boulder to set it from
 
 
 def _ruled(m: np.ndarray, n: int) -> np.ndarray:
@@ -272,7 +297,7 @@ def pitch_peak(L: np.ndarray, m: np.ndarray, H: float) -> float:
 
 
 def masonry_rock(rgb, alpha, H, subject) -> list[Finding]:
-    if not ROCK_RE.search(_base(subject)) or alpha.sum() < 0.5 * H * H:
+    if not named(subject, ROCK_WORDS) or alpha.sum() < 0.5 * H * H:
         return []
     L = lum(rgb).astype(float)
     med = ndi.median_filter(L, size=int(0.5 * H) | 1)
@@ -305,9 +330,12 @@ def masonry_rock(rgb, alpha, H, subject) -> list[Finding]:
 
 # ------------------------------------------------------------------------------------------
 # Stairs that do not read as steps
-RISER_SHARE = 0.36      # the shaded riser's share of a step's pitch. Eastward's stairs 0.43 to 0.53, the
-#                         kit's log steps 0.42 to 0.50; the round 4 stair 0.31 and round 5 0.25 (risers drawn
-#                         as lines: a ladder of strips, F11)
+RISER_SHARE = 0.38      # the shaded riser's share of a step's pitch. Eastward's stairs 0.43 to 0.53, the
+#                         kit's log steps 0.42 to 0.50; the round 4 stair 0.34 and round 5 0.19 (risers drawn
+#                         as lines: a ladder of strips, F11). Raised from 0.36 in the #481 audit, a tightening:
+#                         it catches strictly more (a 10/6 tread/riser stair, 0.375, now trips), and every
+#                         correct-stair probe (9/7, 10/8, 11/7, 12/8, with and without texture), Eastward's
+#                         four stairs and main's log steps still pass
 BOND_JOINTS = 2         # vertical joints across a step, staggered from the step above, in at least
 BOND_STEPS = 0.5        # half the steps: a brick bond (the bf525d25 stair, F10); Eastward's stairs 0
 
@@ -336,7 +364,7 @@ def _pitch(prof: np.ndarray):
 
 
 def stair_read(rgb, alpha, H, subject) -> list[Finding]:
-    if not STAIR_RE.search(_base(subject)) or alpha.sum() < 0.3 * H * H:
+    if not named(subject, STAIR_WORDS) or alpha.sum() < 0.3 * H * H:
         return []
     L = lum(rgb).astype(float)
     # the step profile: each row's median tone across the middle 60 % of the flight (its cheeks left out)
@@ -406,7 +434,7 @@ SLAB_SIDE = 0.9         # share of rows whose edge sits on one column: icefall 0
 
 
 def fall_slab(alpha, H, subject) -> list[Finding]:
-    if not FALL_RE.search(_base(subject)) or alpha.sum() < 0.2 * H * H:
+    if not named(subject, FALL_WORDS) or alpha.sum() < 0.2 * H * H:
         return []
     x0, y0, x1, y1 = _bbox(alpha)
     sub = alpha[y0:y1, x0:x1]
@@ -438,6 +466,8 @@ STATE_CONTACT = 0.3     # the share of the frozen part's rim against open water:
 #                         bank (much of its rim is open water); a frozen section (a frozen tarn feeding an
 #                         open stream, an icefall over an open pool) meets it only across the channel.
 #                         Matt's fall step: 0.14 (tarn) and 0.03 (icefall); old snow zones: none found
+#                         Untested on real passing art: no clean winter screen with shore ice was found,
+#                         so only the synthetic rim test (Forms) holds the passing side
 
 
 def water_state(native, H, ignore) -> list[Finding]:
@@ -479,16 +509,22 @@ def water_state(native, H, ignore) -> list[Finding]:
 
 
 # ------------------------------------------------------------------------------------------
-def check_asset(rgb_n, alpha, H, subject) -> list[Finding]:
-    """Every sprite check above (assets.review_rgba)."""
+def check_named(rgb, alpha, H, subject) -> list[Finding]:
+    """The name-keyed checks (tree_pole, deck_upright, masonry_rock, stair_read, fall_slab). They run on
+    every asset whatever its opacity (assets.review_rgba calls them before the ground/sprite split), so
+    trimming a picture's transparent margin cannot route a cut-out fall or a rock face around them."""
     fs = []
-    fs += snow_stamp(rgb_n, alpha, H, subject)
-    fs += tree_pole(rgb_n, alpha, H, subject)
-    fs += deck_upright(rgb_n, alpha, H, subject)
-    fs += masonry_rock(rgb_n, alpha, H, subject)
-    fs += stair_read(rgb_n, alpha, H, subject)
+    fs += tree_pole(rgb, alpha, H, subject)
+    fs += deck_upright(rgb, alpha, H, subject)
+    fs += masonry_rock(rgb, alpha, H, subject)
+    fs += stair_read(rgb, alpha, H, subject)
     fs += fall_slab(alpha, H, subject)
     return fs
+
+
+def check_asset(rgb_n, alpha, H, subject) -> list[Finding]:
+    """The sprite-only check (snow_stamp; assets.review_rgba)."""
+    return snow_stamp(rgb_n, alpha, H, subject)
 
 
 def check_screen(native, H, ignore) -> list[Finding]:

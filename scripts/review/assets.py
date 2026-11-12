@@ -222,11 +222,16 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         # a ground-coded cast and contact shadow picture (town.py): no form or material to judge;
         # the scene gate checks where shadows fall
         return [], None
+    # Matt's 12 Nov Frostline misses keyed to the asset's name (forms.py): a pole of a tree, a deck drawn
+    # front-on, rock drawn as masonry, stairs that read as a ladder or a wall, a fall cut as a rectangle.
+    # Before the ground/sprite split, so a picture trimmed to its opaque box is judged too (#481 audit B1)
+    from . import forms as F
+    findings += F.check_named(on_ground(rgba, NEUTRAL), alpha, H, subject)
     if ground or alpha.mean() > 0.97:
         # a ground or background picture: judged like a screen (water, repetition, flats, artefacts)
         ignore = SC.hud_mask(rgba) | ~alpha       # transparent parts of an overlay are not art
         rep = SC.review_screen(rgba, H, biome=biome, subject=subject, ignore=ignore)
-        findings = list(rep['_objs'])
+        findings += list(rep['_objs'])
         # organic edges on the soft grid (edges.py): judged on the ground picture itself, where no
         # sprite stands on them (on a composed screen trunks, logs and props join the dirt)
         from . import edges as E
@@ -256,9 +261,7 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         findings += __import__('scripts.review.cluster_noise', fromlist=['check']).check(rgba[..., :3], alpha, H, subject)
         findings += __import__('scripts.review.flat_cylinder', fromlist=['check']).check(rgb_n, alpha, H, subject)
         findings += __import__('scripts.review.checker_dither', fromlist=['check']).check(rgba, H, subject)
-        # Matt's 12 Nov Frostline misses: stamped snow chips, a pole of a tree, a deck drawn front-on,
-        # rock drawn as masonry, stairs that read as a ladder or a wall, a fall cut as a rectangle (forms.py)
-        from . import forms as F
+        # Matt's 12 Nov Frostline misses: stamped snow chips on a crown (forms.py)
         findings += F.check_asset(rgb_n, alpha, H, subject)
         from . import edges as E
         if any(k in subject.split('/')[-1] for k in E.ORGANIC_SPRITES):

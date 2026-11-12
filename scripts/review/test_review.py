@@ -1814,3 +1814,103 @@ class KitOverlap(unittest.TestCase):
         with patch.object(K, 'layout', return_value=self._items(240)):
             fs = K.check('frostline')
         self.assertEqual([f.severity for f in fs], ['polish'], 'two crowns overlapping is advice only')
+
+
+class FormsThroughTheGate(unittest.TestCase):
+    """#481 audit B1: a picture trimmed to its opaque box (alpha > 0.97) takes the ground branch of
+    assets.review_rgba; the name-keyed form checks must still judge it."""
+
+    def _dets(self, rgba, subject):
+        fs, _ = A.review_rgba(rgba, subject, '', 'woodland')
+        return [f.detector for f in fs if f.severity in ('fault', 'blocker')]
+
+    def test_a_fully_opaque_rectangular_icefall_trips(self):
+        a = np.zeros((111, 96, 4), np.uint8)
+        a[..., :3] = (210, 228, 240)
+        a[:, ::9, :3] = (150, 180, 215)
+        a[..., 3] = 255
+        self.assertIn('detail.fall_slab', self._dets(a, 'kit/frost_icefall'))
+
+    def test_a_fully_opaque_brick_grid_rock_face_trips(self):
+        a = np.zeros((114, 144, 4), np.uint8)
+        a[..., :3] = (120, 122, 130)
+        a[..., 3] = 255
+        for r, y in enumerate(range(0, 114, 14)):
+            a[y:y + 2, :, :3] = 30
+            for x in range((r % 2) * 12, 144, 24):
+                a[y:y + 14, x:x + 2, :3] = 30
+        self.assertIn('detail.masonry_rock', self._dets(a, 'kit/x_rockface'))
+
+    def test_a_fully_opaque_ground_picture_is_not_judged_by_name_checks(self):
+        a = np.zeros((114, 144, 4), np.uint8)
+        a[..., :3] = GRASS
+        a[..., 3] = 255
+        dets = self._dets(a, 'woodland/ground')
+        self.assertFalse({'detail.fall_slab', 'detail.masonry_rock', 'detail.stair_read'} & set(dets))
+
+
+class FormNames(unittest.TestCase):
+    def test_whole_name_parts_only(self):
+        from scripts.review import forms as F
+        self.assertTrue(F.is_tree('kit/frost_pine_squat'))
+        self.assertTrue(F.is_tree('woodland/oak_13'))
+        self.assertTrue(F.is_tree('kit/lombardy_poplar') and F.is_tree('kit/cypress_b'))
+        for name in ('kit/brackens_fire_ring_cold', 'commons/washing_line', 'kit/cloak', 'kit/frost_snow_pole'):
+            self.assertFalse(F.is_tree(name), name)
+        self.assertTrue(F.named('kit/frost_rockface_plain_b', F.ROCK_WORDS))
+        self.assertTrue(F.named('kit/rock_face_west', F.ROCK_WORDS))
+        self.assertFalse(F.named('kit/shadow_frost_crag__b', F.ROCK_WORDS), 'shadow pictures are not rock')
+        self.assertFalse(F.named('kit/surface_cracks', F.ROCK_WORDS))
+        self.assertTrue(F.named('kit/log_steps_3', F.STAIR_WORDS))
+        self.assertTrue(F.named('kit/waterfall_2_tall', F.FALL_WORDS))
+        self.assertFalse(F.named('kit/landfall_marker', F.FALL_WORDS))
+
+
+class KitOverlapReading(unittest.TestCase):
+    """kit_overlap reads a plan, the props index (role, variant, foot, res:// path) and the pictures."""
+
+    def test_a_tiny_plan(self):
+        import io as _io
+        from scripts.review import kit_overlap as K
+
+        def png(w, h):
+            b = _io.BytesIO()
+            Image.new('RGBA', (w, h), (90, 90, 90, 255)).save(b, 'PNG')
+            return b.getvalue()
+        files = {
+            'game/kit/zones/tiny.json': json.dumps({'pieces': [
+                {'id': 'hut', 'piece': 'hut', 'at': [300, 300]},
+                {'id': 'fir_1', 'piece': 'fir', 'at': [250, 260], 'variant': 'tall'},
+                {'id': 'bench', 'piece': 'bench', 'at': [280, 290]}]}).encode(),
+            'game/kit/props/index.json': json.dumps({
+                'hut': {'role': 'house', 'variants': {'still': {'png': 'res://kit/props/art/hut.png', 'foot': [50, 40]}}},
+                'fir': {'role': 'tree', 'foot': [0, 0], 'variants': {
+                    'still': {'png': 'res://kit/props/art/missing.png'},
+                    'tall': {'png': 'res://kit/props/art/fir.png', 'foot': [10, 60]}}},
+                'bench': {'role': 'prop', 'variants': {'still': {'png': 'res://kit/props/art/hut.png'}}}}).encode(),
+            'game/kit/props/art/hut.png': png(100, 40),
+            'game/kit/props/art/fir.png': png(20, 60),
+        }
+        with patch.object(K, 'reader', return_value=lambda rel: files[rel]):
+            items = K.layout('tiny')
+            fs = K.check('tiny')
+        self.assertEqual([(i[0], i[1], i[2], i[3], i[4].shape) for i in items],
+                         [('hut', 'house', 250, 260, (40, 100)), ('fir_1', 'tree', 240, 200, (60, 20))])
+        # the fir (x 240..260, y 200..260) meets the hut (x 250..350, y 260..300) only at its foot row: no overlap
+        self.assertEqual(fs, [])
+        files['game/kit/zones/tiny.json'] = files['game/kit/zones/tiny.json'].replace(b'[250, 260]', b'[270, 290]')
+        with patch.object(K, 'reader', return_value=lambda rel: files[rel]):
+            fs = K.check('tiny')
+        self.assertEqual([(f.detector, f.severity) for f in fs], [('logic.tree_overlap', 'fault')])
+
+
+class CalibrationOpenFaults(unittest.TestCase):
+    def test_only_f4_to_f6_are_open_and_each_says_why(self):
+        with open(os.path.join(os.path.dirname(A.__file__), 'calibration_set.json')) as f:
+            cal = json.load(f)
+        opened = {f['id']: f['open'] for f in cal['faults'] if f.get('open')}
+        self.assertEqual(sorted(opened), ['F4', 'F5', 'F6'],
+                         'an "open" fault leaves the recall gate: only Claude A or Matt may add one, with its measurements')
+        for fid, why in opened.items():
+            self.assertIsInstance(why, str)
+            self.assertRegex(why, r'\d', f'{fid}: the reason must give what was measured')
