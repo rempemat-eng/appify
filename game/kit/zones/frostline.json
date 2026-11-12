@@ -458,7 +458,7 @@
   {
    "at": [
     36,
-    624
+    648
    ],
    "facing": "s",
    "id": "spruce",
@@ -468,7 +468,7 @@
   {
    "at": [
     120,
-    672
+    648
    ],
    "facing": "s",
    "id": "pine",
@@ -477,8 +477,8 @@
   },
   {
    "at": [
-    36,
-    768
+    24,
+    792
    ],
    "facing": "s",
    "id": "pine_squat",
@@ -488,31 +488,11 @@
   {
    "at": [
     180,
-    672
+    648
    ],
    "facing": "s",
    "id": "snag",
    "piece": "frost_snag",
-   "variant": "still"
-  },
-  {
-   "at": [
-    36,
-    1080
-   ],
-   "facing": "s",
-   "id": "spruce_2",
-   "piece": "frost_spruce",
-   "variant": "still"
-  },
-  {
-   "at": [
-    120,
-    1104
-   ],
-   "facing": "s",
-   "id": "pine_2",
-   "piece": "frost_pine",
    "variant": "still"
   },
   {
@@ -527,8 +507,8 @@
   },
   {
    "at": [
-    324,
-    1056
+    348,
+    1080
    ],
    "facing": "s",
    "id": "pine_squat_2",
@@ -543,16 +523,6 @@
    "facing": "s",
    "id": "pine_3",
    "piece": "frost_pine",
-   "variant": "still"
-  },
-  {
-   "at": [
-    324,
-    792
-   ],
-   "facing": "s",
-   "id": "spruce_4",
-   "piece": "frost_spruce",
    "variant": "still"
   },
   {
@@ -657,8 +627,8 @@
   },
   {
    "at": [
-    780,
-    984
+    792,
+    960
    ],
    "facing": "s",
    "id": "spruce_8",
@@ -677,8 +647,8 @@
   },
   {
    "at": [
-    816,
-    792
+    744,
+    768
    ],
    "facing": "s",
    "id": "pine_squat_6",
@@ -687,7 +657,7 @@
   },
   {
    "at": [
-    96,
+    120,
     408
    ],
    "facing": "s",
@@ -717,7 +687,7 @@
   },
   {
    "at": [
-    1044,
+    972,
     408
    ],
    "facing": "s",
