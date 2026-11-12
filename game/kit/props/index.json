@@ -318,7 +318,7 @@
    "mask": {
     "offset": [
      -9,
-     1
+     -5
     ],
     "png": "res://kit/props/art/shadow_barrow_kerb.png"
    },
@@ -346,7 +346,7 @@
     "shadow": {
      "offset": [
       -9,
-      1
+      -5
      ],
      "png": "res://kit/props/art/shadow_barrow_kerb.png"
     }
@@ -360,7 +360,7 @@
     "shadow": {
      "offset": [
       -10,
-      -1
+      -5
      ],
      "png": "res://kit/props/art/shadow_barrow_kerb__b.png"
     }
@@ -374,7 +374,7 @@
     "shadow": {
      "offset": [
       -8,
-      -5
+      -6
      ],
      "png": "res://kit/props/art/shadow_barrow_kerb__c.png"
     }
@@ -442,7 +442,7 @@
    "mask": {
     "offset": [
      -45,
-     -4
+     -7
     ],
     "png": "res://kit/props/art/shadow_brackens_bench.png"
    },
@@ -470,7 +470,7 @@
     "shadow": {
      "offset": [
       -45,
-      -4
+      -7
      ],
      "png": "res://kit/props/art/shadow_brackens_bench.png"
     }
@@ -530,7 +530,7 @@
    "mask": {
     "offset": [
      -17,
-     1
+     -8
     ],
     "png": "res://kit/props/art/shadow_brackens_cairn.png"
    },
@@ -558,7 +558,7 @@
     "shadow": {
      "offset": [
       -17,
-      1
+      -8
      ],
      "png": "res://kit/props/art/shadow_brackens_cairn.png"
     }
@@ -572,7 +572,7 @@
     "shadow": {
      "offset": [
       -19,
-      -4
+      -7
      ],
      "png": "res://kit/props/art/shadow_brackens_cairn__toppled.png"
     }
@@ -640,7 +640,7 @@
    "mask": {
     "offset": [
      -51,
-     -6
+     -9
     ],
     "png": "res://kit/props/art/shadow_brackens_cart_broken.png"
    },
@@ -668,7 +668,7 @@
     "shadow": {
      "offset": [
       -51,
-      -6
+      -9
      ],
      "png": "res://kit/props/art/shadow_brackens_cart_broken.png"
     }
@@ -774,11 +774,11 @@
    "mask": {
     "offset": [
      -37,
-     4
+     -40
     ],
     "png": "res://kit/props/art/shadow_brackens_drove_well.png"
    },
-   "rule": "silhouette",
+   "rule": "block",
    "sun": [
     0.46,
     0.22
@@ -802,7 +802,7 @@
     "shadow": {
      "offset": [
       -37,
-      4
+      -40
      ],
      "png": "res://kit/props/art/shadow_brackens_drove_well.png"
     }
@@ -1114,7 +1114,7 @@
    "mask": {
     "offset": [
      -31,
-     -9
+     -13
     ],
     "png": "res://kit/props/art/shadow_brackens_gorse.png"
    },
@@ -1142,7 +1142,7 @@
     "shadow": {
      "offset": [
       -31,
-      -9
+      -13
      ],
      "png": "res://kit/props/art/shadow_brackens_gorse.png"
     }
@@ -1156,7 +1156,7 @@
     "shadow": {
      "offset": [
       -25,
-      -5
+      -10
      ],
      "png": "res://kit/props/art/shadow_brackens_gorse__b.png"
     }
@@ -1220,7 +1220,7 @@
    "mask": {
     "offset": [
      -42,
-     4
+     -7
     ],
     "png": "res://kit/props/art/shadow_brackens_peat_stack.png"
    },
@@ -1248,7 +1248,7 @@
     "shadow": {
      "offset": [
       -42,
-      4
+      -7
      ],
      "png": "res://kit/props/art/shadow_brackens_peat_stack.png"
     }
@@ -1512,7 +1512,7 @@
    "mask": {
     "offset": [
      -66,
-     -10
+     -13
     ],
     "png": "res://kit/props/art/shadow_coast_boat_beached.png"
    },
@@ -1540,7 +1540,7 @@
     "shadow": {
      "offset": [
       -66,
-      -10
+      -13
      ],
      "png": "res://kit/props/art/shadow_coast_boat_beached.png"
     }
@@ -1664,7 +1664,7 @@
    "mask": {
     "offset": [
      -13,
-     1
+     -6
     ],
     "png": "res://kit/props/art/shadow_coast_harbour_light.png"
    },
@@ -1692,7 +1692,7 @@
     "shadow": {
      "offset": [
       -13,
-      1
+      -6
      ],
      "png": "res://kit/props/art/shadow_coast_harbour_light.png"
     }
@@ -1748,7 +1748,7 @@
    "mask": {
     "offset": [
      -24,
-     -1
+     -7
     ],
     "png": "res://kit/props/art/shadow_coast_lobster_pots.png"
    },
@@ -1776,7 +1776,7 @@
     "shadow": {
      "offset": [
       -24,
-      -1
+      -7
      ],
      "png": "res://kit/props/art/shadow_coast_lobster_pots.png"
     }
@@ -1790,7 +1790,7 @@
     "shadow": {
      "offset": [
       -32,
-      -5
+      -9
      ],
      "png": "res://kit/props/art/shadow_coast_lobster_pots__b.png"
     }
@@ -1842,7 +1842,7 @@
    "mask": {
     "offset": [
      -33,
-     -6
+     -9
     ],
     "png": "res://kit/props/art/shadow_coast_mooring_bitt.png"
    },
@@ -1870,7 +1870,7 @@
     "shadow": {
      "offset": [
       -33,
-      -6
+      -9
      ],
      "png": "res://kit/props/art/shadow_coast_mooring_bitt.png"
     }
@@ -1938,7 +1938,7 @@
    "mask": {
     "offset": [
      -62,
-     -5
+     -9
     ],
     "png": "res://kit/props/art/shadow_coast_net_rack.png"
    },
@@ -1966,7 +1966,7 @@
     "shadow": {
      "offset": [
       -62,
-      -5
+      -9
      ],
      "png": "res://kit/props/art/shadow_coast_net_rack.png"
     }
@@ -2023,7 +2023,7 @@
    "mask": {
     "offset": [
      -42,
-     -4
+     -8
     ],
     "png": "res://kit/props/art/shadow_commons_bench.png"
    },
@@ -2051,7 +2051,7 @@
     "shadow": {
      "offset": [
       -42,
-      -4
+      -8
      ],
      "png": "res://kit/props/art/shadow_commons_bench.png"
     }
@@ -2119,7 +2119,7 @@
    "mask": {
     "offset": [
      -34,
-     -11
+     -14
     ],
     "png": "res://kit/props/art/shadow_commons_cart.png"
    },
@@ -2147,7 +2147,7 @@
     "shadow": {
      "offset": [
       -34,
-      -11
+      -14
      ],
      "png": "res://kit/props/art/shadow_commons_cart.png"
     }
@@ -2196,7 +2196,7 @@
    "mask": {
     "offset": [
      -22,
-     -6
+     -11
     ],
     "png": "res://kit/props/art/shadow_commons_chopping_block.png"
    },
@@ -2224,7 +2224,7 @@
     "shadow": {
      "offset": [
       -22,
-      -6
+      -11
      ],
      "png": "res://kit/props/art/shadow_commons_chopping_block.png"
     }
@@ -2273,7 +2273,7 @@
    "mask": {
     "offset": [
      -11,
-     -4
+     -5
     ],
     "png": "res://kit/props/art/shadow_commons_fingerpost_esw.png"
    },
@@ -2301,7 +2301,7 @@
     "shadow": {
      "offset": [
       -11,
-      -4
+      -5
      ],
      "png": "res://kit/props/art/shadow_commons_fingerpost_esw.png"
     }
@@ -2350,7 +2350,7 @@
    "mask": {
     "offset": [
      -11,
-     -4
+     -5
     ],
     "png": "res://kit/props/art/shadow_commons_fingerpost_nes.png"
    },
@@ -2378,7 +2378,7 @@
     "shadow": {
      "offset": [
       -11,
-      -4
+      -5
      ],
      "png": "res://kit/props/art/shadow_commons_fingerpost_nes.png"
     }
@@ -2427,7 +2427,7 @@
    "mask": {
     "offset": [
      -11,
-     -4
+     -5
     ],
     "png": "res://kit/props/art/shadow_commons_fingerpost_nesw.png"
    },
@@ -2455,7 +2455,7 @@
     "shadow": {
      "offset": [
       -11,
-      -4
+      -5
      ],
      "png": "res://kit/props/art/shadow_commons_fingerpost_nesw.png"
     }
@@ -2504,7 +2504,7 @@
    "mask": {
     "offset": [
      -11,
-     -5
+     -8
     ],
     "png": "res://kit/props/art/shadow_commons_fingerpost_new.png"
    },
@@ -2532,7 +2532,7 @@
     "shadow": {
      "offset": [
       -11,
-      -5
+      -8
      ],
      "png": "res://kit/props/art/shadow_commons_fingerpost_new.png"
     }
@@ -2581,7 +2581,7 @@
    "mask": {
     "offset": [
      -11,
-     -7
+     -10
     ],
     "png": "res://kit/props/art/shadow_commons_fingerpost_nsw.png"
    },
@@ -2609,7 +2609,7 @@
     "shadow": {
      "offset": [
       -11,
-      -7
+      -10
      ],
      "png": "res://kit/props/art/shadow_commons_fingerpost_nsw.png"
     }
@@ -2669,7 +2669,7 @@
    "mask": {
     "offset": [
      -25,
-     -3
+     -4
     ],
     "png": "res://kit/props/art/shadow_commons_notice_board.png"
    },
@@ -2697,7 +2697,7 @@
     "shadow": {
      "offset": [
       -25,
-      -3
+      -4
      ],
      "png": "res://kit/props/art/shadow_commons_notice_board.png"
     }
@@ -2757,7 +2757,7 @@
    "mask": {
     "offset": [
      -24,
-     -4
+     -7
     ],
     "png": "res://kit/props/art/shadow_commons_pump.png"
    },
@@ -2785,7 +2785,7 @@
     "shadow": {
      "offset": [
       -24,
-      -4
+      -7
      ],
      "png": "res://kit/props/art/shadow_commons_pump.png"
     }
@@ -2849,7 +2849,7 @@
    "mask": {
     "offset": [
      -30,
-     -4
+     -7
     ],
     "png": "res://kit/props/art/shadow_commons_shrine.png"
    },
@@ -2877,7 +2877,7 @@
     "shadow": {
      "offset": [
       -30,
-      -4
+      -7
      ],
      "png": "res://kit/props/art/shadow_commons_shrine.png"
     }
@@ -2953,7 +2953,7 @@
    "mask": {
     "offset": [
      -67,
-     -12
+     -14
     ],
     "png": "res://kit/props/art/shadow_commons_stall_cloth.png"
    },
@@ -2981,7 +2981,7 @@
     "shadow": {
      "offset": [
       -67,
-      -12
+      -14
      ],
      "png": "res://kit/props/art/shadow_commons_stall_cloth.png"
     }
@@ -3057,7 +3057,7 @@
    "mask": {
     "offset": [
      -67,
-     -12
+     -14
     ],
     "png": "res://kit/props/art/shadow_commons_stall_produce.png"
    },
@@ -3085,7 +3085,7 @@
     "shadow": {
      "offset": [
       -67,
-      -12
+      -14
      ],
      "png": "res://kit/props/art/shadow_commons_stall_produce.png"
     }
@@ -3154,7 +3154,7 @@
    "mask": {
     "offset": [
      -57,
-     -3
+     -4
     ],
     "png": "res://kit/props/art/shadow_commons_washing_line.png"
    },
@@ -3182,7 +3182,7 @@
     "shadow": {
      "offset": [
       -57,
-      -3
+      -4
      ],
      "png": "res://kit/props/art/shadow_commons_washing_line.png"
     }
@@ -3239,7 +3239,7 @@
    "mask": {
     "offset": [
      -39,
-     -4
+     -7
     ],
     "png": "res://kit/props/art/shadow_commons_woodpile.png"
    },
@@ -3267,7 +3267,7 @@
     "shadow": {
      "offset": [
       -39,
-      -4
+      -7
      ],
      "png": "res://kit/props/art/shadow_commons_woodpile.png"
     }
@@ -8474,7 +8474,7 @@
    "mask": {
     "offset": [
      -17,
-     -9
+     -13
     ],
     "png": "res://kit/props/art/shadow_farm_calf.png"
    },
@@ -8502,7 +8502,7 @@
     "shadow": {
      "offset": [
       -17,
-      -9
+      -13
      ],
      "png": "res://kit/props/art/shadow_farm_calf.png"
     }
@@ -8558,7 +8558,7 @@
    "mask": {
     "offset": [
      -16,
-     -1
+     -7
     ],
     "png": "res://kit/props/art/shadow_farm_churns.png"
    },
@@ -8586,7 +8586,7 @@
     "shadow": {
      "offset": [
       -16,
-      -1
+      -7
      ],
      "png": "res://kit/props/art/shadow_farm_churns.png"
     }
@@ -8786,7 +8786,7 @@
    "mask": {
     "offset": [
      -38,
-     -10
+     -14
     ],
     "png": "res://kit/props/art/shadow_farm_cow.png"
    },
@@ -8814,7 +8814,7 @@
     "shadow": {
      "offset": [
       -38,
-      -10
+      -14
      ],
      "png": "res://kit/props/art/shadow_farm_cow.png"
     }
@@ -8874,7 +8874,7 @@
    "mask": {
     "offset": [
      -26,
-     -4
+     -7
     ],
     "png": "res://kit/props/art/shadow_farm_feed_sacks.png"
    },
@@ -8902,7 +8902,7 @@
     "shadow": {
      "offset": [
       -26,
-      -4
+      -7
      ],
      "png": "res://kit/props/art/shadow_farm_feed_sacks.png"
     }
@@ -8980,7 +8980,7 @@
    "mask": {
     "offset": [
      -15,
-     -9
+     -13
     ],
     "png": "res://kit/props/art/shadow_farm_goat.png"
    },
@@ -9008,7 +9008,7 @@
     "shadow": {
      "offset": [
       -15,
-      -9
+      -13
      ],
      "png": "res://kit/props/art/shadow_farm_goat.png"
     }
@@ -9086,7 +9086,7 @@
    "mask": {
     "offset": [
      -23,
-     -9
+     -13
     ],
     "png": "res://kit/props/art/shadow_farm_goat_b.png"
    },
@@ -9114,7 +9114,7 @@
     "shadow": {
      "offset": [
       -23,
-      -9
+      -13
      ],
      "png": "res://kit/props/art/shadow_farm_goat_b.png"
     }
@@ -9183,7 +9183,7 @@
    "mask": {
     "offset": [
      -5,
-     -8
+     -10
     ],
     "png": "res://kit/props/art/shadow_farm_hen_brown.png"
    },
@@ -9211,7 +9211,7 @@
     "shadow": {
      "offset": [
       -5,
-      -8
+      -10
      ],
      "png": "res://kit/props/art/shadow_farm_hen_brown.png"
     }
@@ -9280,7 +9280,7 @@
    "mask": {
     "offset": [
      -8,
-     -8
+     -9
     ],
     "png": "res://kit/props/art/shadow_farm_hen_speckled.png"
    },
@@ -9308,7 +9308,7 @@
     "shadow": {
      "offset": [
       -8,
-      -8
+      -9
      ],
      "png": "res://kit/props/art/shadow_farm_hen_speckled.png"
     }
@@ -9377,7 +9377,7 @@
    "mask": {
     "offset": [
      -5,
-     -8
+     -10
     ],
     "png": "res://kit/props/art/shadow_farm_hen_white.png"
    },
@@ -9405,7 +9405,7 @@
     "shadow": {
      "offset": [
       -5,
-      -8
+      -10
      ],
      "png": "res://kit/props/art/shadow_farm_hen_white.png"
     }
@@ -9487,7 +9487,7 @@
    "mask": {
     "offset": [
      -27,
-     -6
+     -12
     ],
     "png": "res://kit/props/art/shadow_farm_horse.png"
    },
@@ -9515,7 +9515,7 @@
     "shadow": {
      "offset": [
       -27,
-      -6
+      -12
      ],
      "png": "res://kit/props/art/shadow_farm_horse.png"
     }
@@ -9579,7 +9579,7 @@
    "mask": {
     "offset": [
      -30,
-     -9
+     -12
     ],
     "png": "res://kit/props/art/shadow_farm_muck_heap.png"
    },
@@ -9607,7 +9607,7 @@
     "shadow": {
      "offset": [
       -30,
-      -9
+      -12
      ],
      "png": "res://kit/props/art/shadow_farm_muck_heap.png"
     }
@@ -9685,7 +9685,7 @@
    "mask": {
     "offset": [
      -26,
-     -8
+     -12
     ],
     "png": "res://kit/props/art/shadow_farm_pig.png"
    },
@@ -9713,7 +9713,7 @@
     "shadow": {
      "offset": [
       -26,
-      -8
+      -12
      ],
      "png": "res://kit/props/art/shadow_farm_pig.png"
     }
@@ -9875,7 +9875,7 @@
    "mask": {
     "offset": [
      -17,
-     -10
+     -14
     ],
     "png": "res://kit/props/art/shadow_farm_sheep.png"
    },
@@ -9903,7 +9903,7 @@
     "shadow": {
      "offset": [
       -17,
-      -10
+      -14
      ],
      "png": "res://kit/props/art/shadow_farm_sheep.png"
     }
@@ -9981,7 +9981,7 @@
    "mask": {
     "offset": [
      -27,
-     -10
+     -14
     ],
     "png": "res://kit/props/art/shadow_farm_sheep_graze.png"
    },
@@ -10009,7 +10009,7 @@
     "shadow": {
      "offset": [
       -27,
-      -10
+      -14
      ],
      "png": "res://kit/props/art/shadow_farm_sheep_graze.png"
     }
@@ -10087,7 +10087,7 @@
    "mask": {
     "offset": [
      -21,
-     -8
+     -10
     ],
     "png": "res://kit/props/art/shadow_farm_sheep_lie.png"
    },
@@ -10115,7 +10115,7 @@
     "shadow": {
      "offset": [
       -21,
-      -8
+      -10
      ],
      "png": "res://kit/props/art/shadow_farm_sheep_lie.png"
     }
@@ -10475,7 +10475,7 @@
    "mask": {
     "offset": [
      -14,
-     -3
+     -7
     ],
     "png": "res://kit/props/art/shadow_farm_water_butt.png"
    },
@@ -10503,7 +10503,7 @@
     "shadow": {
      "offset": [
       -14,
-      -3
+      -7
      ],
      "png": "res://kit/props/art/shadow_farm_water_butt.png"
     }
@@ -10563,7 +10563,7 @@
    "mask": {
     "offset": [
      -24,
-     -8
+     -10
     ],
     "png": "res://kit/props/art/shadow_farm_wheelbarrow.png"
    },
@@ -10591,7 +10591,7 @@
     "shadow": {
      "offset": [
       -24,
-      -8
+      -10
      ],
      "png": "res://kit/props/art/shadow_farm_wheelbarrow.png"
     }
@@ -11009,7 +11009,7 @@
     "shadow": {
      "offset": [
       -35,
-      -7
+      -12
      ],
      "png": "res://kit/props/art/shadow_fence_picket_gate_ew__shut.png"
     }
@@ -12259,7 +12259,7 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -6,
+     -12,
      -2
     ],
     "png": "res://kit/props/art/shadow_fence_rail_ew.png"
@@ -12287,7 +12287,7 @@
     "png": "res://kit/props/art/fence/fence_rail_ew_plain.png",
     "shadow": {
      "offset": [
-      -6,
+      -12,
       -2
      ],
      "png": "res://kit/props/art/shadow_fence_rail_ew.png"
@@ -12356,7 +12356,7 @@
    "mask": {
     "offset": [
      -36,
-     -7
+     -9
     ],
     "png": "res://kit/props/art/shadow_fence_rail_gate_ew.png"
    },
@@ -12384,7 +12384,7 @@
     "shadow": {
      "offset": [
       -36,
-      -7
+      -9
      ],
      "png": "res://kit/props/art/shadow_fence_rail_gate_ew.png"
     }
@@ -12398,7 +12398,7 @@
     "shadow": {
      "offset": [
       -36,
-      -7
+      -11
      ],
      "png": "res://kit/props/art/shadow_fence_rail_gate_ew__shut.png"
     }
@@ -12557,7 +12557,7 @@
    "mask": {
     "offset": [
      -4,
-     -9
+     -12
     ],
     "png": "res://kit/props/art/shadow_fence_rail_n.png"
    },
@@ -12585,7 +12585,7 @@
     "shadow": {
      "offset": [
       -4,
-      -9
+      -12
      ],
      "png": "res://kit/props/art/shadow_fence_rail_n.png"
     }
@@ -12634,7 +12634,7 @@
    "mask": {
     "offset": [
      -4,
-     -9
+     -12
     ],
     "png": "res://kit/props/art/shadow_fence_rail_ne.png"
    },
@@ -12662,7 +12662,7 @@
     "shadow": {
      "offset": [
       -4,
-      -9
+      -12
      ],
      "png": "res://kit/props/art/shadow_fence_rail_ne.png"
     }
@@ -12711,7 +12711,7 @@
    "mask": {
     "offset": [
      -5,
-     -9
+     -12
     ],
     "png": "res://kit/props/art/shadow_fence_rail_nes.png"
    },
@@ -12739,7 +12739,7 @@
     "shadow": {
      "offset": [
       -5,
-      -9
+      -12
      ],
      "png": "res://kit/props/art/shadow_fence_rail_nes.png"
     }
@@ -12788,7 +12788,7 @@
    "mask": {
     "offset": [
      -12,
-     -9
+     -12
     ],
     "png": "res://kit/props/art/shadow_fence_rail_nesw.png"
    },
@@ -12816,7 +12816,7 @@
     "shadow": {
      "offset": [
       -12,
-      -9
+      -12
      ],
      "png": "res://kit/props/art/shadow_fence_rail_nesw.png"
     }
@@ -12865,7 +12865,7 @@
    "mask": {
     "offset": [
      -12,
-     -9
+     -12
     ],
     "png": "res://kit/props/art/shadow_fence_rail_new.png"
    },
@@ -12893,7 +12893,7 @@
     "shadow": {
      "offset": [
       -12,
-      -9
+      -12
      ],
      "png": "res://kit/props/art/shadow_fence_rail_new.png"
     }
@@ -12942,7 +12942,7 @@
    "mask": {
     "offset": [
      1,
-     -9
+     -12
     ],
     "png": "res://kit/props/art/shadow_fence_rail_ns.png"
    },
@@ -12970,7 +12970,7 @@
     "shadow": {
      "offset": [
       1,
-      -9
+      -12
      ],
      "png": "res://kit/props/art/shadow_fence_rail_ns.png"
     }
@@ -13033,7 +13033,7 @@
    "mask": {
     "offset": [
      -12,
-     -9
+     -12
     ],
     "png": "res://kit/props/art/shadow_fence_rail_nsw.png"
    },
@@ -13061,7 +13061,7 @@
     "shadow": {
      "offset": [
       -12,
-      -9
+      -12
      ],
      "png": "res://kit/props/art/shadow_fence_rail_nsw.png"
     }
@@ -13110,7 +13110,7 @@
    "mask": {
     "offset": [
      -12,
-     -9
+     -12
     ],
     "png": "res://kit/props/art/shadow_fence_rail_nw.png"
    },
@@ -13138,7 +13138,7 @@
     "shadow": {
      "offset": [
       -12,
-      -9
+      -12
      ],
      "png": "res://kit/props/art/shadow_fence_rail_nw.png"
     }
@@ -13324,7 +13324,7 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -10,
+     -11,
      -12
     ],
     "png": "res://kit/props/art/shadow_fence_rail_stile_ns.png"
@@ -13352,7 +13352,7 @@
     "png": "res://kit/props/art/fence/fence_rail_stile_ns_plain.png",
     "shadow": {
      "offset": [
-      -10,
+      -11,
       -12
      ],
      "png": "res://kit/props/art/shadow_fence_rail_stile_ns.png"
@@ -13883,7 +13883,7 @@
    "mask": {
     "offset": [
      -35,
-     -7
+     -8
     ],
     "png": "res://kit/props/art/shadow_fence_wattle_gate_ew.png"
    },
@@ -13911,7 +13911,7 @@
     "shadow": {
      "offset": [
       -35,
-      -7
+      -8
      ],
      "png": "res://kit/props/art/shadow_fence_wattle_gate_ew.png"
     }
@@ -13925,7 +13925,7 @@
     "shadow": {
      "offset": [
       -35,
-      -4
+      -8
      ],
      "png": "res://kit/props/art/shadow_fence_wattle_gate_ew__shut.png"
     }
@@ -15140,7 +15140,7 @@
    "mask": {
     "offset": [
      -33,
-     -10
+     -13
     ],
     "png": "res://kit/props/art/shadow_halt_churn_stand.png"
    },
@@ -15168,7 +15168,7 @@
     "shadow": {
      "offset": [
       -33,
-      -10
+      -13
      ],
      "png": "res://kit/props/art/shadow_halt_churn_stand.png"
     }
@@ -15311,7 +15311,7 @@
    "mask": {
     "offset": [
      -7,
-     -2
+     -4
     ],
     "png": "res://kit/props/art/shadow_halt_platform_lamp.png"
    },
@@ -15339,7 +15339,7 @@
     "shadow": {
      "offset": [
       -7,
-      -2
+      -4
      ],
      "png": "res://kit/props/art/shadow_halt_platform_lamp.png"
     }
@@ -15395,7 +15395,7 @@
    "mask": {
     "offset": [
      -11,
-     -1
+     -6
     ],
     "png": "res://kit/props/art/shadow_halt_semaphore.png"
    },
@@ -15423,7 +15423,7 @@
     "shadow": {
      "offset": [
       -11,
-      -1
+      -6
      ],
      "png": "res://kit/props/art/shadow_halt_semaphore.png"
     }
@@ -15483,7 +15483,7 @@
    "mask": {
     "offset": [
      -21,
-     -4
+     -8
     ],
     "png": "res://kit/props/art/shadow_halt_timetable_board.png"
    },
@@ -15511,7 +15511,7 @@
     "shadow": {
      "offset": [
       -21,
-      -4
+      -8
      ],
      "png": "res://kit/props/art/shadow_halt_timetable_board.png"
     }
@@ -15674,7 +15674,7 @@
    "mask": {
     "offset": [
      -14,
-     -9
+     -13
     ],
     "png": "res://kit/props/art/shadow_hive_skep.png"
    },
@@ -15702,7 +15702,7 @@
     "shadow": {
      "offset": [
       -14,
-      -9
+      -13
      ],
      "png": "res://kit/props/art/shadow_hive_skep.png"
     }
@@ -15758,7 +15758,7 @@
    "mask": {
     "offset": [
      -16,
-     -5
+     -10
     ],
     "png": "res://kit/props/art/shadow_hive_wbc.png"
    },
@@ -15786,7 +15786,7 @@
     "shadow": {
      "offset": [
       -16,
-      -5
+      -10
      ],
      "png": "res://kit/props/art/shadow_hive_wbc.png"
     }
@@ -15990,7 +15990,7 @@
    "mask": {
     "offset": [
      -44,
-     -8
+     -12
     ],
     "png": "res://kit/props/art/shadow_mill_fence_broken.png"
    },
@@ -16018,7 +16018,7 @@
     "shadow": {
      "offset": [
       -44,
-      -8
+      -12
      ],
      "png": "res://kit/props/art/shadow_mill_fence_broken.png"
     }
@@ -16191,7 +16191,7 @@
    "mask": {
     "offset": [
      -58,
-     -11
+     -14
     ],
     "png": "res://kit/props/art/shadow_mill_millstones.png"
    },
@@ -16219,7 +16219,7 @@
     "shadow": {
      "offset": [
       -58,
-      -11
+      -14
      ],
      "png": "res://kit/props/art/shadow_mill_millstones.png"
     }
@@ -17141,7 +17141,7 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -12,
+     -13,
      -8
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_ew.png"
@@ -17169,7 +17169,7 @@
     "png": "res://kit/props/art/brackens/wall_drystone_ew_a.png",
     "shadow": {
      "offset": [
-      -12,
+      -13,
       -8
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_ew.png"
@@ -17183,7 +17183,7 @@
     "png": "res://kit/props/art/brackens/wall_drystone_ew_b.png",
     "shadow": {
      "offset": [
-      -12,
+      -13,
       -8
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_ew__b.png"
@@ -17238,7 +17238,7 @@
    "mask": {
     "offset": [
      -36,
-     -9
+     -13
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_gate_ew.png"
    },
@@ -17266,7 +17266,7 @@
     "shadow": {
      "offset": [
       -36,
-      -9
+      -13
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_gate_ew.png"
     }
@@ -17425,7 +17425,7 @@
    "mask": {
     "offset": [
      -13,
-     -12
+     -14
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_n.png"
    },
@@ -17453,7 +17453,7 @@
     "shadow": {
      "offset": [
       -13,
-      -12
+      -14
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_n.png"
     }
@@ -17502,7 +17502,7 @@
    "mask": {
     "offset": [
      -12,
-     -12
+     -14
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_ne.png"
    },
@@ -17530,7 +17530,7 @@
     "shadow": {
      "offset": [
       -12,
-      -12
+      -14
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_ne.png"
     }
@@ -17579,7 +17579,7 @@
    "mask": {
     "offset": [
      -13,
-     -12
+     -14
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_nes.png"
    },
@@ -17607,7 +17607,7 @@
     "shadow": {
      "offset": [
       -13,
-      -12
+      -14
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_nes.png"
     }
@@ -17656,7 +17656,7 @@
    "mask": {
     "offset": [
      -13,
-     -12
+     -14
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_nesw.png"
    },
@@ -17684,7 +17684,7 @@
     "shadow": {
      "offset": [
       -13,
-      -12
+      -14
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_nesw.png"
     }
@@ -17732,8 +17732,8 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -12,
-     -12
+     -13,
+     -14
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_new.png"
    },
@@ -17760,8 +17760,8 @@
     "png": "res://kit/props/art/brackens/wall_drystone_new_plain.png",
     "shadow": {
      "offset": [
-      -12,
-      -12
+      -13,
+      -14
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_new.png"
     }
@@ -17810,7 +17810,7 @@
    "mask": {
     "offset": [
      -13,
-     -12
+     -14
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_ns.png"
    },
@@ -17838,7 +17838,7 @@
     "shadow": {
      "offset": [
       -13,
-      -12
+      -14
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_ns.png"
     }
@@ -17887,7 +17887,7 @@
    "mask": {
     "offset": [
      -13,
-     -12
+     -14
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_nsw.png"
    },
@@ -17915,7 +17915,7 @@
     "shadow": {
      "offset": [
       -13,
-      -12
+      -14
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_nsw.png"
     }
@@ -17963,8 +17963,8 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -12,
-     -12
+     -13,
+     -14
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_nw.png"
    },
@@ -17991,8 +17991,8 @@
     "png": "res://kit/props/art/brackens/wall_drystone_nw_plain.png",
     "shadow": {
      "offset": [
-      -12,
-      -12
+      -13,
+      -14
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_nw.png"
     }
@@ -18109,7 +18109,7 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -12,
+     -13,
      -8
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_stile_ew.png"
@@ -18137,7 +18137,7 @@
     "png": "res://kit/props/art/brackens/wall_drystone_stile_ew_steps.png",
     "shadow": {
      "offset": [
-      -12,
+      -13,
       -8
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_stile_ew.png"
@@ -18263,7 +18263,7 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -12,
+     -13,
      -8
     ],
     "png": "res://kit/props/art/shadow_wall_drystone_w.png"
@@ -18291,7 +18291,7 @@
     "png": "res://kit/props/art/brackens/wall_drystone_w_plain.png",
     "shadow": {
      "offset": [
-      -12,
+      -13,
       -8
      ],
      "png": "res://kit/props/art/shadow_wall_drystone_w.png"
@@ -19248,7 +19248,7 @@
    "mask": {
     "offset": [
      -19,
-     -8
+     -11
     ],
     "png": "res://kit/props/art/shadow_woodland_boulder.png"
    },
@@ -19276,7 +19276,7 @@
     "shadow": {
      "offset": [
       -19,
-      -8
+      -11
      ],
      "png": "res://kit/props/art/shadow_woodland_boulder.png"
     }
@@ -19290,7 +19290,7 @@
     "shadow": {
      "offset": [
       -20,
-      -8
+      -11
      ],
      "png": "res://kit/props/art/shadow_woodland_boulder__b1.png"
     }
@@ -19304,7 +19304,7 @@
     "shadow": {
      "offset": [
       -26,
-      -8
+      -11
      ],
      "png": "res://kit/props/art/shadow_woodland_boulder__b2.png"
     }
@@ -19318,7 +19318,7 @@
     "shadow": {
      "offset": [
       -25,
-      -8
+      -11
      ],
      "png": "res://kit/props/art/shadow_woodland_boulder__b3.png"
     }
@@ -19332,7 +19332,7 @@
     "shadow": {
      "offset": [
       -29,
-      -9
+      -12
      ],
      "png": "res://kit/props/art/shadow_woodland_boulder__b4.png"
     }
@@ -19346,7 +19346,7 @@
     "shadow": {
      "offset": [
       -38,
-      -9
+      -12
      ],
      "png": "res://kit/props/art/shadow_woodland_boulder__b5.png"
     }
@@ -19407,7 +19407,7 @@
    "mask": {
     "offset": [
      -59,
-     -11
+     -14
     ],
     "png": "res://kit/props/art/shadow_woodland_bramble.png"
    },
@@ -19435,7 +19435,7 @@
     "shadow": {
      "offset": [
       -59,
-      -11
+      -14
      ],
      "png": "res://kit/props/art/shadow_woodland_bramble.png"
     }
@@ -19496,7 +19496,7 @@
    "mask": {
     "offset": [
      -46,
-     -11
+     -14
     ],
     "png": "res://kit/props/art/shadow_woodland_bramble_b.png"
    },
@@ -19524,7 +19524,7 @@
     "shadow": {
      "offset": [
       -46,
-      -11
+      -14
      ],
      "png": "res://kit/props/art/shadow_woodland_bramble_b.png"
     }
@@ -19585,7 +19585,7 @@
    "mask": {
     "offset": [
      -39,
-     -10
+     -14
     ],
     "png": "res://kit/props/art/shadow_woodland_bush.png"
    },
@@ -19613,7 +19613,7 @@
     "shadow": {
      "offset": [
       -39,
-      -10
+      -14
      ],
      "png": "res://kit/props/art/shadow_woodland_bush.png"
     }
@@ -19674,7 +19674,7 @@
    "mask": {
     "offset": [
      -32,
-     -11
+     -14
     ],
     "png": "res://kit/props/art/shadow_woodland_bush_b.png"
    },
@@ -19702,7 +19702,7 @@
     "shadow": {
      "offset": [
       -32,
-      -11
+      -14
      ],
      "png": "res://kit/props/art/shadow_woodland_bush_b.png"
     }
@@ -19763,7 +19763,7 @@
    "mask": {
     "offset": [
      -46,
-     -11
+     -14
     ],
     "png": "res://kit/props/art/shadow_woodland_bush_c.png"
    },
@@ -19791,7 +19791,7 @@
     "shadow": {
      "offset": [
       -46,
-      -11
+      -14
      ],
      "png": "res://kit/props/art/shadow_woodland_bush_c.png"
     }
@@ -19918,7 +19918,7 @@
    "mask": {
     "offset": [
      -50,
-     -5
+     -8
     ],
     "png": "res://kit/props/art/shadow_woodland_forest_bench.png"
    },
@@ -19946,7 +19946,7 @@
     "shadow": {
      "offset": [
       -50,
-      -5
+      -8
      ],
      "png": "res://kit/props/art/shadow_woodland_forest_bench.png"
     }
@@ -20083,7 +20083,7 @@
    "mask": {
     "offset": [
      -33,
-     -10
+     -13
     ],
     "png": "res://kit/props/art/shadow_woodland_holly.png"
    },
@@ -20111,7 +20111,7 @@
     "shadow": {
      "offset": [
       -33,
-      -10
+      -13
      ],
      "png": "res://kit/props/art/shadow_woodland_holly.png"
     }
@@ -20172,7 +20172,7 @@
    "mask": {
     "offset": [
      -38,
-     -11
+     -14
     ],
     "png": "res://kit/props/art/shadow_woodland_holly_b.png"
    },
@@ -20200,7 +20200,7 @@
     "shadow": {
      "offset": [
       -38,
-      -11
+      -14
      ],
      "png": "res://kit/props/art/shadow_woodland_holly_b.png"
     }
@@ -20242,7 +20242,7 @@
    "mask": {
     "offset": [
      -37,
-     -10
+     -14
     ],
     "png": "res://kit/props/art/shadow_woodland_lintel.png"
    },
@@ -20270,7 +20270,7 @@
     "shadow": {
      "offset": [
       -37,
-      -10
+      -14
      ],
      "png": "res://kit/props/art/shadow_woodland_lintel.png"
     }
@@ -20347,7 +20347,7 @@
    "mask": {
     "offset": [
      -86,
-     -7
+     -10
     ],
     "png": "res://kit/props/art/shadow_woodland_mossy_log.png"
    },
@@ -20375,7 +20375,7 @@
     "shadow": {
      "offset": [
       -86,
-      -7
+      -10
      ],
      "png": "res://kit/props/art/shadow_woodland_mossy_log.png"
     }
@@ -20635,7 +20635,7 @@
    "mask": {
     "offset": [
      -13,
-     -4
+     -8
     ],
     "png": "res://kit/props/art/shadow_woodland_standing_stone.png"
    },
@@ -20663,7 +20663,7 @@
     "shadow": {
      "offset": [
       -13,
-      -4
+      -8
      ],
      "png": "res://kit/props/art/shadow_woodland_standing_stone.png"
     }
@@ -20718,7 +20718,7 @@
    "mask": {
     "offset": [
      -18,
-     -5
+     -9
     ],
     "png": "res://kit/props/art/shadow_woodland_standing_stone_b.png"
    },
@@ -20746,7 +20746,7 @@
     "shadow": {
      "offset": [
       -18,
-      -5
+      -9
      ],
      "png": "res://kit/props/art/shadow_woodland_standing_stone_b.png"
     }
@@ -20801,7 +20801,7 @@
    "mask": {
     "offset": [
      -17,
-     -5
+     -9
     ],
     "png": "res://kit/props/art/shadow_woodland_standing_stone_broken.png"
    },
@@ -20829,7 +20829,7 @@
     "shadow": {
      "offset": [
       -17,
-      -5
+      -9
      ],
      "png": "res://kit/props/art/shadow_woodland_standing_stone_broken.png"
     }
@@ -20884,7 +20884,7 @@
    "mask": {
     "offset": [
      -17,
-     -5
+     -9
     ],
     "png": "res://kit/props/art/shadow_woodland_standing_stone_lean.png"
    },
@@ -20912,7 +20912,7 @@
     "shadow": {
      "offset": [
       -17,
-      -5
+      -9
      ],
      "png": "res://kit/props/art/shadow_woodland_standing_stone_lean.png"
     }
@@ -20975,7 +20975,7 @@
    "mask": {
     "offset": [
      -29,
-     -5
+     -8
     ],
     "png": "res://kit/props/art/shadow_woodland_standing_stone_low.png"
    },
@@ -21003,7 +21003,7 @@
     "shadow": {
      "offset": [
       -29,
-      -5
+      -8
      ],
      "png": "res://kit/props/art/shadow_woodland_standing_stone_low.png"
     }
@@ -21058,7 +21058,7 @@
    "mask": {
     "offset": [
      -16,
-     -5
+     -9
     ],
     "png": "res://kit/props/art/shadow_woodland_standing_stone_runes.png"
    },
@@ -21086,7 +21086,7 @@
     "shadow": {
      "offset": [
       -16,
-      -5
+      -9
      ],
      "png": "res://kit/props/art/shadow_woodland_standing_stone_runes.png"
     }
@@ -21214,7 +21214,7 @@
    "mask": {
     "offset": [
      -18,
-     -7
+     -13
     ],
     "png": "res://kit/props/art/shadow_woodland_stone_top.png"
    },
@@ -21242,7 +21242,7 @@
     "shadow": {
      "offset": [
       -18,
-      -7
+      -13
      ],
      "png": "res://kit/props/art/shadow_woodland_stone_top.png"
     }
@@ -21295,7 +21295,7 @@
    "mask": {
     "offset": [
      -34,
-     -5
+     -9
     ],
     "png": "res://kit/props/art/shadow_woodland_stump.png"
    },
@@ -21323,7 +21323,7 @@
     "shadow": {
      "offset": [
       -34,
-      -5
+      -9
      ],
      "png": "res://kit/props/art/shadow_woodland_stump.png"
     }

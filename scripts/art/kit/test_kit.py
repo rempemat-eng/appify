@@ -1721,6 +1721,10 @@ class FootprintShadows(unittest.TestCase):
         for pid, vid in self.variants():
             sh, pic, _, _ = self.lay(pid, vid)
             st = self.standing(pid, vid)
+            m = re.match(r'^(?:fence_\w+?|wall_drystone)_(?:stile_)?([nesw]+)$', pid)
+            if m and 's' in m.group(1):
+                # a cell whose run goes on south: its picture's base is the next cell's, which carries it
+                st = [(x, b) for x, b in st if b < self.AT[1] + 12]
             if not st:
                 continue                       # a floating section (a rail between posts) touches nothing
             seen = sum(1 for x, b in st if (sh[b:b + 2, x] > 0).any() and not pic[b:b + 2, x].all())
@@ -1831,6 +1835,54 @@ class FootprintShadows(unittest.TestCase):
             self.assertTrue(all((sh[b:b + 2, x] > 0).any() for x, b in st), pid)
             self.assertGreater(((sh > 0) & ~pic).sum(), 60, pid)
 
+    def test_no_stray_fragment(self):
+        # R2-2: every visible piece of a standing prop's shadow touches its picture (the broken cart's
+        # crates threw a detached 46-texel streak, the muck heap a 16-texel one)
+        from scipy import ndimage as ndi
+        bad = []
+        for pid, vid in self.variants():
+            if pid.startswith(('fence_', 'wall_drystone_')) or pid == 'brackens_fold_ruin':
+                continue                   # a floating rail's shadow lies apart from it by right
+            sh, pic, _, _ = self.lay(pid, vid)
+            vis = (sh > 0) & ~pic
+            lab, n = ndi.label(vis, structure=np.ones((3, 3)))
+            near = ndi.binary_dilation(pic, iterations=1)
+            for i in range(1, n + 1):
+                if not (near & (lab == i)).any():
+                    bad.append('%s %s %d texels' % (pid, vid, (lab == i).sum()))
+        self.assertEqual(bad, [], 'a shadow fragment lies apart from its picture')
+
+    def test_regression_cart_and_muck_heap_throw_no_streak(self):
+        # round 2: a 46-texel streak off the cart's crates (south-west) and a 16-texel one off the heap
+        from scipy import ndimage as ndi
+        for pid, vid in (('brackens_cart_broken', 'still'), ('farm_muck_heap', 'farm_muck_heap')):
+            sh, pic, _, _ = self.lay(pid, vid)
+            vis = (sh > 0) & ~pic
+            lab, n = ndi.label(vis, structure=np.ones((3, 3)))
+            near = ndi.binary_dilation(pic, iterations=1)
+            self.assertTrue(all((near & (lab == i)).any() for i in range(1, n + 1)), pid)
+            # nothing south-west of the picture's lowest standing texel
+            cols = np.nonzero(pic.any(0))[0]
+            low = np.nonzero(pic[:, cols.min():cols.min() + 12].any(1))[0].max()
+            self.assertFalse(vis[low + 8:, :cols.min() + 12].any(), pid)
+
+    def test_regression_the_drove_well_casts_its_mass(self):
+        # R2-2: the well's house stands on the box's back row, behind its trough; its shadow is a column
+        # east of the block, not a thin wedge thrown from the trough's foot
+        from scipy import ndimage as ndi
+        kx, ky = self.CAST
+        sh, pic, (x0, y0), a = self.lay('brackens_drove_well', 'still')
+        rect = self.idx['brackens_drove_well']['collision']
+        vis = (sh > 0) & ~pic
+        east = np.nonzero(pic.any(0))[0].max() + 1
+        back = self.AT[1] + int(rect[1])
+        house = back - (y0 + np.nonzero(a.any(1))[0].min())        # how high the house stands over the back row
+        self.assertGreater(vis[:, east:].sum(), 0.25 * kx * house * (rect[3] + ky * house))
+        # beside the house (above the trough's front), not only south of the trough
+        self.assertGreater(vis[back:self.AT[1] + int(rect[1] + rect[3]), east:].sum(), 100)
+        self.assertGreaterEqual(ndi.distance_transform_edt(vis[:, east:]).max(), 4)   # a mass, not a sliver
+
+
     def test_a_building_casts_nothing_before_its_front(self):
         # eastward-edges 11.6: nothing south of the foot line but the contact under the front
         for pid, vid in self.variants():
@@ -1841,6 +1893,89 @@ class FootprintShadows(unittest.TestCase):
             self.assertFalse((sh[base + 3:] > 0).any(), '%s casts before its front' % pid)
             east = np.nonzero(pic.any(0))[0].max() + 1
             self.assertFalse((sh[self.AT[1]:, east:] > 0).any(), '%s casts south of its foot line east of it' % pid)
+
+
+class FenceRuns(unittest.TestCase):
+    """R2-1 (the audit of #479, round 2): a fence or wall laid cell by cell is one band. Each cell's
+    mask is cut from its run's (its arms run on past the cell before the ramp), so a five-cell run
+    each way, for every fence, wall and stile kind, has a core unbroken along its middle three cells
+    and no rim inside the band (every rim texel lies within the 6-texel rim of the band's edge), in what
+    shows between the run's pictures."""
+
+    AT = (400, 400)
+    SIZE = (800, 800)
+
+    @classmethod
+    def setUpClass(cls):
+        from scripts.art.kit import compose as CO
+        cls.CO = CO
+        cls.idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
+        CO._INDEX = cls.idx
+        CO._MASKS.clear()
+        cls.cell = 24
+
+    def runs(self):
+        for fam in ('fence_picket', 'fence_rail', 'fence_wattle', 'wall_drystone'):
+            yield fam + ' ns', [fam + '_s', fam + '_ns', fam + '_ns', fam + '_ns', fam + '_n'], 'ns'
+            yield fam + ' ew', [fam + '_e', fam + '_ew', fam + '_ew', fam + '_ew', fam + '_w'], 'ew'
+            if fam != 'wall_drystone':
+                yield fam + ' ns posts', [fam + '_s', fam + '_ns', fam + '_ns', fam + '_ns', fam + '_n'], 'ns+post'
+                yield fam + ' ew posts', [fam + '_e', fam + '_ew', fam + '_ew', fam + '_ew', fam + '_w'], 'ew+post'
+        yield 'rail stile ns', ['fence_rail_s', 'fence_rail_ns', 'fence_rail_stile_ns', 'fence_rail_ns', 'fence_rail_n'], 'ns'
+        yield 'rail stile ew', ['fence_rail_e', 'fence_rail_ew', 'fence_rail_stile_ew', 'fence_rail_ew', 'fence_rail_w'], 'ew'
+        yield 'drystone stile ew', ['wall_drystone_e', 'wall_drystone_ew', 'wall_drystone_stile_ew', 'wall_drystone_ew', 'wall_drystone_w'], 'ew'
+
+    def lay(self, ids, way):
+        pcs = []
+        for k, pid in enumerate(ids):
+            vs = self.idx[pid]['variants']
+            v = 'post' if way.endswith('+post') and 'post' in vs and k % 2 else ('plain' if 'plain' in vs else next(iter(vs)))
+            d = (k - 2) * self.cell
+            at = [self.AT[0], self.AT[1] + d] if way.startswith('ns') else [self.AT[0] + d, self.AT[1]]
+            pcs.append({'id': 'r%d' % k, 'piece': pid, 'at': at, 'variant': v})
+        pic = np.zeros(self.SIZE, bool)                    # what the run's pictures cover
+        from PIL import Image
+        for pc in pcs:
+            ve = self.idx[pc['piece']]['variants'][pc['variant']]
+            a = np.asarray(Image.open(os.path.join(S.ROOT, 'game', ve['png'][len('res://'):])).convert('RGBA'))[..., 3] > 0
+            x0, y0 = int(pc['at'][0] - ve['foot'][0]), int(pc['at'][1] - ve['foot'][1])
+            pic[y0:y0 + a.shape[0], x0:x0 + a.shape[1]] |= a
+        return self.CO.shadows(pcs, *self.SIZE), pic
+
+    def test_runs_join_into_one_band(self):
+        from scipy import ndimage as ndi
+        bad = []
+        for name, ids, way in self.runs():
+            for pid in ids:
+                self.assertIn(pid, self.idx, pid)
+            sh, pic = self.lay(ids, way)
+            lo, hi = self.AT[1 if way.startswith('ns') else 0] - 24, self.AT[1 if way.startswith('ns') else 0] + 24
+            win = np.zeros(sh.shape, bool)
+            if way.startswith('ns'):
+                win[lo:hi, :] = True
+            else:
+                win[:, lo:hi] = True
+            if way.startswith('ns'):
+                win[:, :self.AT[0] + 8] = False     # the band east of the run, not the posts' contacts under it
+            win &= ~pic                             # what shows
+            core = (sh == 2) & win
+            along = core.any(1)[lo:hi] if way.startswith('ns') else core.any(0)[lo:hi]
+            if not along.all():
+                bad.append('%s: the core breaks at %d of 48' % (name, (~along).sum()))
+            lab, n = ndi.label(core)
+            near = ndi.binary_dilation(pic, iterations=1)
+            for i in range(1, n + 1):
+                if (lab == i).sum() <= 24 and (near & (lab == i)).any():
+                    continue                   # a pocket of the shadow under a stile, seen between its legs
+                ix = np.nonzero(lab == i)[0 if way.startswith('ns') else 1]
+                if ix.min() > lo or ix.max() < hi - 1:
+                    bad.append('%s: a core piece stops inside the run (%d to %d)' % (name, ix.min() - lo, ix.max() - lo))
+                    break
+            d = ndi.distance_transform_edt(sh > 0)
+            inner = (sh == 1) & win & (d > 6)
+            if inner.any():
+                bad.append('%s: %d rim texels inside the band' % (name, inner.sum()))
+        self.assertEqual(bad, [], 'a run laid cell by cell is not one band')
 
 
 class Sun(unittest.TestCase):

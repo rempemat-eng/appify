@@ -81,6 +81,8 @@ CLOSE = 7                # the closing that joins the projected texels into one 
 RIMS = (3, 6)            # the rim, 1 world px on a small shadow and 2 on a large one (house-style 6)
 HALF = 12                # half a cell: a fence or wall arm's reach from the foot
 BUILDING_ROLES = ('house', 'coop', 'shelter', 'sty', 'stall')
+RUN_ON = 48              # how far a fence's or wall's arms run on past its cell before the cut (R2-1)
+BLOCK_DEPTH = 30         # a solid box this deep (texels) or more casts as a block, swept up its height (R2-2)
 CAST_HEIGHT = {'brackens_fold_ruin': 27}   # authored: the ruin's walls stand about 9 world px
 
 
@@ -131,7 +133,8 @@ GATE_NS = re.compile(r'^(.*)_gate_ns$')
 
 def shadow_rule(p: dict) -> str:
     """Which way a piece's shadow is made: 'boundary' (a fence or wall cell), 'gate_ns' (a gate in a
-    north-south run), 'ruin' (an enclosure with an authored cast height), 'building' or 'silhouette'."""
+    north-south run), 'ruin' (an enclosure with an authored cast height), 'building', 'block' (a solid
+    box BLOCK_DEPTH deep or more: the drove well) or 'silhouette'."""
     if BOUNDARY.match(p['id']):
         return 'boundary'
     if GATE_NS.match(p['id']):
@@ -140,6 +143,9 @@ def shadow_rule(p: dict) -> str:
         return 'ruin'
     if (p.get('placement') or {}).get('role') in BUILDING_ROLES:
         return 'building'
+    rect = _rect(p)
+    if rect is not None and rect[3] >= BLOCK_DEPTH:
+        return 'block'
     return 'silhouette'
 
 
@@ -203,39 +209,54 @@ def footprint_shadow(p: dict, vid: str, out_name: str) -> dict:
         x0, x1 = max(x0, pic0), min(x1, pic1)
     else:
         x0 = x1 = None
-    cast_r, cast_c = [np.zeros(0, int)], [np.zeros(0, int)]
+    # the shapes, each closed and ramped on its own and laid by the deepest step: 'cast' (the
+    # silhouette's throw), 'band' (a fence's or wall's arms: cut to the cell, see below) and 'post'
+    layers = {}
+
+    def put(layer, r, c):
+        R, C = layers.setdefault(layer, ([], []))
+        R.append(r)
+        C.append(c)
 
     def silhouette(cols_ok, base):
         ys, xs = np.nonzero(a & cols_ok[None, :])
         h = base[xs] - 1 - ys
-        cast_r.append(np.floor(base[xs] - 0.5 + ky * h).astype(int))
-        cast_c.append(np.floor(xs + 0.5 + kx * h).astype(int))
+        put('cast', np.floor(base[xs] - 0.5 + ky * h).astype(int), np.floor(xs + 0.5 + kx * h).astype(int))
 
-    def band(rr_rel, cc_rel, heights):
+    def band(rr_rel, cc_rel, heights, layer='cast'):
         r, c = _sweep(rr_rel, cc_rel, heights)
-        cast_r.append(r - sy0)
-        cast_c.append(c - sx0)
+        put(layer, r - sy0, c - sx0)
 
     segmented = False
     if rule == 'boundary':
         fam, stile, letters = BOUNDARY.match(p['id']).groups()
         lib = _lib()
-        twin = lib.get(fam + ('_stile' if stile else '') + '_ew') or p
+        twin = lib[fam + '_ew']                               # the run's section: its rails, its wall
+        tall = lib.get(fam + '_stile_ew') if stile else twin  # what stands at the junction: a post, a stile
         rns, rew = _rect(lib[fam + '_ns']), _rect(lib[fam + '_ew'])
         hw, ey0, ey1 = -rns[0], rew[1], rew[1] + rew[3]
         twin_v = vid if any(t['id'] == vid for t in twin['variants']) else \
             ('plain' if any(t['id'] == 'plain' for t in twin['variants']) else None)
         rails = _height_rows(twin, twin_v, wide=0.3)
+        # each arm runs on past the cell (as the run it belongs to does) and the band is cut back to the
+        # cell afterwards (R2-1): so a cell's core and rim are the run's, and a run laid cell by cell joins
+        # into one band with no rim at the seams
+        far = HALF + RUN_ON
         boxes = [(-hw, ey0, hw, ey1)]
-        boxes += [b for k, b in (('n', (-hw, -HALF, hw, ey0)), ('s', (-hw, ey1, hw, HALF)),
-                                 ('e', (hw, ey0, HALF, ey1)), ('w', (-HALF, ey0, -hw, ey1))) if k in letters]
+        boxes += [b for k, b in (('n', (-hw, -far, hw, ey0)), ('s', (-hw, ey1, hw, far)),
+                                 ('e', (hw, ey0, far, ey1)), ('w', (-far, ey0, -hw, ey1))) if k in letters]
         for b in boxes:
-            band(*_box(*b, dx, dy), rails)
+            band(*_box(*b, dx, dy), rails, 'band')
+        cut = letters
         jc = np.zeros(W, bool)
         jc[max(0, int(np.floor(fx - hw))):int(np.ceil(fx + hw))] = True
-        if (grounded & jc).any():                            # a post (or the wall) stands at the junction
+        if stile:
+            # the stile's steps stand across the run, as wide as its picture, as high as its east-west twin
+            band(*_box(min(-hw, pic0 - fx), ey0, max(hw, pic1 - fx), ey1, dx, dy),
+                 range(0, max(_height_rows(tall, None)) + 1), 'post')
+        elif (grounded & jc).any():                          # a post (or the wall) stands at the junction
             post = 'post' if any(t['id'] == 'post' for t in twin['variants']) else twin_v
-            band(*_box(-hw, ey0, hw, ey1, dx, dy), range(0, max(_height_rows(twin, post)) + 1))
+            band(*_box(-hw, ey0, hw, ey1, dx, dy), range(0, max(_height_rows(twin, post)) + 1), 'post')
     elif rule == 'gate_ns':
         lib = _lib()
         twin = lib[GATE_NS.match(p['id']).group(1) + '_gate_ew']
@@ -263,32 +284,89 @@ def footprint_shadow(p: dict, vid: str, out_name: str) -> dict:
         ys, xs = np.nonzero(f)
         band(ys + sy0, xs + sx0, range(0, hgt + 1))
         segmented = True
-    elif rule == 'building' and rect is not None:
-        # a roofed building: its ground box swept up its height (the picture's above the foot, less the
-        # box's depth that the picture shows above its front), cut below at the front (11.6), so what shows
-        # is a column east of it from its back to its front
+    elif rule in ('building', 'block') and rect is not None:
+        # a roofed building or a deep solid block (the drove well): its ground box swept up its height (the
+        # picture's above the foot, less the box's depth that the picture shows above its front); a
+        # building's is cut below at the front (11.6), so what shows is a column east of it from its back to
+        # its front
         top = int(np.nonzero(a.any(1))[0].min())
-        band(*_box(rect[0], rect[1], rect[0] + rect[2], rect[1] + rect[3], dx, dy),
+        bx0, bx1 = rect[0], rect[0] + rect[2]
+        if rule == 'block' and x0 is not None:
+            bx0, bx1 = min(bx0, x0 - fx), max(bx1, x1 - fx)      # the block as wide as it stands
+        band(*_box(bx0, rect[1], bx1, rect[1] + rect[3], dx, dy),
              range(0, max(1, FY - top - int(round(rect[3]))) + 1))
+        if rule == 'block':
+            # and what stands above the box's back row (the well's house behind its trough) stands on that
+            # row: thrown from there, not from the trough's foot (R2-2: it was a thin wedge south of the trough)
+            back = int(np.floor(fy + rect[1]))
+            ys, xs = np.nonzero(a[:back])
+            h = back - 1 - ys
+            put('cast', np.floor(back - 0.5 + ky * h).astype(int), np.floor(xs + 0.5 + kx * h).astype(int))
     else:
         silhouette(has, G)
-    cr, cc = np.concatenate(cast_r), np.concatenate(cast_c)
+    pts = {k: (np.concatenate(R), np.concatenate(C)) for k, (R, C) in layers.items()}
+    allr = np.concatenate([r for r, _ in pts.values()] + [np.zeros(0, int)])
+    allc = np.concatenate([c for _, c in pts.values()] + [np.zeros(0, int)])
     # the canvas, in sprite texels, padded past the closing on every side (B6)
     pad = CLOSE + 3
-    r0 = min([cr.min()] if len(cr) else [FY]) - pad
-    r1 = max([cr.max()] if len(cr) else [FY]) + pad + 1
-    c0 = min([cc.min()] if len(cc) else [pic0]) - pad
-    c1 = max([cc.max()] if len(cc) else [pic1]) + pad + 1
+    r0 = (allr.min() if len(allr) else FY) - pad
+    r1 = (allr.max() if len(allr) else FY) + pad + 1
+    c0 = (allc.min() if len(allc) else pic0) - pad
+    c1 = (allc.max() if len(allc) else pic1) + pad + 1
     r0, r1 = min(r0, int(G.min()) - 8 - pad), max(r1, int(G.max()) + 8 + pad)
     c0, c1 = min(c0, pic0 - pad), max(c1, pic1 + pad)
-    m = np.zeros((r1 - r0, c1 - c0), bool)
-    m[cr - r0, cc - c0] = True
-    if m.any():
-        m = ndi.binary_dilation(m, iterations=CLOSE)
-        m = ndi.binary_fill_holes(m)
-        m = ndi.binary_erosion(m, iterations=CLOSE)
-        m |= ndi.gaussian_filter(m.astype(float), 1.2) > 0.5   # a hem's teeth smoothed, nothing taken away
-    out = _ramp(m, RIMS[1] if m.sum() > 600 else RIMS[0])
+    out = np.zeros((r1 - r0, c1 - c0), np.uint8)
+    def closed(cr, cc):
+        m = np.zeros((r1 - r0, c1 - c0), bool)
+        m[cr - r0, cc - c0] = True
+        if m.any():
+            m = ndi.binary_dilation(m, iterations=CLOSE)
+            m = ndi.binary_fill_holes(m)
+            m = ndi.binary_erosion(m, iterations=CLOSE)
+            m |= ndi.gaussian_filter(m.astype(float), 1.2) > 0.5   # a hem's teeth smoothed, nothing taken away
+        return m
+
+    post_m = None
+    if 'band' in pts and 'post' in pts:
+        # a post or stile is ramped with the run's band (no rim between them) and keeps its whole shadow
+        # past the cut; the neighbours' bands lie under it at the same or a lighter step
+        post_m = closed(*pts.pop('post'))
+        post_keep = ndi.binary_dilation(post_m, structure=np.ones((3, 3)), iterations=RIMS[1])   # with its rim's reach into the band
+        pts['band'] = (np.concatenate([pts['band'][0], np.nonzero(post_m)[0] + r0]),
+                       np.concatenate([pts['band'][1], np.nonzero(post_m)[1] + c0]))
+    cell = np.ones((r1 - r0, c1 - c0), bool)
+    if rule == 'boundary':
+        # the cell: the rows north of it belong to the cell north, and so on (the run's neighbours each
+        # carry their own share), so the run's cells meet edge to edge
+        R = np.arange(r0, r1)[:, None] + sy0
+        C = np.arange(c0, c1)[None, :] + sx0
+        if 'n' in cut:
+            cell &= R >= -HALF
+        if 's' in cut:
+            cell &= R < HALF
+        if 'w' in cut:
+            cell &= C >= -HALF
+        if 'e' in cut:
+            cell &= C < HALF
+    for k, (cr, cc) in sorted(pts.items()):
+        m = closed(cr, cc)
+        if not m.any():
+            continue
+        if k == 'cast' and rule == 'silhouette':
+            # a fragment of the throw that touches nothing of the picture is dropped (R2-2: a stray streak
+            # off the broken cart's crates, the muck heap's)
+            pic_c = np.zeros_like(m)
+            ys_, xs_ = np.nonzero(a)
+            ok_ = (ys_ >= r0) & (ys_ < r1) & (xs_ >= c0) & (xs_ < c1)
+            pic_c[ys_[ok_] - r0, xs_[ok_] - c0] = True
+            pic_c = ndi.binary_dilation(pic_c, iterations=1)
+            lab, n = ndi.label(m, structure=np.ones((3, 3)))
+            keep = np.unique(lab[pic_c & m])
+            m = np.isin(lab, keep[keep > 0])
+        lv = _ramp(m, RIMS[1] if (k == 'band' or m.sum() > 600) else RIMS[0])
+        if k == 'band':
+            lv = np.where(cell | (post_keep if post_m is not None else False), lv, 0).astype(np.uint8)
+        out = np.maximum(out, lv)
     # the contact, centred on the base line: CONTACT texels show below it in the core tone
     if x0 is not None:
         Y, X = np.mgrid[r0:r1, c0:c1]
@@ -309,16 +387,27 @@ def footprint_shadow(p: dict, vid: str, out_name: str) -> dict:
             if len(sgm) and grounded[sgm].any():
                 segs.append((float(max(x0, sgm.min())), float(min(x1, sgm.max() + 1))))
         for s0, s1 in segs:
-            cx, rx = (s0 + s1) / 2.0, max(0.5, (s1 - s0) / 2.0)
-            ry = CONTACT + 1 + (1 if rect is not None and rect[3] >= 10 and s1 - s0 >= 30 else 0)
+            if rule == 'boundary':
+                # a fence's or wall's contact is an even strip, so a run's cells meet without a scallop
+                ry, east, flat = CONTACT + 1, 0.0, True
+            else:
+                # the contact's depth grows with what stands there (1 to 2 world px below the base at its
+                # middle, R2: as grounded as main's pools at play scale), and the light from the upper left
+                # carries it on east a little past the base
+                ry = CONTACT + 1 + int(np.clip(round(0.2 * (s1 - s0)) - CONTACT, 0, CONTACT + 1))
+                east, flat = (round(kx * 3 * ry) if rule != 'building' else 0.0), False
+            s1e = s1 + east
+            cx, rx = (s0 + s1e) / 2.0, max(0.5, (s1e - s0) / 2.0)
             t = np.minimum(1.0, np.abs(X + 0.5 - cx) / rx)
-            prof = (1.0 - t ** 3) ** (1.0 / 3.0)
+            prof = np.ones_like(t) if flat else (1.0 - t ** 3) ** (1.0 / 3.0)
             d = np.abs(Y + 0.5 - base)
-            inside = (X + 0.5 >= s0) & (X + 0.5 <= s1)
+            inside = (X + 0.5 >= s0) & (X + 0.5 <= s1e)
             out = np.maximum(out, np.where(inside & (d <= ry * prof), 1, 0).astype(np.uint8))
             out = np.maximum(out, np.where(inside & (d <= (ry - 1) * prof), 2, 0).astype(np.uint8))
+    if rule == 'boundary':
+        out = np.where(cell | (post_keep if post_m is not None else False), out, 0).astype(np.uint8)
     # nothing west: of the footprint where the piece stands, else of the picture
-    west = x0 if (x0 is not None and rule in ('silhouette', 'building')) else pic0
+    west = x0 if (x0 is not None and rule in ('silhouette', 'building', 'block')) else pic0
     out[:, :max(0, int(np.ceil(west)) - c0)] = 0
     if rule == 'building':
         # nothing before the front (eastward-edges 11.6): under the picture the contact only, east of it
@@ -326,6 +415,17 @@ def footprint_shadow(p: dict, vid: str, out_name: str) -> dict:
         cols = np.arange(c0, c1)
         lim = np.where((cols >= pic0) & (cols < pic1), G[np.clip(cols, 0, W - 1)] + CONTACT, FY)
         out[np.arange(r0, r1)[:, None] >= lim[None, :]] = 0
+    if rule in ('silhouette', 'block', 'building'):
+        # what shows of the shadow is one with the picture: a piece seen apart from it (a stack's top thrown
+        # past a stake, a crate's streak) is dropped (R2-2)
+        pic_c = np.zeros(out.shape, bool)
+        ys_, xs_ = np.nonzero(a)
+        ok_ = (ys_ >= r0) & (ys_ < r1) & (xs_ >= c0) & (xs_ < c1)
+        pic_c[ys_[ok_] - r0, xs_[ok_] - c0] = True
+        vis = (out > 0) & ~pic_c
+        lab, n = ndi.label(vis, structure=np.ones((3, 3)))
+        keep = np.unique(lab[ndi.binary_dilation(pic_c, iterations=1) & vis])
+        out = np.where(vis & ~np.isin(lab, keep[keep > 0]), 0, out).astype(np.uint8)
     ys, xs = np.nonzero(out)
     out = out[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
     Image.fromarray(out, 'L').save(os.path.join(OUT, 'art', out_name))
