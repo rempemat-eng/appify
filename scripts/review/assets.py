@@ -256,6 +256,10 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         findings += __import__('scripts.review.cluster_noise', fromlist=['check']).check(rgba[..., :3], alpha, H, subject)
         findings += __import__('scripts.review.flat_cylinder', fromlist=['check']).check(rgb_n, alpha, H, subject)
         findings += __import__('scripts.review.checker_dither', fromlist=['check']).check(rgba, H, subject)
+        # Matt's 12 Nov Frostline misses: stamped snow chips, a pole of a tree, a deck drawn front-on,
+        # rock drawn as masonry, stairs that read as a ladder or a wall, a fall cut as a rectangle (forms.py)
+        from . import forms as F
+        findings += F.check_asset(rgb_n, alpha, H, subject)
         from . import edges as E
         if any(k in subject.split('/')[-1] for k in E.ORGANIC_SPRITES):
             # a laid-out piece of ground drawn as a sprite (beds, a pond): its outline on the soft grid

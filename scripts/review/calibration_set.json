@@ -1,5 +1,5 @@
 {
- "_about": "Matt's flagged faults (25 Oct) as the calibration set for both gates. The screenshots are Matt's and stay local (never committed): pass their folder with --flagged. Boxes are in art px of each picture after core.to_native (the woodland shot is 3066 x 1740 at 3.14 screen px a texel, Retina; the crops likewise; 49583f7d is 6.28). Each fault lists what must catch it: 'screen' = the scene gate's image detectors on Matt's picture, 'zone' = the scene gate's data checks on the Godot zone, 'asset' = the asset gate on the asset that draws it. A fault counts as caught when at least one listed route finds it with a listed detector (in the box, for screen and zone routes). Asset refs are pinned to the commit Matt saw ('zone/name@commit', 'file:<repo path>@commit|x0,y0,x1,y1' for a frame of a sheet), so later redraws do not change the calibration. Kit pieces are drawn from the generator, so the two Matt saw (W6, W10) are kept as rendered at main 561235c2 under scripts/review/calibration/kit/ (pinned 26 Oct, fix queue 2). W15 is not Matt's: the plunge pool's foam an independent detail-auditor failed on 4 Nov (docs/reviews/2026-11-04-woodland-water.md), frozen from 4881fee7 as scripts/review/calibration/woodland_plunge_foam_4881fee7.png (ground.png 140..420 x 740..960), so the foam check never loses it.",
+ "_about": "Matt's flagged faults (25 Oct) as the calibration set for both gates. The screenshots are Matt's and stay local (never committed): pass their folder with --flagged. Boxes are in art px of each picture after core.to_native (the woodland shot is 3066 x 1740 at 3.14 screen px a texel, Retina; the crops likewise; 49583f7d is 6.28). Each fault lists what must catch it: 'screen' = the scene gate's image detectors on Matt's picture, 'zone' = the scene gate's data checks on the Godot zone, 'asset' = the asset gate on the asset that draws it. A fault counts as caught when at least one listed route finds it with a listed detector (in the box, for screen and zone routes). Asset refs are pinned to the commit Matt saw ('zone/name@commit', 'file:<repo path>@commit|x0,y0,x1,y1' for a frame of a sheet), so later redraws do not change the calibration. Kit pieces are drawn from the generator, so the two Matt saw (W6, W10) are kept as rendered at main 561235c2 under scripts/review/calibration/kit/ (pinned 26 Oct, fix queue 2). W15 is not Matt's: the plunge pool's foam an independent detail-auditor failed on 4 Nov (docs/reviews/2026-11-04-woodland-water.md), frozen from 4881fee7 as scripts/review/calibration/woodland_plunge_foam_4881fee7.png (ground.png 140..420 x 740..960), so the foam check never loses it. F1 to F13 (12 Nov) are Matt's Frostline misses that an independent detail-auditor had passed: his screenshots frost_hut_stream.png, frost_fall_step.png and frost_stair.png (local only; their scales are pinned in 'images' because they are smoothed zooms core.to_native cannot measure), the art pinned to #478's round 3 head bf525d25, and the further misses of rounds 4 and 5 pinned to 0b122ffe and 0ef53b94 (F11, F12, F13). 'kitplan' = kit_overlap on a kit zone's plan at a commit. A fault with 'open' has no detector yet: the reason says what was measured; the auditors judge it by eye (docs/review-agents.md, Matt's 12 Nov misses) and it does not count in the recall gate.",
  "H": 74,
  "faults": [
   {
@@ -743,6 +743,227 @@
    "screen": [
     "detail.debug_overlay"
    ]
+  },
+  {
+   "id": "F1",
+   "image": "frost_hut_stream.png",
+   "what": "conifer snow drawn as one stamped white chip on every bough",
+   "box": [
+    110,
+    0,
+    330,
+    500
+   ],
+   "screen": [
+    "detail.snow_stamp"
+   ],
+   "asset": {
+    "file:game/kit/props/art/frost/frost_pine.png@bf525d25": [
+     "detail.snow_stamp"
+    ],
+    "file:game/kit/props/art/frost/frost_spruce.png@bf525d25": [
+     "detail.snow_stamp"
+    ],
+    "file:game/kit/props/art/frost/frost_pine_squat.png@bf525d25": [
+     "detail.snow_stamp"
+    ]
+   }
+  },
+  {
+   "id": "F2",
+   "image": "frost_hut_stream.png",
+   "what": "a spruce absurdly tall and thin beside the hut",
+   "box": [
+    115,
+    0,
+    205,
+    480
+   ],
+   "asset": {
+    "file:game/kit/props/art/frost/frost_spruce.png@bf525d25": [
+     "logic.tree_pole",
+     "logic.scale"
+    ]
+   }
+  },
+  {
+   "id": "F3",
+   "image": "frost_hut_stream.png",
+   "what": "trees drawn over the hut and over each other",
+   "box": [
+    0,
+    100,
+    220,
+    500
+   ],
+   "kitplan": {
+    "frostline@bf525d25": [
+     "logic.tree_overlap"
+    ]
+   }
+  },
+  {
+   "id": "F4",
+   "image": "frost_hut_stream.png",
+   "what": "the river in blotchy camouflage depth patches",
+   "box": [
+    170,
+    60,
+    340,
+    560
+   ],
+   "screen": [
+    "detail.water_flat",
+    "detail.flat"
+   ],
+   "open": "no detector separates it: inside the water, mid-size tone patches a H^2 measure 2.7 here against 2.2 on the approved woodland ground and 2.1 on the pilot golden"
+  },
+  {
+   "id": "F5",
+   "image": "frost_hut_stream.png",
+   "what": "a uniform row of round lobes along the river bank",
+   "box": [
+    170,
+    60,
+    340,
+    560
+   ],
+   "screen": [
+    "logic.water_staircase",
+    "detail.ragged_edge"
+   ],
+   "open": "no detector separates it: bank bumps measure 4 lobes with length CV 0.26 here against 0.27 on the approved woodland ground"
+  },
+  {
+   "id": "F6",
+   "image": "frost_hut_stream.png",
+   "what": "over-saturated blue water that does not sit in the snow palette",
+   "box": [
+    170,
+    0,
+    340,
+    560
+   ],
+   "screen": [
+    "detail.water_palette"
+   ],
+   "open": "no clean winter reference to set a line: the water chroma here (86) is below the old web snow zones (89) and the approved woodland water (102)"
+  },
+  {
+   "id": "F7",
+   "image": "frost_hut_stream.png",
+   "what": "the footbridge drawn front-on like a fence, the wrong projection",
+   "box": [
+    215,
+    345,
+    340,
+    410
+   ],
+   "asset": {
+    "file:game/kit/props/art/frost/frost_footbridge.png@bf525d25": [
+     "logic.deck_upright"
+    ]
+   }
+  },
+  {
+   "id": "F8",
+   "image": "frost_fall_step.png",
+   "what": "a frozen tarn and icefall beside open liquid water",
+   "box": [
+    140,
+    0,
+    380,
+    310
+   ],
+   "screen": [
+    "logic.water_state"
+   ]
+  },
+  {
+   "id": "F9",
+   "image": "frost_fall_step.png",
+   "what": "the rock face a wall of round pillow stones",
+   "box": [
+    0,
+    170,
+    437,
+    290
+   ],
+   "asset": {
+    "file:game/kit/props/art/frost/frost_rockface_plain.png@bf525d25": [
+     "detail.masonry_rock"
+    ],
+    "file:game/kit/props/art/frost/frost_rockface_short_plain.png@bf525d25": [
+     "detail.masonry_rock"
+    ],
+    "file:game/kit/props/art/frost/frost_rockface_east.png@bf525d25": [
+     "detail.masonry_rock"
+    ]
+   }
+  },
+  {
+   "id": "F10",
+   "image": "frost_stair.png",
+   "what": "the stair reads as a brick wall, not steps",
+   "box": [
+    20,
+    10,
+    150,
+    150
+   ],
+   "asset": {
+    "file:game/kit/props/art/frost/frost_rock_stair.png@bf525d25": [
+     "detail.stair_read"
+    ]
+   }
+  },
+  {
+   "id": "F11",
+   "what": "the stair reads as a ladder of strips (rounds 4 and 5)",
+   "asset": {
+    "file:game/kit/props/art/frost/frost_rock_stair.png@0b122ffe": [
+     "detail.stair_read",
+     "detail.flat"
+    ],
+    "file:game/kit/props/art/frost/frost_rock_stair.png@0ef53b94": [
+     "detail.stair_read",
+     "detail.flat"
+    ]
+   }
+  },
+  {
+   "id": "F12",
+   "what": "the rock face a regular brick grid (rounds 4 and 5)",
+   "asset": {
+    "file:game/kit/props/art/frost/frost_rockface_plain.png@0b122ffe": [
+     "detail.masonry_rock"
+    ],
+    "file:game/kit/props/art/frost/frost_rockface_plain.png@0ef53b94": [
+     "detail.masonry_rock"
+    ]
+   }
+  },
+  {
+   "id": "F13",
+   "image": "frost_fall_step.png",
+   "what": "the icefall a rectangle cut out of the face (every round)",
+   "box": [
+    195,
+    175,
+    295,
+    285
+   ],
+   "asset": {
+    "file:game/kit/props/art/frost/frost_icefall.png@bf525d25": [
+     "detail.fall_slab"
+    ],
+    "file:game/kit/props/art/frost/frost_icefall.png@0b122ffe": [
+     "detail.fall_slab"
+    ],
+    "file:game/kit/props/art/frost/frost_icefall.png@0ef53b94": [
+     "detail.fall_slab"
+    ]
+   }
   }
  ],
  "clean": {
@@ -803,6 +1024,18 @@
  "images": {
   "4081df8a-image.png": {
    "biome": "cellar"
+  },
+  "frost_hut_stream.png": {
+   "biome": "snow",
+   "scale": 3.0
+  },
+  "frost_fall_step.png": {
+   "biome": "snow",
+   "scale": 2.0
+  },
+  "frost_stair.png": {
+   "biome": "snow",
+   "scale": 4.67
   }
  }
 }
