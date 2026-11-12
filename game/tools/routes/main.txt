@@ -57,10 +57,10 @@ goto 372 1150 10
 talk StoneSign
 expect said 40 Glint
 expect quest woodland_stones done
-expect glint 40
+expect glint 46
 expect hud Someone has walked it since the storm
 restart
-expect glint 40
+expect glint 46
 expect quest woodland_stones done
 
 step Hale on the east path: she does not vanish as her line closes
@@ -97,10 +97,10 @@ expect prompt Talk
 talk Moss
 expect said And Hale with you
 expect quest road_to_crossroads done
-expect glint 50
+expect glint 56
 expect hud Talk to Hale by her smithy
 restart
-expect glint 50
+expect glint 56
 expect quest road_to_crossroads done
 
 step Hale by her smithy
@@ -117,12 +117,12 @@ expect prompt Restore
 talk SmithySite
 expect said You pay 30 Glint
 expect restored forge
-expect glint 20
+expect glint 26
 expect quest cold_forge active report
 shot 05_forge_lit
 restart
 expect restored forge
-expect glint 20
+expect glint 26
 expect quest cold_forge active report
 
 step Hale at her anvil opens the hatch
@@ -144,11 +144,18 @@ restart
 expect zone undercroft
 expect quest under_the_stones active rooms
 
-step downed in the first room: up again at the stair with every heart, the quest kept
+step downed in the first room: up again at the stair with every heart, the quest kept; a fifth of the 26 Glint carried lies where the player fell
+# (a few steps into the hall first: a cache left on the stair itself is picked up again on getting up there)
+goto 250 400 16
 down 60
 expect zone undercroft
 expect hp 5
 expect quest under_the_stones active rooms
+expect cached 5
+expect glint 21
+restart
+expect cached 5
+expect glint 21
 
 step leave the Undercroft mid-fight and come back
 door 12 408 woodland
@@ -156,13 +163,17 @@ expect at 330 1080 14
 door 336 1020 undercroft
 expect quest under_the_stones active rooms
 
-step free the rooms
+step free the rooms: 3 Glint a creature, and the cache is picked up again (every cache, if the fight cost another)
 fight 300
 expect flag camp_cleared:undercroft_rooms
 expect quest under_the_stones active thornback
+caches
+expect cached 0
+expect glint 41
 restart
 expect zone undercroft
 expect flag camp_cleared:undercroft_rooms
+expect glint 41
 
 # The plate lies south of the channel, off the straight walk from the doorway to the lever (11 Nov); feet
 # anywhere on its slab press it, so walking east along the doorway's axis first does too. The walk here goes
@@ -195,16 +206,25 @@ down 120
 expect zone undercroft
 expect hp 5
 expect flag undercroft_seal_open
+expect cached 8
+expect glint 33
 
 step free the Thornback
-goto 1770 408 16
+# well inside the arena: after a downing the fight's pilot walks back to within 30 texels of here, and from
+# 1770 that could stop in the doorway's rows west of x 1752, which stay the door: its arrows glance there and
+# the Thornback heals 3 s after the player has left (Matt, 11 Nov)
+goto 1830 408 12
 fight 360
 expect flag camp_cleared:thornback
 expect quest under_the_stones active shard
 shot 07_thornback_freed
+caches
+expect cached 0
+expect glint 51
 restart
 expect flag camp_cleared:thornback
 expect quest under_the_stones active shard
+expect glint 51
 
 step the stone figure and the great shard
 goto 2160 262 8
@@ -217,7 +237,11 @@ talk CircleShard
 expect said You wrap the shard
 expect flag shard_taken:woodland
 expect quest under_the_stones active lantern
+# back to the figure the way the first visit came, from the west (from the shard, straight north, the walk
+# once stopped short of its reach and the talk found nothing in reach on main's CI)
+goto 2100 262 8
 goto 2160 262 8
+expect prompt Look
 talk CairnStatue
 expect said glow faintly amber
 restart
@@ -231,12 +255,12 @@ talk ShardLantern
 expect said You lift the shard
 expect flag shard_home:woodland
 expect quest under_the_stones done
-expect glint 80
+expect glint 111
 expect hud Talk to Moss at the stall
 shot 08_lantern_lit
 restart
 expect flag shard_home:woodland
-expect glint 80
+expect glint 111
 
 step Home again: the Ferns' door and Ada
 goto 1152 830 10
@@ -248,16 +272,16 @@ expect prompt Restore
 talk FernSite
 expect said You pay 20 Glint
 expect restored fern_cottage
-expect glint 60
+expect glint 91
 goto 1492 1346 10
 talk Ada
 expect said Our door
 expect quest home_again done
-expect glint 85
+expect glint 116
 expect hud Morel is waiting outside his herbalist's
 restart
 expect quest home_again done
-expect glint 85
+expect glint 116
 
 step Moss's loaf waits for the Col Path: nothing half-starts
 goto 1152 830 10
@@ -278,7 +302,7 @@ expect prompt Restore
 talk ApothecarySite
 expect said You pay 40 Glint
 expect restored apothecary
-expect glint 45
+expect glint 76
 goto 600 1096 10
 talk Morel
 expect said A roof!
@@ -300,11 +324,11 @@ expect prompt Rest
 talk HutBed
 expect said swollen shut
 expect hp 5
-expect glint 45
+expect glint 76
 restart
 expect quest a1_the_torn_roof done
 expect restored apothecary
-expect glint 45
+expect glint 76
 expect banner none
 expect hud The Col Path is still buried
 end

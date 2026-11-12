@@ -9,7 +9,7 @@ goto 640 1392 20
 fight 180
 goto 372 1150 10
 talk StoneSign
-expect glint 40
+expect glint 46
 expect quest road_to_crossroads none
 
 step Crossroads before Hale: nobody at the smithy, but its mark can be paid (as recorded)
@@ -21,7 +21,7 @@ expect prompt Restore
 talk SmithySite
 expect said an ember is still alive
 expect restored forge
-expect glint 10
+expect glint 16
 expect quest cold_forge none
 goto 1530 936 10
 expect focus none
@@ -56,7 +56,7 @@ goto 1152 830 10
 talk Moss
 expect said And Hale with you
 expect quest road_to_crossroads done
-expect glint 20
+expect glint 26
 goto 1530 936 10
 expect focus HaleForge
 talk HaleForge

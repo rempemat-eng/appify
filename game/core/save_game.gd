@@ -56,6 +56,8 @@ static func fresh() -> Dictionary:
 		"tracked": "",
 		"player": {"hp": 5, "max_hp": 5},
 		"village": {"restored": {}},
+		"paid": {},          # creatures that have paid their Glint (core/glint_cache.gd), "<camp>/<name>": true
+		"caches": [],        # Glint left where the player went down: {zone, x, y, glint}
 		"settings": {"reduced_motion": false, "pixel_scale": "fill"},
 	}
 
@@ -157,6 +159,9 @@ func _migrate(doc: Dictionary) -> Dictionary:
 	_fill_missing(out, fresh())
 	out.version = VERSION
 	out.glint = int(out.glint)
+	for cache: Dictionary in out.caches:
+		for key: String in ["x", "y", "glint"]:
+			cache[key] = int(cache[key])
 	out.player.hp = int(out.player.hp)
 	out.player.max_hp = int(out.player.max_hp)
 	for r in out.village.restored:
@@ -169,7 +174,7 @@ func _fill_missing(out: Dictionary, defaults: Dictionary) -> void:
 	for key in defaults:
 		if not out.has(key):
 			var value: Variant = defaults[key]
-			out[key] = value.duplicate(true) if value is Dictionary else value
+			out[key] = value.duplicate(true) if (value is Dictionary or value is Array) else value
 		elif defaults[key] is Dictionary:
 			_fill_missing(out[key], defaults[key])
 
@@ -184,7 +189,16 @@ func _document_error(doc: Dictionary) -> Error:
 	for key in ["zone", "spawn", "tracked"]:
 		if doc.has(key) and not doc[key] is String:
 			return ERR_INVALID_DATA
-	for key in ["flags", "quests", "player", "village", "settings"]:
+	if doc.has("caches"):
+		if not doc.caches is Array:
+			return ERR_INVALID_DATA
+		for cache: Variant in doc.caches:
+			if not cache is Dictionary or not cache.get("zone") is String:
+				return ERR_INVALID_DATA
+			for key: String in ["x", "y", "glint"]:
+				if not _whole_number(cache.get(key)):
+					return ERR_INVALID_DATA
+	for key in ["flags", "quests", "player", "village", "settings", "paid"]:
 		if doc.has(key) and not doc[key] is Dictionary:
 			return ERR_INVALID_DATA
 	if doc.has("glint") and not _whole_number(doc.glint):
