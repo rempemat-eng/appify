@@ -40,6 +40,8 @@ extends Node
 const WalkGrid := preload("res://tools/walk_grid.gd")
 const STUCK_AFTER := 9
 const MAX_DOWNS := 4
+const DOOR_MARGIN := 36.0   # texels the fight pilot keeps between the player and an open door's trigger
+const DODGE_REACH := 140.0  # how far a dodge may carry the player: a roll (about 100 texels) and the steps after it
 
 var route_path := ""
 var out_dir := "user://playtest"
@@ -61,6 +63,11 @@ var _grid_zone: Node = null
 var _boss_attacks := 0          # the Thornback pilot (`_boss_turn`): wind-ups seen, the one last rolled for
 var _boss_rolled_for := -1
 var _boss_last := ""
+var _doors: Array = []          # the current zone's Door nodes (`_door_rects`), found once per zone
+var _doors_zone: Node = null
+var _fighting := false         # while `fight` runs, `_process` keeps the nearest the player came to a door
+var _fight_gap := 1e9
+var _door_turns := 0           # how often `_door_safe` turned the pilot from a door (the FIGHT line logs it)
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -119,6 +126,8 @@ func _process(_d: float) -> void:
 		p.downed.connect(func() -> void:
 			_downs += 1
 			out("  DOWNED"))
+	if _fighting and p != null and p.is_inside_tree():
+		_fight_gap = minf(_fight_gap, _door_gap(p.global_position))
 	if _busy or p == null:
 		return
 	if follow:
@@ -572,10 +581,87 @@ func _threat(p: Node2D) -> Node2D:
 			worst_d = d
 	return worst
 
+## The triggers of the zone's open doors, made global and grown by DOOR_MARGIN. A door takes whoever enters
+## it (world/door.gd), mid-fight too, as it should: a player may leave a fight that way. The fight pilot must
+## not do it by accident, and its dodges did: the meadow camp is some 200 texels from the door to Crossroads,
+## and a roll and the steps after it carry the player about 140 (12 Nov).
+func _door_rects() -> Array[Rect2]:
+	if _doors_zone != Zones.current:
+		_doors_zone = Zones.current
+		_doors = []
+		var todo: Array[Node] = []
+		if Zones.current != null:
+			todo.append(Zones.current)
+		while not todo.is_empty():
+			var n: Node = todo.pop_back()
+			if n is Door:
+				_doors.append(n)
+			todo.append_array(n.get_children())
+	var rects: Array[Rect2] = []
+	for d in _doors:
+		if not is_instance_valid(d) or not (d as Door).is_open():
+			continue
+		for s in (d as Node).get_children():
+			var cs := s as CollisionShape2D
+			if cs != null and cs.shape != null and not cs.disabled:
+				rects.append((cs.global_transform * cs.shape.get_rect()).grow(DOOR_MARGIN))
+	return rects
+
+## Whether going `reach` texels from `from` along `dir` comes near a door. A door the player already stands
+## near only counts when `dir` leads closer to it.
+func _door_on_way(from: Vector2, dir: Vector2, reach: float, rects: Array[Rect2]) -> bool:
+	if dir.length() < 0.001:
+		return false
+	var n := dir.normalized()
+	for r: Rect2 in rects:
+		if r.has_point(from):
+			if n.dot(from - r.get_center()) <= 0.0:
+				return true
+			continue
+		var t := 0.0
+		while t <= reach:
+			if r.has_point(from + n * t):
+				return true
+			t += 6.0
+	return false
+
+## `dir` when going that way for `reach` texels keeps clear of the doors; otherwise the nearest turn of it
+## that does and is open ground; otherwise straight away from the nearest door.
+func _door_safe(from: Vector2, dir: Vector2, reach: float) -> Vector2:
+	var rects := _door_rects()
+	if rects.is_empty() or not _door_on_way(from, dir, reach, rects):
+		return dir
+	_door_turns += 1
+	var g := grid()
+	for turn: float in [PI / 4.0, -PI / 4.0, PI / 2.0, -PI / 2.0, 3.0 * PI / 4.0, -3.0 * PI / 4.0, PI]:
+		var d := dir.normalized().rotated(turn)
+		if not _door_on_way(from, d, reach, rects) and g.is_free(WalkGrid.cell_of(from + d * minf(reach, 60.0))):
+			return d
+	return _away_from_doors(from, rects)
+
+## Texels from `at` to the nearest open door's trigger (its own rect, without the margin); 1e9 with none.
+func _door_gap(at: Vector2) -> float:
+	var gap := 1e9
+	for r: Rect2 in _door_rects():
+		var raw := r.grow(-DOOR_MARGIN)
+		gap = minf(gap, at.distance_to(at.clamp(raw.position, raw.end)))
+	return gap
+
+func _away_from_doors(from: Vector2, rects: Array) -> Vector2:
+	var best := Vector2.ZERO
+	var best_d := 1e9
+	for r: Rect2 in rects:
+		var d := from.distance_to(r.get_center())
+		if d < best_d:
+			best_d = d
+			best = r.get_center().direction_to(from)
+	return best
+
 ## Fights whatever is near: aims the mouse at the nearest enemy and clicks, steps or rolls sideways out
 ## of the lane of a telegraphed attack, closes in when out of range or when a wall is in the way.
 ## Downed, it walks back to where the fight began and goes on (up to MAX_DOWNS times; the log counts
-## them). Ends when no enemy that can be walked to is left in the zone, or after `limit` seconds (a failure).
+## them). It never dodges or closes in towards a door, and steps out of DOOR_MARGIN of one first.
+## Ends when no enemy that can be walked to is left in the zone, or after `limit` seconds (a failure).
 func fight(limit: float) -> String:
 	var p := player()
 	var start := now()
@@ -594,6 +680,9 @@ func fight(limit: float) -> String:
 	_boss_rolled_for = -1
 	_boss_last = ""
 	var left := n0
+	var turns0 := _door_turns
+	_fight_gap = 1e9
+	_fighting = true
 	while now() - start < limit and SaveGame.data.zone == zone:
 		if _downs != seen_downs:
 			seen_downs = _downs
@@ -626,6 +715,13 @@ func fight(limit: float) -> String:
 			rolls += await _boss_turn(p, near as Thornback)
 			continue
 		aim_at(near.global_position + Vector2(0, -24))
+		var out_of_door := _away_from_doors(p.global_position, _door_rects().filter(
+			func(r: Rect2) -> bool: return r.has_point(p.global_position)))
+		if out_of_door != Vector2.ZERO and not p.is_rolling():
+			_door_turns += 1
+			hold(out_of_door)   # too near a door: out of its margin before anything else
+			await _sleep(0.12)
+			continue
 		var threat := _threat(p)
 		if threat != null and not p.is_rolling():
 			# out of the lane, to the side the player is already on (or the one with room)
@@ -635,6 +731,7 @@ func fight(limit: float) -> String:
 			side = side.normalized() if side.length() > 2.0 else dir.orthogonal()
 			if not g.is_free(WalkGrid.cell_of(p.global_position + side * 60.0)):
 				side = -side
+			side = _door_safe(p.global_position, side, DODGE_REACH)
 			hold(side)
 			if p.roll_charges > 0 and (p.is_shooting() or str(threat.get("state")) != "windup" or threat.get("arena") != null or p.roll_charges == Player.ROLL_CHARGES):
 				await _sleep(0.03)
@@ -652,7 +749,7 @@ func fight(limit: float) -> String:
 				if g.clear_line(p.global_position, plan[i]):
 					want = plan[i]
 					break
-			hold(want - p.global_position)
+			hold(_door_safe(p.global_position, want - p.global_position, 40.0))
 			await _sleep(0.15)
 			continue
 		hold(Vector2.ZERO)
@@ -661,7 +758,9 @@ func fight(limit: float) -> String:
 			shots += 1
 		await _sleep(0.05)
 	hold(Vector2.ZERO)
-	out("FIGHT %.1fs enemies %d -> %d shots=%d rolls=%d hurt=%d downs=%d  %s" % [now() - start, n0, enemies().size(), shots, rolls, _hurt - hurt0, _downs - downs0, status()])
+	_fighting = false
+	var gap := _fight_gap
+	out("FIGHT %.1fs enemies %d -> %d shots=%d rolls=%d hurt=%d downs=%d door_turns=%d nearest_door=%s  %s" % [now() - start, n0, enemies().size(), shots, rolls, _hurt - hurt0, _downs - downs0, _door_turns - turns0, ("%d" % gap) if gap < 1e8 else "none", status()])
 	if SaveGame.data.zone != zone:
 		return "the zone changed during the fight"
 	if _downs - downs0 > MAX_DOWNS:
@@ -698,6 +797,7 @@ func _boss_turn(p: Node2D, b: Thornback) -> int:
 	var arena := Rect2(b.arena.position + b._zone_origin(), b.arena.size)   # texels in the zone, made global
 	var centre := arena.get_center() if arena.size != Vector2.ZERO else b.global_position
 	if want != Vector2.ZERO and _boss_attacks != _boss_rolled_for and p.roll_charges > 0 and not p.is_rolling():
+		want = _door_safe(p.global_position, want, DODGE_REACH)   # never towards a door; the arena still wins
 		if arena.size != Vector2.ZERO and not arena.grow(-20.0).has_point(p.global_position + want * 100.0):
 			want = -want if arena.grow(-20.0).has_point(p.global_position - want * 100.0) else (centre - p.global_position).normalized()
 		if b.attack != "volley":
@@ -722,6 +822,8 @@ func _boss_turn(p: Node2D, b: Thornback) -> int:
 			move = l if (centre - p.global_position).dot(l) > 0.0 else r
 	elif d > 320.0:
 		move = -to.normalized()
+	if move != Vector2.ZERO:
+		move = _door_safe(p.global_position, move, 40.0)
 	hold(move)
 	if move == Vector2.ZERO and not p.is_shooting() and not p.is_rolling():
 		await click()
