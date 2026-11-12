@@ -103,7 +103,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "post",
+  "size_class": "pole (a snow pole marking the trod over the drifts)",
   "eastward_ref": "04 (posts)",
   "painter": {
    "module": "scripts.art.kit.sets.frost",

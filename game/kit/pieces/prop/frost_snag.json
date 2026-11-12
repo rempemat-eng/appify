@@ -87,7 +87,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "conifer (a dead snag, its crown gone)",
+  "size_class": "snag (a dead spruce, its crown gone)",
   "eastward_ref": "22 (the tiered pines)",
   "painter": {
    "module": "scripts.art.kit.sets.frost",

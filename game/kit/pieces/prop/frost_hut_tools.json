@@ -107,7 +107,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "post (skis stood upright, 0.9 A)",
+  "size_class": "tall_furniture (skis, a shovel and an axe stood in a rack against the wall, 0.9 A)",
   "eastward_ref": "17",
   "painter": {
    "module": "scripts.art.kit.sets.frost",

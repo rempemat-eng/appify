@@ -66,7 +66,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "stair (40 world px wide: a stair is at least 34)",
+  "size_class": "unsized (rough steps cut up the granite face: no stair kind in the guide; 40 world px wide, at least 34)",
   "eastward_ref": "12 (the stairs)",
   "painter": {
    "module": "scripts.art.kit.sets.frost",

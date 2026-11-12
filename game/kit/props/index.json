@@ -13647,7 +13647,7 @@
   ],
   "deck": null,
   "foot": [
-   33,
+   37,
    30
   ],
   "footprint": [
@@ -13708,7 +13708,7 @@
   "variants": {
    "still": {
     "foot": [
-     33,
+     37,
      30
     ],
     "png": "res://kit/props/art/frost/frost_bench.png"
@@ -13953,8 +13953,8 @@
   "variants": {
    "small": {
     "foot": [
-     16,
-     29
+     17,
+     30
     ],
     "png": "res://kit/props/art/frost/frost_cairn_small.png"
    },
@@ -14263,7 +14263,7 @@
    "b": {
     "foot": [
      73,
-     90
+     94
     ],
     "png": "res://kit/props/art/frost/frost_crag_b.png"
    }
@@ -14281,8 +14281,8 @@
   ],
   "deck": null,
   "foot": [
-   16,
-   16
+   18,
+   17
   ],
   "footprint": [
    [
@@ -14330,8 +14330,8 @@
   "variants": {
    "still": {
     "foot": [
-     16,
-     16
+     18,
+     17
     ],
     "png": "res://kit/props/art/frost/frost_fire_ring.png"
    }

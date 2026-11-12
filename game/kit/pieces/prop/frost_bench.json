@@ -13,7 +13,7 @@
    "weight": 1.0,
    "png": "res://kit/props/art/frost/frost_bench.png",
    "foot": [
-    33,
+    37,
     30
    ]
   }
@@ -27,7 +27,7 @@
  },
  "geometry": {
   "size_px": [
-   60,
+   68,
    40
   ],
   "size_cells": [
@@ -46,7 +46,7 @@
    ]
   },
   "foot": [
-   33,
+   37,
    30
   ],
   "footprint": [

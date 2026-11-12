@@ -464,7 +464,8 @@ def moraine(seed: int = 1403, P: int = PERIOD) -> np.ndarray:
     side and a contact texel; old snow lies in the hollow on the north side of the large ones."""
     rng = np.random.default_rng(seed)
     yy, xx = np.mgrid[0:P, 0:P]
-    gq = TN._fmix((((yy // 2) % (P // 2)) * 92821 + ((xx // 2) % (P // 2)) * 68917 + seed) & 0xffffffff) / 4294967295.0
+    # 2 by 2 grains, their grid offset a texel so the wrap falls inside a grain (as every other row pair)
+    gq = TN._fmix(((((yy + 1) // 2) % (P // 2)) * 92821 + (((xx + 1) // 2) % (P // 2)) * 68917 + seed) & 0xffffffff) / 4294967295.0
     g = aniso(P, 9.0, 7.0, seed + 2)
     cv = np.where(g > 0.2, C('slate', 3), C('slate_cool', 3)).astype(np.int32)
     cv[(gq > 0.9) & (g < 0.9)] = C('slate_cool', 2)            # dark grains, 2 by 2, one in ten

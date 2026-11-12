@@ -23,7 +23,7 @@
    "png": "res://kit/props/art/frost/frost_crag_b.png",
    "foot": [
     73,
-    90
+    94
    ]
   }
  ],
@@ -140,7 +140,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "unsized (a crag of the headwall's foot, the zone's frame: no crag kind in the guide)",
+  "size_class": "crag (a granite outcrop of the headwall's foot, the zone's frame)",
   "eastward_ref": "12 (the cliff's stones)",
   "painter": {
    "module": "scripts.art.kit.sets.frost",

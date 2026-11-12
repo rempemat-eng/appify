@@ -278,7 +278,7 @@ def crag(kind='a', seed=61):
     for k in range(n):
         rx = rng.uniform(20, 36)
         ry = rx * rng.uniform(0.6, 0.8)
-        h = rx * rng.uniform(0.5, 0.8) * (1.2 if abs(xs[k]) < 35 else 1.0)
+        h = rx * rng.uniform(0.5, 0.8) * (1.2 if abs(xs[k]) < 35 else 1.0) * (1.0 if kind == 'a' else 1.08)
         cy = rng.uniform(-34, 6)
         sc.ellipsoid(xs[k], cy, h, rx, ry, h, GRANITE, base=2.6 + rng.uniform(-0.3, 0.3), k=1.8, tag='rock',
                      mix=rng.random(), flat=3.0 + rng.uniform(0, 0.8), tex='stone')
@@ -300,7 +300,7 @@ def cairn(kind='standing', seed=47):
     elif kind == 'toppled':
         rings = [(11.0, 8, 0.0, 6.0, 0.55), (7.5, 6, 6.5, 5.2, 0.5)]
     else:
-        rings = [(7.0, 6, 0.0, 4.6, 0.55), (3.5, 4, 5.5, 4.0, 0.6)]
+        rings = [(8.2, 6, 0.0, 4.8, 0.55), (4.2, 4, 5.8, 4.2, 0.6)]
     B.stone_pile(sc, rings, seed, tag='rock', sets=GRANITE, base=2.8, flat=1.9,
                  spill=[(19, 4, 4.2), (25, -3, 3.6), (14, 9, 3.4), (-15, 8, 3.2)] if kind == 'toppled' else None)
     for r, n, z, size, sq in rings:
@@ -324,13 +324,13 @@ def fire_ring(seed=67):
     clear on its south-east side. No green (Z6)."""
     sc = K.Scene(-30, 30, -24, 16, 40)
     rng = np.random.default_rng(seed)
-    for k in range(9):
-        ang = 2 * math.pi * k / 9 + rng.uniform(-0.2, 0.2)
-        x, y = 11 * math.cos(ang), 8 * math.sin(ang)
+    for k in range(11):
+        ang = 2 * math.pi * k / 11 + rng.uniform(-0.2, 0.2)
+        x, y = 13.5 * math.cos(ang), 9.5 * math.sin(ang)
         sz = rng.uniform(3.2, 4.4)
         sc.ellipsoid(x, y, sz * 0.5, sz, sz * 0.75, sz * 0.62, GRANITE, base=2.7, k=1.8, tag='rock', mix=rng.random(), flat=1.8)
         _snowcap(sc, x, y, sz * 1.05, sz * 0.75, sz * 0.55, th=1.4, seed=seed + k)
-    sc.ellipsoid(-1.5, -1.0, 0.2, 8.5, 6.0, 1.6, SNOW, base=3.7, k=0.9, tag='snow', flat=1.4)       # snow in the hearth
+    sc.ellipsoid(-1.5, -1.0, 0.2, 10.5, 7.2, 1.6, SNOW, base=3.7, k=0.9, tag='snow', flat=1.4)       # snow in the hearth
     sc.ellipsoid(3.5, 2.5, 0.6, 3.6, 2.2, 0.9, [('soot', 'soot', 'ash')], base=1.8, k=0.6, tag='soot', flat=1.2)
     sc.box(1, 2, 0.8, 9, 4, 2.4, [('soot', 'timber_cool', 'timber')], base=1.4, k=1.0, tag='brand', round_=0.8)
     a = _solo(sc)
@@ -818,11 +818,11 @@ def hut_tools(seed=73):
 def bench(seed=79):
     """A granite slab bench by the Col Path, the snow brushed off the west half of the seat."""
     sc = K.Scene(-40, 40, -16, 10, 50)
-    for x in (-20, 14):
+    for x in (-23, 17):
         sc.box(x, -6, 0, x + 6, 3, 13, GRANITE, base=2.6, k=1.7, tag='rock', round_=1.2, tex='stone')
-    sc.box(-26, -8, 13, 26, 5, 18, GRANITE, base=2.9, k=1.7, tag='rock', round_=1.5, tex='stone')
-    sc.box(0, -8, 17.5, 25, 5, 20.5, SNOW, base=3.9, k=1.0, tag='snow', round_=1.4)
-    _drift_west(sc, -24, 5, 6, seed)
+    sc.box(-30, -8, 13, 30, 5, 18, GRANITE, base=2.9, k=1.7, tag='rock', round_=1.5, tex='stone')
+    sc.box(0, -8, 17.5, 29, 5, 20.5, SNOW, base=3.9, k=1.0, tag='snow', round_=1.4)
+    _drift_west(sc, -28, 5, 6, seed)
     a = _solo(sc, dress=lambda s, a: _cracks(s, a, n=1, seed=seed))
     return K.crop(a, sc.ox, sc.oy)
 
@@ -1157,11 +1157,11 @@ def prop_jobs():
             note='A squat pine cropped by the wind, its snow shelves on the west.', **trees)),
         ('frost_krummholz', [('still', lambda: conifer('krummholz'))], dict(
             name='Krummholz', cells=(4, 2), fp=B._fp(3, 1), collision={'shape': 'rect', 'rect': [-9.0, -4.0, 18, 4]},
-            size_class='bush (a tree-line shrub of pine)', fn='conifer',
+            size_class='conifer (krummholz: a wind-flattened spruce at the tree line)', fn='conifer',
             note='A pine at the tree line grown low and wide, snow on its tiers.', **trees)),
         ('frost_snag', [('still', lambda: snag())], dict(
             name='Dead pine', cells=(2, 2), fp=B._fp(1, 1), collision={'shape': 'rect', 'rect': [-3.0, -3.0, 6, 3]},
-            size_class='conifer (a dead snag, its crown gone)', fn='snag',
+            size_class='snag (a dead spruce, its crown gone)', fn='snag',
             note='A weathered dead pine with a broken top and two stub limbs, snow on the break and the stubs.', **trees)),
         ('frost_boulder', [('a', lambda: boulder('a')), ('b', lambda: boulder('b'))], dict(
             name='Granite boulder', purpose='mark', role='rock', cells=(3, 2), fp=B._fp(2, 1),
@@ -1181,7 +1181,7 @@ def prop_jobs():
         ('frost_crag', [('a', lambda: crag('a')), ('b', lambda: crag('b'))], dict(
             name='Headwall crag', purpose='exclude', role='rock', cells=(7, 3), fp=B._fp(6, 2),
             collision={'shape': 'rect', 'rect': [-24.0, -14.0, 48, 14]}, shadow=None, composition='edge',
-            forbids=NATURE, size_class='unsized (a crag of the headwall\'s foot, the zone\'s frame: no crag kind in the guide)',
+            forbids=NATURE, size_class='crag (a granite outcrop of the headwall\'s foot, the zone\'s frame)',
             eastward='12 (the cliff\'s stones)', fn='crag',
             note='Granite blocks stacked in a jagged mass with snow on every ledge: the north frame of the cirque.')),
         ('frost_cairn', [('standing', lambda: cairn('standing')), ('toppled', lambda: cairn('toppled')),
@@ -1194,7 +1194,7 @@ def prop_jobs():
         ('frost_fire_ring', [('still', lambda: fire_ring())], dict(
             name='Cold fire ring under snow', purpose='mark', role='story', cells=(2, 2), fp=B._fp(2, 2),
             collision={'shape': 'rect', 'rect': [-5.0, -6.0, 10, 6]}, shadow=None, blocks=False, composition='free',
-            forbids=NATURE, size_class='campfire (a fire ring of stones 1.5 m across)', eastward='05 and 37 (the camp fires)',
+            forbids=NATURE, size_class='campfire (a cold fire ring of stones about a metre across)', eastward='05 and 37 (the camp fires)',
             fn='fire_ring', note='The fallen climbers\' camp: a ring of granite under snow, soot only where scraped.')),
         ('frost_sledge', [('still', lambda: sledge())], dict(
             name="Ice-cutter's sledge", purpose='work', role='story', cells=(5, 2), fp=B._fp(4, 1),
@@ -1216,7 +1216,7 @@ def prop_jobs():
         ('frost_hut_tools', [('still', lambda: hut_tools())], dict(
             name='Skis and shovel', purpose='work', role='story', cells=(2, 1), fp=B._fp(2, 1),
             collision={'shape': 'rect', 'rect': [-5.0, -3.0, 10, 3]}, shadow=(5.0, 1.5), composition='edge',
-            requires=[NEAR_HUT], forbids=NATURE, size_class='post (skis stood upright, 0.9 A)', eastward='17', fn='hut_tools',
+            requires=[NEAR_HUT], forbids=NATURE, size_class='tall_furniture (skis, a shovel and an axe stood in a rack against the wall, 0.9 A)', eastward='17', fn='hut_tools',
             note='A pair of skis, two poles and a snow shovel stuck in a heap of snow by the hut door.')),
         ('frost_bench', [('still', lambda: bench())], dict(
             name='Granite bench', purpose='rest', role='seat', cells=(3, 1), fp=B._fp(3, 1),
@@ -1234,7 +1234,7 @@ def prop_jobs():
             name='Snow pole', purpose='guide', role='marker', cells=(1, 1), fp=B._fp(1, 1),
             collision={'shape': 'rect', 'rect': [-1.5, -1.5, 3, 2]}, shadow=(2.0, 1.0), composition='edge',
             requires=[_rel('near', 'route', 2, 'marking the Col Path where drifts cover it')], forbids=NATURE,
-            size_class='post', eastward='04 (posts)', fn='snow_pole',
+            size_class='pole (a snow pole marking the trod over the drifts)', eastward='04 (posts)', fn='snow_pole',
             note='A stake banded red and white to find the path under drifts.')),
         ('frost_lost_hat', [('still', lambda: lost_hat())], dict(
             name='Lost hat', purpose='mark', role='story', cells=(1, 1), fp=[], blocks=False,
@@ -1261,7 +1261,7 @@ def prop_jobs():
         ('frost_rock_stair', [('still', lambda: rock_stair())], dict(
             name='Granite stair', purpose='climb', role='rock_steps', cells=(5, 5), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='axis', z_sort='ground',
-            size_class='stair (40 world px wide: a stair is at least 34)', eastward='12 (the stairs)', fn='rock_stair',
+            size_class='unsized (rough steps cut up the granite face: no stair kind in the guide; 40 world px wide, at least 34)', eastward='12 (the stairs)', fn='rock_stair',
             note='Six granite steps up the face with snow-dusted treads: the Col Path\'s way up the cirque\'s step.')),
         ('frost_footbridge', [('still', lambda: footbridge())], dict(
             name='Plank footbridge over the outlet', purpose='cross', role='bridge', cells=(5, 2), fp=[], blocks=False,
