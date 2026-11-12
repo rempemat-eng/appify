@@ -6,7 +6,7 @@
   2304,
   648
  ],
- "inputs": "732108abd9d631de7dad5f24625c93d93d63a357c2e7ce49f3d8e1f5271cada2",
+ "inputs": "42a45723c5c073ae69622ca4c852bcbc1369beeb73b7ee442ab14e021e999c4b",
  "kit_drawn": [
   "cairn_alcove.png",
   "channel_lit.png",
@@ -35,7 +35,7 @@
    "png": "rubble_hall.png",
    "foot": [
     132,
-    576
+    596
    ],
    "offset": [
     -54,
@@ -44,7 +44,7 @@
    "cond": null,
    "solid": [
     30.0,
-    180,
+    186.67,
     28,
     12
    ]
@@ -95,7 +95,7 @@
    "png": "roots_corridor.png",
    "foot": [
     816,
-    480
+    498
    ],
    "offset": [
     -72,
@@ -104,7 +104,7 @@
    "cond": null,
    "solid": [
     259.0,
-    152,
+    158,
     26,
     8
    ]
@@ -143,9 +143,9 @@
    ],
    "cond": null,
    "solid": [
-    424,
+    421,
     188,
-    15,
+    18,
     7
    ]
   },

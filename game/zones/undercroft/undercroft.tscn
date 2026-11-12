@@ -88,7 +88,7 @@ size = Vector2(78, 24)
 size = Vector2(30, 18)
 
 [sub_resource type="RectangleShape2D" id="s18"]
-size = Vector2(45, 21)
+size = Vector2(54, 21)
 
 [sub_resource type="RectangleShape2D" id="s19"]
 size = Vector2(54, 18)
@@ -305,7 +305,7 @@ collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_rubble_hall"]
-position = Vector2(132, 558)
+position = Vector2(132, 578.01)
 shape = SubResource("s13")
 
 [node name="Solid_roots_hall" type="StaticBody2D" parent="Walls"]
@@ -329,7 +329,7 @@ collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_roots_corridor"]
-position = Vector2(816, 468)
+position = Vector2(816, 486)
 shape = SubResource("s16")
 
 [node name="Solid_urn_seal" type="StaticBody2D" parent="Walls"]
@@ -345,7 +345,7 @@ collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_rubble_seal"]
-position = Vector2(1294.5, 574.5)
+position = Vector2(1290, 574.5)
 shape = SubResource("s18")
 
 [node name="Solid_stump_nw" type="StaticBody2D" parent="Walls"]
@@ -441,7 +441,7 @@ script = ExtResource("torch")
 y_sort_enabled = true
 
 [node name="RubbleHall" type="Sprite2D" parent="Props"]
-position = Vector2(132, 580)
+position = Vector2(132, 600)
 texture = ExtResource("t6")
 centered = false
 offset = Vector2(-54, -82)
@@ -459,7 +459,7 @@ centered = false
 offset = Vector2(-42, -65)
 
 [node name="RootsCorridor" type="Sprite2D" parent="Props"]
-position = Vector2(816, 480)
+position = Vector2(816, 498)
 texture = ExtResource("t9")
 centered = false
 offset = Vector2(-72, -44)
