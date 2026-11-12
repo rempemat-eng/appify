@@ -14744,6 +14744,78 @@
   },
   "z_sort": "foot"
  },
+ "frost_lead": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   12,
+   71
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Open lead in the ice",
+  "painted": false,
+  "requires": [],
+  "role": "water",
+  "shadow": null,
+  "size_cells": [
+   1,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "gap": {
+    "foot": [
+     8,
+     23
+    ],
+    "png": "res://kit/props/art/frost/frost_lead_gap.png"
+   },
+   "pool": {
+    "foot": [
+     39,
+     53
+    ],
+    "png": "res://kit/props/art/frost/frost_lead_pool.png"
+   },
+   "run": {
+    "foot": [
+     12,
+     71
+    ],
+    "png": "res://kit/props/art/frost/frost_lead_run.png"
+   },
+   "short": {
+    "foot": [
+     12,
+     47
+    ],
+    "png": "res://kit/props/art/frost/frost_lead_short.png"
+   },
+   "strip": {
+    "foot": [
+     12,
+     59
+    ],
+    "png": "res://kit/props/art/frost/frost_lead_strip.png"
+   },
+   "strip_long": {
+    "foot": [
+     12,
+     119
+    ],
+    "png": "res://kit/props/art/frost/frost_lead_strip_long.png"
+   }
+  },
+  "z_sort": "ground"
+ },
  "frost_lost_hat": {
   "approval": "candidate",
   "blocks_move": false,
@@ -15608,8 +15680,8 @@
   ],
   "deck": null,
   "foot": [
-   43,
-   284
+   51,
+   250
   ],
   "footprint": [
    [
@@ -15640,8 +15712,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -33,
-     -87
+     -34,
+     -77
     ],
     "png": "res://kit/props/art/shadow_frost_spruce.png"
    }
@@ -15657,8 +15729,8 @@
   "variants": {
    "still": {
     "foot": [
-     43,
-     284
+     51,
+     250
     ],
     "png": "res://kit/props/art/frost/frost_spruce.png"
    }

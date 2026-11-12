@@ -13,8 +13,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/frost/frost_spruce.png",
    "foot": [
-    43,
-    284
+    51,
+    250
    ]
   }
  ],
@@ -27,15 +27,15 @@
  },
  "geometry": {
   "size_px": [
-   94,
-   285
+   107,
+   251
   ],
   "size_cells": [
    3,
    2
   ],
   "z_sort": "foot",
-  "height_px": 285,
+  "height_px": 251,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -46,8 +46,8 @@
    ]
   },
   "foot": [
-   43,
-   284
+   51,
+   250
   ],
   "footprint": [
    [

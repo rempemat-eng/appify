@@ -892,7 +892,7 @@ def col_hut(seed=31):
 # ------------------------------------------------------------------------------------------------
 # conifers (F-P1, Z2): the woodland pine's painter at other sizes, snow lying as shelves on its tiers
 # ------------------------------------------------------------------------------------------------
-CONIFERS = {'spruce': ((0.8, 1.22), 503), 'pine': ((1.0, 1.0), 511), 'squat': ((1.18, 0.74), 521),
+CONIFERS = {'spruce': ((0.95, 1.06), 507), 'pine': ((1.0, 1.0), 511), 'squat': ((1.18, 0.74), 521),
             'krummholz': ((1.25, 0.44), 531), 'krummholz_b': ((1.0, 0.36), 547), 'krummholz_c': ((1.4, 0.52), 559)}
 
 
@@ -911,35 +911,57 @@ def _shelves(code, mask, seed, load=1.0):
     x0, x1, y0, y1 = xs.min(), xs.max(), ys.min(), ys.max()
     snow = np.zeros_like(mask)
     lvl = np.zeros(mask.shape, int)
+    rng = np.random.default_rng(seed * 13 + 5)
     lab, n = ndi.label(tops, structure=np.array([[0, 0, 0], [1, 1, 1], [0, 0, 0]]))
+    # (Matt's review of round 3: the snow read as one white triangle stamped on every bough) each
+    # bough top carries one to three clumps of its own length and height, following the tier's top
+    # edge, heaped where the bough is stiff (west, near the trunk) and sagging a row at the tip;
+    # some boughs are bare; the bough's dark underside shows beneath every clump
+    Nf = ndi.gaussian_filter(rng.random((H, W)), (2.5, 2.2), mode='nearest')
+    Nf = (Nf - Nf.min()) / max(1e-6, Nf.max() - Nf.min())
     for k in range(1, n + 1):
         ry, rx = np.nonzero(lab == k)
-        if len(rx) < 4:
+        if len(rx) < 3:
             continue
-        xl, xr, yr = rx.min(), rx.max(), int(np.median(ry))
-        mid = (xl + xr) / 2.0
-        ux = (mid - x0) / max(1, x1 - x0)
-        uy = (yr - y0) / max(1, y1 - y0)
-        if ux > 0.62 and uy > 0.45:
-            continue
-        thick = (3.0 + 3.0 * (1 - ux)) * load * (1.0 if uy < 0.8 else 0.7)
-        for y, x in zip(ry, rx):
-            u = (x - xl) / max(1, xr - xl)
-            t = int(round(thick * (1 - u) ** 1.2))
+        xl, xr = rx.min(), rx.max()
+        for y, xx in zip(ry, rx):
+            ux_ = (xx - x0) / max(1, x1 - x0)
+            uy_ = (y - y0) / max(1, y1 - y0)
+            if ux_ > 0.74 and uy_ > 0.45:
+                continue
+            v = Nf[y, xx]
+            if v < 0.45:
+                continue                                    # a gap between two clumps
+            t = int(round((2.0 + 5.5 * (v - 0.45) / 0.55) * load * (1.3 - 0.65 * ux_) * (1.0 if uy_ < 0.8 else 0.8)))
+            sag = 1 if (xr - xx) <= 1 and xr - xl >= 4 else 0  # the bough's tip bends under it
             for j in range(t):
-                if y + j < H and mask[y + j, x]:
-                    snow[y + j, x] = True
-                    lvl[y + j, x] = j
-    # tones: top row lit on the west, body, cool lower edge, the shade row under it
+                yy = y + j + sag
+                if yy < H and mask[yy, xx]:
+                    snow[yy, xx] = True
+                    lvl[yy, xx] = j
+    # no one-texel strip of green left between two clumps (it would read as a drawn line)
+    for _ in range(2):
+        gap = mask & ~snow & ((np.roll(snow, 1, 0) & np.roll(snow, -1, 0)) | (np.roll(snow, 1, 1) & np.roll(snow, -1, 1)))
+        snow |= gap
+        lvl[gap] = 1
+    # tones: each clump's top row lit on its west, its body, a cool lower edge, the shade under it
     lowest = snow & ~np.roll(snow, -1, 0)
-    Xg = np.mgrid[0:H, 0:W][1]
+    Hh, Wd = H, W
+    Xg = np.mgrid[0:Hh, 0:Wd][1]
     ux = (Xg - x0) / max(1, x1 - x0)
-    c = np.where(lvl == 0, np.where(ux < 0.55, C('snow', 5), C('snow', 4)), C('snow', 4))
+    west_end = snow & ~np.roll(snow, 1, 1)
+    c = np.where(lvl == 0, np.where(ux < 0.5, C('snow', 5), C('snow', 4)), C('snow', 4))
+    c = np.where(west_end & (lvl <= 1), C('snow', 5), c)
     c = np.where(lowest & (lvl > 0), C('snow_cool', 3), c)
-    c = np.where(ux > 0.7, np.where(lvl == 0, C('snow', 4), C('snow_cool', 3)), c)
+    c = np.where((ux > 0.62) & (lvl > 0), C('snow_cool', 4), c)
     code[snow] = c[snow]
-    under = np.roll(lowest, 1, 0) & mask & ~snow
-    code[under] = C('leaf_cool', 0)
+    # the bough's dark underside: two rows under the heavier clumps, so it reads as shade, not a line
+    under = np.roll(lowest & (lvl >= 2), 1, 0) & mask & ~snow
+    code[under] = C('leaf_cool', 1)
+    under2 = np.roll(under, 1, 0) & mask & ~snow
+    code[under2] = C('leaf_cool', 1)
+    under3 = np.roll(under2, 1, 0) & mask & ~snow
+    code[under3] = C('leaf_cool', 2)
     del seed
     return snow
 
@@ -1423,7 +1445,7 @@ LIP_PX = 12
 
 
 COURSES = [0, 17, 33, 52, 72, FACE_PX]            # the face's bedding planes (z), the same in every panel
-SET_BACK = 1.7                                      # each course stands this far behind the one under it
+SET_BACK = 3.0                                      # each course stands this far behind the one under it
 
 
 def _wall_blocks(W, seed, ends):
@@ -1477,6 +1499,8 @@ def _face(width, seed, ends=(True, True), fall=None, stair=None):
     W = width
     zmax = FACE_PX + 40
     sc = K.Scene(0, W, -30, 12, zmax)
+    cheeks = ends                                         # (Matt's review of round 3) an end is a stair's cheek
+    ends = (False, False)
     blocks = _wall_blocks(W, seed, ends)
     bx0 = 8.0 if ends[0] else -2.0
     bx1 = W - 8.0 if ends[1] else W + 2.0
@@ -1497,11 +1521,12 @@ def _face(width, seed, ends=(True, True), fall=None, stair=None):
     if stair is not None:
         _stair_steps(sc, stair, seed)
     for (x0, x1, z0, z1, yf, base, mix, rnd) in blocks:
-        # a weathered block: a superellipsoid packed into its course (flat faces, rounded arrises,
-        # its top turning up to the light and its underside tucking into shade)
-        rz = (z1 - z0) / 2 + 1.2
-        sc.ellipsoid((x0 + x1) / 2, yf - 7, (z0 + z1) / 2 + 0.5 * (hsh(int(x0), int(z0), 5) - 0.5) * 3, (x1 - x0) / 2 + 1.5, 7.5,
-                     rz, GRANITE, base=base + 0.2, k=1.9, tag='rock', mix=mix, flat=1.9 + rnd * 0.25)
+        # (Matt's review of round 3: the pillow stones) an angular granite block on its bedding plane:
+        # a flat lit top lip where the course above stands back, a flat front in its own tone, sharp
+        # arrises with a texel of chamfer, its top a little out of level
+        tilt = (hsh(int(x0), int(z0), 5) - 0.5) * 2.0
+        sc.box(x0, yf - 16, z0, x1, yf, z1 + tilt, GRANITE, base=base + 0.1, k=1.9, tag='rock', round_=0.9 + 0.25 * rnd,
+               mix=mix)
     # snow on some ledges: where a block stands proud of the one above it
     for k_, (x0, x1, z0, z1, yf, base, mix, rnd) in enumerate(blocks):
         if z1 >= FACE_PX - 1 or x1 - x0 < 10 or hsh(seed, k_, 3) < 0.45:
@@ -1550,6 +1575,25 @@ def _face(width, seed, ends=(True, True), fall=None, stair=None):
     zfoot = sc.oy - 0                                     # canvas row of the ground line
     low = rockm & (Y > zfoot - 30) & (sc.n[..., 2] < 0.6)
     a[low] = (a[low] // 8) * 8 + np.maximum(1, a[low] % 8 - 1)
+    # the lit top lips: each block's top plane where the course above stands back, two tones up
+    lip_ = rockm & (sc.n[..., 2] > 0.5)
+    a[lip_] = np.where(sc.light()[lip_] > 0.6, C('slate', 5), C('slate', 4))
+    lip_edge = lip_ & ~np.roll(lip_, -1, 0)
+    a[lip_edge] = C('slate_warm', 4)
+    # each block's front: lit high where it meets its lip, shaded low where it tucks over the course
+    # below (three tones down its height)
+    labm = sc.label
+    fr = rockm & ~lip_
+    run = np.zeros(labm.shape, int)
+    for y in range(1, labm.shape[0]):
+        run[y] = np.where(fr[y] & (labm[y] == labm[y - 1]), run[y - 1] + 1, 0)
+    rev = np.zeros(labm.shape, int)
+    for y in range(labm.shape[0] - 2, -1, -1):
+        rev[y] = np.where(fr[y] & (labm[y] == labm[y + 1]), rev[y + 1] + 1, 0)
+    hi_ = fr & (run <= 1) & (rev > 3)
+    a[hi_] = (a[hi_] // 8) * 8 + np.minimum(5, a[hi_] % 8 + 1)
+    lo_ = fr & (rev <= 2) & (run > 3)
+    a[lo_] = (a[lo_] // 8) * 8 + np.maximum(1, a[lo_] % 8 - 1)
     _fractures(a, rockm & (sc.n[..., 1] > 0.5), seed + 5, n=max(2, W // 30))
     # water streaks: from under some ledges, a darker run down the face
     for j in range(max(2, W // 28)):
@@ -1568,7 +1612,7 @@ def _face(width, seed, ends=(True, True), fall=None, stair=None):
     V.tidy(a)
     K.despeckle(a)
     V.outline(a)
-    _grain_after(sc, a, seed, swap=0.55)
+    _grain_after(sc, a, seed, swap=0.3, step=0.04)
     if stair is not None:
         _stair_wear(sc, a, stair, seed)
     # onto the panel's canvas: the ground line at row LIP_PX + FACE_PX - 1
@@ -1590,6 +1634,9 @@ def _face(width, seed, ends=(True, True), fall=None, stair=None):
             out[:first[x], x] = C('snow', 4)
         else:
             out[:, x] = -1
+    for side, on in enumerate(cheeks):
+        if on:
+            _cheek(out, side, seed)
     # under the foot: the drifts' lower edge, then nothing (the ground below is the zone's)
     prof = ndi.gaussian_filter1d(np.array([hsh(seed, x, 9) for x in range(W)]), 3.0, mode='wrap')
     prof = (prof - prof.min()) / max(1e-6, prof.max() - prof.min())
@@ -1632,8 +1679,8 @@ def _icefall(a, fall, seed):
         edges.append((L_, R_))
     # paint each column from its west edge (lit) to its east edge (shade); the body in lanes that
     # stay put (their tone steps only every 8 to 30 texels down), so the ice falls in streaks
-    body = [C('snow', 5), C('snow', 4), C('snow', 4), C('sky_cool', 5), C('water', 5), C('sky_cool', 4), C('water', 4),
-            C('sky_cool', 3), C('sky_cool', 2)]
+    body = [C('snow', 5), C('snow', 4), C('snow', 4), C('snow_cool', 4), C('snow_cool', 4), C('sky_cool', 5), C('sky_cool', 5),
+            C('sky_cool', 4), C('sky_cool', 3), C('sky_cool', 2)]
     for (L_, R_) in edges:
         lm, rm = float(L_[y_top:y_bot].mean()), float(R_[y_top:y_bot].mean())
         for y in range(y_top, y_bot):
@@ -1653,9 +1700,43 @@ def _icefall(a, fall, seed):
                     sg = (y + int(hsh(seed, ln, 1) * 30)) // (8 + int(hsh(seed, ln, 2) * 22))
                     # across the column the lanes go from frost white to blue shade, a step either way
                     rel = (x - lm) / max(1.0, rm - lm)
-                    k_ = int(round(rel * 8.5 + 5.8 * x / W - 2.6 + (hsh(seed, ln, sg) - 0.5) * 2.2))
+                    k_ = int(round(rel * 8.5 + 6.6 * x / W - 3.0 + (hsh(seed, ln, sg) - 0.5) * 2.2))
                     c = body[max(0, min(len(body) - 1, k_))]
                 a[y, x] = c
+    # (Matt's review of round 3: why is one part frozen and the other not?) fast water freezes last:
+    # the fall still runs in one narrow column down its middle, dark and quick, white where it
+    # breaks; the ice either side is its frozen flows and icicle curtains
+    cxw = (f0 + f1) / 2.0 + 3
+    for y in range(y_top, y_bot):
+        v_ = (y - y_top) / float(y_bot - y_top)
+        half = 5.0 + 1.5 * math.sin(y / 9.0) + 2.5 * v_
+        c0 = cxw + 1.2 * math.sin(y / 13.0 + 1.0)
+        l_, r_ = int(round(c0 - half)), int(round(c0 + half))
+        for x in range(max(0, l_ - 1), min(W, r_ + 2)):
+            if x == l_ - 1 or x == r_ + 1:
+                a[y, x] = C('sky_cool', 3)                          # the ice's wet edge on the flow
+                continue
+            ln = (x * 3 + int(hsh(seed, x) * 5)) // 4
+            sg = (y + int(hsh(seed, ln, 31) * 24)) // (6 + int(hsh(seed, ln, 32) * 14))
+            g = hsh(seed, ln, sg, 33)
+            rel = (x - l_) / max(1.0, r_ - l_)
+            if rel < 0.2:
+                c = C('snow', 5) if g > 0.4 else C('sky_cool', 5)
+            elif g > 0.8:
+                c = C('snow', 5)                                    # the water breaking white
+            elif g > 0.6:
+                c = C('water', 4)
+            elif rel > 0.65:
+                c = C('water_cool', 2) if g > 0.25 else C('sky_cool', 2)
+            else:
+                c = C('water', 2) if g > 0.3 else C('water', 3)
+            a[y, x] = c
+    # spray and rime at the foot: a soft cloud over the plunge, frost feathers on the ice beside it
+    for y in range(y_bot - 16, y_bot + 1):
+        for x in range(max(0, int(cxw) - 16), min(W, int(cxw) + 17)):
+            d = ((x - cxw) / 15.0) ** 2 + ((y - y_bot + 3) / 10.0) ** 2
+            if d < 1.0 and hsh(seed, x // 2, y // 2, 40) > 0.25 + 0.6 * d:
+                a[y, x] = C('snow', 5) if d < 0.45 else C('snow_cool', 4)
     # the frozen lip: a crown of snow on the ice over the edge, icicles hanging under it in clusters
     for x in range(f0 - 2, f1 + 2):
         if not (0 <= x < W):
@@ -1691,7 +1772,44 @@ def _icefall(a, fall, seed):
 
 
 STEPS = 6
-RISE, TREAD = 11.0, 5.0
+RISE, TREAD = 6.5, 9.5          # (Matt's review of round 3) seen from above a stair is mostly treads
+CHEEK = 14
+
+
+def _cheek(a, side, seed):
+    """The face's end where a stair is cut through it (Matt's review of round 3): a cheek 14 texels
+    wide showing the cut's side wall, the face's courses running round onto it with their joints,
+    lit where it faces west (the east cheek) and in shade where it faces east, a sharp arris where
+    it turns from the face, the upper tier's snow capping it and a drift banked into its foot."""
+    H, W = a.shape
+    yf = LIP_PX + FACE_PX
+    x0, x1 = (0, CHEEK) if side == 0 else (W - CHEEK, W)
+    lit = side == 0
+    rows_course = [yf - 1 - z for z in COURSES]
+    for x in range(x0, x1):
+        d = (x - x0) if side == 0 else (x1 - 1 - x)       # 0 at the stair, CHEEK-1 at the arris
+        for y in range(LIP_PX - 2, yf):
+            k = sum(1 for r in rows_course if y < r)
+            c = C('slate', 3 if lit else 2) if lit else C('slate_cool', 2)
+            if (y + d // 5) % 3 == 0 and hsh(seed, x, y // 3) > 0.6:
+                c = C('slate', 4) if lit else C('slate_cool', 1)
+            if any(abs(y - r) == 0 for r in rows_course):
+                c = C('slate_cool', 0) if not lit else C('slate_cool', 1)
+            if (d + 4 * k) % 9 == 0 and hsh(seed, k, x) > 0.4:
+                c = C('slate_cool', 0) if not lit else C('slate_cool', 1)
+            if d == CHEEK - 1:
+                c = C('slate', 5) if lit else C('slate', 4)      # the arris where it turns from the face
+            if d == 0:
+                c = C('slate_cool', 0)
+            a[y, x] = c
+        top = LIP_PX - 6 + int(round(1.5 * hsh(seed, x // 4, 2)))
+        for y in range(max(0, top), LIP_PX - 1):
+            a[y, x] = C('snow', 5) if y == top else (C('snow', 4) if y < LIP_PX - 3 else C('snow_cool', 3))
+        a[LIP_PX - 1, x] = C('sky_cool', 2)
+        h = int(round(3 + 4 * (1 - d / CHEEK)))
+        for k_ in range(h):
+            y = yf - 1 - k_
+            a[y, x] = C('snow', 5) if k_ == h - 1 else (C('snow', 4) if k_ > 1 else C('snow_cool', 4))
 
 
 def _stair_steps(sc, stair, seed):
@@ -1705,9 +1823,9 @@ def _stair_steps(sc, stair, seed):
         yfr = 2.0 - TREAD * k
         x = s0 + 1.0
         while x < s1 - 1:
-            w = rng.uniform(14, 34)
+            w = rng.uniform(30, 62)
             x1 = min(s1 - 1.0, x + w)
-            if s1 - 1 - x1 < 9:
+            if s1 - 1 - x1 < 20:
                 x1 = s1 - 1.0
             sc.box(x, yfr - TREAD - 2.5, max(0.0, z1 - RISE - 6), x1 - 1, yfr + rng.uniform(-0.6, 0.8), z1 + rng.uniform(-0.8, 0.8), GRANITE,
                    base=2.75 + rng.uniform(-0.3, 0.3), k=1.9, tag='step', round_=rng.uniform(1.6, 2.6), mix=rng.random(),
@@ -1726,16 +1844,22 @@ def _stair_dress(sc, a, stair, seed):
     s0, s1 = stair
     top = m & (sc.n[..., 2] > 0.55)
     front = m & ~top
-    # the riser: the row under the nose lit a step, then down to a dark foot
-    above_top = np.zeros_like(m)
-    above_top[1:] = top[:-1]
+    # (Matt's review of round 3: the stair read as a brick wall) seen from above each step is a broad
+    # lit tread: the stone's top in light greys, a shaded row at its back where the riser above
+    # meets it, a lit nose at its front; under the nose a shallow riser in shade, darkest at its foot
+    trun = np.zeros((H, W), int)
+    for y in range(1, H):
+        trun[y] = np.where(top[y], np.where(top[y - 1], trun[y - 1] + 1, 0), 0)
+    nose = top & ~np.roll(top, -1, 0)
+    g = K.vhash((X + (Y // 2) % 2) // 2, Y // 2, seed + 41)
+    a[top] = np.where(g[top] > 0.78, C('slate_warm', 4), np.where(g[top] > 0.55, C('slate', 5), C('slate', 4)))
+    a[top & (trun == 0)] = C('slate', 3)
+    a[nose] = C('slate', 5)
     run = np.zeros((H, W), int)
     for y in range(1, H):
         run[y] = np.where(front[y], np.where(front[y - 1], run[y - 1] + 1, 0), 0)
-    deep = front & (run >= 6)
-    a[deep] = (a[deep] // 8) * 8 + np.maximum(1, a[deep] % 8 - 1)
-    deeper = front & (run >= 9)
-    a[deeper] = C('slate_cool', 1)
+    a[front] = np.where(run[front] == 0, C('slate', 3), np.where(run[front] <= 2, C('slate_cool', 2),
+                        np.where(run[front] <= 4, C('slate_cool', 1), C('slate_cool', 0))))
     # snow at the back of each tread and in its ends
     for y in range(H):
         row = top[y]
@@ -1763,7 +1887,14 @@ def _stair_wear(sc, a, stair, seed):
     Y, X = np.mgrid[0:H, 0:W]
     wob = (K.vhash(Y, 3, seed) * 6).astype(int)
     worn = top & (X >= mid0 + wob - 3) & (X < mid1 - wob + 3) & ~np.isin(a // 8, list(SNOWS))
-    a[worn] = np.where(K.vhash(X // 3, Y, seed + 2)[worn] > 0.8, C('snow_cool', 3), C('stone_cool', 4))
+    a[worn] = np.where(K.vhash(X // 3, Y, seed + 2)[worn] > 0.8, C('snow_cool', 3), C('slate', 5))
+    # snow banked into each tread's corners against the cheeks, deepest at the back
+    rel = np.zeros_like(Y)
+    for y in range(1, H):
+        rel[y] = np.where(top[y], np.where(top[y - 1], rel[y - 1] + 1, 0), 0)
+    lump = (K.vhash(Y // 3, 7, seed) * 5).astype(int)
+    corner = top & (((X - s0) < 5 + lump) | ((s1 - X) < 6 + lump))
+    a[corner] = np.where(rel[corner] <= 1, C('snow', 5), np.where(X[corner] < (s0 + s1) / 2, C('snow', 4), C('snow_cool', 4)))
     nose = top & ~np.roll(top, -1, 0) & ~np.isin(a // 8, list(SNOWS))
     a[nose] = np.where(K.vhash(X // 4, Y, seed + 3)[nose] > 0.5, C('snow', 5), C('slate', 4))
 
@@ -1784,109 +1915,223 @@ def rockface_fall(seed=113):
 def rock_stair(seed=127):
     """The Col Path's stair up the face: five cells (40 world px, over the 34 a stair needs), six
     granite steps with snow-dusted treads, cut through the lip."""
-    pic, a = _face(5 * 24, seed, ends=(False, False), stair=(8, 112))
+    pic, a = _face(5 * 24, seed, ends=(False, False), stair=(1, 119))
     pic.a[:] = a
     return pic
 
 
 def footbridge(seed=131):
-    """The Col Path's crossing of the tarn's outlet (round 3, R2-P2): a plank deck five cells long,
-    its planks across the way, each with grain, a lit west edge, a dark east edge and nail heads at
-    its ends, the gaps between them dark (the water under them); a log kerb on each side on squat
-    posts, snow drifted along the north kerb and lodged at the plank ends; abutments of laid stone
-    in courses at both ends, lit on their tops, under snow."""
+    """The Col Path's crossing of the tarn's outlet, seen from above in the three-quarter view
+    (Matt's review of round 3: the round 3 bridge was drawn front-on like a fence). The deck's
+    planks lie across the way, seen from above and a little foreshortened, each with its grain and
+    a dark gap; a trodden track of packed snow runs along the deck; log kerbs edge it north and south
+    on short posts, the south kerb over the deck's dark edge; the deck's shadow falls on the ice
+    below it; abutments of laid stone are set into each bank, their tops under snow."""
     W, H = 5 * 24, 2 * 24 + 18
     a = np.full((H, W), -1, np.int32)
     rng = np.random.default_rng(seed)
-    y0, y1 = 14, H - 7
-    # the abutments: courses of laid stones, each a lit top row, a body, a dark joint below and east
-    for (xa, xb) in ((0, 13), (W - 13, W)):
-        y = y0 - 9
+    x0, x1 = 13, W - 13
+    y0, y1 = 10, 44                                       # the deck's top, north edge to south edge
+    # the shadow on the ice under the deck (south of it, the light being north-west)
+    for x in range(x0 - 2, x1 + 4):
+        h = 9 + int(round(2 * hsh(seed, x // 5, 3)))
+        for k in range(h):
+            y = y1 + 3 + k
+            if y < H:
+                a[y, x] = C('slate_cool', 1) if k < h - 3 else C('sky_cool', 2)
+    # the deck: planks across the way
+    x = x0
+    k = 0
+    while x < x1:
+        w = int(rng.integers(5, 7))
+        tone = 4 if k % 3 == 0 else 3
+        for xx in range(x, min(x1, x + w)):
+            u = xx - x
+            for yy in range(y0, y1):
+                if u == w - 1:
+                    c = C('timber_cool', 1)                                   # the gap between planks
+                elif u == 0:
+                    c = C('timber', min(5, tone + 1))                         # the plank's lit west arris
+                else:
+                    g = hsh(seed + k, xx, (yy + int(hsh(seed, k) * 9)) // 5)
+                    c = C('timber', tone) if g > 0.3 else (C('timber_cool', tone) if g > 0.1 else C('timber', tone - 1))
+                a[yy, xx] = c
+        for yy in (y0 + 3, y1 - 4):                                           # nail heads at the joists
+            a[yy, x + 1] = C('iron', 2)
+        x += w
+        k += 1
+    # the trodden track: packed snow along the deck, its edges ragged, bootprints in it
+    for xx in range(x0, x1):
+        t0 = y0 + 10 + int(round(2 * hsh(seed, xx // 4, 5)))
+        t1 = y1 - 9 - int(round(2 * hsh(seed, xx // 4, 6)))
+        for yy in range(t0, t1):
+            g = hsh(seed, (xx + yy * 3) // 4, yy)
+            a[yy, xx] = (C('snow', 4) if (yy - t0) == 0 else C('snow_cool', 3) if g > 0.82 else
+                         C('snow', 3) if g > 0.55 else C('snow_cool', 4))
+        a[t1, xx] = C('sky_cool', 4)
+    for xx in range(x0 + 6, x1 - 6, 9):
+        yy = y0 + 13 + (xx // 9) % 2 * 4
+        a[yy:yy + 2, xx:xx + 3] = C('snow_cool', 3)
+    # snow lying on the deck along the north kerb, and lodged in the plank gaps
+    for xx in range(x0, x1):
+        h = 3 + int(round(3 * hsh(seed, xx // 5, 7)))
+        for yy in range(y0, y0 + h):
+            a[yy, xx] = (C('snow', 5) if yy == y0 else C('snow_cool', 2) if yy == y0 + h - 1 else
+                         C('snow_cool', 3) if yy == y0 + h - 2 else
+                         C('snow', 4) if hsh(seed, xx // 3, yy) > 0.35 else C('snow_cool', 4))
+        if a[y0 + h, xx] >= 0 and a[y0 + h, xx] // 8 in (FI['timber'], FI['timber_cool']):
+            a[y0 + h, xx] = C('timber', 5)
+    # the kerbs: logs seen from above on short posts; the south one over the deck's dark edge
+    for (yr, north) in ((y0 - 4, True), (y1 - 1, False)):
+        for xx in range(x0 - 3, x1 + 3):
+            a[yr, xx] = C('timber', 4)
+            a[yr + 1, xx] = C('timber', 3)
+            a[yr + 2, xx] = C('timber_cool', 2)
+            if north:
+                a[yr - 1, xx] = C('snow', 5) if hsh(seed, xx // 3, 9) > 0.3 else C('snow', 4)
+        for xp in range(x0 + 2, x1, 20):
+            a[yr - 2:yr + 3, xp:xp + 3] = C('timber_cool', 1)
+            a[yr - 2, xp:xp + 3] = C('snow', 5)
+            a[yr - 1, xp] = C('timber', 4)
+        if not north:
+            for d in range(3):
+                a[yr + 3 + d, x0 - 2:x1 + 2] = C('timber_cool', 1) if d < 2 else C('timber_cool', 0)
+    # the abutments: laid stones set into the banks, seen from above, their tops under snow
+    for (xa, xb) in ((0, x0 + 1), (x1 - 1, W)):
+        y = y0 - 8
         row = 0
-        while y < y1 + 5:
-            hh = int(rng.integers(3, 5))
-            x = xa - (2 if row % 2 else 0)
+        while y < y1 + 8:
+            hh = int(rng.integers(5, 8))
+            x = xa - (3 if row % 2 else 0)
             while x < xb:
-                w = int(rng.integers(4, 7))
-                for yy in range(y, min(y + hh, y1 + 5)):
+                w = int(rng.integers(5, 9))
+                for yy in range(y, min(y + hh, y1 + 8)):
                     for xx in range(max(xa, x), min(xb, x + w)):
-                        if yy == y + hh - 1 or xx == x + w - 1:
-                            c = C('slate_cool', 1)
-                        elif yy == y:
-                            c = C('slate', 4) if xx < x + w - 2 else C('slate', 3)
+                        r_ = yy - y
+                        if xx == x + w - 1 or r_ == hh - 1:
+                            c = C('slate_cool', 0)
+                        elif r_ < hh - 3:
+                            c = C('slate', 4) if xx < x + w - 2 else C('slate', 3)      # the stone's top
                         else:
-                            c = C('slate', 3) if (xx - x) < w // 2 else C('slate_cool', 2)
+                            c = C('slate_cool', 2)                                     # its face, in shade
                         a[yy, xx] = c
                 x += w
             y += hh
             row += 1
-        a[y0 - 9:y0 - 6, xa:xb] = C('snow', 5)
-        a[y0 - 6, xa:xb] = C('snow_cool', 4)
-    # the deck: planks across the way
-    x = 12
-    k = 0
-    while x < W - 12:
-        w = int(rng.integers(5, 7))
-        for xx in range(x, min(W - 12, x + w)):
-            u = xx - x
-            for yy in range(y0, y1):
-                if u == w - 1:
-                    c = C('timber_cool', 1) if (yy + k) % 9 else C('water_cool', 1)      # the gap: dark, water below
-                elif u == 0:
-                    c = C('timber', 4)
-                elif u == w - 2:
-                    c = C('timber_cool', 2)
-                else:
-                    g = hsh(seed + k, xx, (yy + int(hsh(seed, k) * 9)) // 4)
-                    c = C('timber', 3) if g > 0.35 else (C('timber_cool', 3) if g > 0.12 else C('timber', 2))
-                a[yy, xx] = c
-        for yy in (y0 + 2, y1 - 3):                                           # nail heads
-            xn = x + 1 + (k % 2)
-            a[yy, xn] = C('iron', 1)
-            a[yy, xn + 1] = C('iron', 3)
-        if hsh(seed, k, 4) > 0.55:                                              # a knot
-            yk = int(y0 + 6 + hsh(seed, k, 5) * (y1 - y0 - 12))
-            a[yk, x + 2:x + min(4, w - 2)] = C('timber_cool', 1)
-        # snow lodged at the plank's north end
-        dn = int(1 + 3 * hsh(seed, k, 6))
-        a[y0:y0 + dn, x:x + w - 1] = C('snow', 4)
-        a[y0 + dn, x:x + w - 1] = C('snow_cool', 3)
-        x += w
-        k += 1
-    a[y1:y1 + 3, 12:W - 12] = C('timber_cool', 1)                          # the deck's south beam in shade
-    a[y1, 12:W - 12] = C('timber_cool', 2)
-    # the kerbs: logs on squat posts, the north one under a drift
-    for (yr, north) in ((y0 - 6, True), (y1 - 4, False)):
-        for xp in range(14, W - 14, 22):
-            a[yr + 4:yr + 7, xp:xp + 3] = C('timber_cool', 1)
-            a[yr + 4:yr + 7, xp] = C('timber', 3)
-        a[yr:yr + 5, 9:W - 9] = C('timber', 3)
-        a[yr + 1, 9:W - 9] = C('timber', 4)
-        a[yr + 3, 9:W - 9] = C('timber_cool', 2)
-        a[yr + 4, 9:W - 9] = C('timber_cool', 1)
-        for xx in range(9, W - 9, 9):
-            a[yr + 2, xx:xx + 2] = C('timber_cool', 3)                         # bark checks
-        a[yr:yr + 5, 9] = C('sand_cool', 3)
-        a[yr + 1:yr + 4, 10] = C('sand', 4)                                    # the cut end, lit
-        a[yr:yr + 5, W - 10] = C('sand_cool', 2)
-        if north:
-            prof = ndi.gaussian_filter1d(rng.random(W), 4.0, mode='nearest')
-            prof = (prof - prof.min()) / max(1e-6, prof.max() - prof.min())
-            for xx in range(8, W - 8):
-                h = int(round(3 + 3 * prof[xx]))
-                for d in range(h):
-                    a[yr - d, xx] = (C('snow', 5) if d == h - 1 else C('snow', 4) if d == h - 2 else
-                                     C('snow_cool', 4) if d > 0 else C('snow_cool', 3))
-                a[yr + 1, xx] = C('snow_cool', 2) if prof[xx] > 0.4 else C('sky_cool', 3)
-                a[yr + 2, xx] = C('timber', 4)
-        else:
-            for xx in range(9, W - 9):
-                if hsh(seed, xx // 4, 8) > 0.5:
-                    a[yr, xx] = C('snow', 5)
+        for xx in range(xa, xb):
+            h = 4 + int(round(4 * hsh(seed, xx // 3, 11)))
+            for yy in range(y0 - 8, y0 - 8 + h):
+                a[yy, xx] = C('snow', 5) if yy == y0 - 8 else C('snow', 4)
+            a[y0 - 8 + h, xx] = C('snow_cool', 3)
     V.outline(a)
     pic = V.Pic(W, H, W // 2, H - 1)
     pic.a[:] = a
     return pic
+
+
+# ------------------------------------------------------------------------------------------------
+# open water in a frozen country (Matt's review of round 3): still water freezes first and fast water
+# last, so the outlet is ice with a narrow dark lead of running water down its middle
+# ------------------------------------------------------------------------------------------------
+LEAD_WATER = [C('slate_cool', 1), C('slate', 1), C('slate_cool', 2), C('slate', 2), C('sky_cool', 2)]
+
+
+def _lead_mask(H, W, seed, width=(5.0, 9.0), close=(), ends=True):
+    """A lead's open water down a picture H tall: a channel that meanders a texel or two, swells and
+    narrows, pinched shut at its ends (and where `close` lists rows, an ice bridge across it)."""
+    rng = np.random.default_rng(seed)
+    yy = np.arange(H)
+    cx = W / 2.0 + 1.6 * np.sin(yy / 11.0 + rng.uniform(0, 6)) + 0.8 * np.sin(yy / 4.3 + rng.uniform(0, 6))
+    w = width[0] + (width[1] - width[0]) * (0.5 + 0.5 * np.sin(yy / 9.0 + rng.uniform(0, 6)))
+    if ends:
+        taper = np.clip(np.minimum(yy + 1, H - yy) / 9.0, 0, 1)
+        w = w * taper
+    for (c0, c1) in close:
+        w[c0:c1] = 0
+    w = ndi.uniform_filter1d(w, 3)
+    L = np.round(cx - w / 2).astype(int)
+    R = np.round(cx + w / 2).astype(int)
+    m = np.zeros((H, W), bool)
+    for y in range(H):
+        if R[y] - L[y] >= 2:
+            m[y, max(0, L[y]):min(W, R[y])] = True
+    return m
+
+
+def _paint_lead(a, m, seed):
+    """Open water under shelf ice: a calm dark centre, lighter shallows at its edges, a faint line of
+    current; the shelf's snow-covered lip round it (lit on the west and north), the lip's shadow
+    lying on the water under its south-facing edges, and a stone breaking the ice here and there."""
+    H, W = a.shape
+    Y, X = np.mgrid[0:H, 0:W]
+    dist = ndi.distance_transform_edt(m)
+    a[m] = np.where(dist[m] <= 1, C('sky_cool', 2), np.where(dist[m] <= 2, C('slate', 2), C('slate_cool', 1)))
+    cur = m & (dist >= 2) & ((X + (Y // 7)) % 5 == 0) & (K.vhash(X, Y // 4, seed) > 0.55)
+    a[cur] = C('slate', 2)
+    l1 = ndi.binary_dilation(m, iterations=1) & ~m
+    grow = K.vhash(X // 3, Y // 3, seed + 3) > 0.45
+    lip = l1 | (ndi.binary_dilation(l1, iterations=1) & ~m & grow)
+    lip2 = ndi.binary_dilation(lip, iterations=1) & ~m & ~lip & (K.vhash(X // 2, Y // 3, seed + 4) > 0.4)
+    north = lip & np.roll(m, -1, 0) & ~np.roll(m, 1, 0)
+    a[lip] = C('snow', 4)
+    a[lip & np.roll(m, 1, 1)] = C('snow_cool', 3)                       # the east lip, facing west in shade
+    a[lip & np.roll(m, -1, 1)] = C('snow', 5)                           # the west lip, lit
+    a[lip2] = C('snow_cool', 4)
+    shade = m & np.roll(lip, 1, 0) & (dist <= 2)                         # the lip's shadow on the water
+    a[shade] = C('slate_cool', 0)
+    a[north] = C('snow', 5)
+    del seed
+
+
+def lead(kind='run', seed=137):
+    """A lead of open water in the frozen outlet (ground dressing laid on the ice): `run` three cells
+    long, `short` two, `long` four with an ice bridge, `pool` the fall's plunge pool, half open under
+    an ice rim with rime from the spray, `gap` the inflow's one dark gap."""
+    if kind == 'pool':
+        H, W = 2 * 24 + 6, 3 * 24 + 6
+        a = np.full((H, W), -1, np.int32)
+        Y, X = np.mgrid[0:H, 0:W]
+        nz = ndi.gaussian_filter(np.random.default_rng(seed).random((H, W)), 3.0)
+        nz = (nz - nz.mean()) / (nz.std() + 1e-9)
+        d = ((X - W / 2) / (W / 2 - 3)) ** 2 + ((Y - H / 2) / (H / 2 - 3)) ** 2 + 0.12 * nz
+        # the pool under the fall: open where the water lands (its north half), the ice shelf grown
+        # over its south half with a ragged edge, rime from the spray on the shelf
+        open_ = (d < 0.8) & (Y < H * 0.52 + 4 * np.sin(X / 7.0) + 2 * nz)
+        _paint_lead(a, open_, seed)
+        shelf = (d < 1.0) & ~open_ & (a < 0)
+        g = K.vhash((X + Y // 4) // 4, Y // 3, seed + 5)
+        a[shelf] = np.where(g[shelf] > 0.8, C('snow', 5), np.where(g[shelf] > 0.3, C('snow_cool', 4), C('sky_cool', 5)))
+        return _pic(a)
+    if kind in ('strip', 'strip_long'):
+        # laid over a one-cell channel of the kit's water: the shelf ice grown in from both sides
+        # covers the cell to its edges, the lead open down its middle and running off the zone's edge
+        H, W = (60 if kind == 'strip' else 120), 24
+        m = _lead_mask(H, W, seed + H, (6.0, 10.0), ends=False)
+        a = np.full((H, W), -1, np.int32)
+        _paint_lead(a, m, seed)
+        Y, X = np.mgrid[0:H, 0:W]
+        shelf = a < 0
+        g = K.vhash((X + Y // 4) // 4, Y // 3, seed + 6)
+        a[shelf] = np.where(g[shelf] > 0.85, C('sky_cool', 5), np.where(g[shelf] > 0.45, C('water_cool', 4), C('sky_cool', 4)))
+        return _pic(a)
+    if kind == 'gap':
+        H, W = 24, 16
+        m = _lead_mask(H, W, seed, (3.0, 5.0))
+    else:
+        H = {'short': 48, 'run': 72, 'long': 96}[kind]
+        W = 24
+        close = ((44, 52),) if kind == 'long' else ()
+        m = _lead_mask(H, W, seed + H, (5.0, 10.0), close=close)
+    a = np.full((H, W), -1, np.int32)
+    _paint_lead(a, m, seed)
+    return _pic(a)
+
+
+def _pic(a):
+    H, W = a.shape
+    p = V.Pic(W, H, W // 2, H - 1)
+    p.a[:] = a
+    return p
 
 
 # ================================================================================================
@@ -1954,7 +2199,7 @@ def prop_jobs():
             note='The hut warden\'s bothy: rubble granite under slate at the Frostline hut scale (door leaf 87 art px, eaves '
                  '123), snow lying on the roof as a mass with a cornice, icicles at the corners and over the door, a drift '
                  'at the foot with the doorway dug clear; the stove\'s plume loops (8 frames) over the still.')),
-        ('frost_spruce', [('still', lambda: conifer('spruce'))], dict(
+        ('frost_spruce', [('still', lambda: conifer('spruce', load=1.0))], dict(
             name='Snowy spruce', cells=(3, 2), fp=B._fp(2, 1), collision={'shape': 'rect', 'rect': [-5.0, -4.0, 10, 4]},
             size_class='conifer (a tall spruce)', fn='conifer',
             note='A tall narrow spruce from the woodland pine\'s tiered painter, snow as shelves on its tiers.', **trees)),
@@ -1966,8 +2211,8 @@ def prop_jobs():
             name='Wind-cropped pine', cells=(4, 2), fp=B._fp(2, 1), collision={'shape': 'rect', 'rect': [-5.0, -4.0, 10, 4]},
             size_class='conifer (wind-cropped, three quarters of the pine)', fn='conifer',
             note='A squat pine cropped by the wind, its snow shelves on the west.', **trees)),
-        ('frost_krummholz', [('still', lambda: conifer('krummholz')), ('low', lambda: conifer('krummholz_b')),
-                             ('wide', lambda: conifer('krummholz_c'))], dict(
+        ('frost_krummholz', [('still', lambda: conifer('krummholz', load=0.8)), ('low', lambda: conifer('krummholz_b', load=0.8)),
+                             ('wide', lambda: conifer('krummholz_c', load=0.8))], dict(
             name='Krummholz', cells=(4, 2), fp=B._fp(3, 1), collision={'shape': 'rect', 'rect': [-9.0, -4.0, 18, 4]},
             size_class='conifer (krummholz: a wind-flattened spruce at the tree line)', fn='conifer',
             note='A pine at the tree line grown low and wide, snow on its tiers.', **trees)),
@@ -2078,6 +2323,13 @@ def prop_jobs():
             size_class='unsized (rough steps cut up the granite face: no stair kind in the guide; 40 world px wide, at least 34)', eastward='12 (the stairs)', fn='rock_stair',
             note='Six steps of laid granite up the face, lit noses over shaded risers, snow in the tread corners, the '
                  'trod worn into the middle, cheeks of the face either side: the Col Path\'s way up the cirque\'s step.')),
+        ('frost_lead', [(v, (lambda v=v: lead(v))) for v in ('run', 'short', 'pool', 'gap', 'strip', 'strip_long')], dict(
+            name='Open lead in the ice', purpose='mark', role='water', cells=(1, 3), fp=[], blocks=False,
+            collision={'shape': 'none'}, shadow=None, composition='axis', z_sort='ground',
+            size_class='unsized (open water in a frozen stream: ground dressing laid on the ice)', eastward='-', fn='lead',
+            note='Running water left open down the middle of the frozen outlet: a calm dark centre, lighter shallows, '
+                 'the shelf ice\'s snow-covered lip round it and its shadow on the water; the fall\'s plunge pool, half '
+                 'open under an ice rim; the inflow\'s one dark gap.')),
         ('frost_footbridge', [('still', lambda: footbridge())], dict(
             name='Plank footbridge over the outlet', purpose='cross', role='bridge', cells=(5, 2), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='axis', z_sort='ground', deck=[-20.0, -16.0, 40.0, 16.0],
