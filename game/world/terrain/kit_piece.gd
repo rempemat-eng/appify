@@ -73,18 +73,27 @@ func set_ground_baked(on: bool) -> void:
 static var _masks := {}
 
 ## The piece's cast shadow on the ground, or {} for none: an ellipse ("centre", "radii", texels in
-## zone space) or a mask from the crown ("mask": Image of ramp steps, "at": its top left).
+## zone space) or a mask ("mask": Image of ramp steps, "at": its top left): a crown's, a volume's, or
+## the placed variant's footprint shadow.
 func shadow() -> Dictionary:
 	var s = data().get("shadow")
 	if s == null:
 		return {}
 	if s.has("mask"):
-		var png: String = s.mask.png
+		## the placed variant's own mask where it has one (a footprint shadow: props.footprint_shadow
+		## writes one per variant), else the piece's (a crown, a volume); compose.shadows picks the same
+		var mk: Dictionary = s.mask
+		var vs: Dictionary = data().get("variants", {})
+		if variant != "" and vs.has(variant) and vs[variant].has("shadow"):
+			mk = vs[variant].shadow
+		if s.has("sun") and Vector2(s.sun[0], s.sun[1]) != TerrainGround.sun():
+			push_warning("KitPiece %s: shadow masks made for sun %s, the ground's is %s (python3 -m scripts.art.kit.props)" % [piece_id, s.sun, TerrainGround.sun()])
+		var png: String = mk.png
 		if not _masks.has(png):
 			var img := (load(png) as Texture2D).get_image()
 			if img.is_compressed():
 				img.decompress()
 			img.convert(Image.FORMAT_L8)
 			_masks[png] = img
-		return {"mask": _masks[png], "at": Vector2i(int(position.x) + int(s.mask.offset[0]), int(position.y) + int(s.mask.offset[1]))}
+		return {"mask": _masks[png], "at": Vector2i(int(position.x) + int(mk.offset[0]), int(position.y) + int(mk.offset[1]))}
 	return {"centre": position + Vector2(s.dir[0], s.dir[1]), "radii": Vector2(s.size[0], s.size[1])}

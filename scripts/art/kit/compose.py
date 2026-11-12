@@ -305,7 +305,9 @@ def shadows(pieces, H: int, W: int) -> np.ndarray:
         if not e or not e.get('shadow'):
             continue
         if e['shadow'].get('mask'):
-            mk = e['shadow']['mask']
+            # the placed variant's own mask where it has one (a footprint shadow, props.footprint_shadow),
+            # else the piece's (a crown, a volume); KitPiece.shadow picks the same
+            mk = (e['variants'].get(pc.get('variant') or '') or {}).get('shadow') or e['shadow']['mask']
             arr = _mask(mk['png'])
             y0, x0 = pc['at'][1] + mk['offset'][1], pc['at'][0] + mk['offset'][0]
             h, w = arr.shape

@@ -101,7 +101,9 @@ def expected():
     inputs.update('game/kit/terrain/' + name for name in textures)
     pieces = json.loads((ROOT / 'game/kit/props/index.json').read_text())
     for instance in [piece for _, path, _ in cases for piece in json.loads(path.read_text()).get('pieces', [])]:
-        mask = (pieces[instance['piece']].get('shadow') or {}).get('mask')
+        entry = pieces[instance['piece']]
+        variant = (entry.get('variants') or {}).get(instance.get('variant') or '') or {}
+        mask = variant.get('shadow') or (entry.get('shadow') or {}).get('mask')
         if mask:
             inputs.add('game/' + mask['png'].removeprefix('res://'))
     metadata = {'schema': 'napattack.kit-render-fixtures/1', 'scale': 1, 'cell_texels': kit.man['cell'],

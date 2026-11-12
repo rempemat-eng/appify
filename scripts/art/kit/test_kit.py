@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import unittest
 
 import numpy as np
@@ -1630,33 +1631,80 @@ class CrownMaskConsumers(unittest.TestCase):
 
 
 class FootprintShadows(unittest.TestCase):
-    """The footprint shadow rule (Frostline audit Z4, 12 Nov; props.footprint_shadow): every prop
-    that casts a plain shadow casts it from its footprint, lit from the upper left. Measured on the
-    masks the live ground and compose.shadows lay, against the footprint measured here from the
-    picture (its base band) and the solid box: the contact covers the footprint, nothing reaches west
-    of it, and the cast reaches no further east or down than the projection of the picture's height.
-    On main before the rule the ellipses ran a median 2.5 times the footprint (up to 5.4) and reached
-    a median 16.5 texels west of it (up to 141)."""
+    """The footprint shadow rule (Frostline audit Z4, 12 Nov; the audit of #479, round 2;
+    props.footprint_shadow). Measured on what the ground shows: every variant of every prop that
+    casts a plain shadow is laid alone by the reference renderer (compose.shadows, which the Godot
+    ground is pinned to match) with its picture over it, and the picture is measured here on its
+    own (its columns' lowest opaque rows, its height above the foot), not with the generator's code:
+
+    - the shadow shows below the picture's base: in one of the two rows under each standing column's
+      lowest opaque texel across at least 80 % of the standing columns, and 3 texels of core tone
+      under some standing column (house-style 6, eastward-edges 7.1);
+    - nothing lies west of the picture, nor west of where it stands (a standing prop);
+    - the cast reaches east at least the sun's throw of the picture's height, less 3 texels (a lower
+      bound, B6: the closing used to blunt the tips) and a north-south run's band at least the throw of
+      its east-west section's height;
+    - every part of a shadow at least 3 texels thick keeps a core two steps down (B7).
+
+    On main (59c5a033) the centred ellipses fail on geometry (they reach west and fall short east);
+    on round 1 (4929abf0) the contact hid under the pictures and b1 to b5, the cairn's toppled stones
+    and the gates' open leaves lay on the first variant's mask."""
+
+    AT = (400, 400)
+    SIZE = (800, 800)
+    STAND = 6                # a column stands when its lowest opaque row lies within 6 texels of the foot
 
     @classmethod
     def setUpClass(cls):
         from PIL import Image
-        from scripts.art.kit import props as PR
-        cls.PR = PR
+        from scripts.art.kit import compose as CO
+        from scripts.art.sun import CAST
+        cls.CO, cls.CAST, cls.Image = CO, CAST, Image
         cls.idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
-        cls.pieces = {}
+        CO._INDEX = cls.idx
+        CO._MASKS.clear()
+        cls.lib, cls.pieces = {}, {}
         for f in S.piece_files():
             p = json.load(open(f))
+            cls.lib[p['id']] = p
             cs = (p.get('rendering') or {}).get('cast_shadow') or {}
             e = cls.idx.get(p['id'])
             # a tree casts its crown (crown_shadow) and a house its volume (volume_shadow): not this rule
             if cs.get('shape') == 'ellipse' and p.get('variants') and e and e.get('role') != 'tree' \
                     and (e.get('shadow') or {}).get('kind') != 'volume':
                 cls.pieces[p['id']] = p
-        cls.Image = Image
+        cls._cache = {}
 
-    def _png(self, res):
-        return np.asarray(self.Image.open(os.path.join(S.ROOT, 'game', res[len('res://'):])))
+    def _alpha(self, res):
+        return np.asarray(self.Image.open(os.path.join(S.ROOT, 'game', res[len('res://'):])).convert('RGBA'))[..., 3] > 0
+
+    def lay(self, pid, vid):
+        """(shadow steps, picture mask, picture top-left) for one variant laid alone at AT."""
+        if (pid, vid) not in self._cache:
+            v = self.idx[pid]['variants'][vid]
+            sh = self.CO.shadows([{'id': 'x', 'piece': pid, 'at': list(self.AT), 'variant': vid}], *self.SIZE)
+            a = self._alpha(v['png'])
+            x0, y0 = int(self.AT[0] - v['foot'][0]), int(self.AT[1] - v['foot'][1])   # as render_zone lays it
+            pic = np.zeros(self.SIZE, bool)
+            pic[y0:y0 + a.shape[0], x0:x0 + a.shape[1]] = a
+            self._cache[(pid, vid)] = (sh, pic, (x0, y0), a)
+        return self._cache[(pid, vid)]
+
+    def standing(self, pid, vid):
+        """The picture's standing columns (zone x) and each one's lowest opaque row + 1 (zone y)."""
+        sh, pic, (x0, y0), a = self.lay(pid, vid)
+        fy = self.AT[1]
+        out = []
+        for c in range(a.shape[1]):
+            rows = np.nonzero(a[:, c])[0]
+            if len(rows) and y0 + rows.max() + 1 >= fy - self.STAND:
+                out.append((x0 + c, y0 + rows.max() + 1))
+        return out
+
+    def variants(self):
+        for pid, p in sorted(self.pieces.items()):
+            for v in p['variants']:
+                yield pid, v['id']
 
     def test_no_plain_ellipse_shadow_is_left(self):
         self.assertGreater(len(self.pieces), 100)
@@ -1664,47 +1712,161 @@ class FootprintShadows(unittest.TestCase):
             sh = e.get('shadow') or {}
             self.assertNotIn('size', sh, '%s still casts a centred ellipse' % k)
 
-    def test_every_footprint_shadow_sits_on_its_footprint_and_falls_east_and_down(self):
-        kx, ky = self.PR.CAST
-        for k, p in sorted(self.pieces.items()):
-            e = self.idx[k]
-            sh = e['shadow']
-            self.assertEqual(sh.get('kind'), 'footprint', k)
-            m = self._png(sh['mask']['png']) > 0
-            ox, oy = sh['mask']['offset']
-            ys, xs = np.nonzero(m)
-            v0 = p['variants'][0]
-            foot = v0.get('foot') or e['foot']
-            a = self._png(v0['png'])[..., 3] > 0
-            pys, pxs = np.nonzero(a)
-            band = (pys < foot[1]) & (pys >= foot[1] - self.PR.BASE_BAND)
-            if not band.any():
-                band = pys >= pys.max() - self.PR.BASE_BAND + 1
-            west = pxs[band].min() - foot[0]
-            east = pxs[band].max() + 1 - foot[0]
-            rect = e.get('collision')
-            if rect:
-                west, east = min(west, rect[0]), max(east, rect[0] + rect[2])
-            west, east = max(west, pxs.min() - foot[0]), min(east, pxs.max() + 1 - foot[0])
-            height = foot[1] - pys.min()
-            w = east - west
-            # nothing west of the footprint's west edge
-            self.assertGreaterEqual(xs.min() + ox, np.floor(west), '%s reaches west' % k)
-            # the contact covers the footprint: some row within the footprint's depth is shaded from
-            # its west edge to its east edge, to within one texel at each end
-            depth = rect[3] if rect else self.PR.BASE_BAND
-            spans = []
-            for y in range(-int(np.ceil(depth)), 1):
-                if 0 <= y - oy < m.shape[0] and m[y - oy].any():
-                    c = np.nonzero(m[y - oy])[0] + ox
-                    spans.append((c.min(), c.max() + 1))
-            self.assertTrue(any(a <= west + 1 and b >= east - 1 for a, b in spans), '%s: no contact across its footprint' % k)
-            # the cast reaches no further east than the projected height (and the closing pass),
-            # nor further down
-            self.assertLessEqual(xs.max() + 1 + ox, max(east, pxs.max() + 1 - foot[0]) + kx * height + 3, '%s runs east' % k)
-            self.assertLessEqual(ys.max() + 1 + oy, ky * height + max(4, w * 0.3) + 3, '%s runs down' % k)
-            # two ramp steps: a rim of one and, where there is room, a core of two
-            self.assertTrue(set(np.unique(self._png(sh['mask']['png']))) <= {0, 1, 2}, k)
+    def test_every_variant_has_its_own_mask(self):
+        for pid, vid in self.variants():
+            self.assertIn('shadow', self.idx[pid]['variants'][vid], '%s %s lies on another variant\'s mask' % (pid, vid))
+
+    def test_the_contact_shows_under_every_standing_picture(self):
+        thin, short = [], []
+        for pid, vid in self.variants():
+            sh, pic, _, _ = self.lay(pid, vid)
+            st = self.standing(pid, vid)
+            if not st:
+                continue                       # a floating section (a rail between posts) touches nothing
+            seen = sum(1 for x, b in st if (sh[b:b + 2, x] > 0).any() and not pic[b:b + 2, x].all())
+            if seen < 0.8 * len(st):
+                short.append('%s %s %d/%d' % (pid, vid, seen, len(st)))
+            if not any((sh[b:b + 3, x] == 2).all() for x, b in st):
+                thin.append('%s %s' % (pid, vid))
+        self.assertEqual(short, [], 'shadow not visible under the base')
+        self.assertEqual(thin, [], 'no 3 texels of core under any standing column')
+
+    def test_nothing_lies_west(self):
+        bad = []
+        for pid, vid in self.variants():
+            sh, pic, _, _ = self.lay(pid, vid)
+            cols = np.nonzero((sh > 0).any(0))[0]
+            west = np.nonzero(pic.any(0))[0].min()
+            st = self.standing(pid, vid)
+            # a standing prop casts nothing west of where it stands; a depth piece (a run, a gate's leaf,
+            # the fold) nothing west of its picture
+            depth = pid.startswith(('fence_', 'wall_drystone_')) or pid == 'brackens_fold_ruin'
+            if st and not depth:
+                # where it stands: its standing columns, or its solid box where that reaches further west
+                rect = self.idx[pid].get('collision')
+                stand = min(x for x, _ in st)
+                west = max(west, min(stand, self.AT[0] + rect[0]) if rect else stand)
+            if len(cols) and cols.min() < west:
+                bad.append('%s %s %d' % (pid, vid, west - cols.min()))
+        self.assertEqual(bad, [], 'reaches west')
+
+    def _height(self, pid, vid):
+        """The picture's height above its foot (texels)."""
+        v = self.idx[pid]['variants'][vid]
+        a = self._alpha(v['png'])
+        return np.ceil(v['foot'][1]) - np.nonzero(a.any(1))[0].min()
+
+    def test_the_cast_reaches_its_full_throw_east(self):
+        kx, ky = self.CAST
+        bad = []
+        for pid, vid in self.variants():
+            sh, pic, (x0, y0), a = self.lay(pid, vid)
+            if not (sh > 0).any():
+                bad.append('%s %s casts nothing' % (pid, vid))
+                continue
+            reach = np.nonzero((sh > 0).any(0))[0].max() + 1
+            m = re.match(r'^(fence_(?:picket|rail|wattle)|wall_drystone)_ns$', pid)
+            if m:
+                # a north-south run: its band reaches the throw of its east-west section's height
+                tw = self.idx[m.group(1) + '_ew']
+                tv = vid if vid in tw['variants'] else next(iter(tw['variants']))
+                need = self.AT[0] + 4.5 + kx * self._height(m.group(1) + '_ew', tv) * 0.8
+            elif pid.startswith(('fence_', 'wall_drystone_')) or pid == 'brackens_fold_ruin':
+                continue                   # corners, gates and the fold: their own regressions below
+            elif (self.lib[pid].get('placement') or {}).get('role') in ('house', 'coop', 'shelter', 'sty', 'stall'):
+                # its ground box swept up its height, cut at its front: the throw of the height (less the
+                # box's depth the picture shows) or of the height whose shadow still lies behind the front
+                rect = self.idx[pid]['collision']
+                h = min(self._height(pid, vid) - rect[3], -rect[1] / ky)
+                need = self.AT[0] + rect[0] + rect[2] + kx * h - 3
+            else:
+                # every opaque texel's throw from the foot line, the least a column's base can give
+                ys, xs = np.nonzero(a)
+                h = np.ceil(self.idx[pid]['variants'][vid]['foot'][1]) - 1 - ys
+                need = (x0 + xs + 0.5 + kx * np.maximum(0, h)).max() - 3
+            if reach < need:
+                bad.append('%s %s %.0f short' % (pid, vid, need - reach))
+        self.assertEqual(bad, [], 'the cast falls short east')
+
+    def test_every_thick_shadow_keeps_a_core(self):
+        from scipy import ndimage as ndi
+        bad = []
+        for pid, vid in self.variants():
+            sh, _, _, _ = self.lay(pid, vid)
+            lab, n = ndi.label(sh > 0)
+            d = ndi.distance_transform_edt(sh > 0)
+            for i in range(1, n + 1):
+                part = lab == i
+                if d[part].max() >= 2 and not (sh[part] == 2).any():
+                    bad.append('%s %s' % (pid, vid))
+        self.assertEqual(bad, [], 'a shadow 3 texels thick without a core')
+
+    def test_regression_boulder_b5_casts_its_own_width(self):
+        # round 1: b5 (84 wide) lay on b0's 41-wide mask
+        st = self.standing('woodland_boulder', 'b5')
+        sh, _, _, _ = self.lay('woodland_boulder', 'b5')
+        xs = [x for x, b in st if (sh[b:b + 2, x] > 0).any()]
+        self.assertGreaterEqual(max(xs) - min(xs) + 1, 0.8 * (max(x for x, _ in st) - min(x for x, _ in st) + 1))
+        self.assertGreater(len(st), 60)
+        b0, _, _, _ = self.lay('woodland_boulder', 'b0')
+        self.assertGreater((sh > 0).sum(), 1.5 * (b0 > 0).sum())
+
+    def test_regression_gate_open_w_casts_its_west_leaf(self):
+        # round 1: open_w lay on open_e's mask, its leaf's shadow on the wrong side
+        for pid in ('wall_drystone_gate_ns', 'fence_picket_gate_ns', 'fence_rail_gate_ns', 'fence_wattle_gate_ns'):
+            w, _, _, _ = self.lay(pid, 'open_w')
+            e, _, _, _ = self.lay(pid, 'open_e')
+            cw = np.nonzero((w > 0).any(0))[0]
+            ce = np.nonzero((e > 0).any(0))[0]
+            self.assertLess(cw.min(), self.AT[0] - 30, pid)          # the leaf's shadow lies west of the run
+            self.assertGreaterEqual(ce.min(), self.AT[0] - 14, pid)  # and open_e's none there (the run is 25 wide)
+            self.assertGreater(ce.max(), self.AT[0] + 40, pid)       # open_e's leaf casts east
+
+    def test_regression_hen_stands_on_its_shadow(self):
+        # round 1: the hen's contact lay wholly under its picture
+        for pid in ('farm_hen_white', 'farm_hen_brown', 'farm_hen_speckled'):
+            sh, pic, _, _ = self.lay(pid, pid)
+            st = self.standing(pid, pid)
+            self.assertTrue(st, pid)
+            self.assertTrue(all((sh[b:b + 2, x] > 0).any() for x, b in st), pid)
+            self.assertGreater(((sh > 0) & ~pic).sum(), 60, pid)
+
+    def test_a_building_casts_nothing_before_its_front(self):
+        # eastward-edges 11.6: nothing south of the foot line but the contact under the front
+        for pid, vid in self.variants():
+            if (self.lib[pid].get('placement') or {}).get('role') not in ('house', 'coop', 'shelter', 'sty', 'stall'):
+                continue
+            sh, pic, _, _ = self.lay(pid, vid)
+            base = max(b for _, b in self.standing(pid, vid))
+            self.assertFalse((sh[base + 3:] > 0).any(), '%s casts before its front' % pid)
+            east = np.nonzero(pic.any(0))[0].max() + 1
+            self.assertFalse((sh[self.AT[1]:, east:] > 0).any(), '%s casts south of its foot line east of it' % pid)
+
+
+class Sun(unittest.TestCase):
+    """One sun (game/data/sun.json, scripts/art/sun.py): the bake's projection, the kit's prop masks
+    and the live ground read the same file, and its default is the painted zones' 0.46 east, 0.22 south."""
+
+    def test_one_source(self):
+        from scripts.art.sun import CAST, PATH
+        from scripts.art.native import compose as NC
+        self.assertEqual(tuple(json.load(open(PATH))['cast']), (0.46, 0.22))
+        self.assertEqual(tuple(NC.SHADOW), CAST)
+        idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
+        for k, e in idx.items():
+            sh = e.get('shadow') or {}
+            if sh.get('kind') == 'footprint':
+                self.assertEqual(tuple(sh['sun']), CAST, '%s: masks made for another sun (run props)' % k)
+        gd = open(os.path.join(S.ROOT, 'game', 'world', 'terrain', 'terrain_ground.gd')).read()
+        self.assertIn('"res://data/sun.json"', gd)
+        # the biomes' old copies are no longer read; they must not drift from the sun meanwhile
+        for b in ('woodland', 'meadow'):
+            proj = json.load(open(os.path.join(S.ROOT, 'scripts', 'art', 'biomes', b + '.json')))['shadow']['project']
+            self.assertEqual(tuple(proj), CAST, b)
+        for f in ('scripts/art/kit/props.py', 'scripts/art/native/compose.py'):
+            src = open(os.path.join(S.ROOT, f)).read()
+            self.assertNotIn("['project']", src, f)
+            self.assertIn('from scripts.art.sun import CAST', src, f)
 
 
 class FencesAndFarm(unittest.TestCase):

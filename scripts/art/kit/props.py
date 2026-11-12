@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 
 import numpy as np
@@ -55,75 +56,280 @@ def crown_shadow(png_res: str, foot, out_name: str):
     return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(x0), int(y0)]}
 
 
-# the footprint shadow rule (Frostline audit Z4, 12 Nov; house-style 6, eastward-edges 7): light from
-# the upper left, so a prop's shadow is a contact shadow the size of its footprint plus its own
-# silhouette cast east and down by the same projection the bakes use (CAST, compose.SHADOW's, from the biome:
-# a texel h above the foot lands kx h east and ky h down), and nothing reaches west of its west edge.
-BASE_BAND = 6            # the picture's lowest rows above the foot that stand on the ground (2 world px)
-# the projection the painted zones' objects cast by (scripts/art/biomes/woodland.json and meadow.json
-# shadow.project, read by compose.SHADOW): one rule for the bake and the live ground
-CAST = tuple(json.load(open(os.path.join(ROOT, 'scripts', 'art', 'biomes', 'woodland.json')))['shadow']['project'])
+# the footprint shadow rule (Frostline audit Z4, 12 Nov; round 2 after the audit of #479; house-style 6,
+# eastward-edges 7.1 and 11.6). Light from the upper left, thrown by the one sun (game/data/sun.json):
+# a texel h above the ground lands kx h east and ky h south. Every placed variant has its own mask.
+#  - The base: per column, the picture's lowest opaque row where the column stands on the ground (within
+#    BASE_BAND of the foot or below it), else the foot line (an overhang, a seat between legs). A texel's
+#    height is measured from its column's base, so what is drawn below the foot stays on its own row.
+#  - The contact: an ellipse centred on the base line under the footprint (the grounded columns,
+#    widened to the solid box), so CONTACT texels (1 world px) show below the picture in the core tone.
+#  - The cast: the silhouette thrown by the sun, closed into one shape on a padded canvas.
+#  - Depth is not height: fences and walls cast their ground footprint (the cell's arms) swept up the
+#    heights of their east-west section; a north-south gate its run, swept up its east-west twin's
+#    height, the open leaf from its own lower edge; the fold ruin its walls' footprint swept up an
+#    authored height, so the back wall's shadow lies on the fold's floor.
+#  - Buildings (BUILDING_ROLES) cast nothing before their front: nothing south of the base line but the
+#    contact, and east of the picture nothing south of the foot line (11.6).
+#  - The ramp: two steps down in the core, one in the rim, the core chosen from the local thickness
+#    (a distance transform), so every shadow at least 3 texels thick keeps a core.
+from scripts.art.sun import CAST  # noqa: E402  (kx, ky), the one sun
+
+BASE_BAND = 6            # columns whose lowest row lies within this of the foot (2 world px) stand on the ground
+CONTACT = 3              # texels of contact shown below the base in the core tone (1 world px)
+CLOSE = 7                # the closing that joins the projected texels into one shape
+RIMS = (3, 6)            # the rim, 1 world px on a small shadow and 2 on a large one (house-style 6)
+HALF = 12                # half a cell: a fence or wall arm's reach from the foot
+BUILDING_ROLES = ('house', 'coop', 'shelter', 'sty', 'stall')
+CAST_HEIGHT = {'brackens_fold_ruin': 27}   # authored: the ruin's walls stand about 9 world px
 
 
-def footprint(png_res: str, foot, rect=None) -> dict:
-    """What a piece stands on, in texels from the foot: the x extent of the picture's base band
-    (its lowest BASE_BAND opaque rows above the foot, or its lowest rows if it floats), widened to
-    the solid box where that is wider, never past the picture; and the depth (the box's, or the base
-    band's)."""
+def _alpha(png_res: str) -> np.ndarray:
     from PIL import Image
-    a = np.asarray(Image.open(os.path.join(ROOT, 'game', png_res[len('res://'):])).convert('RGBA'))[..., 3] > 0
-    fx, fy = foot
-    ys, xs = np.nonzero(a)
-    band = (ys < fy) & (ys >= fy - BASE_BAND)
-    if not band.any():
-        band = ys >= ys.max() - BASE_BAND + 1
-    x0, x1 = xs[band].min() - fx, xs[band].max() + 1.0 - fx
-    if rect is not None:
-        x0, x1 = min(x0, rect[0]), max(x1, rect[0] + rect[2])
-    x0, x1 = max(x0, xs.min() - fx), min(x1, xs.max() + 1.0 - fx)
-    depth = rect[3] if rect is not None else float(BASE_BAND)
-    return {'x0': float(x0), 'x1': float(x1), 'depth': float(depth)}
+    return np.asarray(Image.open(os.path.join(ROOT, 'game', png_res[len('res://'):])).convert('RGBA'))[..., 3] > 0
 
 
-def footprint_shadow(png_res: str, foot, out_name: str, rect=None):
-    """A prop's shadow by the footprint rule: a contact ellipse exactly as wide as the footprint
-    (west end at its west edge) and as deep as it, and the picture's silhouette projected east and
-    down (CAST, as the bakes cast it); their union, cut at the footprint's west edge, the
-    core two ramp steps down and the outer rim one. Written as an R8 mask with its offset from the
-    foot, like a crown's; TerrainGround and compose.shadows lay it."""
+_LIB = {}
+
+
+def _lib() -> dict:
+    if not _LIB:
+        for f in piece_files():
+            p = json.load(open(f))
+            _LIB[p['id']] = p
+    return _LIB
+
+
+def _variant(p: dict, vid: str | None) -> dict:
+    vs = p.get('variants') or []
+    return next((v for v in vs if v['id'] == vid), None) or vs[0]
+
+
+def _foot(p: dict, v: dict):
+    g = p.get('geometry', {})
+    return v.get('foot') or g.get('foot') or [g['size_px'][0] / 2.0, g['size_px'][1]]
+
+
+def _rect(p: dict):
+    col = p.get('geometry', {}).get('collision') or {}
+    return [x * D for x in col['rect']] if col.get('shape') == 'rect' and col.get('rect') else None
+
+
+def _height_rows(p: dict, vid: str | None, wide: float = 0.0):
+    """A piece's heights (texels above its foot line) where its picture is opaque: every row, or only
+    the rows covering `wide` of its width (an east-west section's rails, not its post)."""
+    v = _variant(p, vid)
+    a = _alpha(v['png'])
+    fy = int(np.ceil(_foot(p, v)[1]))
+    rows = np.nonzero(a.sum(1) >= max(1, wide * a.any(0).sum()))[0]
+    return sorted({max(0, fy - 1 - int(y)) for y in rows})
+
+
+BOUNDARY = re.compile(r'^(fence_(?:picket|rail|wattle)|wall_drystone)_(?:(stile)_)?([nesw]+)$')
+GATE_NS = re.compile(r'^(.*)_gate_ns$')
+
+
+def shadow_rule(p: dict) -> str:
+    """Which way a piece's shadow is made: 'boundary' (a fence or wall cell), 'gate_ns' (a gate in a
+    north-south run), 'ruin' (an enclosure with an authored cast height), 'building' or 'silhouette'."""
+    if BOUNDARY.match(p['id']):
+        return 'boundary'
+    if GATE_NS.match(p['id']):
+        return 'gate_ns'
+    if p['id'] in CAST_HEIGHT:
+        return 'ruin'
+    if (p.get('placement') or {}).get('role') in BUILDING_ROLES:
+        return 'building'
+    return 'silhouette'
+
+
+def _sweep(rr: np.ndarray, cc: np.ndarray, heights) -> tuple:
+    """Ground texels (rows, cols) swept up the heights: the shadow of a slab standing on them."""
+    kx, ky = CAST
+    R, C = [], []
+    for h in heights:
+        R.append(np.floor(rr + 0.5 + ky * h).astype(int))
+        C.append(np.floor(cc + 0.5 + kx * h).astype(int))
+    return (np.concatenate(R), np.concatenate(C)) if R else (np.zeros(0, int), np.zeros(0, int))
+
+
+def _box(x0, y0, x1, y1, dx, dy) -> tuple:
+    """Texels (rows, cols, foot-relative) whose centres lie in a box given from the foot point."""
+    c = np.arange(int(np.floor(x0 + dx)) - 1, int(np.ceil(x1 + dx)) + 1)
+    r = np.arange(int(np.floor(y0 + dy)) - 1, int(np.ceil(y1 + dy)) + 1)
+    c = c[(c + 0.5 >= x0 + dx) & (c + 0.5 < x1 + dx)]
+    r = r[(r + 0.5 >= y0 + dy) & (r + 0.5 < y1 + dy)]
+    R, C = np.meshgrid(r, c, indexing='ij')
+    return R.ravel(), C.ravel()
+
+
+def _ramp(m: np.ndarray, rim: int) -> np.ndarray:
+    """2 in the core, 1 in the rim: the core lies deeper than min(rim, half the local thickness)
+    and at least 1 texel in, so any shape 3 texels thick keeps a core (B7)."""
+    from scipy import ndimage as ndi
+    d = ndi.distance_transform_edt(m)
+    local = ndi.grey_dilation(d, size=(2 * rim + 1, 2 * rim + 1))
+    core = m & (d > np.maximum(1.0, np.minimum(rim, local / 2.0)))
+    return np.where(core, 2, np.where(m, 1, 0)).astype(np.uint8)
+
+
+def footprint_shadow(p: dict, vid: str, out_name: str) -> dict:
+    """One variant's shadow by the footprint rule (the comment above). Written as an R8 mask (2 the
+    core, 1 the rim) with its offset from the foot, laid by TerrainGround and compose.shadows."""
     from PIL import Image
     from scipy import ndimage as ndi
     kx, ky = CAST
-    a = np.asarray(Image.open(os.path.join(ROOT, 'game', png_res[len('res://'):])).convert('RGBA'))[..., 3] > 0
-    fx, fy = foot
-    fp = footprint(png_res, foot, rect)
-    w = fp['x1'] - fp['x0']
-    rx = w / 2.0
-    ry = float(np.clip(fp['depth'] / 2.0, 3.0, max(3.0, 0.3 * w)))
-    cx, cy = (fp['x0'] + fp['x1']) / 2.0, -ry + 1.0
-    ys, xs = np.nonzero(a)
-    h = np.maximum(0.0, fy - ys - 0.5)
-    px = np.round(xs + 0.5 - fx + kx * h).astype(int)
-    py = np.round(ky * h - np.maximum(0.0, ys + 0.5 - fy)).astype(int)
-    X0 = int(np.floor(fp['x0'])) - 1
-    Y0 = int(min(py.min(), np.floor(cy - ry))) - 3
-    X1 = int(max(px.max(), np.ceil(fp['x1']))) + 4
-    Y1 = int(max(py.max(), np.ceil(cy + ry))) + 4
-    m = np.zeros((Y1 - Y0, X1 - X0), bool)
-    ok = (px >= X0) & (px < X1)
-    m[py[ok] - Y0, px[ok] - X0] = True
-    k = 7                                                      # close the projected texels into one shape
-    m = ndi.binary_dilation(m, iterations=k)
-    m = ndi.binary_fill_holes(m)
-    m = ndi.binary_erosion(m, iterations=k)
-    Y, X = np.mgrid[Y0:Y1, X0:X1] + 0.5
-    m |= ((X - cx) / rx) ** 2 + ((Y - cy) / ry) ** 2 <= 1.0  # the contact under the footprint
-    m &= X >= fp['x0']                                         # nothing west of the west edge
-    rim = 6 if m.sum() > 600 else 3
-    core = ndi.binary_erosion(m, iterations=rim)
-    out = np.where(core, 2, np.where(m, 1, 0)).astype(np.uint8)
+    rule = shadow_rule(p)
+    v = _variant(p, vid)
+    a = _alpha(v['png'])
+    fx, fy = _foot(p, v)
+    rect = _rect(p)
+    H, W = a.shape
+    sx0, sy0 = int(np.floor(-fx)), int(np.floor(-fy))      # the sprite's top left from the foot, as it is laid
+    dx, dy = fx + sx0, fy + sy0                              # the foot point in the sprite's texel frame, rel.
+    FY = -sy0                                                # the foot line, in sprite rows
+    has = a.any(0)
+    g = np.where(has, H - np.argmax(a[::-1], 0), 0)          # each column's base: below its lowest opaque row
+    grounded = has & (g >= FY - BASE_BAND)
+    G = np.where(grounded, g, np.where(has, np.maximum(g, FY), FY))   # a standing column on its own base
+    xs_all = np.nonzero(has)[0]
+    pic0, pic1 = xs_all.min(), xs_all.max() + 1
+    # the footprint's columns: the grounded ones, widened to the solid box, never past the picture
+    if grounded.any():
+        gx = np.nonzero(grounded)[0]
+        x0, x1 = float(gx.min()), float(gx.max() + 1)
+        if rect is not None and rule not in ('ruin',):
+            x0, x1 = min(x0, fx + rect[0]), max(x1, fx + rect[0] + rect[2])
+        x0, x1 = max(x0, pic0), min(x1, pic1)
+    else:
+        x0 = x1 = None
+    cast_r, cast_c = [np.zeros(0, int)], [np.zeros(0, int)]
+
+    def silhouette(cols_ok, base):
+        ys, xs = np.nonzero(a & cols_ok[None, :])
+        h = base[xs] - 1 - ys
+        cast_r.append(np.floor(base[xs] - 0.5 + ky * h).astype(int))
+        cast_c.append(np.floor(xs + 0.5 + kx * h).astype(int))
+
+    def band(rr_rel, cc_rel, heights):
+        r, c = _sweep(rr_rel, cc_rel, heights)
+        cast_r.append(r - sy0)
+        cast_c.append(c - sx0)
+
+    segmented = False
+    if rule == 'boundary':
+        fam, stile, letters = BOUNDARY.match(p['id']).groups()
+        lib = _lib()
+        twin = lib.get(fam + ('_stile' if stile else '') + '_ew') or p
+        rns, rew = _rect(lib[fam + '_ns']), _rect(lib[fam + '_ew'])
+        hw, ey0, ey1 = -rns[0], rew[1], rew[1] + rew[3]
+        twin_v = vid if any(t['id'] == vid for t in twin['variants']) else \
+            ('plain' if any(t['id'] == 'plain' for t in twin['variants']) else None)
+        rails = _height_rows(twin, twin_v, wide=0.3)
+        boxes = [(-hw, ey0, hw, ey1)]
+        boxes += [b for k, b in (('n', (-hw, -HALF, hw, ey0)), ('s', (-hw, ey1, hw, HALF)),
+                                 ('e', (hw, ey0, HALF, ey1)), ('w', (-HALF, ey0, -hw, ey1))) if k in letters]
+        for b in boxes:
+            band(*_box(*b, dx, dy), rails)
+        jc = np.zeros(W, bool)
+        jc[max(0, int(np.floor(fx - hw))):int(np.ceil(fx + hw))] = True
+        if (grounded & jc).any():                            # a post (or the wall) stands at the junction
+            post = 'post' if any(t['id'] == 'post' for t in twin['variants']) else twin_v
+            band(*_box(-hw, ey0, hw, ey1, dx, dy), range(0, max(_height_rows(twin, post)) + 1))
+    elif rule == 'gate_ns':
+        lib = _lib()
+        twin = lib[GATE_NS.match(p['id']).group(1) + '_gate_ew']
+        th = max(_height_rows(twin, 'shut'))
+        sv = _variant(p, 'shut')
+        sa = _alpha(sv['png'])
+        sfx, sfy = _foot(p, sv)
+        sys_, sxs = np.nonzero(sa)
+        rx0, rx1 = sxs.min() - sfx, sxs.max() + 1 - sfx       # the run's x extent from the foot
+        ry0, ry1 = sys_.min() + th - sfy, sys_.max() + 1 - sfy   # its ground from the north post to the south end
+        if vid == 'shut' or p['id'].startswith('wall_'):
+            band(*_box(rx0, ry0, rx1, ry1, dx, dy), range(0, th + 1))   # the shut leaf, or the wall, along the run
+        else:
+            for py0, py1 in ((ry0, ry0 + 3), (ry1 - 3, ry1)):        # an open fence gate: its two posts
+                band(*_box(rx0, py0, rx1, py1, dx, dy), range(0, th + 1))
+        leaf = has & ((np.arange(W) + 0.5 < fx + rx0) | (np.arange(W) + 0.5 > fx + rx1))
+        silhouette(leaf, np.where(has, g, FY))                # the open leaf stands at its own lower edge
+        if x0 is not None:
+            x0, x1 = max(x0, fx + rx0), min(x1, fx + rx1)
+    elif rule == 'ruin':
+        hgt = CAST_HEIGHT[p['id']]
+        f = np.zeros_like(a)
+        f[hgt:] = a[hgt:] & a[:-hgt]                          # ground under a wall: the wall stands hgt above it
+        f = ndi.binary_opening(f, iterations=1)
+        ys, xs = np.nonzero(f)
+        band(ys + sy0, xs + sx0, range(0, hgt + 1))
+        segmented = True
+    elif rule == 'building' and rect is not None:
+        # a roofed building: its ground box swept up its height (the picture's above the foot, less the
+        # box's depth that the picture shows above its front), cut below at the front (11.6), so what shows
+        # is a column east of it from its back to its front
+        top = int(np.nonzero(a.any(1))[0].min())
+        band(*_box(rect[0], rect[1], rect[0] + rect[2], rect[1] + rect[3], dx, dy),
+             range(0, max(1, FY - top - int(round(rect[3]))) + 1))
+    else:
+        silhouette(has, G)
+    cr, cc = np.concatenate(cast_r), np.concatenate(cast_c)
+    # the canvas, in sprite texels, padded past the closing on every side (B6)
+    pad = CLOSE + 3
+    r0 = min([cr.min()] if len(cr) else [FY]) - pad
+    r1 = max([cr.max()] if len(cr) else [FY]) + pad + 1
+    c0 = min([cc.min()] if len(cc) else [pic0]) - pad
+    c1 = max([cc.max()] if len(cc) else [pic1]) + pad + 1
+    r0, r1 = min(r0, int(G.min()) - 8 - pad), max(r1, int(G.max()) + 8 + pad)
+    c0, c1 = min(c0, pic0 - pad), max(c1, pic1 + pad)
+    m = np.zeros((r1 - r0, c1 - c0), bool)
+    m[cr - r0, cc - c0] = True
+    if m.any():
+        m = ndi.binary_dilation(m, iterations=CLOSE)
+        m = ndi.binary_fill_holes(m)
+        m = ndi.binary_erosion(m, iterations=CLOSE)
+        m |= ndi.gaussian_filter(m.astype(float), 1.2) > 0.5   # a hem's teeth smoothed, nothing taken away
+    out = _ramp(m, RIMS[1] if m.sum() > 600 else RIMS[0])
+    # the contact, centred on the base line: CONTACT texels show below it in the core tone
+    if x0 is not None:
+        Y, X = np.mgrid[r0:r1, c0:c1]
+        cols = np.arange(c0, c1)
+        base = np.where((cols >= 0) & (cols < W), G[np.clip(cols, 0, W - 1)], FY)[None, :]
+        # the contact runs under the columns that stand on the ground or are low over it (a seat between
+        # its legs), not across an open gateway or the mouth of the fold
+        low = has & (g >= FY - max(BASE_BAND, 0.4 * (FY - int(np.nonzero(a.any(1))[0].min()))))
+        lo = np.zeros(W, bool)
+        lo[max(0, int(np.floor(x0))):int(np.ceil(x1))] = True
+        if not segmented:
+            lo &= low | grounded
+        else:
+            lo &= grounded
+        segs = []
+        cols_lo = np.nonzero(lo)[0]
+        for sgm in np.split(cols_lo, np.nonzero(np.diff(cols_lo) > 1)[0] + 1):
+            if len(sgm) and grounded[sgm].any():
+                segs.append((float(max(x0, sgm.min())), float(min(x1, sgm.max() + 1))))
+        for s0, s1 in segs:
+            cx, rx = (s0 + s1) / 2.0, max(0.5, (s1 - s0) / 2.0)
+            ry = CONTACT + 1 + (1 if rect is not None and rect[3] >= 10 and s1 - s0 >= 30 else 0)
+            t = np.minimum(1.0, np.abs(X + 0.5 - cx) / rx)
+            prof = (1.0 - t ** 3) ** (1.0 / 3.0)
+            d = np.abs(Y + 0.5 - base)
+            inside = (X + 0.5 >= s0) & (X + 0.5 <= s1)
+            out = np.maximum(out, np.where(inside & (d <= ry * prof), 1, 0).astype(np.uint8))
+            out = np.maximum(out, np.where(inside & (d <= (ry - 1) * prof), 2, 0).astype(np.uint8))
+    # nothing west: of the footprint where the piece stands, else of the picture
+    west = x0 if (x0 is not None and rule in ('silhouette', 'building')) else pic0
+    out[:, :max(0, int(np.ceil(west)) - c0)] = 0
+    if rule == 'building':
+        # nothing before the front (eastward-edges 11.6): under the picture the contact only, east of it
+        # nothing south of the foot line
+        cols = np.arange(c0, c1)
+        lim = np.where((cols >= pic0) & (cols < pic1), G[np.clip(cols, 0, W - 1)] + CONTACT, FY)
+        out[np.arange(r0, r1)[:, None] >= lim[None, :]] = 0
+    ys, xs = np.nonzero(out)
+    out = out[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
     Image.fromarray(out, 'L').save(os.path.join(OUT, 'art', out_name))
-    return {'png': 'res://kit/props/art/' + out_name, 'offset': [X0, Y0]}
+    return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(c0 + xs.min() + sx0), int(r0 + ys.min() + sy0)]}
 
 
 def _set_looks() -> dict:
@@ -201,20 +407,28 @@ def entry(p: dict) -> dict:
         rect = [-radius, -radius, 2 * radius, 2 * radius]
     cs = r.get('cast_shadow') or {}
     shadow = None
-    if cs.get('shape') == 'ellipse' and p.get('variants'):
-        # by the footprint rule (footprint_shadow): the authored ellipse's size and dir are not read,
-        # since half the sets wrote full widths and the woodland half widths, and both renderers drew
-        # them as radii, centred, so they ran 2.5 times the footprint and reached west (Z4, 12 Nov)
-        v0 = p['variants'][0]
-        shadow = {'mask': footprint_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'], rect), 'kind': 'footprint'}
-    if (p['kind'] == 'structure' or p['id'] in _set_looks()) and p.get('variants'):
+    vshadow = {}
+    is_tree = p.get('placement', {}).get('role') == 'tree' and p.get('variants')
+    vol = None
+    if not is_tree and (p['kind'] == 'structure' or p['id'] in _set_looks()) and p.get('variants'):
         # a building drawn by the house builder (houses.py), from a zone plan's look or a set's:
         # its volume's shadow, and only that one
-        mk = volume_shadow(p, 'shadow_%s.png' % p['id'])
-        shadow = {'mask': mk, 'kind': 'volume'} if mk else shadow
-    if p.get('placement', {}).get('role') == 'tree' and p.get('variants'):
+        vol = volume_shadow(p, 'shadow_%s.png' % p['id'])
+    if is_tree:
         v0 = p['variants'][0]
         shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'])}
+    elif vol:
+        shadow = {'mask': vol, 'kind': 'volume'}
+    elif cs.get('shape') == 'ellipse' and p.get('variants'):
+        # by the footprint rule (footprint_shadow), one mask per variant: the placed variant's mask is
+        # laid (KitPiece.shadow, compose.shadows), and `mask` (the first variant's) stays for readers of
+        # the piece as a whole. The authored ellipse's size and dir are not read: half the sets wrote
+        # full widths and the woodland half widths, and both renderers drew them as radii (Z4, 12 Nov)
+        for i, v in enumerate(p['variants']):
+            vshadow[v['id']] = footprint_shadow(p, v['id'], 'shadow_%s.png' % p['id'] if i == 0 else
+                                                'shadow_%s__%s.png' % (p['id'], v['id']))
+        shadow = {'mask': vshadow[p['variants'][0]['id']], 'kind': 'footprint', 'rule': shadow_rule(p),
+                  'sun': list(CAST)}
     deck = p.get('gameplay', {}).get('deck')
     return {'kind': p['kind'], 'name': p['name'], 'foot': foot, 'collision': rect, 'shadow': shadow,
             'deck': [v * D for v in deck] if deck else None, 'z_sort': g.get('z_sort', 'foot'),
@@ -226,7 +440,9 @@ def entry(p: dict) -> dict:
             **({'collision_circle': radius} if radius else {}),
             **({'sheet_px': g['sheet_px']} if g.get('sheet_px') else {}),
             **({'anim': _anim(r, foot)} if _anim(r, foot) else {}),
-            'variants': {v['id']: {'png': v['png'], 'foot': v.get('foot', foot)} for v in p.get('variants', [])}}
+            'variants': {v['id']: {'png': v['png'], 'foot': v.get('foot', foot),
+                                   **({'shadow': vshadow[v['id']]} if vshadow else {})}
+                         for v in p.get('variants', [])}}
 
 
 def scene(pid: str, e: dict) -> str:
