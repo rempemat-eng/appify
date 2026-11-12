@@ -4,7 +4,9 @@ extends Node2D
 ## numbers). Raids adds one to the raid's zone on every load. It shows the brief repairs after a lost night,
 ## and while the night runs it stands the chosen defences on the pads (world/raid_barricade.gd), gives the
 ## shard lantern its health (world/raid_lantern.gd), sends the waves along the lane from the halt road
-## (enemies/raid_creature.gd), and reports the outcome to Raids.
+## (enemies/raid_creature.gd), and reports the outcome to Raids. When the night ends it clears the hurdles
+## and the bar away and says how it went (a card); a night lost by going down says so on getting up. Once
+## the raid is won it sets out the restore mark of the restore it offers (the bell tower) until it is paid.
 ##
 ## Its creatures walk the lane towards the lantern, batter whatever stands on it, and turn on the player
 ## when the player comes near. Villagers are never a target: Hale and Moss stay where they are, unhurt.
@@ -28,6 +30,7 @@ var lantern: RaidLantern
 var camp: Node2D
 var slots: SliceAttackSlots
 var repairs: Array[Node2D] = []
+var offer_site: RestoreSite
 var wave := -1
 var _queue: Array = []                 ## roles still to come in this wave
 var _spawned := 0
@@ -46,11 +49,18 @@ func _ready() -> void:
 		_cum[i] = 0.0 if i == 0 else _cum[i - 1] + lane[i - 1].distance_to(lane[i])
 	Raids.changed.connect(_on_raids_changed)
 	_show_repairs()
+	_set_out_offer()
 	if Raids.running():
 		start()
+	elif Raids.state() == "lost" and Raids.loss_untold == "down":
+		# the night was lost by going down: the zone has just reloaded, so this is where it is told
+		Raids.loss_untold = ""
+		_card.call_deferred(String(def.get("title", "")), "The night is lost",
+			"You went down, and the shardstruck scattered back down the halt road. A few things need mending; they will come again on your next walk into town.", 7.0)
 
 func _on_raids_changed(st: String) -> void:
 	_show_repairs()
+	_set_out_offer()
 	if st == "running" and not _started:
 		start()
 
@@ -99,18 +109,30 @@ func notice() -> float:
 	return float(def.get("notice", 60.0)) * DENSITY
 
 ## What blocks a creature `s` texels along the lane: a standing hurdle just ahead of it (or one it is
-## pressed against, off the lane), else the lantern once it is in reach; null when the way is open.
+## pressed against, off the lane), else the lantern when it stands beside the post (within `lantern.reach`
+## world px of its solid, `lantern.box`); null when the way is open.
 func blocker_ahead(creature: Node2D, s: float) -> Node2D:
 	for b in barricades:
 		if is_instance_valid(b) and b.standing():
 			var on_lane := s >= b.lane_s - STOP and s <= b.lane_s + 12.0
 			if on_lane or creature.global_position.distance_to(b.global_position) < STOP + 8.0:
 				return b
-	if is_instance_valid(lantern) and lantern.standing():
-		var reach := float(def.get("lantern", {}).get("reach", 30.0)) * DENSITY
-		if s >= length() - reach or creature.global_position.distance_to(lantern.global_position) < reach:
-			return lantern
+	if is_instance_valid(lantern) and lantern.standing() and lantern_distance(creature.global_position) <= lantern_reach():
+		return lantern
 	return null
+
+## The lantern's post in texels (the lit lantern's solid; data/raids/<id>.json lantern.box).
+func lantern_box() -> Rect2:
+	var b: Array = def.get("lantern", {}).get("box", [307, 290, 10, 22])
+	return Rect2(Vector2(float(b[0]), float(b[1])) * DENSITY, Vector2(float(b[2]), float(b[3])) * DENSITY)
+
+func lantern_reach() -> float:
+	return float(def.get("lantern", {}).get("reach", 10.0)) * DENSITY
+
+## How far `at` (texels) is from the lantern's post.
+func lantern_distance(at: Vector2) -> float:
+	var box := lantern_box()
+	return at.distance_to(Vector2(clampf(at.x, box.position.x, box.end.x), clampf(at.y, box.position.y, box.end.y)))
 
 func batter_damage(role: String) -> int:
 	var b: Dictionary = def.get("batter", {})
@@ -149,6 +171,7 @@ func _stand_defences() -> void:
 		b.name = "Raid_" + String(pad.id)
 		b.pad_id = String(pad.id)
 		b.kind = def.get("kinds", {}).get(kind, {})
+		b.span = float(pad.get("span", 0.0))
 		b.position = (pad.at as Vector2) * DENSITY
 		b.lane_s = progress(b.position)
 		b.across = direction_at(b.lane_s)
@@ -156,16 +179,9 @@ func _stand_defences() -> void:
 		barricades.append(b)
 
 func _light_the_lantern() -> void:
-	# where the lantern's talk area stands in the scene, else the plan's thing, else the lane's end
-	var at := point_at(length())
-	for t: Dictionary in Village.plans.get(String(def.get("zone", "")), {}).get("things", []):
-		if t.get("id", "") == "shard_lantern":
-			at = Vector2(float(t.at[0]), float(t.at[1])) * DENSITY
-	var node: Node2D = null
-	if zone != null:
-		node = zone.get_node_or_null("Actors/ShardLantern") as Node2D
-	if node != null:
-		at = node.global_position
+	# the bar hangs from the post's foot (data lantern.foot), else from the lane's end
+	var foot: Variant = def.get("lantern", {}).get("foot")
+	var at := Vector2(float(foot[0]), float(foot[1])) * DENSITY if foot is Array else point_at(length())
 	lantern = RaidLantern.new()
 	lantern.name = "RaidLantern"
 	lantern.max_hp = int(def.get("lantern", {}).get("hp", 12))
@@ -239,21 +255,65 @@ func _end(won: bool) -> void:
 	_queue.clear()
 	if won:
 		var purse := Raids.win()
-		_card(String(def.get("title", "")), "The lantern held", "Hale's hurdles did their part. The village's purse: %d Glint." % purse, 6.0)
+		_card(String(def.get("title", "")), "The lantern held", "The village's purse: %d Glint. Hale will want a word about the old bell." % purse, 6.0)
 	else:
 		for c: RaidCreature in creatures():
 			c.leave()
-		Raids.lose()
-		_card(String(def.get("title", "")), "The lantern went dark", "The shardstruck scatter back down the halt road. A few things need mending; the villagers will see to it.", 6.0)
+		Raids.lose("lantern")
+		Raids.loss_untold = ""
+		_card(String(def.get("title", "")), "The shardstruck reached the lantern",
+			"They scatter back down the halt road. A few things need mending; they will come again on your next walk into town.", 7.0)
+	_clear_defences()
 	ended.emit(won)
+
+## The night is over: the hurdles (standing or broken) and the lantern's bar go. They fade unless reduced
+## motion is on, when they go at once. Finite.
+func _clear_defences() -> void:
+	var gone: Array[Node2D] = []
+	for b in barricades:
+		if is_instance_valid(b):
+			b.collision_layer = 0
+			gone.append(b)
+	if is_instance_valid(lantern):
+		gone.append(lantern)
+	barricades.clear()
+	lantern = null
+	for n in gone:
+		n.remove_from_group("raid_defence")
+		if SaveGame.setting("reduced_motion", false) or not n.is_inside_tree():
+			n.queue_free()
+		else:
+			var t := n.create_tween()
+			t.tween_property(n, "modulate:a", 0.0, 0.6)
+			t.tween_callback(n.queue_free)
 
 func is_over() -> bool:
 	return _over
 
 func _card(title: String, sub: String, text: String, secs: float) -> void:
+	if not is_inside_tree():
+		return                       # a deferred card whose zone has already gone
 	var hud := get_tree().get_first_node_in_group("hud")
 	if hud != null and hud.has_method("show_card"):
 		hud.show_card(title, sub, text, secs)
+
+# --- the restore a won raid offers --------------------------------------------------------------
+## The mark of the offered restore (the bell tower before the library), while the raid is won, the offer is
+## Raids' own (no plan site) and it is not restored yet. The mark is a RestoreSite like the plan's.
+func _set_out_offer() -> void:
+	var offer: Dictionary = def.get("reward", {}).get("offers", {})
+	var want := not offer.is_empty() and offer.has("mark") and Raids.won(String(def.get("id", ""))) \
+		and bool(Village.sites.get(offer.get("id", ""), {}).has("offered_by")) and not Village.is_restored(String(offer.id))
+	if want == is_instance_valid(offer_site):
+		return
+	if not want:
+		return                       # a paid mark stays until the zone reloads; its lines say the bell is back
+	offer_site = RestoreSite.new()
+	offer_site.name = "BellTowerSite" if offer.id == "bell_tower" else "OfferSite"
+	offer_site.restore_id = String(offer.id)
+	offer_site.verb = "Restore"
+	offer_site.position = Vector2(float(offer.mark[0]), float(offer.mark[1])) * DENSITY
+	actors().add_child(offer_site)
 
 # --- the brief repairs ------------------------------------------------------------------------
 func _show_repairs() -> void:

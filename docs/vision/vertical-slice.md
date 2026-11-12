@@ -154,19 +154,23 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
 3. **Postponed twice.** "Not tonight" puts it off until the next walk in. After two, the next walk in
    brings the screen without "Not tonight". Moss mentions the camp while it is put off. Quitting on the
    screen brings it back on the next start.
-4. **Three waves, one lane, two pads.** The waves come down the plan's `halt_road` and use the woodland's
+4. **Three waves, one lane, two pads.** The waves come down the halt road and use the woodland's
    creature roles: two boarlets; then a boarlet, a toad and a boarlet; then a mossback, a boarlet and the
    horned elite. They march to the lantern and batter a standing hurdle, or the lantern itself, with
    their own tells. A creature turns on the player when the player is near and nothing solid is between
    them. The toad spits over a hurdle. Nobody targets Hale, Moss or any villager. Creatures are freed with
-   the camps' look and pay no fight Glint. The two pads are the plan's `pad_halt_gate`, where the road
-   meets the square, and `pad_halt_street`, a new pad in the raid's data between the bakery and the
-   herbalist's.
-5. **Win.** A purse of 30 Glint is paid once and `first_night_won` is set. The bell tower is offered as a
-   stage-1 restore (`bell_tower`, 50 Glint, act 1's id and price), and Hale says so. Its mark and its
-   picture come with stage 1.
-6. **Loss.** The night is lost when the lantern falls or the player goes down. Defeat keeps the usual
-   cache rule. Nothing is taken. Brief repairs show (boards on the smithy's window, a cart on its side)
+   the camps' look and pay no fight Glint. Both pads are in the raid's own data: `pad_halt_street` in the
+   street between the bakery and the herbalist's, and `pad_street_mouth` where the street opens on the
+   square. Each hurdle spans the street wall to wall, so nothing walks round it. The lane is the plan's
+   `halt_road` to the square's edge, then the raid's own points round the north of the well to the
+   lantern's west side (the plan's last leg ran through the well). A raider strikes the lantern only
+   from beside its post.
+5. **Win.** A purse of 30 Glint is paid once and `first_night_won` is set. The hurdles and the lantern's
+   bar clear away. The bell tower is offered as a restore (`bell_tower`, 50 Glint, act 1's id and price):
+   its mark stands before the library's door from then on, and Hale points to it. Its picture (the
+   cupola) comes with stage 1, so paying it changes no picture yet.
+6. **Loss.** The night is lost when the lantern falls or the player goes down; a card says so, on
+   getting up for the second. Defeat keeps the usual cache rule. Nothing is taken. Brief repairs show (boards on the smithy's window, a cart on its side)
    until the next walk in, which clears them and offers the night again with both postponements back.
    Walking out mid-night leaves it due. Quitting mid-night brings the screen back, from wave 1.
 
@@ -187,7 +191,10 @@ on the screen, the three waves and the win, to Hale's offer.
 6. The first night (12 Nov), to confirm: the announcement waits for *Home again* to be done; the
    announcement and the prepare screen are one screen; a lost night is offered again on the next walk in
    with both postponements back; going down during the night loses it; walking out mid-night leaves it
-   due. The second pad is new, `pad_halt_street`, because the plan's other first-night pad
-   (`pad_harbour_gate`) stands on the harbour road, which no first-night wave walks. Either move that
-   pad in the plan or keep the new one. The purse is 30 Glint, and the bell tower is offered at act 1's
-   price of 50.
+   due. Where the pads go: both are now in the raid's data, in the street between the bakery and the
+   herbalist's (`pad_halt_street`) and at its mouth (`pad_street_mouth`), each closing it wall to wall.
+   The plan's first-night pads stand in the open square (`pad_halt_gate`, where a hurdle can be walked
+   round) and on the harbour road (`pad_harbour_gate`, which no wave walks); move the plan's pads to
+   match, or the raid's. The raid's lane also leaves the plan's last leg, which runs through the well.
+   The purse is 30 Glint, and the bell tower is offered at act 1's price of 50, payable at once though
+   its cupola is not drawn yet.

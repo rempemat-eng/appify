@@ -154,25 +154,30 @@ func test_every_pad_starts_with_hales_hurdle_and_a_tap_cycles_it() -> void:
 	for pad: Dictionary in pads:
 		assert_str(Raids.pad_kind(pad.id)).is_equal("hurdle_barricade")
 	assert_array(Raids.kinds_owned()).is_equal(["hurdle_barricade"])
-	assert_str(Raids.cycle_pad("pad_halt_gate")).is_equal("")
-	assert_str(Raids.pad_kind("pad_halt_gate")).is_equal("")
-	assert_str(Raids.cycle_pad("pad_halt_gate")).is_equal("hurdle_barricade")
+	assert_str(Raids.cycle_pad("pad_street_mouth")).is_equal("")
+	assert_str(Raids.pad_kind("pad_street_mouth")).is_equal("")
+	assert_str(Raids.cycle_pad("pad_street_mouth")).is_equal("hurdle_barricade")
 	Raids.cycle_pad("pad_halt_street")
-	assert_dict(Raids.rec().layout).is_equal({"pad_halt_gate": "hurdle_barricade", "pad_halt_street": ""})
+	assert_dict(Raids.rec().layout).is_equal({"pad_street_mouth": "hurdle_barricade", "pad_halt_street": ""})
 	# without the forge there is no kind to choose, but the prefill stands
 	SaveGame.data.village.restored.erase("forge")
 	assert_array(Raids.kinds_owned()).is_empty()
 
-func test_the_pads_and_the_lane_come_from_the_plan() -> void:
-	var lane := Raids.lane(Raids.defs.first_night)
-	assert_int(lane.size()).is_equal(3)
-	assert_vector(lane[0]).is_equal(Vector2(0, 300))
-	var gate: Dictionary = Raids.pads(Raids.defs.first_night).filter(func(p: Dictionary) -> bool: return p.id == "pad_halt_gate")[0]
-	assert_vector(gate.at).is_equal(Vector2(210, 300))
-	# both pads stand on the halt road (the one lane), the street pad first
-	for pad: Dictionary in Raids.pads(Raids.defs.first_night):
-		assert_float(absf((pad.at as Vector2).y - 300.0)).is_less_equal(12.0)
+func test_the_pads_and_the_lane_are_the_raids_own_data() -> void:
 	var def: Dictionary = Raids.defs.first_night
+	var lane := Raids.lane(def)
+	assert_int(lane.size()).is_equal((def.lane_points as Array).size())
+	# it starts where the plan's halt road does, at the zone's west edge
+	assert_vector(lane[0]).is_equal(Vector2(0, 300))
+	# both pads stand across the halt road (the one lane), in the street between the bakery and the
+	# herbalist's (x 112 to 184), and each spans it wall to wall (y 288 to 336)
+	var pads: Array = Raids.pads(def)
+	assert_int(pads.size()).is_equal(2)
+	for pad: Dictionary in pads:
+		var at: Vector2 = pad.at
+		assert_float(at.x).is_between(112.0 + 4.0, 184.0 - 4.0)
+		assert_float(at.y - pad.span / 2.0).is_less_equal(288.0)
+		assert_float(at.y + pad.span / 2.0).is_greater_equal(336.0)
 	assert_int((def.waves as Array).size()).is_equal(3)
 	for w: Dictionary in def.waves:
 		for role: String in w.creatures:
@@ -206,7 +211,7 @@ func test_the_raid_round_trips_through_the_save() -> void:
 	_after_home_again()
 	Raids.arrive("crossroads", "woodland")
 	Raids.postpone()
-	Raids.cycle_pad("pad_halt_gate")
+	Raids.cycle_pad("pad_street_mouth")
 	Raids.rec().repairs = true
 	var before: Dictionary = SaveGame.data.raid.duplicate(true)
 	assert_int(SaveGame.save(PATH)).is_equal(OK)
@@ -323,8 +328,11 @@ func test_a_raider_marches_to_the_hurdle_and_batters_it_with_its_own_tell() -> v
 		c.step(0.1)
 	assert_object(c.blocker).is_null()
 	assert_str(c.state).is_equal("leash")
-	# no villager is ever a target: only hurdles and the lantern block, and the player draws it off
-	assert_bool(night.blocker_ahead(c, night.length()) == night.lantern).is_true()
+	# the lantern blocks only beside its post: at the lane's end, not from across the well
+	c.global_position = night.point_at(night.length())
+	assert_object(night.blocker_ahead(c, night.length())).is_same(night.lantern)
+	c.global_position = night.point_at(night.length() - 60.0)
+	assert_object(night.blocker_ahead(c, night.length() - 60.0)).is_null()
 
 func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_the_next_visit() -> void:
 	var night := _into_town()
@@ -337,6 +345,8 @@ func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_the_nex
 	assert_bool(night.is_over()).is_true()
 	assert_int(_creatures(night).size()).is_equal(0)                  # they go back down the road
 	assert_int(get_tree().get_nodes_in_group("raid_repair").size()).is_equal(2)
+	assert_int(get_tree().get_nodes_in_group("raid_defence").size()).is_equal(0)   # the hurdles go with the night
+	assert_object(night.lantern).is_null()                                          # and the lantern's bar
 	assert_int(int(SaveGame.data.glint)).is_equal(116)
 	# getting up in town keeps them; the next walk in clears them and offers the night again
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()
@@ -385,9 +395,9 @@ func test_the_prepare_screen_is_untimed_touch_sized_and_rings_the_bell() -> void
 	assert_bool(screen.is_open()).is_true()
 	assert_str(Raids.state()).is_equal("announced")
 	# a pad tap cycles, and the first "not tonight" puts it off
-	screen._on_pad("pad_halt_gate")
-	assert_str(Raids.pad_kind("pad_halt_gate")).is_equal("")
-	screen._on_pad("pad_halt_gate")
+	screen._on_pad("pad_street_mouth")
+	assert_str(Raids.pad_kind("pad_street_mouth")).is_equal("")
+	screen._on_pad("pad_street_mouth")
 	screen._on_later()
 	assert_bool(screen.is_open()).is_false()
 	assert_bool(player.input_enabled).is_true()
@@ -402,3 +412,132 @@ func test_the_prepare_screen_is_untimed_touch_sized_and_rings_the_bell() -> void
 	screen._on_ring()
 	assert_str(Raids.state()).is_equal("running")
 	assert_bool(screen.is_open()).is_false()
+
+# --- the audit of #483 ------------------------------------------------------------------------
+## Crossroads loaded and in the tree after Home again, with the bell rung, and its solids in the physics space.
+func _rung_town() -> RaidNight:
+	var night := _into_town()
+	Raids.ring()
+	for i in 3:
+		await get_tree().physics_frame
+	return night
+
+## B1: a hurdle closes the road. Across the lane at each hurdle, from the bakery's wall to the herbalist's,
+## no creature-sized circle (r 12 texels, a creature's body) is free: nothing walks round it.
+func test_no_creature_sized_gap_is_left_across_the_lane_at_either_hurdle() -> void:
+	var night: RaidNight = await _rung_town()
+	assert_int(night.barricades.size()).is_equal(2)
+	var space := night.get_world_2d().direct_space_state
+	var body := CircleShape2D.new()
+	body.radius = 12.0
+	var q := PhysicsShapeQueryParameters2D.new()
+	q.shape = body
+	q.collision_mask = 1
+	for b: RaidBarricade in night.barricades:
+		var free := []
+		var y := (288.0 - 16.0) * 3.0
+		while y <= (336.0 + 16.0) * 3.0:
+			q.transform = Transform2D(0.0, Vector2(b.global_position.x, y))
+			if space.intersect_shape(q, 1).is_empty():
+				free.append(int(y / 3.0))
+			y += 3.0
+		assert_array(free).override_failure_message("%s: a creature fits at y %s (world px)" % [b.name, free]).is_empty()
+	# broken, it opens the road
+	var first: RaidBarricade = night.barricades[0]
+	first.batter(first.hp)
+	await get_tree().physics_frame
+	q.transform = Transform2D(0.0, Vector2(first.global_position.x, 312.0 * 3.0))
+	assert_bool(space.intersect_shape(q, 1).is_empty()).is_true()
+
+## B2: the lane goes round the well, not through it: no point of it lies inside a solid, and its end stands
+## beside the lantern's post, within the reach a raider strikes from.
+func test_no_point_of_the_lane_lies_inside_a_solid_and_it_ends_beside_the_lantern() -> void:
+	var night: RaidNight = await _rung_town()
+	for b: RaidBarricade in night.barricades:
+		b.batter(b.hp)                      # the hurdles stand on the lane by design; the rest must not
+	await get_tree().physics_frame
+	var space := night.get_world_2d().direct_space_state
+	var q := PhysicsPointQueryParameters2D.new()
+	q.collision_mask = 1
+	var inside := []
+	var s := 0.0
+	while s <= night.length():
+		q.position = night.point_at(s)
+		for hit: Dictionary in space.intersect_point(q, 4):
+			inside.append("%s at %s" % [(hit.collider as Node).name, (q.position / 3.0).round()])
+		s += 3.0
+	assert_array(inside).is_empty()
+	var end := night.point_at(night.length())
+	assert_float(night.lantern_distance(end)).is_less_equal(night.lantern_reach())
+	assert_float(night.lantern_distance(end)).is_greater(0.0)
+
+func test_a_night_lost_by_going_down_is_told_on_getting_up() -> void:
+	var night := _into_town()
+	Raids.ring()
+	Raids.player_downed()
+	assert_str(Raids.loss_untold).is_equal("down")
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()          # as game.gd does on getting up
+	assert_str(Raids.loss_untold).is_equal("")
+	assert_str(Raids.state()).is_equal("lost")
+	assert_object(night).is_not_null()
+	# a night lost at the lantern is told there and then, so nothing is left to tell on a reload
+	Raids.loss_untold = ""
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	assert_str(Raids.loss_untold).is_equal("")
+
+func test_a_won_night_clears_away_and_sets_out_the_bell_towers_mark() -> void:
+	SaveGame.data.settings.reduced_motion = true
+	var night := _into_town()
+	Raids.ring()
+	night.set_physics_process(false)
+	for w in 3:
+		for i in 12:
+			night._physics_process(1.0)
+		_free_all(night)
+		await get_tree().process_frame
+	night._physics_process(0.1)
+	assert_str(Raids.state()).is_equal("won")
+	await get_tree().process_frame
+	assert_int(get_tree().get_nodes_in_group("raid_defence").size()).is_equal(0)
+	assert_object(night.lantern).is_null()
+	var site := Zones.current.get_node_or_null("Actors/BellTowerSite") as RestoreSite
+	assert_object(site).is_not_null()
+	assert_str(site.restore_id).is_equal("bell_tower")
+	assert_bool(site.visible).is_true()
+	# paid at the mark, as every restore: 50 Glint
+	var before := int(SaveGame.data.glint)
+	await site.interact()
+	assert_bool(Village.is_restored("bell_tower")).is_true()
+	assert_int(int(SaveGame.data.glint)).is_equal(before - 50)
+	# not set out again once restored
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	assert_object(Zones.current.get_node_or_null("Actors/BellTowerSite")).is_null()
+
+func test_an_unknown_raid_state_in_a_save_starts_afresh() -> void:
+	var doc := {"raid": {"id": "first_night", "state": "bogus", "postponed": 1}}
+	var out: Dictionary = SaveGame._migrate(doc)
+	assert_str(String(out.raid.state)).is_equal("none")
+	for st: String in Raids.STATES:
+		assert_str(String(SaveGame._migrate({"raid": {"state": st}}).raid.state)).is_equal(st)
+	assert_array(SaveGame.RAID_STATES).is_equal(Raids.STATES)
+
+func test_the_screen_says_what_stands_on_the_pads() -> void:
+	_after_home_again()
+	Raids.arrive("crossroads", "woodland")
+	var def := Raids.current()
+	assert_str(RaidScreen._pads_sentence(def)).contains("both pads")
+	Raids.cycle_pad("pad_street_mouth")
+	assert_str(RaidScreen._pads_sentence(def)).contains("pad 2 is empty")
+	Raids.cycle_pad("pad_halt_street")
+	assert_str(RaidScreen._pads_sentence(def)).contains("Both pads are empty")
+	# Hale's line before the night holds whatever the layout
+	assert_str(" ".join(Dialogue.lines_for("hale"))).not_contains("on both pads")
+
+func test_moss_never_talks_of_the_raid_while_one_of_her_quests_could_start() -> void:
+	_after_home_again()
+	Raids.arrive("crossroads", "woodland")
+	Raids.postpone()
+	assert_str(" ".join(Dialogue.lines_for("moss"))).contains("halt road")
+	# the Frostline in the build: her brief for the Col hut, which starts on talking to her, comes first
+	var entry: Dictionary = Dialogue.speakers.moss.entries[0]
+	assert_array(entry.get("if", {}).get("not_flags", [])).contains(["zone_built:frostline"])

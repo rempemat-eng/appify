@@ -9,7 +9,7 @@ extends Node2D
 signal fell
 
 const BAR := Vector2(60, 6)
-const ABOVE := 190.0                  ## texels above the node (the talk area, below the post's foot): just over the lit cap, as seen in play
+const ABOVE := 166.0                  ## texels above the post's foot (936, 936): just over the lit cap, as seen in play
 const FILL := Color("#f5d49c")
 const LOW := Color("#d98a7a")
 const BACK := Color("#1E1917")

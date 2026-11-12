@@ -15,6 +15,8 @@ const VERSION := 1
 # JSON numbers must retain exact whole values through Godot's float-based parser.
 const MAX_EXACT_INTEGER := 9007199254740991
 const DEFAULT_PATH := "user://save_0.json"
+## The raid record's states (core/raids.gd STATES; kept here so the save does not depend on the autoload).
+const RAID_STATES := ["none", "announced", "postponed", "pending", "running", "won", "lost"]
 
 var data: Dictionary = fresh()
 var path := DEFAULT_PATH
@@ -168,6 +170,9 @@ func _migrate(doc: Dictionary) -> Dictionary:
 	# whatever its flags say; the raid is earned and announced from there (core/raids.gd)
 	for key: String in ["postponed", "wave"]:
 		out.raid[key] = int(out.raid[key])
+	# a state this build does not know (a hand-edited or damaged save) would freeze the raid: start it afresh
+	if not String(out.raid.state) in RAID_STATES:
+		out.raid.state = "none"
 	out.player.hp = int(out.player.hp)
 	out.player.max_hp = int(out.player.max_hp)
 	for r in out.village.restored:

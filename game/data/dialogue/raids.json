@@ -4,17 +4,31 @@
     "entries": [
       {
         "priority": 5,
-        "if": { "flags": ["first_night_won"], "not_restored": ["bell_tower"] },
+        "if": {
+          "flags": [
+            "first_night_won"
+          ],
+          "not_restored": [
+            "bell_tower"
+          ]
+        },
         "lines": [
           "They broke on my hurdles and your bow. That's the first night held.",
-          "The library's bell used to warn the whole valley. Put it back in its cupola when the square reopens, and we'll hear the next lot coming."
+          "The library's bell used to warn the whole valley. There's a mark by the library door: put the bell back in its cupola, and we'll hear the next lot coming."
         ]
       },
       {
         "priority": 5,
-        "if": { "flags": ["first_night_announced"], "not_flags": ["first_night_won"] },
+        "if": {
+          "flags": [
+            "first_night_announced"
+          ],
+          "not_flags": [
+            "first_night_won"
+          ]
+        },
         "lines": [
-          "My hurdles are on both pads, across the halt road. They'll hold a while. The rest is your bow.",
+          "My hurdles are ready for the halt road, wherever you want them on the pads. They'll hold a while. The rest is your bow.",
           "Ring when you're ready, not before."
         ]
       }
@@ -25,11 +39,25 @@
     "entries": [
       {
         "priority": 11,
-        "if": { "flags": ["first_night_postponed"], "not_flags": ["first_night_won"] },
+        "if": {
+          "flags": [
+            "first_night_postponed"
+          ],
+          "not_flags": [
+            "first_night_won",
+            "zone_built:frostline"
+          ],
+          "not_started": [
+            "a1_bread_for_the_bothy",
+            "a1_the_choked_well",
+            "a1_the_landslip"
+          ]
+        },
         "lines": [
           "Their camp's still out on the halt road. I can see their eyes from the stall at dusk.",
           "Hale's hurdles are ready whenever you are."
-        ]
+        ],
+        "why": "priority 11 outranks Moss's act-1 lines (10), but only while the raid is put off and no quest of hers can start or run: her three act-1 quests start on talking to her and each needs the Frostline built first (Bread for the Col hut asks for zone_built:frostline; the choked well follows the bread, the landslip the wolf moon), so this line never shows while the Frostline is in the build"
       }
     ]
   }

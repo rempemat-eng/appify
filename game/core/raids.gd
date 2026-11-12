@@ -31,9 +31,14 @@ signal finished(won: bool)
 
 const DIR := "res://data/raids"
 const DENSITY := 3.0
+## Every state a raid record can hold (SaveGame keeps the same list: a state it does not know loads as "none").
+const STATES := ["none", "announced", "postponed", "pending", "running", "won", "lost"]
 
 var defs: Dictionary = {}
 var _from := ""          ## the zone the player was in before the one now loading ("" at the start of a run)
+## How the last night was lost, until the zone has said so on screen: "down" when the player went down (the
+## zone reloads, so the card shows on getting up), "" once told. Not saved: a quit after a loss tells nothing.
+var loss_untold := ""
 
 func _ready() -> void:
 	load_dir(DIR)
@@ -181,17 +186,19 @@ func win() -> int:
 	finished.emit(true)
 	return purse
 
-## The lantern fell, or the player went down: brief repairs until the next walk into town.
-func lose() -> void:
+## The lantern fell (`how` "lantern"), or the player went down ("down"): brief repairs until the next walk
+## into town.
+func lose(how := "lantern") -> void:
 	if not running():
 		return
+	loss_untold = how
 	rec().repairs = true
 	_to_state("lost")
 	finished.emit(false)
 
 func player_downed() -> void:
 	if running():
-		lose()
+		lose("down")
 
 # --- zones ----------------------------------------------------------------------------------
 func _on_zone_changing(to_zone: String) -> void:
@@ -258,17 +265,22 @@ func pads(def: Dictionary = {}) -> Array:
 				if p.id == pad.id:
 					at = p.at
 		if at is Array and (at as Array).size() == 2:
-			out.append({"id": String(pad.id), "at": Vector2(float(at[0]), float(at[1])), "why": String(pad.get("why", ""))})
+			out.append({"id": String(pad.id), "at": Vector2(float(at[0]), float(at[1])), "why": String(pad.get("why", "")),
+				"span": float(pad.get("span", 0.0))})
 		else:
 			push_error("Raids: pad %s has no place" % pad.get("id", "?"))
 	return out
 
-## The raid's lane in world px, from the plan's `raid_lanes`.
+## The raid's lane in world px: its own `lane_points` where it gives them, else the plan's `raid_lanes`.
 func lane(def: Dictionary = {}) -> PackedVector2Array:
 	if def.is_empty():
 		def = current()
-	var plan: Dictionary = Village.plans.get(String(def.get("zone", "")), {})
 	var out := PackedVector2Array()
+	if def.has("lane_points"):
+		for p: Array in def.lane_points:
+			out.append(Vector2(float(p[0]), float(p[1])))
+		return out
+	var plan: Dictionary = Village.plans.get(String(def.get("zone", "")), {})
 	for l: Dictionary in plan.get("raid_lanes", []):
 		if l.id == def.get("lane", ""):
 			for p: Array in l.points:

@@ -147,8 +147,8 @@ func _refresh() -> void:
 	_title.text = String(def.get("title", ""))
 	var forced := Raids.postpones_left() <= 0
 	_sub.text = "The shardstruck gather on the halt road, drawn by the lantern"
-	_text.text = "A horn from the halt road. %sHale's hurdles stand on the pads. Ring the bell when you are ready, then hold the lantern through %d waves." % [
-		"They will not wait another night. " if forced and Raids.postponed() > 0 else "", (def.get("waves", []) as Array).size()]
+	_text.text = "A horn from the halt road. %s%s Ring the bell when you are ready, then hold the lantern through %d waves." % [
+		"They will not wait another night. " if forced and Raids.postponed() > 0 else "", _pads_sentence(def), (def.get("waves", []) as Array).size()]
 	_later.visible = not forced
 	_later.text = "Not tonight (%d left)" % Raids.postpones_left()
 	var names := []
@@ -162,6 +162,20 @@ func _refresh() -> void:
 	_pads_line.text = "   ".join(names)
 	_hint.visible = Raids.kinds_owned(def).size() > 0
 	_map.queue_redraw()
+
+## What stands on the pads, from the layout as it is now ("Hale's hurdles stand on both pads.", "Pad 2 is
+## empty.", ...).
+static func _pads_sentence(def: Dictionary) -> String:
+	var pads: Array = Raids.pads(def)
+	var empty := []
+	for i in pads.size():
+		if Raids.pad_kind(String(pads[i].id), def) == "":
+			empty.append(i + 1)
+	if empty.is_empty():
+		return "Hale's hurdles stand on %s." % ("both pads" if pads.size() == 2 else "every pad")
+	if empty.size() == pads.size():
+		return "%s empty: nothing stands in their way." % ("Both pads are" if pads.size() == 2 else "Every pad is")
+	return "Hale's hurdles stand on the road; pad %s %s empty." % [" and ".join(empty.map(func(n: int) -> String: return str(n))), "is" if empty.size() == 1 else "are"]
 
 func _build_pads() -> void:
 	for b in _pad_buttons.values():

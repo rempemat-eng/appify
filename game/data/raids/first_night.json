@@ -8,9 +8,11 @@
   "why_announce_if": "the raid comes from the lantern's light (attention), and is announced only once the homecoming quest is over, so beat 8 follows beat 7 (a decision for Matt)",
   "postpones": 2,
   "lane": "halt_road",
+  "lane_points": [[0, 300], [200, 300], [262, 294], [300, 296]],
+  "why_lane_points": "the plan's halt_road to the square's edge, then round the north of the well (its box 278-298 x 304-320) to the lantern's west side, clear of its post (307-317 x 290-312): the plan's own last leg runs through the well and ends inside the post (audit of #483, B2). The plan is left as it is; test_raids.gd holds that no point of this lane lies inside a solid",
   "pads": [
-    { "id": "pad_halt_street", "at": [140, 300], "why": "between the bakery and the herbalist's, where the halt road is a street: the first hurdle the shardstruck meet. Not in the plan yet: the plan's other first-night pad (pad_harbour_gate) stands on the harbour road, which no first-night wave walks (map follow-up for the plan's owner and Matt)" },
-    { "id": "pad_halt_gate", "plan": true, "why": "the plan's pad where the halt road meets the square" }
+    { "id": "pad_halt_street", "at": [124, 312], "span": 48, "why": "inside the street between the bakery (foot at y 288) and the herbalist's (top at y 336): its span closes the street wall to wall, so the halt road is shut until it breaks" },
+    { "id": "pad_street_mouth", "at": [178, 312], "span": 48, "why": "the street's mouth onto the square, the same span from wall to wall. Replaces the plan's pad_halt_gate (210, 300), which stands in the open square where a hurdle can be walked round (audit of #483, B1). Where the pads go is Matt's open decision (vertical-slice.md, Open for Matt 6): move them here, in the raid's data" }
   ],
   "kinds": {
     "hurdle_barricade": {
@@ -21,11 +23,13 @@
       "hp": 10,
       "hp_placeholder": true,
       "span": 22,
+      "why_span": "world px across the lane when a pad gives no span of its own",
       "depth": 6
     }
   },
   "prefill": "hurdle_barricade",
-  "lantern": { "hp": 12, "hp_placeholder": true, "reach": 30 },
+  "lantern": { "hp": 12, "hp_placeholder": true, "foot": [312, 312], "box": [307, 290, 10, 22], "reach": 10,
+    "why": "a raider strikes the lantern only standing within `reach` world px of its post (`box`, the lit lantern's solid in zones/crossroads/kit.json); `foot` is where its bar hangs from" },
   "march_speed": 30,
   "march_speed_placeholder": true,
   "notice": 60,
@@ -52,6 +56,8 @@
       "cost": { "glint": 50 },
       "if": { "flags": ["first_night_won"] },
       "stage": 1,
+      "mark": [248, 214],
+      "why_mark": "a restore mark in front of the library's door (248, 200), set out by world/raid_night.gd once the raid is won and the bell tower not yet restored; the plan holds no site for it yet",
       "why": "the bell tower (game-design.md 7.2, the library's cupola; act 1's restore id bell_tower at the 50 Glint its mark's lines quote, docs/story/act1.md) is offered for stage 1. core/raids.gd adds it to Village.sites only while no plan defines bell_tower; its restore mark and its picture arrive with stage 1's map and art. Until then the offer is in Hale's lines"
     }
   }

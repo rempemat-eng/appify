@@ -12,6 +12,12 @@ extends GdUnitTestSuite
 ##   - the HUD always has a line (a tracked quest or a lead), and Glint never goes below zero;
 ##   - every line written for the three zones' people can show, apart from those listed with a reason.
 ##
+## Raids (core/raids.gd) are modelled as one more thing in their zone: once a raid is earned it can be
+## defended and won (the purse, its flags), and the restore it offers gets its mark (world/raid_night.gd sets
+## it out at runtime, so it is added here from the raid's data). A lost night changes nothing that lasts (its
+## repairs clear on the next walk in), so the model only plays the win. Announcing and postponing are
+## the raid's own state machine, held by test/test_raids.gd.
+##
 ## The model mirrors the game's own code paths (Dialogue.talk, RestoreSite.interact, SealLever.interact,
 ## PressurePlate.press, Camp._on_died, Door and Zones.go_to); fights are assumed won, since losing
 ## changes nothing but where the player stands, and the Glint.
@@ -50,6 +56,7 @@ func before_test() -> void:
 
 func after_test() -> void:
 	SaveGame.reset()
+	Raids.offer_restores()          # a raid won in the walk leaves no offered site behind
 
 # --- what the zones offer -----------------------------------------------------------------------
 func _scan() -> void:
@@ -59,6 +66,20 @@ func _scan() -> void:
 		_conds[id] = []
 		_scan_node(zone, id, Vector2.ZERO, [])
 		zone.free()
+	# the raids, and the mark of the restore a won raid offers (set out at runtime by world/raid_night.gd)
+	for rid: String in Raids.defs:
+		var def: Dictionary = Raids.defs[rid]
+		var zid := String(def.get("zone", ""))
+		if not _things.has(zid):
+			continue
+		var lane := Raids.lane(def)
+		_things[zid].append({"kind": "raid", "id": rid, "name": String(def.get("title", rid)),
+			"at": lane[lane.size() - 1] * 3.0, "conds": [def.get("attention_if"), def.get("announce_if")]})
+		var offer: Dictionary = def.get("reward", {}).get("offers", {})
+		if offer.has("mark"):
+			_things[zid].append({"kind": "restore", "id": String(offer.id), "speaker": "restore_" + String(offer.id),
+				"name": "the %s mark" % offer.id, "at": Vector2(float(offer.mark[0]), float(offer.mark[1])) * 3.0,
+				"conds": [offer.get("if")]})
 
 func _scan_node(n: Node, zone: String, origin: Vector2, conds: Array) -> void:
 	var at := origin + ((n as Node2D).position if n is Node2D else Vector2.ZERO)
@@ -187,6 +208,12 @@ func _do(thing: Dictionary) -> void:
 					GlintCache.pay_once(pay[0], pay[1])          # as world/camp.gd does for each creature freed
 				SaveGame.set_flag("camp_cleared:" + thing.id)
 				Quests.notify("camp:" + thing.id)
+		"raid":
+			# rung and held: the game's own win (Raids.win: the purse once, the flags, the offered restore)
+			if not Raids.won(thing.id):
+				Raids.rec().id = thing.id
+				Raids.rec().state = "running"
+				Raids.win()
 		"door":
 			if Quests.check(thing["if"]) and Zones.has_zone(thing.to):
 				Quests.zone_loading()
@@ -207,6 +234,7 @@ func _label(thing: Dictionary) -> String:
 		"restore": return "pay at %s" % thing.name
 		"plate": return "step on %s" % thing.name
 		"camp": return "clear camp %s" % thing.id
+		"raid": return "defend %s and win" % thing.name
 		_: return "walk through %s" % thing.name
 
 func _route(key: String, parent: Dictionary) -> String:

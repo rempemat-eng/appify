@@ -22,6 +22,7 @@ const PIP_EMPTY := Color("#3a3030")
 
 var pad_id := ""
 var kind: Dictionary = {}
+var span := 0.0                          ## world px across the lane, from the pad (0: the kind's own `span`)
 var lane_s := 0.0                       ## how far along the lane it stands (texels)
 var across := Vector2.RIGHT             ## the lane's direction where it stands
 var hp := 10
@@ -46,8 +47,8 @@ func _ready() -> void:
 ## placeholder is drawn on the pixel grid, never rotated).
 func _size() -> Vector2:
 	var depth := float(kind.get("depth", 6)) * DENSITY
-	var span := float(kind.get("span", 22)) * DENSITY
-	return Vector2(depth, span) if absf(across.x) >= absf(across.y) else Vector2(span, depth)
+	var wide := (span if span > 0.0 else float(kind.get("span", 22))) * DENSITY
+	return Vector2(depth, wide) if absf(across.x) >= absf(across.y) else Vector2(wide, depth)
 
 func standing() -> bool:
 	return hp > 0
@@ -85,8 +86,8 @@ func _draw() -> void:
 	var vertical := s.y >= s.x
 	var rise := 24.0                    # the rails stand this high above the ground (texels)
 	if vertical:
-		# across an east-west road: three hurdle panels down the span, each two posts and two rails
-		var panels := 3
+		# across an east-west road: hurdle panels down the span (one per 16 world px), each two posts and two rails
+		var panels := maxi(1, roundi(s.y / 48.0))
 		var step := s.y / panels
 		for i in panels:
 			var y := r.position.y + step * (i + 1) - 4.0
