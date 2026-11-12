@@ -1,0 +1,121 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "frost_pine",
+ "name": "Snowy pine",
+ "kind": "prop",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "heavy",
+   "weight": 1.0,
+   "png": "res://kit/props/art/frost/frost_pine_heavy.png",
+   "foot": [
+    53,
+    239
+   ]
+  },
+  {
+   "id": "light",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_pine_light.png",
+   "foot": [
+    53,
+    239
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "The woodland's pine (approved 9 Nov, PR #446) with snow lying on its boughs, heavy or light."
+ },
+ "geometry": {
+  "size_px": [
+   107,
+   240
+  ],
+  "size_cells": [
+   4,
+   2
+  ],
+  "z_sort": "foot",
+  "height_px": 240,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -5.0,
+    -4.0,
+    10,
+    4
+   ]
+  },
+  "foot": [
+   53,
+   239
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "grow",
+  "role": "tree",
+  "composition": "cluster",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    30,
+    6
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "tree (the woodland's pine: 79 world px)",
+  "eastward_ref": "12 (the pines, 3 A)",
+  "painter": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "pine",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/frost.py",
+  "todo": []
+ }
+}

@@ -51,6 +51,15 @@ What building it showed:
 - **Validate zone reports 15 faults on this screen, all piece data.** 13 are `size_cells disagrees with art size on the cell grid`: a piece with a size class has its footprint (`size_cells`) held to its art box as a fault, where an unclassified piece gets advice. One is the stone seat, larger than the bench class. One is the cart, whose spec names a kind (`cart`) the size guide does not have. The validator used to report 29: it looked up the whole size spec ("bush (41 to 81 tall, 44 to 115 wide)") instead of its head word, as `scripts/review/scale.py` does; that is fixed (16 false faults across 61 pieces of the library). The piece data is not changed here.
 - The 59 hold no animal, no tree and no person: the screen has no sheep, no pine and nobody at the hut.
 
+### The Frostline (11 November): the first quest zone built this way
+
+`frostline` (`game/kit/zones/frostline.json`, its design and quest bindings in `game/data/plans/frostline.json`, the scene `game/zones/frostline/frostline.tscn` from `kit_zone.gd --plan`) is two screens of the Col Path: in from the south, the Col hut with its warden at the door, one switchback, the tarn with the ice-cutter's sledge, and the High Fells' boulder field with the shardstruck ibex's camp. **It is a lab and is not in `data/zones.json`**: every piece in it is a candidate, and nothing in the world leads to it yet. A playtest opens it with `--try-zone=frostline` (debug builds; `core/zones.gd`), as `game/tools/routes/frostline.txt` does from a save at the top of the Col Path.
+
+- **Ground**: two new materials, `snow` and `snow_trod`, with the snow's transitions over the trod, the scree and the water (`scripts/art/kit/sets/frost.py`, additive as the moor's). Like the Brackens lab it shows live tiles: bake.py would paint an unknown painter as lawn.
+- **Pieces**: the Col hut (the house builder's stone and slate, as the mill, with snow on the roof, icicles, a drift at the foot and the stove's smoke looping), and snow laid on the valley's own pictures (`snow_on`): the woodland's pine (two loads), its boulders, the Brackens' cairn. The ice-cutter's sledge is new. Reused as they are: the water, the scree and the Brackens' cold fire ring.
+- **Not drawn**: the hut warden and the ice-cutter have no cast; they speak from the hut's door and the sledge. The ibex use the slice enemies in the woodland creatures' looks. The ice caves are not built, so Under the snout now waits for `zone_built:ice_caves` (as the loaf waits for the Frostline).
+- **To ship it**: Matt's approval of the Frostline set, then `lab` off, the zone listed in `data/zones.json`, a north door and a `frostline` spawn in the woodland, the shard crows' camp (`camp:col_crows`) on the woodland's side of that door, and `routes/main.txt`'s closing beat updated (it expects the Col Path still buried).
+
 ### Open faults (not fixed)
 
 - **`walk.gd` still looks up a saved process id** if one reaches a scene (`_ground_owner`). The dock no longer saves one.

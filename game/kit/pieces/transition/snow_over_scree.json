@@ -1,0 +1,52 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "snow_over_scree",
+ "name": "Snow over scree",
+ "kind": "transition",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "Snow lying over the moraine's stones."
+ },
+ "transition": {
+  "upper": "snow",
+  "lower": "scree",
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "sunken",
+   "args": {
+    "fray": true
+   }
+  },
+  "variants": 1,
+  "shape": "lower",
+  "dressing": {
+   "density": 0.35,
+   "south": [
+    "pebble_0",
+    "pebble_1"
+   ],
+   "north": [
+    "pebble_1",
+    "pebble_2"
+   ],
+   "side": [
+    "pebble_0"
+   ]
+  }
+ },
+ "audit": {
+  "painter": {
+   "module": "scripts.art.kit.edges",
+   "fn": "sunken",
+   "args": {}
+  },
+  "eastward_ref": "Eastward 22 and 23 (snow over the trod and the shore)"
+ }
+}

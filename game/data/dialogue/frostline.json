@@ -119,6 +119,24 @@
         ]
       },
       {
+        "if": {
+          "done": [
+            "a1_the_ring_is_shut"
+          ],
+          "not_started": [
+            "a1_under_the_snout"
+          ],
+          "not_flags": [
+            "zone_built:ice_caves"
+          ]
+        },
+        "lines": [
+          "The ring's open, and the kettle's on. Sit a while.",
+          "The light that fell up here slid under the glacier, into the ice caves. The snout's sealed with new ice since the storm.",
+          "When it rots enough to let a body in, I'll tell you. Not before. Tam would say the same."
+        ]
+      },
+      {
         "lines": [
           "The hut is always open. The kettle is always on. Mind the step; it has opinions about boots."
         ]

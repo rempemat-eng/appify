@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://world/camp.gd" id="camp"]
+[ext_resource type="Script" path="res://enemies/creature_dresser.gd" id="dresser"]
+[ext_resource type="Script" path="res://enemies/slice_enemy.gd" id="enemy"]
+
+[node name="FellsIbexCamp" type="Node2D"]
+script = ExtResource("camp")
+camp_id = "fells_ibex"
+
+[node name="Dresser" type="Node" parent="."]
+script = ExtResource("dresser")
+with_den = false
+
+[node name="Rusher1" type="CharacterBody2D" parent="."]
+position = Vector2(-72, 24)
+script = ExtResource("enemy")
+role = "rusher"
+
+[node name="Rusher2" type="CharacterBody2D" parent="."]
+position = Vector2(66, -18)
+script = ExtResource("enemy")
+role = "rusher"
+
+[node name="Shooter3" type="CharacterBody2D" parent="."]
+position = Vector2(6, -66)
+script = ExtResource("enemy")
+role = "shooter"

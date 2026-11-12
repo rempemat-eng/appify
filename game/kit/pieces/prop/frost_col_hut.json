@@ -1,0 +1,264 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "frost_col_hut",
+ "name": "Col hut",
+ "kind": "prop",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/frost/frost_col_hut.png",
+   "foot": [
+    106,
+    269
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "The hut warden's bothy on the Col Path: rubble granite under slate, snow on the roof and banked at its foot, icicles off the eave, a warm window; the stove's smoke loops (8 frames) over the still."
+ },
+ "geometry": {
+  "size_px": [
+   226,
+   271
+  ],
+  "size_cells": [
+   10,
+   4
+  ],
+  "z_sort": "foot",
+  "height_px": 271,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -34.0,
+    -26.0,
+    68,
+    26
+   ]
+  },
+  "foot": [
+   106,
+   269
+  ],
+  "footprint": [
+   [
+    -4,
+    -3
+   ],
+   [
+    -3,
+    -3
+   ],
+   [
+    -2,
+    -3
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    2,
+    -3
+   ],
+   [
+    3,
+    -3
+   ],
+   [
+    4,
+    -3
+   ],
+   [
+    -4,
+    -2
+   ],
+   [
+    -3,
+    -2
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    3,
+    -2
+   ],
+   [
+    4,
+    -2
+   ],
+   [
+    -4,
+    -1
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ],
+   [
+    3,
+    -1
+   ],
+   [
+    4,
+    -1
+   ]
+  ],
+  "door_cells": [
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "doors": [
+   {
+    "x": [
+     -30,
+     12
+    ],
+    "faces": "s"
+   }
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "live",
+  "role": "house",
+  "provides": [
+   "home",
+   "hearth"
+  ],
+  "composition": "edge",
+  "requires": [
+   {
+    "rel": "near",
+    "what": "route",
+    "cells": 3,
+    "note": "on the Col Path, its door on the trod"
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    64,
+    9
+   ],
+   "dir": [
+    1,
+    1
+   ]
+  },
+  "contact_ao": true,
+  "animations": [
+   {
+    "clip": "smoke",
+    "loop": true,
+    "frames": 8,
+    "fps": 6.0,
+    "strip": "res://kit/props/art/frost/frost_col_hut_loop.png",
+    "frame_px": [
+     40,
+     64
+    ],
+    "reduced_motion": "hold:0",
+    "on_screen_only": true,
+    "region_px": [
+     186,
+     2,
+     40,
+     64
+    ]
+   }
+  ]
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "hut (148 to 252 tall, 178 to 296 wide: size-guide \"stone refuge, shepherd's bothy: as a hut\")",
+  "eastward_ref": "12 (the stone hut: 2.5 A to the ridge, 3 A wide)",
+  "painter": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "col_hut",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/frost.py",
+  "todo": []
+ }
+}

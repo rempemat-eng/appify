@@ -543,6 +543,40 @@
    ],
    "face": null,
    "hash": "61876cc55d0ad696"
+  },
+  {
+   "id": "snow",
+   "material_id": 13,
+   "priority": 31,
+   "fill": "fill_snow.png",
+   "walkable": true,
+   "surface": "snow",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "cce7e05cfa9922f2"
+  },
+  {
+   "id": "snow_trod",
+   "material_id": 14,
+   "priority": 22,
+   "fill": "fill_snow_trod.png",
+   "walkable": true,
+   "surface": "snow",
+   "route": true,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "ef3f8e9d623cb0c1"
   }
  ],
  "transitions": [
@@ -988,6 +1022,62 @@
    },
    "approval": "candidate",
    "hash": "797c68549d93db37"
+  },
+  {
+   "id": "snow_over_scree",
+   "upper": "snow",
+   "lower": "scree",
+   "png": "over_snow_over_scree.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.35,
+    "south": [
+     "pebble_0",
+     "pebble_1"
+    ],
+    "north": [
+     "pebble_1",
+     "pebble_2"
+    ],
+    "side": [
+     "pebble_0"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "362e2a0563b8ea81"
+  },
+  {
+   "id": "snow_over_snow_trod",
+   "upper": "snow",
+   "lower": "snow_trod",
+   "png": "over_snow_over_snow_trod.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "23309b556d94f4bd"
+  },
+  {
+   "id": "snow_over_water",
+   "upper": "snow",
+   "lower": "water",
+   "png": "over_snow_over_water.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.35,
+    "south": [
+     "pebble_0",
+     "pebble_1"
+    ],
+    "north": [
+     "pebble_1",
+     "pebble_2"
+    ],
+    "side": [
+     "pebble_0"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "8e49b3f6e8eb9292"
   },
   {
    "id": "water_over_earth_face",

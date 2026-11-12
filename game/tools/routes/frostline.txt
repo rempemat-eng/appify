@@ -1,0 +1,61 @@
+#! args: --try-zone=frostline --zone=frostline --spawn=woodland
+#! save: frostline.save.json
+# The Frostline (game/kit/zones/frostline.json), played with real input. It is a lab until Matt approves
+# its pieces and nothing in the world leads to it yet, so the route opens it by name (--try-zone,
+# core/zones.gd) from a save made at the top of the Col Path: the slice and the torn roof done, Moss's
+# loaf carried past the shard crows at the ridge col (the climb is what arriving here finishes).
+# The loaf to the warden, the ring and the ibex on the High Fells end to end, the ice-cutter by the
+# tarn, Under the snout waiting for the ice caves, and down the Col Path through the door.
+# Commands: tools/play_driver.gd.
+
+step in at the top of the Col Path: the climb is done, the warden waits for her loaf
+expect zone frostline
+expect quest a1_bread_for_the_bothy active warden
+shot 01_arrival
+
+step up the trod to the Col hut's door: the loaf
+goto 330 840 10
+expect prompt Talk
+talk HutWarden
+expect said Bread! Real bread, from Moss!
+expect quest a1_bread_for_the_bothy done
+expect quest a1_the_ring_is_shut active fells
+shot 02_warden
+
+step up the switchback to the tarn: the ice-cutter at her sledge
+goto 552 540 10
+goto 744 552 10
+goto 744 312 10
+goto 444 312 10
+expect prompt Talk
+talk IceCutter
+expect said I cut ice for the inn at Cogsworth
+shot 03_tarn
+
+step over the snow to the High Fells: free the ibex
+goto 744 300 10
+goto 744 204 10
+shot 04_fells
+fight 180
+expect flag camp_cleared:fells_ibex
+expect quest a1_the_ring_is_shut active report
+
+step back down to the warden: the ring opens, the caves stay sealed
+goto 744 312 10
+goto 744 552 10
+goto 552 552 10
+goto 330 840 10
+talk HutWarden
+expect said The fells are clear?
+expect quest a1_the_ring_is_shut done
+expect flag ring_open:frostline
+expect quest a1_under_the_snout none
+talk HutWarden
+expect said sealed with new ice
+shot 05_ring_open
+
+step down the Col Path and out through the door
+goto 552 1032 10
+door 552 1090 woodland
+expect zone woodland
+end
