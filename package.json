@@ -79,7 +79,10 @@
     "check:kit-scene": "python3 -m scripts.review.kit_scene --check",
     "verify:serial": "npm run check && npm run export:web && npm run export:ios",
     "check:parallel": "node scripts/run-verification.cjs --check-only",
-    "check:check-speed": "node scripts/check-runner.test.cjs && node scripts/art-repro-parallel.test.cjs && node scripts/art-repro-cache.test.cjs"
+    "check:check-speed": "node scripts/check-runner.test.cjs && node scripts/art-repro-parallel.test.cjs && node scripts/art-repro-cache.test.cjs && node scripts/stream-checks.test.cjs",
+    "stream:checks": "node scripts/stream-checks.cjs",
+    "verify:game": "node scripts/stream-checks.cjs verify-game",
+    "playtest:repeat": "node scripts/stream-checks.cjs routes"
   },
   "dependencies": {
     "@biltme/backend": "^0.7.0",
