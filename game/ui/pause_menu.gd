@@ -147,6 +147,7 @@ func _toggle_scale() -> void:
 func _write(key: String, value: Variant) -> void:
 	SaveGame.data.settings[key] = value
 	SaveGame.save()
+	Sound.play(&"ui_confirm")
 	_refresh()
 
 func _quit() -> void:

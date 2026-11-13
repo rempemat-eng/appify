@@ -258,6 +258,7 @@ func _next_wave() -> void:
 	_spawn_t = 0.0
 	_gap_t = float(def.get("wave_gap", 3.0))
 	Raids.wave_started(wave)
+	Sound.play(&"raid_wave")
 	_card(String(def.get("title", "")), "Wave %d of %d, down the halt road" % [wave + 1, waves.size()], "", CARD)
 
 func _spawn(role: String) -> void:

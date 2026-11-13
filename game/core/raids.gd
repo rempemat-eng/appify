@@ -171,6 +171,7 @@ func ring() -> bool:
 	rec().wave = 0
 	wave_begun = false
 	_to_state("running")
+	Sound.play(&"raid_bell")
 	return true
 
 func wave_started(index: int) -> void:

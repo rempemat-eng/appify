@@ -37,6 +37,7 @@ func _ready() -> void:
 	add_to_group("game")
 	# The save was read when the process started (core/save_game.gd); this scene plays what is in memory.
 	player = preload("res://actors/player.tscn").instantiate()
+	player.add_child(PlayerSounds.new())      # its cues, read from its signals and its clip (actors/player_sounds.gd)
 	# The player sets full health when it first enters the tree, and the first zone change autosaves:
 	# put the saved hearts back between the two, or loading a save would heal (and then save the heal).
 	var saved_hp := int(SaveGame.data.player.hp)
@@ -210,6 +211,7 @@ func _show_due_card() -> void:
 		return
 	SaveGame.set_flag("seen:" + str(card.id))
 	hud.show_card(str(card.get("title", "")), str(card.get("subtitle", "")), str(card.get("text", "")), float(card.get("seconds", 9.0)))
+	Sound.card(str(card.id))
 	autosave()
 
 ## Puts the Camera2D on the phantom camera at once, so the first frame drawn in a new zone already shows the

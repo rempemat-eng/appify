@@ -22,5 +22,6 @@ func pull() -> bool:
 		return false
 	SaveGame.set_flag(flag)
 	Village.changed.emit(flag)
+	Sound.play(&"seal_open")
 	opened.emit()
 	return true

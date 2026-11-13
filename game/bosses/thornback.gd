@@ -304,7 +304,9 @@ func _changed(current: LimboState, _previous: LimboState) -> void:
 		"approach": _play("move")
 		"recover": _play("recover")
 		"stagger": _play("stagger")
-		"roar": _play("volley_windup", ROAR_TIME)
+		"roar":
+			_play("volley_windup", ROAR_TIME)
+			Sound.play(&"boss_roar")
 		"freed": _play("freed")
 
 func player_in_arena() -> bool:
@@ -436,12 +438,14 @@ func _start_windup(name: String, to: Vector2) -> void:
 	windup_time = windup_for(name)
 	hsm.dispatch(&"windup")
 	_play(name + "_windup", windup_time)
+	Sound.boss_tell(name)
 	telegraph_started.emit(name, windup_time)
 
 func _release() -> void:
 	_struck = false
 	_travel = 0.0
 	hsm.dispatch(&"act")
+	Sound.boss_attack(attack)
 	attack_released.emit(attack)
 	match attack:
 		"charge":
@@ -489,6 +493,7 @@ func _finish_attack(hold: float) -> void:
 func _stagger(seconds: float) -> void:
 	_hold = seconds
 	hsm.dispatch(&"stagger")
+	Sound.play(&"boss_stagger")
 	staggered.emit()
 
 func _release_slot() -> void:
@@ -539,6 +544,7 @@ func _free() -> void:
 	collision_layer = 0
 	remove_from_group("enemy")
 	hsm.dispatch(&"freed")
+	Sound.play(&"boss_freed")
 	died.emit()
 
 func _exit_tree() -> void:

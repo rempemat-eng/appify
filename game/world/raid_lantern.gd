@@ -31,8 +31,9 @@ func batter(amount: int, _dir: Vector2 = Vector2.ZERO) -> bool:
 	hp = maxi(hp - amount, 0)
 	queue_redraw()
 	if hp == 0:
-		fell.emit()
+		fell.emit()                      # the night is lost: its own cue is the sound of this blow
 		return true
+	Sound.play(&"lantern_hit")
 	return false
 
 func _draw() -> void:

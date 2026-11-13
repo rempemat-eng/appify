@@ -1,0 +1,20 @@
+{
+  "_about": "What the player's footsteps sound like, by zone (core/sound.gd surface_at): `default`, and `areas` in world px (the zone plans' unit; the first area that holds the player's feet wins). grass, stone or wood. A zone not listed is grass. The Crossroads stone is the plan's own paving (data/plans/crossroads.json art.paving; test/test_sound.gd holds the two together). The footbridge is the woodland scene's (art/scenes/woodland.json bridge: x0, y0, w, y1 - y0), copied by hand: move it here if the bridge moves.",
+  "woodland": {
+    "default": "grass",
+    "areas": [
+      { "rect": [118, 288, 20, 24], "surface": "wood", "why": "the footbridge over the river" }
+    ]
+  },
+  "crossroads": {
+    "default": "grass",
+    "areas": [
+      { "rect": [200, 200, 240, 176], "surface": "stone", "why": "the paved square" },
+      { "rect": [296, 152, 48, 48], "surface": "stone", "why": "the gate stair and its landing" }
+    ]
+  },
+  "undercroft": {
+    "default": "stone",
+    "areas": []
+  }
+}
