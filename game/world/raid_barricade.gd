@@ -132,12 +132,26 @@ func pictured() -> bool:
 func _draw_pictured() -> void:
 	var st: Dictionary = sheet().states[look()]
 	var foot: Array = sheet().foot
+	# its contact shadow: each panel's ground line thrown by the one sun, the panels' shadows joined into one
+	# shape so no fold is shaded twice
 	var ground: Array = st.ground
 	var cast := TerrainGround.sun() * float(st.rise)
+	var shade: Array[PackedVector2Array] = []
 	for i in range(ground.size() - 1):
 		var a := Vector2(float(ground[i][0]), float(ground[i][1]))
 		var b := Vector2(float(ground[i + 1][0]), float(ground[i + 1][1]))
-		draw_colored_polygon(PackedVector2Array([a, b, b + cast, a + cast]), SHADE)
+		var panel := PackedVector2Array([a, b, b + cast, a + cast])
+		var joined := false
+		for k in shade.size():
+			var merged := Geometry2D.merge_polygons(shade[k], panel)
+			if merged.size() == 1:
+				shade[k] = merged[0]
+				joined = true
+				break
+		if not joined:
+			shade.append(panel)
+	for poly in shade:
+		draw_colored_polygon(poly, SHADE)
 	draw_texture(load(ART + String(st.png)), -Vector2(float(foot[0]), float(foot[1])), HIT_LIT if _hit > 0.0 else Color.WHITE)
 
 func _draw() -> void:
