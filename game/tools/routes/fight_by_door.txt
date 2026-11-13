@@ -1,0 +1,13 @@
+# The fight pilot by a door (12 Nov). A door takes whoever walks or rolls into it, mid-fight too, as it should;
+# the pilot (`fight` in tools/play_driver.gd) must not do it by accident. It used to: its dodges only checked
+# for walls, and wrong_order and main failed now and then with "the zone changed during the fight" at the
+# meadow camp, some 200 texels from the woodland's door to Crossroads. Begun here, a few steps north-west of
+# that door, the old pilot rolled through it on its first dodge in six runs of six. Commands: tools/play_driver.gd.
+
+step the meadow camp, fought from beside the door to Crossroads
+goto 640 1392 20
+goto 905 1290 10
+fight 180
+expect zone woodland
+expect flag camp_cleared:meadow
+end
