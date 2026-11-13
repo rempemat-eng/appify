@@ -319,5 +319,5 @@ func tracker_text() -> String:
 		return ""
 	var def := current()
 	if not wave_begun:
-		return "%s: Hold the lantern (the shardstruck are coming)" % def.get("title", def.id)
-	return "%s: Hold the lantern (wave %d of %d)" % [def.get("title", def.id), int(rec().get("wave", 0)) + 1, (def.waves as Array).size()]
+		return "%s: Hold the shard lantern (the shardstruck are coming)" % def.get("title", def.id)
+	return "%s: Hold the shard lantern (wave %d of %d)" % [def.get("title", def.id), int(rec().get("wave", 0)) + 1, (def.waves as Array).size()]

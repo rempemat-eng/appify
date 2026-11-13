@@ -149,8 +149,8 @@ The entire S2 prop list is covered below. Each condition is copied as data, not 
 | square_rubble_b | rubble [396, 214, 26, 16]      | {}; no extra source story claim                                                                            |
 | fern_boards     | boards [462, 380, 56, 10]      | {"not_restored": ["fern_cottage"]}; no extra source story claim                                            |
 | fern_rubble     | rubble [458, 416, 30, 14]      | {"not_restored": ["fern_cottage"]}; no extra source story claim                                            |
-| lantern_dark    | lantern [307, 290, 10, 22]     | {"not_flags": ["shard_home:woodland"]}; the shard lantern, empty                                           |
-| lantern_lit     | lantern [307, 290, 10, 22]     | {"flags": ["shard_home:woodland"]}; the shard lantern holding the woodland's shard                         |
+| lantern_dark    | lantern [344, 314, 16, 6]      | {"not_flags": ["shard_home:woodland"]}; the shard lantern, empty                                           |
+| lantern_lit     | lantern [344, 314, 16, 6]      | {"flags": ["shard_home:woodland"]}; the shard lantern holding the woodland's shard                         |
 | crater_smoke    | smoke [490, 420, 30, 20]       | {"not_flags": ["shard_home:woodland"]}; no extra source story claim                                        |
 | beds_scorched   | beds [384, 80, 80, 40]         | {"not_flags": ["shard_home:woodland"]}; four crop beds, scorched                                           |
 | beds_dug        | beds [384, 80, 80, 40]         | {"flags": ["shard_home:woodland"]}; four beds dug over; two planted with valley seeds after the homecoming |

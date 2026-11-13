@@ -29,8 +29,29 @@
         },
         "lines": [
           "My hurdles are ready for the halt road, wherever you want them on the pads. They'll hold a while. The rest is your bow.",
+          "It's the shard they're after. Its light is the light that's in them. Keep them off the lantern and the night is ours.",
           "Ring when you're ready, not before."
         ]
+      }
+    ]
+  },
+  "shard_lantern": {
+    "name": "Shard lantern",
+    "entries": [
+      {
+        "priority": 5,
+        "if": {
+          "flags": [
+            "first_night_announced"
+          ],
+          "not_flags": [
+            "first_night_won"
+          ]
+        },
+        "lines": [
+          "The great shard hums in its cradle, bright enough to see from the halt road. Whatever is out there is coming for it."
+        ],
+        "why": "one plain line at the lantern itself before the first night (Matt, 13 Nov: \"why would i defend a lantern that's so odd\"): what it holds and that they come for it. Nothing here says what becomes of the shard if the lantern breaks: the story has not said (a question for Matt)"
       }
     ]
   },

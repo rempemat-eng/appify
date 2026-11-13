@@ -1,5 +1,6 @@
 """The desktop HUD's pictures (Claude M, 25 Oct): hearts, roll charges, the Glint mark, the
-panel the quest tracker and pause menu sit on, and the key cap for prompts.
+panel the quest tracker and pause menu sit on, and the key cap for prompts; and the shard lantern's
+lights (13 Nov), its health during a raid in the hearts' own style.
 
 Drawn on the 960 x 540 art grid at one image pixel per texel, the same grid as the world and
 the cast (docs/godot.md), so the HUD is pixel-crisp at 2x on 1080p and 4x on 4K. Colours come
@@ -16,7 +17,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'scripts' / 'art'))
-from materials import CREAM, GOLD, INK, RED, STONE, WOOD, WTR  # noqa: E402
+from materials import CREAM, GOLD, INK, NAP, RED, STONE, WOOD, WTR  # noqa: E402
 
 OUT = Path(__file__).resolve().parent
 
@@ -118,7 +119,40 @@ KEY = [
 ]
 KEY_KEY = {'o': INK, 'h': STONE[4], 'l': STONE[3], 'm': STONE[3], 'd': STONE[1]}
 
+# the shard lantern's health (world/raid_lantern.gd, the tracker): a light in the shard's violet (the
+# nap ramp) with a pale heart, as a heart is a heart; half a light for one blow of two; its socket empty
+SHARD = [
+    '...o...',
+    '..oho..',
+    '.ohlmo.',
+    '.olcmo.',
+    'ohlcmdo',
+    'olccmdo',
+    'olcmmdo',
+    '.ommdo.',
+    '..odo..',
+    '...o...',
+]
+SHARD_HALF = [                # one blow of two: broken on a diagonal, the lit half above with half its
+    '...o...',                # heart, the spent half below as the empty socket, a crack between them
+    '..oho..',
+    '.ohlmo.',
+    '.olcmo.',
+    'ohlcOOO',
+    'olmOSSO',
+    'oOOSSSO',
+    '.OSSSO.',
+    '..OSO..',
+    '...O...',
+]
+SHARD_FULL = {'o': NAP[0], 'd': NAP[1], 'm': NAP[2], 'l': NAP[3], 'h': NAP[4], 'c': CREAM[3]}
+SHARD_HALF_KEY = dict(SHARD_FULL, O=STONE[0], S=STONE[1])
+SHARD_EMPTY = {'o': STONE[0], 'd': STONE[0], 'm': STONE[1], 'l': STONE[2], 'h': STONE[2], 'c': STONE[1]}
+
 PICTURES = {
+    'shard_full': (SHARD, SHARD_FULL),
+    'shard_half': (SHARD_HALF, SHARD_HALF_KEY),
+    'shard_empty': (SHARD, SHARD_EMPTY),
     'heart_full': (HEART, HEART_FULL),
     'heart_empty': (HEART, HEART_EMPTY),
     'roll_full': (ROLL, ROLL_FULL),

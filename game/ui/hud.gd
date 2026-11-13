@@ -19,6 +19,7 @@ var _rolls := HBoxContainer.new()
 var _quest := PanelContainer.new()
 var _quest_title := UiStyle.label("", UiStyle.TITLE)
 var _quest_step := UiStyle.label()
+var _lantern := HBoxContainer.new()   ## the shard lantern's lights while a raid runs (world/raid_lantern.gd)
 var _glint := UiStyle.label()
 var _prompt := HBoxContainer.new()
 var _prompt_key := UiStyle.label("E", UiStyle.INK)
@@ -54,6 +55,10 @@ func _ready() -> void:
 	_quest_step.custom_minimum_size.x = 220
 	lines.add_child(_quest_title)
 	lines.add_child(_quest_step)
+	_lantern.add_theme_constant_override("separation", 1)
+	_lantern.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_lantern.visible = false
+	lines.add_child(_lantern)
 	_quest.add_child(lines)
 	top_left.add_child(_quest)
 	# Glint, top right: the number then its mark
@@ -149,10 +154,11 @@ func _process(delta: float) -> void:
 		_shown.glint = g
 		_glint.text = g
 	# a lab zone is not part of the story: no quest and no lead pointing somewhere it cannot lead
-	# a raid under way takes the tracker (core/raids.gd: "The first night: Hold the lantern (wave 1 of 3)", and
+	# a raid under way takes the tracker (core/raids.gd: "The first night: Hold the shard lantern (wave 1 of 3)", and
 	# "(the shardstruck are coming)" until wave 1 comes)
 	var raid := Raids.tracker_text()
 	_show_quest("" if Zones.in_lab() else (raid if raid != "" else Quests.tracked_text(guidance)))
+	_show_lantern(get_tree().get_first_node_in_group("raid_lantern") as RaidLantern if raid != "" else null)
 	var f: Node = player.focus
 	var prompt := f != null and is_instance_valid(f) and not Dialogue.busy
 	_prompt.visible = prompt
@@ -178,6 +184,7 @@ func shown_text() -> Dictionary:
 		"glint": _glint.text,
 		"banner": _card_title.text if _card.visible and _card_left > 0.0 else "",
 		"banner_text": _card_text.text if _card.visible and _card_left > 0.0 else "",
+		"lantern": "%d/%d" % [_shown.lantern.x, _shown.lantern.y] if _lantern.visible else "",
 	}
 
 ## A row of `total` icons, the first `full` of them filled.
@@ -194,6 +201,26 @@ func _meter(row: HBoxContainer, key: String, full: int, total: int, art: String)
 		last.queue_free()
 	for i in total:
 		(row.get_child(i) as TextureRect).texture = load("res://ui/art/%s_%s.png" % [art, "full" if i < now.x else "empty"])
+
+## The shard lantern's lights under the raid's line, from the bell on: what to protect, before the first
+## blow (the lantern itself shows them only once it is hurt). Hidden when no raid runs.
+func _show_lantern(lantern: RaidLantern) -> void:
+	var now := Vector2i(lantern.hp, lantern.max_hp) if lantern != null else Vector2i(-1, -1)
+	if _shown.get("lantern") == now:
+		return
+	_shown.lantern = now
+	_lantern.visible = lantern != null
+	if lantern == null:
+		return
+	var row := RaidLantern.lights(lantern.hp, lantern.max_hp)
+	while _lantern.get_child_count() < row.size():
+		_lantern.add_child(UiStyle.icon("shard_full"))
+	while _lantern.get_child_count() > row.size():
+		var last := _lantern.get_child(_lantern.get_child_count() - 1)
+		_lantern.remove_child(last)
+		last.queue_free()
+	for i in row.size():
+		(_lantern.get_child(i) as TextureRect).texture = load("res://ui/art/shard_%s.png" % row[i])
 
 ## "Title: step" from Quests.tracked_text(), as a gold title over the step.
 func _show_quest(text: String) -> void:

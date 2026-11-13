@@ -5,9 +5,12 @@ extends StaticBody2D
 ## so the player shoots across it. Marching creatures stop short of it and batter it (world/raid_night.gd
 ## blocker_ahead, enemies/raid_creature.gd); at no health it breaks, its body goes, and the lane is open.
 ##
-## No picture yet: it is drawn in the blockout's placeholder style (flat rectangles in the blockout's wood
-## colours, game/tools/gen_blockout.py), an art follow-up. A hit tints it for HIT_TINT seconds (a colour,
-## not a movement, so reduced motion keeps it); nothing about it loops.
+## Across an east-west road it is drawn from its pictures (scripts/art/kit/hurdles.py; Matt, 13 Nov: "what
+## are those brown things on the track?"): a zigzag of woven wattle hurdles from wall to wall, standing,
+## then battered (from half its health down: leaning, the weave burst), then broken (stumps and rods flat on
+## the road, under everyone). Its contact shadow is laid by the one sun from the picture's sheet. Any other
+## way round (no pad asks for it yet) keeps the blockout's placeholder. A hit tints it for HIT_TINT seconds
+## (a colour, not a movement, so reduced motion keeps it); nothing about it loops.
 
 signal broke
 
@@ -20,6 +23,9 @@ const LIT := Color("#d8c0a0")
 const SHADE := Color(0.06, 0.08, 0.04, 0.24)   ## the creatures' contact shadow (enemies/creature_look.gd)
 const PIP := Color("#f5d49c")
 const PIP_EMPTY := Color("#3a3030")
+const ART := "res://kit/props/art/raid/"
+const HIT_LIT := Color(1.28, 1.22, 1.12)   ## the struck picture, a step towards the light
+static var _sheet: Dictionary = {}         ## hurdle.json, read once
 const STUMP := 8.0                       ## texels: a broken panel's post stumps stand this high
 const LYING := 4.0                       ## texels: a fallen rail's highest end off the road (its contact shadow)
 
@@ -65,6 +71,10 @@ func batter(amount: int, _dir: Vector2 = Vector2.ZERO) -> bool:
 	queue_redraw()
 	if hp > 0:
 		return false
+	if pictured():
+		# its wreckage lies flat on the road: over the ground and its shadows, under everyone (as the zone's debris)
+		z_as_relative = false
+		z_index = -8
 	_shape.set_deferred("disabled", true)
 	collision_layer = 0
 	broke.emit()
@@ -103,7 +113,51 @@ func _panel_feet(r: Rect2) -> Array[float]:
 		out.append(r.position.y + step * (i + 1))
 	return out
 
+## The picture's sheet: frame, foot and each state's ground line and rise (scripts/art/kit/hurdles.py).
+static func sheet() -> Dictionary:
+	if _sheet.is_empty():
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(ART + "hurdle.json"))
+		_sheet = parsed if parsed is Dictionary else {"span": -1}
+	return _sheet
+
+## Which picture shows: "standing", "battered" from half its health down, "broken" at none.
+func look() -> String:
+	return "broken" if hp <= 0 else ("battered" if hp * 2 <= max_hp else "standing")
+
+## True when its pictures fit: across an east-west road, on a pad as wide as they were drawn for.
+func pictured() -> bool:
+	var s := _size()
+	return s.y >= s.x and is_equal_approx(s.y, float(sheet().get("span", -1)) * DENSITY)
+
+func _draw_pictured() -> void:
+	var st: Dictionary = sheet().states[look()]
+	var foot: Array = sheet().foot
+	# its contact shadow: each panel's ground line thrown by the one sun, the panels' shadows joined into one
+	# shape so no fold is shaded twice
+	var ground: Array = st.ground
+	var cast := TerrainGround.sun() * float(st.rise)
+	var shade: Array[PackedVector2Array] = []
+	for i in range(ground.size() - 1):
+		var a := Vector2(float(ground[i][0]), float(ground[i][1]))
+		var b := Vector2(float(ground[i + 1][0]), float(ground[i + 1][1]))
+		var panel := PackedVector2Array([a, b, b + cast, a + cast])
+		var joined := false
+		for k in shade.size():
+			var merged := Geometry2D.merge_polygons(shade[k], panel)
+			if merged.size() == 1:
+				shade[k] = merged[0]
+				joined = true
+				break
+		if not joined:
+			shade.append(panel)
+	for poly in shade:
+		draw_colored_polygon(poly, SHADE)
+	draw_texture(load(ART + String(st.png)), -Vector2(float(foot[0]), float(foot[1])), HIT_LIT if _hit > 0.0 else Color.WHITE)
+
 func _draw() -> void:
+	if pictured():
+		_draw_pictured()
+		return
 	var s := _size()
 	var r := Rect2(-s / 2.0, s)
 	var vertical := s.y >= s.x

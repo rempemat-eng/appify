@@ -1,26 +1,26 @@
 {
  "id": "crossroads/lantern_dark",
  "file": "game/zones/crossroads/art/lantern_dark.png",
- "sha256": "a5e98db14d5340c74ca269c9db7229930d24d09b946cded37f46fd56ca4bb7d5",
+ "sha256": "fa42dfd829794f48660e25b3aa6bf81823532c1733c77fbc26dece42345da02d",
  "kind": "lamp",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  84,
-  222
+  66,
+  186
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 1
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 9,
-   "tones": 17.88888888888889,
-   "shapes": 30.555555555555557
+   "patches": 14,
+   "tones": 22.785714285714285,
+   "shapes": 37.142857142857146
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.607,
-  "tones_ratio": 0.663,
-  "shapes_ratio": 0.607,
+  "ratio": 0.738,
+  "tones_ratio": 0.844,
+  "shapes_ratio": 0.738,
   "passed": false,
   "group": "prop"
  },
@@ -39,23 +39,31 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    19,
-    52,
-    65,
-    220
+    7,
+    10,
+    59,
+    184
    ],
-   "message": "crossroads/lantern_dark: detail bar 0.61 of Eastward's prop band (17.9 tones, 30.6 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/lantern_dark: detail bar 0.74 of Eastward's prop band (22.8 tones, 37.1 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    7,
+    10,
+    59,
+    184
+   ],
+   "message": "crossroads/lantern_dark: 40% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 37% to 44%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
- "reviewed": "2026-11-09",
+ "reviewed": "2026-11-13",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-09",
-  "note": "Round 4 review at 74d275b0 (PR #453), docs/reviews/2026-11-08-crossroads-placed.md, round 4. Pass. XR3-L1 fixed: each slab has a top plane (upper 2 rows, lower 3 rows) in the light stone tone, a lit west column, a front in three tones laid out as dressed blocks with 1 px joints, the east end in a 3-4 column core shadow, and stepped chipped corners; the plinth's largest one-tone run is 47 texels (round 3: 203; limit 60). XR3-L2 fixed: two moss clumps of different size, west and east, each a lit cap over a ragged dark underside; no row of equal tufts. Glass unchanged (XR2-L3 stays fixed). Bar 0.57 -> 0.61: the iron post is most of the picture and is unchanged since it passed in round 1; the bar is a measurement here, not a fault. Noise 34.6 -> 33.2 %. Compared with the Eastward 13 lamp and 17 rocks at x1.37. Polish XR4-L1.",
-  "fix_list": [
-   "XR4-L1 (polish): each dressed block is close to one tone with even 2-texel dashes for tooling: group the tooling into one or two wear patches per block, add a 1-row lit bevel along the lower slab's top-front arris, and darken the contact row under the lower slab by one step so the plinth separates from the equally light paving"
-  ]
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

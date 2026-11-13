@@ -218,7 +218,7 @@ size = Vector2(90, 54)
 size = Vector2(90, 42)
 
 [sub_resource type="RectangleShape2D" id="s34"]
-size = Vector2(42, 15)
+size = Vector2(48, 18)
 
 [sub_resource type="CircleShape2D" id="s35"]
 radius = 30
@@ -378,7 +378,7 @@ shape = SubResource("s12")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_notice_board"]
-position = Vector2(708.5, 667)
+position = Vector2(648.5, 691)
 shape = SubResource("s13")
 
 [node name="Solid_waystone" type="StaticBody2D" parent="Walls"]
@@ -461,7 +461,7 @@ shape = SubResource("s21")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_kit_lantern_24"]
-position = Vector2(876, 598.5)
+position = Vector2(864, 598.5)
 shape = SubResource("s22")
 
 [node name="Solid_kit_lantern_25" type="StaticBody2D" parent="Walls"]
@@ -689,7 +689,7 @@ collision_layer = 17
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_bench_58"]
-position = Vector2(816, 1095)
+position = Vector2(864, 1095)
 shape = SubResource("s23")
 
 [node name="Solid_flower_tub_59" type="StaticBody2D" parent="Walls"]
@@ -965,16 +965,16 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternDark" type="Sprite2D" parent="Props/If_lantern_dark"]
-position = Vector2(936, 936)
+position = Vector2(1056, 960)
 texture = ExtResource("t24")
 centered = false
-offset = Vector2(-42, -218)
+offset = Vector2(-33, -182)
 
 [node name="LanternDarkBody" type="StaticBody2D" parent="Props/If_lantern_dark"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Props/If_lantern_dark/LanternDarkBody"]
-position = Vector2(936, 928.5)
+position = Vector2(1056, 951)
 shape = SubResource("s34")
 
 [node name="If_lantern_lit" type="Node2D" parent="Props"]
@@ -982,16 +982,16 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternLit" type="Sprite2D" parent="Props/If_lantern_lit"]
-position = Vector2(936, 936)
+position = Vector2(1056, 960)
 texture = ExtResource("t25")
 centered = false
-offset = Vector2(-42, -218)
+offset = Vector2(-33, -182)
 
 [node name="LanternLitBody" type="StaticBody2D" parent="Props/If_lantern_lit"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Props/If_lantern_lit/LanternLitBody"]
-position = Vector2(936, 928.5)
+position = Vector2(1056, 951)
 shape = SubResource("s34")
 
 [node name="If_crater_smoke" type="Node2D" parent="Props"]
@@ -1033,7 +1033,7 @@ centered = false
 offset = Vector2(-69, -158)
 
 [node name="NoticeBoard" type="Sprite2D" parent="Props"]
-position = Vector2(708, 672)
+position = Vector2(648, 696)
 texture = ExtResource("t30")
 centered = false
 offset = Vector2(-48, -128)
@@ -1189,7 +1189,7 @@ centered = false
 offset = Vector2(-37, -54)
 
 [node name="KitLantern24" type="Sprite2D" parent="Props"]
-position = Vector2(876, 600)
+position = Vector2(864, 600)
 texture = ExtResource("t56")
 centered = false
 offset = Vector2(-12, -118)
@@ -1378,7 +1378,7 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="DebrisB" type="Sprite2D" parent="Props/If_debris_b"]
-position = Vector2(1116, 936)
+position = Vector2(1176, 900)
 texture = ExtResource("t86")
 centered = false
 offset = Vector2(-45, -41)
@@ -1413,7 +1413,7 @@ centered = false
 offset = Vector2(-57, -80)
 
 [node name="Bench58" type="Sprite2D" parent="Props"]
-position = Vector2(816, 1104)
+position = Vector2(864, 1104)
 texture = ExtResource("t90")
 centered = false
 offset = Vector2(-45, -59)
@@ -1501,7 +1501,7 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternDarkShadow" type="Sprite2D" parent="Props/If_lantern_dark_shadow"]
-position = Vector2(912, 932)
+position = Vector2(1029, 956)
 texture = ExtResource("t99")
 centered = false
 offset = Vector2(0, 0)
@@ -1512,7 +1512,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternLitShadow" type="Sprite2D" parent="Props/If_lantern_lit_shadow"]
-position = Vector2(912, 932)
+position = Vector2(1029, 956)
 texture = ExtResource("t100")
 centered = false
 offset = Vector2(0, 0)
@@ -1682,7 +1682,7 @@ collision_mask = 0
 shape = SubResource("s36")
 
 [node name="NoticeBoard" type="Area2D" parent="Actors"]
-position = Vector2(708, 672)
+position = Vector2(648, 696)
 script = ExtResource("talk")
 speaker_id = "notice_board"
 marker_height = 108.0
@@ -1714,7 +1714,7 @@ collision_mask = 0
 shape = SubResource("s36")
 
 [node name="ShardLantern" type="Area2D" parent="Actors"]
-position = Vector2(936, 960)
+position = Vector2(1056, 984)
 script = ExtResource("talk")
 speaker_id = "shard_lantern"
 marker_height = 40.0

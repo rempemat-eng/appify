@@ -8,8 +8,8 @@
   "why_announce_if": "the raid comes from the lantern's light (attention), and is announced only once the homecoming quest is over, so beat 8 follows beat 7 (a decision for Matt)",
   "postpones": 2,
   "lane": "halt_road",
-  "lane_points": [[0, 300], [200, 300], [262, 330], [300, 332], [316, 321]],
-  "why_lane_points": "the plan's halt_road to the square's edge, then round the south of the well (its solid 278-298 x 304-320) to the south-east of the lantern's post (307-317 x 290-312): the plan's own last leg runs through the well and ends inside the post (audit of #483, B2). The strike spot (316, 321) stands in front of both pictures (the well's sorts at y 320 and spans x 269-307, the lantern's sorts at 312), so the raider is not hidden behind the well's frame (audit round 2, P1). The plan is left as it is; test_raids.gd holds that a creature's body fits along the whole lane",
+  "lane_points": [[0, 300], [200, 300], [262, 330], [306, 334], [338, 326]],
+  "why_lane_points": "the plan's halt_road to the square's edge, then round the south of the well (its solid 278-298 x 304-320) to the south-west of the shard lantern's plinth (344-360 x 314-320; 13 Nov: the lantern moved off the well's ring to the east of the gate walk). The strike spot (338, 326) stands in front of both pictures (the well's sorts at y 320 and spans x 269-307, the lantern's sorts at 320 and spans x 343-361), so the raider is not hidden behind the well's frame or the lantern (audit of #483, B2 and P1). The plan's halt_road lane now holds the same points; test_raids.gd holds that a creature's body fits along the whole lane",
   "pads": [
     { "id": "pad_halt_street", "at": [124, 312], "span": 48, "why": "inside the street between the bakery (foot at y 288) and the herbalist's (top at y 336): its span closes the street wall to wall, so the halt road is shut until it breaks" },
     { "id": "pad_street_mouth", "at": [178, 312], "span": 48, "why": "the street's mouth onto the square, the same span from wall to wall. Replaces the plan's pad_halt_gate (210, 300), which stands in the open square where a hurdle can be walked round (audit of #483, B1). Where the pads go is Matt's open decision (vertical-slice.md, Open for Matt 6): move them here, in the raid's data" }
@@ -28,8 +28,8 @@
     }
   },
   "prefill": "hurdle_barricade",
-  "lantern": { "hp": 12, "hp_placeholder": true, "foot": [312, 312], "box": [307, 290, 10, 22], "reach": 10,
-    "why": "a raider strikes the lantern only standing within `reach` world px of its post (`box`, the lit lantern's solid in zones/crossroads/kit.json); `foot` is where its bar hangs from" },
+  "lantern": { "hp": 12, "hp_placeholder": true, "foot": [352, 320], "box": [344, 314, 16, 6], "reach": 10,
+    "why": "a raider strikes the lantern only standing within `reach` world px of its plinth (`box`, the lit lantern's solid in zones/crossroads/kit.json); `foot` is the plinth's foot, where its health and its struck light are drawn from" },
   "march_speed": 30,
   "march_speed_placeholder": true,
   "notice": 60,

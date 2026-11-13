@@ -6048,15 +6048,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -21.0,
-   -15.0,
-   42,
-   15
+   -24.0,
+   -18.0,
+   48,
+   18
   ],
   "deck": null,
   "foot": [
-   42,
-   218
+   33,
+   182
   ],
   "footprint": [
    [
@@ -6104,8 +6104,8 @@
   "role": "light",
   "shadow": null,
   "size_cells": [
-   4,
-   10
+   3,
+   8
   ],
   "snap": "cell",
   "story": {
@@ -6130,8 +6130,8 @@
   "variants": {
    "lantern_dark": {
     "foot": [
-     42,
-     218
+     33,
+     182
     ],
     "png": "res://zones/crossroads/art/lantern_dark.png"
    }
@@ -6142,15 +6142,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -21.0,
-   -15.0,
-   42,
-   15
+   -24.0,
+   -18.0,
+   48,
+   18
   ],
   "deck": null,
   "foot": [
-   42,
-   218
+   33,
+   182
   ],
   "footprint": [
    [
@@ -6198,8 +6198,8 @@
   "role": "light",
   "shadow": null,
   "size_cells": [
-   4,
-   10
+   3,
+   8
   ],
   "snap": "cell",
   "story": {
@@ -6224,8 +6224,8 @@
   "variants": {
    "lantern_lit": {
     "foot": [
-     42,
-     218
+     33,
+     182
     ],
     "png": "res://zones/crossroads/art/lantern_lit.png"
    }

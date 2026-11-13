@@ -133,11 +133,12 @@ func _focus_at(zone: Zone, at: Vector2) -> String:
 	return found
 
 func test_the_prompt_shows_a_step_short_of_each_thing() -> void:
-	# Crossroads with the Ferns' door still to clear: the notice board from (737, 709), Moss from 47 texels,
+	# Crossroads with the Ferns' door still to clear: the notice board from (677, 733) (the same step short of it
+	# as before it moved west of the library's door on 13 Nov), Moss from 47 texels,
 	# the Ferns' restore mark from 44
 	_apply(STAGES["ferns asked"])
 	var crossroads: Zone = await _zone("crossroads")
-	assert_str(await _focus_at(crossroads, Vector2(737, 709))).is_equal("NoticeBoard")
+	assert_str(await _focus_at(crossroads, Vector2(677, 733))).is_equal("NoticeBoard")
 	assert_str(await _focus_at(crossroads, Vector2(1152, 833))).is_equal("Moss")
 	assert_str(await _focus_at(crossroads, Vector2(1440, 1352))).is_equal("FernSite")
 	remove_child(crossroads)

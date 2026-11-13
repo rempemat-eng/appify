@@ -1441,6 +1441,94 @@ class GroundRules(unittest.TestCase):
         p['rock']['heap'][1]['stacked'] = True
         self.assertNotIn('rules.rock_overlap', self.names(p))
 
+    # Matt, 13 Nov: the lantern's plinth stood on the well's ring of setts, under its crank
+    def square(self, lantern, extra=()):
+        plan = {'places': [{'id': 'square', 'kind': 'square', 'rect': [200, 200, 240, 176]}],
+                'art': {'paving': [[200, 200, 240, 176]], 'setts': [[288, 316, 14, 23]],
+                        'dressing': [{'kind': 'barrel', 'at': [360, 256], 'with': 'stall'}]}}
+        kit = {'objects': [
+            {'id': 'well_choked', 'kind': 'well_choked', 'solid': [278, 304, 20, 16], 'cond': {'not_flags': ['home']}},
+            {'id': 'well', 'kind': 'well', 'solid': [278, 304, 20, 16], 'cond': {'flags': ['home']}},
+            {'id': 'lantern_dark', 'kind': 'lantern', 'solid': lantern, 'cond': {'not_flags': ['home']}},
+            {'id': 'lantern_lit', 'kind': 'lantern_lit', 'solid': lantern, 'cond': {'flags': ['home']}},
+            {'id': 'stall', 'kind': 'stall', 'solid': [366, 240, 36, 16], 'cond': None},
+            {'id': 'barrel_0', 'kind': 'barrel', 'solid': [355, 248, 10, 8], 'cond': None},
+            {'id': 'bakery', 'kind': 'building', 'solid': [112, 240, 72, 48], 'cond': None},
+            *extra]}
+        return kit, plan
+
+    def clearance(self, lantern, extra=()):
+        from scripts.review import ground_rules as GR
+        kit, plan = self.square(lantern, extra)
+        return [(f['check'], f['message']) for f in GR.prop_clearance(kit, plan)]
+
+    def test_the_lantern_on_the_wells_apron_trips(self):
+        # as Matt saw it: the plinth (305 to 319, 307 to 312) on the ring's east edge (x 311)
+        found = self.clearance([305, 307, 14, 5])
+        on = [m for c, m in found if c == 'rules.prop_apron']
+        self.assertTrue(on and all('stands on the apron of well' in m for m in on), found)
+        # each state of the lantern against the ring, never the dark lantern against the lit one
+        self.assertEqual(len(on), 2)
+        # and 7 px from the well's drum, where no body passes: the dark lantern by the choked well, the lit by the clear
+        self.assertEqual(len([m for c, m in found if c == 'rules.prop_gap']), 2)
+        self.assertFalse(any('lantern_dark and lantern_lit' in m for _, m in found))
+
+    def test_the_lantern_clear_of_the_well_passes(self):
+        self.assertEqual(self.clearance([344, 314, 16, 6]), [])
+
+    def test_a_plinth_just_off_the_apron_is_still_too_near(self):
+        # 3 px east of the ring's edge (x 311): nobody walks between them
+        found = self.clearance([314, 312, 16, 6])
+        self.assertTrue(any(c == 'rules.prop_apron' and 'px from the apron' in m for c, m in found), found)
+
+    def test_two_props_sharing_ground_trip(self):
+        found = self.clearance([344, 314, 16, 6], [{'id': 'crate', 'kind': 'crates', 'solid': [356, 316, 12, 10], 'cond': None}])
+        self.assertIn('rules.prop_overlap', {c for c, _ in found})
+
+    def test_a_gap_no_body_fits_on_open_ground_trips_but_not_against_a_wall_or_with_its_stall(self):
+        # 4 px between two free-standing props in the square
+        found = self.clearance([344, 314, 16, 6], [{'id': 'crate', 'kind': 'crates', 'solid': [364, 314, 12, 10], 'cond': None}])
+        self.assertIn('rules.prop_gap', {c for c, _ in found})
+        # the stall's own barrel stands 1 px from it by the plan's `with`: a group, not a gap
+        self.assertFalse(any('barrel_0' in m for _, m in found), found)
+        # clutter against a wall (within a body of the bakery) is not free-standing
+        found = self.clearance([344, 314, 16, 6], [
+            {'id': 'tub_a', 'kind': 'flower_tub', 'solid': [186, 250, 10, 8], 'cond': None},
+            {'id': 'tub_b', 'kind': 'flower_tub', 'solid': [186, 262, 10, 8], 'cond': None}])
+        self.assertEqual(found, [])
+
+    def test_nothing_stands_in_front_of_a_door(self):
+        from scripts.review import ground_rules as GR
+        kit, plan = self.square([344, 314, 16, 6], [{'id': 'notice_board', 'kind': 'notice_board', 'solid': [225.5, 220, 21, 4], 'offset': [-48, -126], 'cond': None}])
+        plan['buildings'] = [{'id': 'library', 'rect': [200, 160, 96, 40], 'door': [248, 200]}]
+        kit['objects'].append({'id': 'library', 'kind': 'building', 'solid': [200, 160, 96, 40], 'cond': None})
+        # as it stood: the board's foot 20 px out from the door, the board 42 px tall, so it hid the door
+        found = [(f['check'], f['message']) for f in GR.prop_clearance(kit, plan)]
+        self.assertTrue(any(c == 'rules.prop_door' and 'notice_board' in m and 'library' in m for c, m in found), found)
+        # west of the door, it passes
+        kit['objects'][-2]['solid'] = [205.5, 228, 21, 4]
+        self.assertEqual([c for c, _ in ((f['check'], f['message']) for f in GR.prop_clearance(kit, plan)) if c == 'rules.prop_door'], [])
+        # the rubble a restore clears lies at its door by the story
+        kit['objects'].append({'id': 'fern_rubble', 'kind': 'rubble', 'solid': [240, 202, 30, 14], 'cond': {'not_restored': ['fern_cottage']}})
+        self.assertEqual([f['check'] for f in GR.prop_clearance(kit, plan) if f['check'] == 'rules.prop_door'], [])
+
+    def test_states_that_never_meet_are_not_compared(self):
+        from scripts.review import ground_rules as GR
+        self.assertFalse(GR._coexist({'flags': ['home']}, {'not_flags': ['home']}))
+        self.assertFalse(GR._coexist({'not_restored': ['forge']}, {'restored': ['forge']}))
+        self.assertTrue(GR._coexist({'flags': ['home']}, None))
+        self.assertTrue(GR._coexist({'flags': ['home']}, {'restored': ['forge']}))
+
+    def test_crossroads_holds_the_clearance(self):
+        from scripts.review import ground_rules as GR
+        root = GR.ROOT
+        plan = json.load(open(os.path.join(root, 'game', 'data', 'plans', 'crossroads.json')))
+        kit = json.load(open(os.path.join(root, 'game', 'zones', 'crossroads', 'kit.json')))
+        self.assertTrue(plan.get('prop_clearance'), 'Crossroads holds rules.prop_* (ground_rules --check)')
+        self.assertEqual(GR.prop_clearance(kit, plan, GR.scene_boxes('crossroads', plan, kit)), [])
+        # the well and the shard lantern each stand on a ring of their own
+        self.assertEqual(len(plan['art']['setts']), 2)
+
     def test_route_to_nowhere_and_clutter_on_route(self):
         p = self.plan()
         p['paths'].append({'points': [[160, 240], [240, 240]], 'radius': 8})
