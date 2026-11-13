@@ -1,0 +1,74 @@
+{
+ "_about": "scripts/art/kit/hurdles.py: Hale's hurdle barricade for a 48 world px span. `foot` is the pad's middle in each picture; `ground` is the run's ground line (its folds, x and y from the pad's middle) and `rise` its height in texels, for the contact shadow by data/sun.json; a `flat` picture lies on the road, under everyone.",
+ "span": 48,
+ "frame": [
+  96,
+  216
+ ],
+ "foot": [
+  30,
+  134
+ ],
+ "states": {
+  "standing": {
+   "png": "hurdle_standing.png",
+   "ground": [
+    [
+     -18,
+     -72
+    ],
+    [
+     18,
+     -36
+    ],
+    [
+     -18,
+     0
+    ],
+    [
+     18,
+     36
+    ],
+    [
+     -18,
+     72
+    ]
+   ],
+   "rise": 42,
+   "flat": false
+  },
+  "battered": {
+   "png": "hurdle_battered.png",
+   "ground": [
+    [
+     -18,
+     -72
+    ],
+    [
+     18,
+     -36
+    ],
+    [
+     -18,
+     0
+    ],
+    [
+     18,
+     36
+    ],
+    [
+     -18,
+     72
+    ]
+   ],
+   "rise": 36,
+   "flat": false
+  },
+  "broken": {
+   "png": "hurdle_broken.png",
+   "ground": [],
+   "rise": 0,
+   "flat": true
+  }
+ }
+}
