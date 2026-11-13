@@ -1,0 +1,66 @@
+#! args: --try-zone=frostline --zone=frostline --spawn=woodland
+#! save: frostline.save.json
+# The Frostline (game/kit/zones/frostline.json), played with real input. It is a lab until Matt approves
+# its pieces and nothing in the world leads to it yet, so the route opens it by name (--try-zone,
+# core/zones.gd) from a save made at the top of the Col Path: the slice and the torn roof done, Moss's
+# loaf carried past the shard crows at the ridge col (the climb is what arriving here finishes).
+# The loaf to the warden over the outlet's footbridge, up the cirque's stair to the ice-cutter at the
+# ice-cut, the ibex on the High Fells and the ring end to end, Under the snout waiting for the ice
+# caves, and down the Col Path through the door.
+# Commands: tools/play_driver.gd.
+
+step in at the top of the Col Path: the climb is done, the warden waits for her loaf
+expect zone frostline
+expect quest a1_bread_for_the_bothy active warden
+shot 01_arrival
+
+step along the spur and over the outlet's footbridge to the Col hut's door: the loaf
+goto 600 948 10
+goto 190 948 10
+expect prompt Talk
+talk HutWarden
+expect said Bread! Real bread, from Moss!
+expect quest a1_bread_for_the_bothy done
+expect quest a1_the_ring_is_shut active fells
+shot 02_warden
+
+step up the cirque's stair to the frozen tarn: the ice-cutter at her sledge by the ice-cut
+goto 600 948 10
+goto 600 560 10
+shot 03_stair
+goto 600 312 10
+goto 460 312 10
+expect prompt Talk
+talk IceCutter
+expect said I cut ice for the inn at Cogsworth
+shot 04_tarn
+
+step over the snow to the High Fells: free the ibex
+goto 600 312 10
+goto 600 204 10
+goto 680 204 10
+shot 05_fells
+fight 180
+expect flag camp_cleared:fells_ibex
+expect quest a1_the_ring_is_shut active report
+
+step back down to the warden: the ring opens, the caves stay sealed
+goto 600 204 10
+goto 600 312 10
+goto 600 948 10
+goto 190 948 10
+talk HutWarden
+expect said before the new ice closed the snout
+expect quest a1_the_ring_is_shut done
+expect flag ring_open:frostline
+expect quest a1_under_the_snout none
+talk HutWarden
+expect said sealed with new ice
+shot 06_ring_open
+
+step down the Col Path and out through the door
+goto 600 948 10
+goto 600 1032 10
+door 600 1090 woodland
+expect zone woodland
+end

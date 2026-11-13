@@ -1,0 +1,89 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "frost_lost_hat",
+ "name": "Lost hat",
+ "kind": "prop",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/frost/frost_lost_hat.png",
+   "foot": [
+    7,
+    12
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "The brief's \"lost hat\": a red bobble hat half drifted over by the path."
+ },
+ "geometry": {
+  "size_px": [
+   17,
+   17
+  ],
+  "size_cells": [
+   1,
+   1
+  ],
+  "z_sort": "foot",
+  "height_px": 17,
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   7,
+   12
+  ],
+  "footprint": []
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "mark",
+  "role": "story",
+  "composition": "free",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "none"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "unsized (a dropped hat on the snow: no clothing kind in the guide)",
+  "eastward_ref": "-",
+  "painter": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "lost_hat",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/frost.py",
+  "todo": []
+ }
+}

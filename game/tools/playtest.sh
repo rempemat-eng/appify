@@ -12,6 +12,9 @@
 # Results go to PLAYTEST_OUT (default game/reports/playtest, git-ignored): per route a log.txt, the
 # engine's godot.log, result.txt and the pictures the route took (fail.png at a failure).
 # PLAYTEST_TIMEOUT caps one game session in seconds (default 900).
+# A route may start somewhere other than a fresh game, with header lines before its first command:
+#   #! args: --try-zone=frostline --zone=frostline   engine arguments for every session of the route
+#   #! save: frostline.save.json                     a save to start from (beside the route), in place of --fresh
 # A real-time play of the whole route takes about a quarter of an hour; it is not part of check:godot.
 set -uo pipefail
 GAME=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -89,13 +92,27 @@ for ROUTE in "${ROUTES[@]}"; do
   PROFILE="$TMP/profile-$NAME"
   mkdir -p "$PROFILE"/{home,data,config,cache}
   FRESH=--fresh
+  # header lines (`#! args:`, `#! save:`): extra engine arguments, and a save to start from
+  read -r -a EXTRA <<< "$(sed -n 's/^#! args: *//p' "$ROUTE" | tr '\n' ' ')"
+  SEED=$(sed -n 's/^#! save: *//p' "$ROUTE" | head -1)
+  if [ -n "$SEED" ]; then
+    SEED="$(dirname "$ROUTE")/$SEED"
+    if [ ! -f "$SEED" ]; then
+      echo "FAIL $NAME: no save at $SEED"
+      FAILED=1
+      continue
+    fi
+    # user:// under the profile (project.godot: custom_user_dir_name="napattack")
+    mkdir -p "$PROFILE/data/napattack" && cp "$SEED" "$PROFILE/data/napattack/save_0.json"
+    FRESH=
+  fi
   SESSIONS=0
   START=$(date +%s)
   while true; do
     SESSIONS=$((SESSIONS + 1))
     rm -f "$DIR/result.txt"
     run_engine "$PROFILE" --path "$GAME" --audio-driver Dummy --resolution 960x540 --position 0,0 -- \
-      $FRESH --play="$ROUTE" --play-out="$DIR" >>"$DIR/godot.log" 2>&1 &
+      $FRESH "${EXTRA[@]}" --play="$ROUTE" --play-out="$DIR" >>"$DIR/godot.log" 2>&1 &
     PID=$!
     ( sleep "$LIMIT"; touch "$DIR/timed-out"; kill -9 "$PID" 2>/dev/null ) &
     WATCH=$!

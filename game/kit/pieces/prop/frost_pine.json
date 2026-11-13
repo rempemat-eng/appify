@@ -1,0 +1,104 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "frost_pine",
+ "name": "Snowy pine",
+ "kind": "prop",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "still",
+   "weight": 1.0,
+   "png": "res://kit/props/art/frost/frost_pine.png",
+   "foot": [
+    47,
+    236
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "The woodland pine's painter with snow as shelves on its tiers (thick west, thinning east)."
+ },
+ "geometry": {
+  "size_px": [
+   96,
+   237
+  ],
+  "size_cells": [
+   4,
+   2
+  ],
+  "z_sort": "foot",
+  "height_px": 237,
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -5.0,
+    -4.0,
+    10,
+    4
+   ]
+  },
+  "foot": [
+   47,
+   236
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "grow",
+  "role": "tree",
+  "composition": "cluster",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "none"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "conifer (the woodland's pine, 79 world px)",
+  "eastward_ref": "22 (the tiered pines)",
+  "painter": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "conifer",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/frost.py",
+  "todo": []
+ }
+}
