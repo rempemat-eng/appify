@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "Fails the detail-auditor checklist (10 Nov, docs/reviews/2026-11-10-woodland-camp-creatures.md). T4 the move is a shuffle in place: the hind foot does not move in any of the 8 drawings and the body never leaves the ground (planted foot 8.6 px/s against the manifest's 25.9 and the camp's 102: 52 px of slide a cycle): draw a hop (crouch, push off with the hind legs stretched, 4 to 6 px of air with a shrinking shadow, land on the forefeet, settle) and set walk_speed to the hop's distance over its time"
  }
 }
