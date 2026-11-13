@@ -149,7 +149,8 @@ func _process(delta: float) -> void:
 		_shown.glint = g
 		_glint.text = g
 	# a lab zone is not part of the story: no quest and no lead pointing somewhere it cannot lead
-	# a raid under way takes the tracker (core/raids.gd: "The first night: Hold the lantern (wave 1 of 3)")
+	# a raid under way takes the tracker (core/raids.gd: "The first night: Hold the lantern (wave 1 of 3)", and
+	# "(the shardstruck are coming)" until wave 1 comes)
 	var raid := Raids.tracker_text()
 	_show_quest("" if Zones.in_lab() else (raid if raid != "" else Quests.tracked_text(guidance)))
 	var f: Node = player.focus

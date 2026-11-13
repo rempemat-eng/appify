@@ -10056,6 +10056,9 @@
    "placed": {
     "caldera": 1
    },
+   "eye": {
+    "note": "not a stair: a basalt column crag whose columns read as brick-like courses. It must not be redrawn as a stair; detail.stair_read flags it only because its name holds \"steps\". Web/Expo only, and Expo is due to be archived (claude-a, 13 Nov)"
+   },
    "checked": "2026-10-21"
   },
   "prop/basalt_stumps": {
@@ -34683,10 +34686,12 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "KEEP",
-   "fix": "none",
-   "why": "passes every check",
-   "fails": [],
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "masonry fault by eye: the outcrop reads as laid courses (flat horizontal bands of block-shaped stones with vertical joints between them), not rock; redraw it as natural sandstone (the fault detail.masonry_rock names). Web/Expo only, and Expo is due to be archived (claude-a, 13 Nov)",
+   "fails": [
+    "logic"
+   ],
    "measured": {
     "scale": 4,
     "h": 25,
@@ -34762,6 +34767,9 @@
    },
    "placed": {
     "oasis": 1
+   },
+   "eye": {
+    "logic": "fault: masonry fault by eye: the outcrop reads as laid courses (flat horizontal bands of block-shaped stones with vertical joints between them), not rock; redraw it as natural sandstone (the fault detail.masonry_rock names). Web/Expo only, and Expo is due to be archived (claude-a, 13 Nov)"
    },
    "checked": "2026-10-21"
   },
