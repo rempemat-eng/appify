@@ -724,9 +724,13 @@ func defend(limit: float, station := Vector2.INF, fallback := Vector2.INF) -> St
 				shots += 1
 			await _sleep(0.05)
 			continue
-		# out of reach from here: back to the station when it can be hit from there, else after it
-		var from_station := station.distance_to(target.global_position) <= 320.0 and not Arrow.walled_off(space, station, target.global_position)
-		var goal := station if from_station else target.global_position
+		# out of reach from here: to whichever station it can be hit from (this one first), else after it
+		var goal := target.global_position
+		for st: Vector2 in [station, held, fallback]:
+			if st != Vector2.INF and st.distance_to(target.global_position) <= 320.0 \
+					and not Arrow.walled_off(space, st, target.global_position):
+				goal = st
+				break
 		var plan := g.path(p.global_position, goal, 30.0)
 		var want := goal
 		for i in range(mini(plan.size(), 60) - 1, -1, -1):
