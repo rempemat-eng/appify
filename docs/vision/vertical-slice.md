@@ -162,13 +162,14 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
    the camps' look and pay no fight Glint. Both pads are in the raid's own data: `pad_halt_street` in the
    street between the bakery and the herbalist's, and `pad_street_mouth` where the street opens on the
    square. Each hurdle spans the street wall to wall, so nothing walks round it. The lane is the plan's
-   `halt_road` to the square's edge, then the raid's own points round the south of the well to the
-   south-east of the lantern's post, where the raider stands in front of the well's picture (the plan's
-   last leg ran through the well). A raider strikes the lantern only from beside its post. Wave 1 waits
+   `halt_road` to the square's edge, then round the south of the well to the south-west of the shard
+   lantern's plinth, where the raider stands in front of both pictures (13 Nov: the lantern moved off the
+   well's ring to the east of the gate walk, 352, 320; the plan's `halt_road` lane holds the same points).
+   A raider strikes the lantern only from beside its plinth. Wave 1 waits
    until the player comes within 60 px of the square (or 25 s), because the bell is rung where the player
    walked in, about 20 s from the street.
 5. **Win.** A purse of 30 Glint is paid once and `first_night_won` is set. The hurdles and the lantern's
-   bar clear away. The bell tower is offered as a restore (`bell_tower`, 50 Glint, act 1's id and price):
+   lights clear away. The bell tower is offered as a restore (`bell_tower`, 50 Glint, act 1's id and price):
    its mark stands before the library's door from then on, and Hale points to it. Its picture (the
    cupola) comes with stage 1, so paying it changes no picture yet.
 6. **Loss.** The night is lost when the lantern falls or the player goes down; a card says so, on
@@ -176,8 +177,26 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
    until the next walk in, which clears them and offers the night again with both postponements back.
    Walking out mid-night leaves it due. Quitting mid-night brings the screen back, from wave 1.
 
-Placeholders (art follow-ups): the hurdle, the lantern's health bar, the two repairs and the screen's lane
-map use the blockout's flat colours. There is no bell or horn sound yet.
+Drawn on 13 Nov (Matt: "the roof looks wrong and what are those brown things on the track? why does the
+lantern have a health bar?", then "why would i defend a lantern that's so odd"):
+
+- **The hurdles** are pictures (`scripts/art/kit/hurdles.py`, `game/kit/props/art/raid/`): four woven
+  wattle panels in a zigzag from the bakery's wall to the herbalist's, a post at each fold; battered from
+  half health (leaning, the weave burst), then broken (stumps and rods flat on the road). The south end of
+  each run stands behind the herbalist's roof, as the street itself does.
+- **The shard lantern** is no street lamp: a housing on a stone pedestal with the cradles in it, dark and
+  empty until the woodland's shard is home, then the shard alight in the middle cradle in the shard's own
+  violet. It stands across the gate walk from the well, each on its own ring of setts.
+- **Its health** shows only once it is struck: a row of six lights over its roof (the HUD's meter style,
+  one light for two blows), and the same row under the tracker's line from the bell, so the player knows
+  what to protect before the first blow. Each blow darkens its glass for a moment; each wave's coming
+  swells its light once. Both are finite and still under reduced motion.
+- **The words** name it the same everywhere: "the shard lantern" (the tracker, the prepare screen, the
+  cards). The prepare screen and Hale say what it holds and why they come; the lantern says so itself
+  when looked at.
+
+Placeholders left (art follow-ups): the two repairs and the screen's lane map use the blockout's flat
+colours.
 
 `test/test_raids.gd` holds the rules. `game/tools/routes/first_night.txt` plays the end of the slice with
 real input, from a save made just after *Home again* through the announcement, both postponements, a quit

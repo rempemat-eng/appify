@@ -5260,7 +5260,9 @@ def p_shard_lantern(w, h, seed, lit=False):
         sh = glass & (fy >= 0) & (fy < 1) & (np.abs(dxc - lean) < hw_s)
         us = (dxc - lean) / np.maximum(0.8, hw_s)
         a[sh] = code('dusk', 5)                                       # the front face
-        a[sh & (us < -0.3)] = code('snow', 4)                         # the face towards the light
+        a[sh & (us < -0.3)] = code('snow', 4)                         # the face towards the light:
+        a[sh & (us < -0.3) & (fy < 0.5)] = code('snow', 5)            # brightest where it is nearest the sky
+        a[sh & (us < -0.3) & (fy > 0.74)] = code('snow', 3)           # and dimmer down in the cradle
         a[sh & (us >= 0.42)] = code('dusk', 4)                        # the east face, turning away
         a[sh & (np.abs(us + 0.3) < 0.16) & (fy > 0.28)] = code('snow', 5)   # the ridge between the faces, its heart
         a[sh & (fy < 0.28) & (us >= -0.05)] = code('dusk', 4)        # the point's east facet
@@ -5269,9 +5271,16 @@ def p_shard_lantern(w, h, seed, lit=False):
         # its light on the glass: nearest the crystal brightest, the frame's shade at the top and east
         dist = ndi.distance_transform_edt(~sh)
         halo = glass & ~sh & ~cup_m & ~iron_m
-        _codes(a, halo, 'dusk', np.select([dist < 4, dist < 11], [4, 3], 2))
+        _codes(a, halo, 'dusk', np.select([dist < 3, dist < 6, dist < 12], [5, 4, 3], 2))
+        # the light comes off the crystal's faces in rays: broad wedges a step apart, on the cool sibling,
+        # so the glass is lit glass and not a flat violet
+        ang = np.arctan2(Y + 0.5 - (sy0 + sy1) / 2.0, dxc - 0.0)
+        ray = (np.floor((ang + math.pi) / (math.pi / 7.0)).astype(int) % 2 == 0)
+        far = halo & (dist >= 6)
+        a[far & ray] = FI['dusk_cool'] * 8 + np.clip(tone_of(a[far & ray]) - 1, 1, 5)
         a[halo & (Y < arch + 3)] = code('dusk', 1)
-        a[halo & (dxc >= 13)] = code('dusk', 1)
+        a[halo & (dxc >= 13)] = code('dusk_cool', 1)
+        a[halo & (dxc < -13) & (Y > arch + 6)] = code('dusk', 3)        # the west pane's edge, lit from inside
         for (px, py) in ((-9, gy0 + 34), (6, gy0 + 15), (10, gy1 - 34)):   # glints in pairs
             g = halo & (Y == py) & (dxc >= px) & (dxc < px + 2)
             if g.sum() == 2:
