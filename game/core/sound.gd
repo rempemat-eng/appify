@@ -89,6 +89,17 @@ func _ready() -> void:
 	Raids.finished.connect(func(won: bool) -> void: play(&"night_won" if won else &"night_lost"))
 	set_active(wanted(AudioServer.get_driver_name(), DisplayServer.get_name(), args))
 
+## The game is closing. A stream still sounding when the engine shuts down is let go one mix step later,
+## and with no step left the engine reported it as leaked ("1 resources still in use at exit": the loop,
+## about every other run, 13 Nov). So everything stops here, and the audio thread gets a moment for that step.
+const EXIT_WAIT_MS := 60
+func _exit_tree() -> void:
+	if not active:
+		return
+	for p: AudioStreamPlayer in _players + _loop_players:
+		p.stop()
+	OS.delay_msec(EXIT_WAIT_MS)
+
 ## Whether this run should make sound: not without a sound card or a window, and not under the play driver,
 ## unless `--sound` asks for it.
 static func wanted(driver: String, display: String, args: PackedStringArray) -> bool:

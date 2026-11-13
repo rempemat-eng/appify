@@ -111,7 +111,7 @@ Tiers are explained under [Playback rules](#playback-rules-godot). "Hook" is whe
 | `bow_draw` | flavour | the stave creaking | `player_sounds.gd`: the clip becomes `primary` |
 | `bow_release` | moment | the string's thrum (G3) and a breath of air | `Player.shot_released` |
 | `arrow_hit` | moment | a soft thump with the shaft's thock: the arrow counted, the creature is hurt | `Player.hit_landed` |
-| `arrow_wall` | flavour | one small tick of wood | `actors/arrow.gd`, stopping at a solid |
+| `arrow_wall` | moment | one small tick of wood: the shot missed | `actors/arrow.gd`, stopping at a solid |
 | `glance` | moment | a small dull clink (Matt, 11 Nov: an arrow from beyond reach must read as a miss) | `Glance.on_clink`, the hook `enemies/glance.gd` kept for it |
 | `roll` | moment | cloth and ground, and the shoulder landing | `player_sounds.gd`: the clip becomes `dodge` |
 | `hurt`, `downed`, `get_up` | moment | a low short "oof"; three slow falling notes; three rising | `Player.hurt` with hearts left or none; `Player.downed` (getting up at the zone's start) |
@@ -155,6 +155,7 @@ A creature's hurt and the arrow's hit are one moment (only an arrow hurts a crea
 - One loop at a time on two players. A zone change crossfades over 1.5 s at equal power. Under the pause menu the loop falls silent within 0.25 s and is held where it is until the game goes on. A zone with no loop (a lab zone) is silent.
 - The pause ends the world's effects that are sounding; while the tree is paused only confirms start. Effects are not cut at a zone change: they are finite, the longest 1.95 s.
 - Hooks: this autoload listens to the signals other autoloads already send (zones, quests, the village, raids, `Glance.on_clink`; not `Dialogue.opened`, where `Dialogue.talk` takes any listener for a dialogue box and waits for it). The rest are one-line `Sound.play` calls at the moment itself. The player's cues are read from the player by `actors/player_sounds.gd`, a child `game.gd` adds; `actors/player.gd` is not changed.
+- **Closing.** A stream still sounding when the engine shuts down was reported as leaked ("resources still in use at exit", about every other run), so the autoload stops every player as it leaves the tree and gives the audio thread 60 ms for the step that lets them go.
 - **Silent runs.** `Sound` is inactive, and `play` and `ambience` do nothing, when the engine runs on the Dummy audio driver (every headless run, `check:godot`, the playtest runner, the screenshot recipes) and under the play driver (`--play`). `-- --sound` turns it on all the same and `--sound-trace` prints one `SOUND <physics frame> <cue> played|skipped:<why>` line per cue asked for, so a route can show which cues its play raises. A test turns it on with `Sound.set_active(true)` and gives it a clock.
 - Where a larger cue covers the same moment, the smaller stays quiet: a quest accepted by the line that finished another (`quest_done`), getting up from the defeat that lost the night (`night_lost`), a walk into town with the night announced (the horn, not the door).
 

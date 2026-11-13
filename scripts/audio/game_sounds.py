@@ -680,7 +680,8 @@ EFFECTS: dict[str, tuple] = {
     'bow_draw': (bow_draw, 'flavour', 'the bow creaking as it is drawn'),
     'bow_release': (bow_release, 'moment', 'the string and the arrow leaving'),
     'arrow_hit': (arrow_hit, 'moment', 'an arrow that counts on a creature (the creature hurt)'),
-    'arrow_wall': (arrow_wall, 'flavour', 'an arrow stopping at a solid'),
+    # a moment, not flavour: it follows the bow's creak by half a second, inside the flavour's own gap
+    'arrow_wall': (arrow_wall, 'moment', 'an arrow stopping at a solid'),
     'glance': (glance, 'moment', 'an arrow from beyond reach: a small dull clink'),
     'roll': (roll, 'moment', 'the roll'),
     'hurt': (hurt, 'moment', 'the player hurt'),

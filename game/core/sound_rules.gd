@@ -9,7 +9,7 @@ extends RefCounted
 ##             effects are on: it tells the player the press landed.
 ##   moment    a beat of the game (a shot, a hit, a tell, a door, a quest, the bell). Plays while effects
 ##             are on.
-##   flavour   pleasant once, tiring when stacked (the bow's creak, an arrow in a wall): at most one every
+##   flavour   pleasant once, tiring when stacked (the bow's creak): at most one every
 ##             FLAVOUR_GAP_MS, and none with Gentle sound.
 ##   step      the footsteps, which have their own spacing so they never use up the flavour's: at most one
 ##             every STEP_GAP_MS, and none with Gentle sound.

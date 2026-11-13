@@ -147,14 +147,14 @@ func test_the_same_cue_twice_at_once_is_one_sound() -> void:
 func test_flavour_and_steps_keep_their_own_spacing() -> void:
 	var h := SoundRules.empty_history()
 	SoundRules.played(&"bow_draw", "flavour", 1000, h)
-	assert_str(SoundRules.refusal(&"arrow_wall", "flavour", 1000 + SoundRules.FLAVOUR_GAP_MS - 1, h, false)).is_equal("flavour_gap")
-	assert_str(SoundRules.refusal(&"arrow_wall", "flavour", 1000 + SoundRules.FLAVOUR_GAP_MS, h, false)).is_equal("")
+	assert_str(SoundRules.refusal(&"other_flavour", "flavour", 1000 + SoundRules.FLAVOUR_GAP_MS - 1, h, false)).is_equal("flavour_gap")
+	assert_str(SoundRules.refusal(&"other_flavour", "flavour", 1000 + SoundRules.FLAVOUR_GAP_MS, h, false)).is_equal("")
 	# a footstep does not wait for the flavour's gap, and a flavour does not wait for a footstep's
 	assert_str(SoundRules.refusal(&"step_grass", "step", 1001, h, false)).is_equal("")
 	SoundRules.played(&"step_grass", "step", 1001, h)
 	assert_str(SoundRules.refusal(&"step_stone", "step", 1001 + SoundRules.STEP_GAP_MS - 1, h, false)).is_equal("step_gap")
 	assert_str(SoundRules.refusal(&"step_stone", "step", 1001 + SoundRules.STEP_GAP_MS, h, false)).is_equal("")
-	assert_str(SoundRules.refusal(&"arrow_wall", "flavour", 1000 + SoundRules.FLAVOUR_GAP_MS, h, false)).is_equal("")
+	assert_str(SoundRules.refusal(&"other_flavour", "flavour", 1000 + SoundRules.FLAVOUR_GAP_MS, h, false)).is_equal("")
 	# confirms and moments are never spaced out while Gentle sound is off
 	for tier in ["confirm", "moment"]:
 		assert_str(SoundRules.refusal(&"other", tier, 1002, h, false)).is_equal("")
@@ -470,6 +470,19 @@ func test_the_sound_panel_sets_the_three_switches_and_saves() -> void:
 	SaveGame.path = path
 	assert_dict(SaveGame.data.settings).is_equal(chosen)
 
+func test_a_switch_answers_with_a_tok_unless_it_just_switched_effects_off() -> void:
+	var sound: SoundMenu = _menus()[1]
+	_listen()
+	get_tree().paused = true                                     # the menu is only there while paused
+	sound.toggle("gentle_sound")
+	_now += 1000
+	sound.toggle("ambience")
+	_now += 1000
+	sound.toggle("sound_effects")                                # off: silence is the answer
+	_now += 1000
+	sound.toggle("sound_effects")                                # on again
+	assert_array(_heard).is_equal([&"ui_confirm", &"ui_confirm", &"ui_confirm"])
+
 func test_the_sound_panel_follows_the_pause() -> void:
 	var host: Control = auto_free(Control.new())
 	add_child(host)
@@ -554,6 +567,34 @@ func test_a_glancing_arrow_clinks() -> void:
 	_listen()
 	Glance.clink(Vector2(10, 20))
 	assert_array(_heard).is_equal([&"glance"])
+
+func test_a_shot_into_a_wall_is_heard_after_the_bows_creak() -> void:
+	# one shot: the creak, the release a third of a second on, the wall a quarter second after that. The
+	# tick of the miss must not be lost to the creak's spacing (played 13 Nov: 9 of 10 were).
+	_listen()
+	assert_bool(Sound.play(&"bow_draw")).is_true()
+	_now += 333
+	assert_bool(Sound.play(&"bow_release")).is_true()
+	_now += 200
+	assert_bool(Sound.play(&"arrow_wall")).is_true()
+	assert_str(Sound.tier_of(&"bow_draw")).is_equal("flavour")
+	assert_str(Sound.tier_of(&"arrow_wall")).is_equal("moment")
+
+func test_the_thornbacks_cues_by_attack_and_a_creatures_by_role() -> void:
+	_listen()
+	for attack in ["charge", "volley", "slam"]:
+		_now += 1000
+		Sound.boss_tell(attack)
+		_now += 1000
+		Sound.boss_attack(attack)
+	for role in ["rusher", "shooter", "shield", "elite"]:
+		_now += 1000
+		Sound.tell(role)
+		_now += 1000
+		Sound.strike(role)
+	assert_array(_heard).is_equal([&"boss_tell_charge", &"boss_charge", &"boss_tell_volley", &"boss_volley",
+		&"boss_tell_slam", &"boss_slam", &"tell_rusher", &"enemy_strike", &"tell_shooter", &"enemy_spit",
+		&"tell_shield", &"enemy_strike", &"tell_elite", &"enemy_strike"])
 
 func test_the_undercrofts_plate_and_lever() -> void:
 	_listen()

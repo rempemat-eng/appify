@@ -62,7 +62,7 @@
    "files": [
     "sfx/arrow_wall.wav"
    ],
-   "tier": "flavour",
+   "tier": "moment",
    "seconds": 0.12,
    "what": "an arrow stopping at a solid"
   },
