@@ -731,6 +731,10 @@ func defend(limit: float, station := Vector2.INF, fallback := Vector2.INF) -> St
 					and not Arrow.walled_off(space, st, target.global_position):
 				goal = st
 				break
+		if goal != target.global_position and p.global_position.distance_to(goal) > 30.0:
+			# to that station with the routes' own walker (plans round the well, sidesteps when stuck)
+			await goto(goal, 24.0)
+			continue
 		var plan := g.path(p.global_position, goal, 30.0)
 		var want := goal
 		for i in range(mini(plan.size(), 60) - 1, -1, -1):
