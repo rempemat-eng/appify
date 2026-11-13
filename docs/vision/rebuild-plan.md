@@ -1,5 +1,7 @@
 # Rebuilding the whole world to one standard
 
+> Superseded in part: the owners in section 2, the kit owners in section 3 and the waves in section 4 are replaced by [development-plan.md](development-plan.md) (10 Nov 2026). The standard in section 1 still stands.
+
 Matt, 20 Oct 20:54: "Can you make absolutely sure the whole map adheres to the highest level of detail, the soft grid etc. specified. not just individual sections but everything." Earlier the same evening he rejected a patched summit ("non of this looks natural (given the soft grid), there is no verticality, hard edges") and asked that no old asset be reused unless it fits the newest standard (AGENTS.md, "Keep the design coherent").
 
 This plan makes sure every square of the world is rebuilt to that standard and none is left old. It sits on the world plan v5.3 (`world-plan.md`) and the region briefs (`regions/`).
