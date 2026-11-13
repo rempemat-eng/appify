@@ -69,6 +69,10 @@ func batter(amount: int, _dir: Vector2 = Vector2.ZERO) -> bool:
 	queue_redraw()
 	if hp > 0:
 		return false
+	if pictured():
+		# its wreckage lies flat on the road: over the ground and its shadows, under everyone (as the zone's debris)
+		z_as_relative = false
+		z_index = -8
 	_shape.set_deferred("disabled", true)
 	collision_layer = 0
 	broke.emit()
@@ -119,9 +123,6 @@ func pictured() -> bool:
 func _draw_pictured() -> void:
 	var st: Dictionary = sheet().states[look()]
 	var foot: Array = sheet().foot
-	# flat wreckage lies on the road: over the ground and its shadows, under everyone (as the zone's debris)
-	z_as_relative = not bool(st.flat)
-	z_index = -8 if bool(st.flat) else 0
 	var ground: Array = st.ground
 	var cast := TerrainGround.sun() * float(st.rise)
 	for i in range(ground.size() - 1):

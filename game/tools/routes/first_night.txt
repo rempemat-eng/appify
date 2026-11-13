@@ -67,6 +67,7 @@ expect raid running
 expect raidscreen no
 expect defences 2
 expect hud Hold the shard lantern
+expect lantern unhurt
 expect enemies 0
 # the station: on the square just east of the street's mouth, in bow range of both hurdles
 goto 640 930 20
@@ -86,6 +87,7 @@ expect raid won
 expect flag first_night_won
 expect glint 146
 expect defences 0
+expect lantern gone
 shot 05_held
 
 step Hale offers the bell tower

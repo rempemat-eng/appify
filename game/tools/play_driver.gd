@@ -479,6 +479,11 @@ func expect(a: PackedStringArray) -> String:
 				if b.has_method("standing") and b.standing():
 					standing += 1
 			return "" if standing == int(a[2]) else "%d hurdles stand" % standing
+		"lantern":
+			# the shard lantern during a raid: "unhurt" (and showing no lights), "hurt" (its lights up) or "gone"
+			var lamp := get_tree().get_first_node_in_group("raid_lantern") as RaidLantern
+			var is_now := "gone" if lamp == null else ("hurt" if lamp.hurt() else "unhurt")
+			return "" if is_now == a[2] else "the lantern is %s" % is_now
 		"battering":
 			for c2 in get_tree().get_nodes_in_group("enemy"):
 				if c2 is RaidCreature and not c2.dead and c2.blocker is RaidBarricade:
