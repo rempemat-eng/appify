@@ -625,14 +625,13 @@ func press_button(what: String) -> String:
 ## With `fallback` given, it holds `station` while a hurdle stands and `fallback` once both are down (a player
 ## falls back to what they defend). It never chases off after the nearest raider, as `fight` does: the lantern
 ## falls in seconds once raiders reach it. Point blank it shoots only the toad, which spits from where it stands.
-## A melee raider coming for it within CLOSE makes it give ground, away from them, never further than GIVE from
-## its station (unbounded, it left the lantern to fall); at that bound it stands and shoots. Its dodges and walks
+## A raider coming for it within COMING is shot first, nearest first; otherwise the raider nearest the lantern.
+## It never gives ground (backing off, bounded or not, let the raiders take the lantern). Its dodges and walks
 ## keep clear of open doors (`_door_safe`, as `fight`'s). Each hurt is logged with the raiders near it.
 ## It fails, saying so, when raiders are up and no arrow has counted for STALL seconds.
 const STALL := 30.0
 const BESIDE := 60.0
-const CLOSE := 110.0                ## a melee raider coming for the archer this near: give ground
-const GIVE := 220.0                 ## but never further than this from the station
+const COMING := 200.0               ## a raider coming for the archer this near is shot first
 
 func defend(limit: float, station := Vector2.INF, fallback := Vector2.INF) -> String:
 	var p := player()
@@ -662,10 +661,18 @@ func defend(limit: float, station := Vector2.INF, fallback := Vector2.INF) -> St
 			continue
 		var lantern := get_tree().get_first_node_in_group("raid_lantern") as Node2D
 		var guard := lantern.global_position if lantern != null else station
-		var target: Node2D = es[0]
+		# the target: a raider coming for the archer, nearest first (a player shoots what is about to hit them);
+		# else the raider nearest the lantern
+		var target: Node2D = null
 		for e: Node2D in es:
-			if e.global_position.distance_to(guard) < target.global_position.distance_to(guard):
+			if str(e.get("state")) in ["approach", "windup", "attack"] and e.global_position.distance_to(p.global_position) < COMING \
+					and (target == null or e.global_position.distance_to(p.global_position) < target.global_position.distance_to(p.global_position)):
 				target = e
+		if target == null:
+			target = es[0]
+			for e: Node2D in es:
+				if e.global_position.distance_to(guard) < target.global_position.distance_to(guard):
+					target = e
 		var threat := _threat(p)
 		if threat != null and not p.is_rolling():
 			var dir := _attack_dir(threat, p)
@@ -701,27 +708,6 @@ func defend(limit: float, station := Vector2.INF, fallback := Vector2.INF) -> St
 				if e.global_position.distance_to(p.global_position) < 200.0:
 					near.append("%s %s %d" % [e.name, e.get("state"), int(e.global_position.distance_to(p.global_position))])
 			out("  defend: hurt at %s by one of [%s]" % [p.global_position.round(), ", ".join(near)])
-		# melee raiders coming for the archer: give ground away from them, but no further than GIVE from the
-		# station (a player backs off and keeps the lantern in reach); at that bound it stands and shoots
-		var pack := Vector2.ZERO
-		var close := 0
-		for e: Node2D in es:
-			if str(e.get("role")) != "shooter" and str(e.get("state")) in ["approach", "windup", "attack"] \
-					and e.global_position.distance_to(p.global_position) < CLOSE:
-				pack += e.global_position
-				close += 1
-		if close > 0 and not p.is_rolling():
-			var away := (pack / close).direction_to(p.global_position)
-			var step := Vector2.ZERO
-			for turn: float in [0.0, 0.6, -0.6, 1.2, -1.2]:
-				var to := p.global_position + away.rotated(turn) * 48.0
-				if to.distance_to(station) <= GIVE and g.is_free(WalkGrid.cell_of(to)) and g.clear_line(p.global_position, to):
-					step = _door_safe(p.global_position, away.rotated(turn), 48.0)
-					break
-			if step != Vector2.ZERO:
-				hold(step)
-				await _sleep(0.12)
-				continue
 		if now() - _landed_t > STALL:
 			hold(Vector2.ZERO)
 			return "no arrow has counted for %.0fs with %d raiders up: %s %s at %s, the archer at %s" % [
