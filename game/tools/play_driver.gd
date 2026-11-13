@@ -611,9 +611,8 @@ func press_button(what: String) -> String:
 ## The line of fire is tested feet to feet, where the arrow flies and hits (actors/arrow.gd: the arrow's node
 ## runs on the ground under the drawn shaft, parallel to the aim from the archer's chest to the target's), so
 ## a raider backed against a wall is shot like any other; one beside the archer is shot whatever the walls say.
-## A raider on the archer's own ground near it (past a broken hurdle, or come round) is fought with `fight`,
-## the pilot every other fight uses; the station's shooting is for the raiders behind the hurdles, which no
-## walk reaches. Point blank it shoots only the toad (a shooter), which spits from where it stands.
+## A raider past every standing hurdle (or already on the archer) is fought with `fight`, the pilot every
+## other fight uses; the station's shooting is for the raiders still at the hurdles. Point blank it shoots only the toad (a shooter), which spits from where it stands.
 ## It fails, saying so, when raiders are up and no arrow has counted for STALL seconds.
 const STALL := 30.0
 const BESIDE := 60.0
@@ -667,21 +666,32 @@ func defend(limit: float, station := Vector2.INF) -> String:
 			else:
 				await _sleep(0.12)
 			continue
-		# a raider on the archer's own ground (past the hurdles, or round them) near the archer: fought as
-		# every fight is (`fight`: closes in, shoots, rolls out of telegraphed lanes), then back to the station
+		# a raider past every standing hurdle (or already on the archer) is fought as every fight is (`fight`:
+		# closes in, shoots, rolls out of telegraphed lanes), then back to the station; one still at the hurdles
+		# is shot from the station, over them
 		if now() - reach_t > 1.0:
 			reach_t = now()
 			g.forget()
 			ground = g.reachable(p.global_position)
+		var night := Zones.current.get_node_or_null("RaidNight") as RaidNight
+		var front := -INF
+		if night != null:
+			for b: RaidBarricade in night.barricades:
+				if is_instance_valid(b) and b.standing():
+					front = maxf(front, b.lane_s)
 		var near_ground := false
 		for e: Node2D in es:
-			if e.global_position.distance_to(p.global_position) < 450.0 and ground.has(g.nearest_free(e.global_position, 40.0)):
+			var through := night == null or night.progress(e.global_position) > front + 20.0
+			var on_me := e.global_position.distance_to(p.global_position) < 150.0
+			if (on_me or (through and e.global_position.distance_to(p.global_position) < 450.0)) \
+					and ground.has(g.nearest_free(e.global_position, 40.0)):
 				near_ground = true
 		if near_ground:
-			var problem := await fight(maxf(limit - (now() - start), 1.0))
-			_landed_t = now()
+			# a turn of `fight` at a time, so the station takes over again once the raiders through are freed;
+			# its "still near after N s" is only the end of the turn
+			var problem := await fight(3.0)
 			reach_t = -99.0
-			if problem != "" and Raids.running():
+			if problem != "" and not problem.contains("were still near") and Raids.running():
 				return problem
 			continue
 		if now() - _landed_t > STALL:
