@@ -23,7 +23,8 @@ extends Node
 ##   hurt [secs]             the same, but only until the first hit lands (hearts missing, not downed)
 ##   button <name or text>   move the mouse onto a visible on-screen button (its node name, or the start of
 ##                           its text) and click it, as a player would (the raid's prepare screen)
-##   defend [secs]           fight a raid's waves as they come until the night is over (core/raids.gd)
+##   defend [secs] [x y]     defend a raid's night from a station (default: here) until it is over: shoots the
+##                           raider nearest the lantern over the hurdles, walks out only for one it cannot hit
 ##   key <Name>              tap a key (Escape, E, Space, Enter, Down, ...)
 ##   hold <left|right|up|down|upleft|...> <secs>
 ##   aim x y, click, roll    the mouse at a world point, a left click, Space
@@ -367,7 +368,8 @@ func run(c: String) -> String:
 		"button":
 			return await press_button(c.substr(7).strip_edges())
 		"defend":
-			return await defend(float(a[1]) if a.size() > 1 else 300.0)
+			var at := Vector2(float(a[2]), float(a[3])) if a.size() > 3 else Vector2.INF
+			return await defend(float(a[1]) if a.size() > 1 else 300.0, at)
 		"expect":
 			var problem := expect(a)
 			out(("  ok   %s" % c) if problem == "" else ("  MISS %s: %s" % [c, problem]))
@@ -582,22 +584,79 @@ func press_button(what: String) -> String:
 	out("BUTTON %s  raid=%s  %s" % [what, Raids.state(), status()])
 	return ""
 
-## Fights a raid's waves as they come, until the night is over (won or lost) or `limit` seconds pass.
-func defend(limit: float) -> String:
+## Defends a raid's night until it is over (won or lost) or `limit` seconds pass, as a player at the lantern
+## would: it holds `station` (default where it stands) and shoots the raider nearest the lantern whenever an
+## arrow can reach it (Arrow.walled_off: arrows fly over the hurdles, which are low solids), so it hits them
+## where they batter a hurdle it cannot walk through. It walks out only for a raider it cannot hit from where
+## it stands, and steps or rolls out of the lane of a telegraphed attack as `fight` does.
+func defend(limit: float, station := Vector2.INF) -> String:
+	var p := player()
 	var start := now()
-	var anchor := player().global_position
+	if station == Vector2.INF:
+		station = p.global_position
+	var shots := 0
+	var rolls := 0
+	var hurt0 := _hurt
+	var g := grid()
 	while now() - start < limit and Raids.running():
-		if enemies().is_empty():
-			# between waves: back to where the defence began, out of the road
-			if player().global_position.distance_to(anchor) > 60.0 and player().is_inside_tree():
-				await goto(anchor, 40.0)
-			else:
-				await _sleep(0.3)
+		if not p.is_inside_tree() or p.is_defeated():
+			hold(Vector2.ZERO)
+			await _sleep(0.2)
 			continue
-		var problem := await fight(maxf(limit - (now() - start), 1.0))
-		if problem != "" and Raids.running():
-			return problem
-	out("DEFEND %.1fs raid=%s  %s" % [now() - start, Raids.state(), status()])
+		var es := enemies()
+		if es.is_empty():
+			if p.global_position.distance_to(station) > 30.0:
+				await goto(station, 20.0)
+			else:
+				hold(Vector2.ZERO)
+				await _sleep(0.2)
+			continue
+		var lantern := get_tree().get_first_node_in_group("raid_lantern") as Node2D
+		var guard := lantern.global_position if lantern != null else station
+		var target: Node2D = es[0]
+		for e: Node2D in es:
+			if e.global_position.distance_to(guard) < target.global_position.distance_to(guard):
+				target = e
+		var threat := _threat(p)
+		if threat != null and not p.is_rolling():
+			var dir := _attack_dir(threat, p)
+			var rel := p.global_position - threat.global_position
+			var side := rel - dir * rel.dot(dir)
+			side = side.normalized() if side.length() > 2.0 else dir.orthogonal()
+			if not g.is_free(WalkGrid.cell_of(p.global_position + side * 60.0)):
+				side = -side
+			hold(side)
+			if p.roll_charges > 0:
+				await _sleep(0.03)
+				await tap(KEY_SPACE)
+				rolls += 1
+				await _sleep(0.28)
+			else:
+				await _sleep(0.12)
+			continue
+		var space := p.get_world_2d().direct_space_state
+		var aim := target.global_position + Vector2(0, -24)
+		if p.global_position.distance_to(target.global_position) <= 320.0 and not Arrow.walled_off(space, p.global_position, aim):
+			hold(Vector2.ZERO)
+			aim_at(aim)
+			if not p.is_shooting() and not p.is_rolling():
+				await click()
+				shots += 1
+			await _sleep(0.05)
+			continue
+		# out of reach from here: back to the station when it can be hit from there, else after it
+		var from_station := station.distance_to(target.global_position) <= 320.0 and not Arrow.walled_off(space, station, aim)
+		var goal := station if from_station else target.global_position
+		var plan := g.path(p.global_position, goal, 30.0)
+		var want := goal
+		for i in range(mini(plan.size(), 60) - 1, -1, -1):
+			if g.clear_line(p.global_position, plan[i]):
+				want = plan[i]
+				break
+		hold(want - p.global_position)
+		await _sleep(0.15)
+	hold(Vector2.ZERO)
+	out("DEFEND %.1fs raid=%s shots=%d rolls=%d hurt=%d  %s" % [now() - start, Raids.state(), shots, rolls, _hurt - hurt0, status()])
 	if Raids.running():
 		return "the night was still on after %.0fs" % limit
 	return ""
