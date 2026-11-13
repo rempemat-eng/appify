@@ -646,9 +646,13 @@ func test_the_first_wave_waits_for_the_player_at_the_square() -> void:
 		night._physics_process(1.0)
 	assert_int(night.wave).is_equal(-1)
 	assert_int(night.creatures().size()).is_equal(0)
+	# the tracker does not count a wave that has not come (#483 polish): it says they are coming
+	assert_str(Raids.tracker_text()).contains("the shardstruck are coming")
+	assert_str(Raids.tracker_text()).not_contains("wave 1")
 	Zones.player.global_position = centre
 	night._physics_process(0.1)
 	assert_int(night.wave).is_equal(0)
+	assert_str(Raids.tracker_text()).contains("wave 1 of 3")
 
 ## R2-1, the game's side: a real arrow, shot from the street as a player shoots it, frees a toad backed
 ## against the bakery's south wall (its body is a circle at its feet; the arrow's node flies on the ground).
