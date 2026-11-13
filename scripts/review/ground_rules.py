@@ -21,6 +21,13 @@ These checks read a zone's plan (world px) and say where it breaks a rule:
                             plan marks them stacked
     rules.clutter           clutter (ferns, flowers, leaves) never on a route's centre or water
     rules.stage_debris      storm debris and puddles only in the broken stage (a stage condition)
+    rules.prop_overlap      no two solid props that can stand at the same time share ground: a
+                            plinth, a drum or a base never cuts into another's (Matt, 13 Nov)
+    rules.prop_apron        nothing stands on another prop's ground apron (the ring of setts round
+                            the well is the well's), and keeps one body's width off it
+    rules.prop_gap          free-standing props on open ground (a square, paving) are either
+                            touching or at least one body's width apart, so a body walks all
+                            the way round each
 
 Existing checks enforce the rest: logic.tiers (one height per tier, faces and stairs agree),
 roads_clear in check:kit (no road under a building), logic.composition (structures with props),
@@ -410,6 +417,137 @@ def stage_debris(kit, plan=None):
     return out
 
 
+# ------------------------------------------------------------------------------------------------
+# props against props (Matt, 13 Nov: the lantern's plinth stood on the well's ring, under its crank:
+# "you have to be better with these layout choices")
+# ------------------------------------------------------------------------------------------------
+BODY = 8.0            # world px: one walkable body (the player's and a creature's circle, r 12 texels)
+APRON_SQUASH = 0.86   # a ring of setts is drawn this much flatter than wide (town.build, `setts`)
+NOT_PROPS = ('building', 'damage', 'glow', 'smoke', 'shadow', 'boards')
+
+
+def _coexist(a, b) -> bool:
+    """False when two conditions can never hold together (the dark lantern and the lit one, the choked
+    well and the clear one): one needs what the other forbids."""
+    a, b = a or {}, b or {}
+    for want, never in (('flags', 'not_flags'), ('restored', 'not_restored')):
+        if set(a.get(want, [])) & set(b.get(never, [])) or set(b.get(want, [])) & set(a.get(never, [])):
+            return False
+    return True
+
+
+def _rect_gap(r, s) -> float:
+    """How far apart two rectangles [x, y, w, h] stand (0 when they touch, negative when they overlap:
+    minus the depth of the overlap)."""
+    dx = max(r[0] - (s[0] + s[2]), s[0] - (r[0] + r[2]))
+    dy = max(r[1] - (s[1] + s[3]), s[1] - (r[1] + r[3]))
+    if dx < 0 and dy < 0:
+        return max(dx, dy)
+    return math.hypot(max(dx, 0.0), max(dy, 0.0))
+
+
+def _apron_gap(r, ring) -> float:
+    """How far a rectangle stands from a ring of setts (cx, cy, r0, r1): 0 or less when it stands on it."""
+    cx, cy, _r0, r1 = ring
+    best = math.inf
+    n = 8
+    for i in range(n + 1):
+        for j in range(n + 1):
+            if 0 < i < n and 0 < j < n:
+                continue                    # the rectangle's edge is what comes nearest (or it holds the middle)
+            px, py = r[0] + r[2] * i / n, r[1] + r[3] * j / n
+            d = math.hypot(px - cx, (py - cy) / APRON_SQUASH)
+            # along the line to the middle, the ring's edge is r1 away in x and r1 * squash in y
+            ux, uy = (px - cx), (py - cy)
+            L = math.hypot(ux, uy) or 1e-9
+            edge = r1 * L / (math.hypot(ux, uy / APRON_SQUASH) or 1e-9)
+            best = min(best, L - edge if d > r1 else -(edge - L))
+    if r[0] <= cx <= r[0] + r[2] and r[1] <= cy <= r[1] + r[3]:
+        return -r1
+    return best
+
+
+def _open_ground(p, plan) -> bool:
+    """The plan says the ground at p is open: a paved square or a place people cross."""
+    rects = [list(r) for r in plan.get('art', {}).get('paving', [])]
+    rects += [pl['rect'] for pl in plan.get('places', []) if pl.get('kind') == 'square' and pl.get('rect')]
+    return _in_rects(p, rects)
+
+
+def prop_clearance(kit, plan, boxes=None):
+    """The props of a drawn zone against each other. `kit` is the zone's kit.json; `boxes` gives a
+    solid's box as the scene has it (id -> [x, y, w, h] in world px) where the kit library reviewed it
+    (game/tools/gen_village.py solids), else the kit's own stands."""
+    out = []
+    boxes = boxes or {}
+    props, walls = [], []
+    for o in kit.get('objects', []):
+        r = boxes.get(o['id'], o.get('solid'))
+        if not r:
+            continue
+        (walls if o.get('kind') == 'building' else props).append((o['id'], [float(v) for v in r], o.get('cond'), o.get('kind')))
+    props = [p for p in props if p[3] not in NOT_PROPS]
+    # props the plan stands together on purpose (a stall's stock beside it): `with` names the other's id
+    together = set()
+    for k, dr in enumerate(plan.get('art', {}).get('dressing', [])):
+        if dr.get('with'):
+            together.add(frozenset((dr.get('id', '%s_%d' % (dr['kind'], k)), dr['with'])))
+    by_wall = {pid for pid, r, _c, _k in props if any(_rect_gap(r, w[1]) < BODY for w in walls)}
+    # each apron is its nearest prop's (the ring is laid round the well; the same ring serves the choked well)
+    aprons = []
+    for ring in plan.get('art', {}).get('setts', []):
+        own = {pid for pid, r, _c, _k in props if math.hypot(r[0] + r[2] / 2 - ring[0], r[1] + r[3] / 2 - ring[1]) <= ring[2]}
+        aprons.append((ring, own))
+    for i, (ida, ra, ca, _ka) in enumerate(props):
+        for idb, rb, cb, _kb in props[i + 1:]:
+            if not _coexist(ca, cb):
+                continue
+            g = _rect_gap(ra, rb)
+            mid = ((ra[0] + ra[2] / 2 + rb[0] + rb[2] / 2) / 2, (ra[1] + ra[3] / 2 + rb[1] + rb[3] / 2) / 2)
+            if g < 0:
+                out.append(_f('rules.prop_overlap', f'{ida} and {idb} share ground ({-g:.1f} px deep): move one clear', mid))
+            elif (0.5 < g < BODY and _open_ground(mid, plan) and ida not in by_wall and idb not in by_wall
+                  and frozenset((ida, idb)) not in together):
+                out.append(_f('rules.prop_gap', f'{ida} and {idb} stand {g:.1f} px apart on open ground: touching, '
+                              f'or at least a body ({BODY:g} px) apart', mid))
+        for ring, own in aprons:
+            if ida in own:
+                continue
+            if any(not _coexist(ca, c) for pid, _r, c, _k in props if pid in own) and not any(
+                    _coexist(ca, c) for pid, _r, c, _k in props if pid in own):
+                continue
+            g = _apron_gap(ra, ring)
+            who = '/'.join(sorted(own)) or 'the ring at %s' % (ring[:2],)
+            if g <= 0:
+                out.append(_f('rules.prop_apron', f'{ida} stands on the apron of {who}: move it off the ring', tuple(ring[:2])))
+            elif g < BODY:
+                out.append(_f('rules.prop_apron', f'{ida} stands {g:.1f} px from the apron of {who}: at least a body '
+                              f'({BODY:g} px) clear', tuple(ring[:2])))
+    # two aprons never run into each other either
+    for i, (ra, oa) in enumerate(aprons):
+        for rb, ob in aprons[i + 1:]:
+            ux, uy = rb[0] - ra[0], rb[1] - ra[1]
+            L = math.hypot(ux, uy)
+            reach = L / (math.hypot(ux, uy / APRON_SQUASH) or 1e-9)      # a ring's edge along the line between them
+            g = L - (ra[3] + rb[3]) * reach
+            if g < BODY:
+                out.append(_f('rules.prop_apron', f'the aprons at {tuple(ra[:2])} and {tuple(rb[:2])} are {g:.1f} px apart: '
+                              f'at least a body ({BODY:g} px) of plain ground between them', tuple(ra[:2])))
+    return out
+
+
+def scene_boxes(zone, plan, kit) -> dict:
+    """Each solid's box as the zone's scene has it (the kit library's reviewed boxes over the plan's)."""
+    tools = os.path.join(ROOT, 'game', 'tools')
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
+    try:
+        import gen_village
+        return {k: v[0] for k, v in gen_village.solids(plan, kit).items()}
+    except Exception:           # a zone the village generator does not build: its kit's boxes stand
+        return {}
+
+
 CHECKS = (water_source, water_end, water_fall, ground_water, route_grid, route_ends, route_clear, seating,
           rock_overlap, clutter)
 
@@ -441,14 +579,23 @@ def main(argv=None) -> int:
     for name, path, kit in plans():
         plan = json.load(open(path))
         fs = check_plan(plan)
+        held = []
         if kit:
-            fs += stage_debris(json.load(open(kit)), plan)
+            kd = json.load(open(kit))
+            fs += stage_debris(kd, plan)
+            if isinstance(kd, dict):
+                # the props' clearance is held wherever the plan asks for it ("prop_clearance": true), whatever
+                # the plan's other rules are (Crossroads, 13 Nov)
+                pc = prop_clearance(kd, plan, scene_boxes(name, plan, kd))
+                (held if plan.get('prop_clearance') else fs).extend(pc)
         strict = bool(plan.get('ground_rules'))
-        tag = 'ok' if not fs else f'{len(fs)} finding(s)' + ('' if strict else ' (advisory)')
+        tag = 'ok' if not (fs or held) else f'{len(fs) + len(held)} finding(s)' + ('' if strict or held else ' (advisory)')
         print(f'[ground rules] {name}: {tag}')
+        for f in held:
+            print(f'  {f["check"]} (held): {f["message"]}')
         for f in fs:
             print(f'  {f["check"]}: {f["message"]}')
-        if strict and fs:
+        if (strict and fs) or held:
             bad += 1
     return 1 if (a.check and bad) else 0
 

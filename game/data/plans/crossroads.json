@@ -12,6 +12,8 @@
     640,
     560
   ],
+  "prop_clearance": true,
+  "why_prop_clearance": "held by scripts/review/ground_rules.py (rules.prop_overlap, prop_apron, prop_gap; check:kit): no prop's footprint on another's footprint or apron, free-standing props on the square touching or a body (8 px) apart (Matt, 13 Nov)",
   "stages": [
     {
       "id": "broken",
@@ -1727,10 +1729,10 @@
       {
         "kind": "kit_lantern",
         "at": [
-          292,
+          288,
           200
         ],
-        "why": "the gate lane's lamps"
+        "why": "the gate lane's lamps, each one cell outside the lane's edge (13 Nov: the west one stood 4 px nearer than the east)"
       },
       {
         "kind": "kit_lantern",
@@ -1806,7 +1808,8 @@
           10,
           8
         ],
-        "why": "Moss's stock"
+        "why": "Moss's stock",
+        "with": "stall"
       },
       {
         "kind": "crates",
@@ -1817,7 +1820,9 @@
         "size": [
           12,
           10
-        ]
+        ],
+        "with": "stall",
+        "why": "Moss's stock, with the barrel west of the stall"
       },
       {
         "kind": "woodpile",
@@ -2097,13 +2102,14 @@
       {
         "kind": "bench",
         "at": [
-          272,
+          288,
           368
         ],
         "size": [
           24,
           6
-        ]
+        ],
+        "why": "under the well, as its twin stands under the lantern (13 Nov: it was centred on the lantern's old place)"
       },
       {
         "kind": "flower_tub",

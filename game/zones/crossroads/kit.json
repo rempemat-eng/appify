@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "c2662b15f6d999bea2476969760d7c92becadfd6e5ca2cd76fba9eb93e9fe6c8",
+ "inputs": "ebcb0bd5dd4baac65687ee905eabd0e685cc00fcde802199c25bd65718ba86cf",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -1138,7 +1138,7 @@
    "kind": "kit_lantern",
    "png": "kit_lantern_24.png",
    "foot": [
-    876,
+    864,
     600
    ],
    "offset": [
@@ -1147,7 +1147,7 @@
    ],
    "cond": null,
    "solid": [
-    290,
+    286,
     198,
     4,
     3
@@ -1814,7 +1814,7 @@
    "kind": "bench",
    "png": "bench_58.png",
    "foot": [
-    816,
+    864,
     1104
    ],
    "offset": [
@@ -1823,7 +1823,7 @@
    ],
    "cond": null,
    "solid": [
-    260.0,
+    276.0,
     362,
     24,
     6

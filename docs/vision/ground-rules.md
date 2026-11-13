@@ -104,6 +104,19 @@ Every prop has a placement relation and a clearance.
   the one behind, never the reverse. Checked by `rules.rock_overlap`.
 - **Trees** have their trunks on cells and their crowns uncut. Checked by the crowns gate
   (`check:kit`) and `grid_snap`.
+- **Every prop has its own ground** (Matt, 13 Nov, on the lantern whose plinth stood on the well's
+  ring of setts under its crank: "you have to be better with these layout choices"). No two solid
+  props that can stand at the same time share ground (`rules.prop_overlap`). A ground apron belongs
+  to its prop (the ring of setts round the well is the well's, the ring round the shard lantern is
+  the lantern's): nothing else stands on it or within one body (8 world px) of it, and two aprons
+  keep a body of plain ground between them (`rules.prop_apron`). Free-standing props on open ground
+  (a square, paving) are either touching or at least a body apart, so a body walks all the way round
+  each (`rules.prop_gap`). Clutter against a wall (within a body of a building) is not
+  free-standing, and props the plan stands together on purpose name each other with `with` (a
+  stall's stock beside it). Two states that never meet (the dark lantern and the lit one) are not
+  compared. A plan that sets `"prop_clearance": true` holds these in `check:kit`
+  (`ground_rules --check`), whatever its other rules are: Crossroads does. The boxes are the
+  scene's own (the kit library's reviewed boxes over the plan's).
 
 ### 7. Clutter
 
