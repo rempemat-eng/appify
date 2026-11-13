@@ -127,6 +127,10 @@
     "boss": 10,
     "note": "in the game since 11 Nov (Matt, 10 Nov): paid once per creature for the life of the save, never again when a camp comes back; today's build has 3 mosslings, 5 Undercroft creatures and the Thornback, 31 Glint in all"
   },
+  "raids": {
+    "first_night": 30,
+    "note": "placeholder (12 Nov): the modest purse for winning the first night (data/raids/first_night.json, core/raids.gd), paid once; the raid's creatures pay no fight Glint of their own"
+  },
   "defeat": {
     "cache_share_of_carried": 0.2,
     "never_below": 0,

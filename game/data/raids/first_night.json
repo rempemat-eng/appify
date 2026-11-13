@@ -1,0 +1,65 @@
+{
+  "_about": "The first night (docs/vision/vertical-slice.md beat 8; game-design.md 7.6 on claude-a/game-design-v2): the first prepared raid on Crossroads. core/raids.gd reads it. Positions are world px local to the zone, as in data/plans/crossroads.json; the lane and the gate pad are the plan's own (looked up by id). Every number marked placeholder is one to tune in play-tests; none is balanced. The purse is in data/balance/glint.json (raids.first_night).",
+  "id": "first_night",
+  "title": "The first night",
+  "zone": "crossroads",
+  "attention_if": { "flags": ["shard_home:woodland"] },
+  "announce_if": { "done": ["home_again"] },
+  "why_announce_if": "the raid comes from the lantern's light (attention), and is announced only once the homecoming quest is over, so beat 8 follows beat 7 (a decision for Matt)",
+  "postpones": 2,
+  "lane": "halt_road",
+  "lane_points": [[0, 300], [200, 300], [262, 330], [300, 332], [316, 321]],
+  "why_lane_points": "the plan's halt_road to the square's edge, then round the south of the well (its solid 278-298 x 304-320) to the south-east of the lantern's post (307-317 x 290-312): the plan's own last leg runs through the well and ends inside the post (audit of #483, B2). The strike spot (316, 321) stands in front of both pictures (the well's sorts at y 320 and spans x 269-307, the lantern's sorts at 312), so the raider is not hidden behind the well's frame (audit round 2, P1). The plan is left as it is; test_raids.gd holds that a creature's body fits along the whole lane",
+  "pads": [
+    { "id": "pad_halt_street", "at": [124, 312], "span": 48, "why": "inside the street between the bakery (foot at y 288) and the herbalist's (top at y 336): its span closes the street wall to wall, so the halt road is shut until it breaks" },
+    { "id": "pad_street_mouth", "at": [178, 312], "span": 48, "why": "the street's mouth onto the square, the same span from wall to wall. Replaces the plan's pad_halt_gate (210, 300), which stands in the open square where a hurdle can be walked round (audit of #483, B1). Where the pads go is Matt's open decision (vertical-slice.md, Open for Matt 6): move them here, in the raid's data" }
+  ],
+  "kinds": {
+    "hurdle_barricade": {
+      "name": "Hurdle barricade",
+      "from": "Hale's forge",
+      "needs": { "restored": ["forge"] },
+      "text": "Blocks the road until it is broken",
+      "hp": 10,
+      "hp_placeholder": true,
+      "span": 22,
+      "why_span": "world px across the lane when a pad gives no span of its own",
+      "depth": 6
+    }
+  },
+  "prefill": "hurdle_barricade",
+  "lantern": { "hp": 12, "hp_placeholder": true, "foot": [312, 312], "box": [307, 290, 10, 22], "reach": 10,
+    "why": "a raider strikes the lantern only standing within `reach` world px of its post (`box`, the lit lantern's solid in zones/crossroads/kit.json); `foot` is where its bar hangs from" },
+  "march_speed": 30,
+  "march_speed_placeholder": true,
+  "notice": 60,
+  "why_notice": "world px: nearer than this, with nothing solid between, a marching creature turns on the player (the camps notice at 100; a raider keeps to its road longer)",
+  "batter": { "damage": 1, "elite_damage": 2, "placeholder": true },
+  "first_wave": { "near": "square", "within": 60, "at_least": 2.0, "or_after": 25.0,
+    "why": "wave 1 waits for the player to come within `within` world px of the plan's place `near` (the square), or `or_after` seconds, and never comes sooner than `at_least`: the bell is rung on the screen where the player walked in (the garden walk, about 20 s from the square), and two boarlets break a hurdle in about 8 s (audit round 2, R2-2). Not a combat number" },
+  "wave_gap": 3.0,
+  "spawn_spacing": 1.0,
+  "waves": [
+    { "creatures": ["rusher", "rusher"], "why": "two boarlets: the hurdles take the first knocks" },
+    { "creatures": ["rusher", "shooter", "rusher"], "why": "a toad that spits over the hurdle at the archer" },
+    { "creatures": ["shield", "rusher", "elite"], "why": "a mossback and the horned elite last" }
+  ],
+  "waves_placeholder": true,
+  "repairs": [
+    { "id": "boards_on_a_window", "kind": "boards", "at": [525, 256], "size": [14, 14], "foot": 281, "why": "over the smithy's front window (smithy.png, right of the forge mouth); `foot` sorts it in front of the building" },
+    { "id": "cart_on_its_side", "kind": "cart", "at": [236, 338], "size": [24, 10], "foot": 342, "why": "south of the gate pad, off the walkway" }
+  ],
+  "reward": {
+    "flags": ["first_night_won"],
+    "offers": {
+      "id": "bell_tower",
+      "name": "The library's bell tower",
+      "cost": { "glint": 50 },
+      "if": { "flags": ["first_night_won"] },
+      "stage": 1,
+      "mark": [248, 214],
+      "why_mark": "a restore mark in front of the library's door (248, 200), set out by world/raid_night.gd once the raid is won and the bell tower not yet restored; the plan holds no site for it yet",
+      "why": "the bell tower (game-design.md 7.2, the library's cupola; act 1's restore id bell_tower at the 50 Glint its mark's lines quote, docs/story/act1.md) is offered for stage 1. core/raids.gd adds it to Village.sites only while no plan defines bell_tower; its restore mark and its picture arrive with stage 1's map and art. Until then the offer is in Hale's lines"
+    }
+  }
+}

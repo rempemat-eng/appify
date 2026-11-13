@@ -1,0 +1,106 @@
+#! save: first_night.save.json
+# The first night (docs/vision/vertical-slice.md beat 8; core/raids.gd), played with real input from a save
+# made just after Home again: the lantern lit, the forge and the Ferns' door restored, 116 Glint, in the
+# square. The save is from before raids (no `raid` record), so loading it is the migration too: nothing is
+# sprung on load. The lantern's light has drawn the shardstruck: the night is announced on the next walk into
+# town, put off twice, then due; the prepare screen (untimed, both pads filled with Hale's hurdles) comes back
+# after a quit; the bell rings and three waves come down the halt road and are freed; the purse is paid and
+# Hale offers the bell tower. A raid lost is held by test/test_raids.gd, not played here.
+# Commands: tools/play_driver.gd.
+
+step in the square just after Home again: a load springs nothing
+wait 1.0
+expect zone crossroads
+expect quest home_again done
+expect raid none
+expect raidscreen no
+expect glint 116
+
+step out to the woodland and back: the lantern's light has drawn them, and the night is announced
+door 12 210 woodland
+door 951 1356 crossroads
+wait 1.0
+expect raid announced
+expect raidscreen yes
+expect flag first_night_announced
+shot 01_announced
+button Not tonight
+expect raid postponed
+expect raidscreen no
+
+step Moss has seen their camp
+goto 1152 830 10
+talk Moss
+expect said Their camp's still out on the halt road
+
+step put off a second time
+door 12 210 woodland
+door 951 1356 crossroads
+wait 1.0
+expect raid announced
+expect raidscreen yes
+button Not tonight
+expect raid pending
+expect raidscreen no
+
+step the third walk in: it is due; the prepare screen waits, with no "not tonight"
+door 12 210 woodland
+door 951 1356 crossroads
+wait 1.0
+expect raid announced
+expect raidscreen yes
+wait 4.0
+expect raidscreen yes
+expect raid announced
+expect enemies 0
+shot 02_prepare
+
+step quit on the screen: it is there again on the next start
+restart
+wait 1.0
+expect raid announced
+expect raidscreen yes
+
+step ring the bell: Hale's hurdles on both pads; the first wave waits for Bramble at the square
+button Ring the bell
+expect raid running
+expect raidscreen no
+expect defences 2
+expect hud Hold the lantern
+expect enemies 0
+# the station: on the square just east of the street's mouth, in bow range of both hurdles
+goto 640 930 20
+waitfor 10 wave 1
+shot 03_first_wave
+
+step the first raider reaches the first hurdle, and both hurdles still stand
+waitfor 40 battering
+expect defences 2
+shot 04_at_the_hurdle
+
+step defend the night from the square: three waves down the halt road
+# by the street's mouth while a hurdle stands, then east of the lantern, in sight of the lane's last leg and
+# the strike spot, and just beyond a raider's notice (60 world px) of the strike spot
+defend 420 640 930 1130 1010
+expect raid won
+expect flag first_night_won
+expect glint 146
+expect defences 0
+shot 05_held
+
+step Hale offers the bell tower
+goto 1530 936 10
+talk HaleForge
+expect said bell
+restart
+expect raid won
+expect glint 146
+
+step the next walk in: nothing more comes, and the town is whole
+door 12 210 woodland
+door 951 1356 crossroads
+wait 1.0
+expect raid won
+expect raidscreen no
+expect repairs no
+end

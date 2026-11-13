@@ -21,6 +21,12 @@ extends Node
 ##                           walked to is left in the zone
 ##   down [secs]             stand a few steps from the nearest enemy until downed, then get up
 ##   hurt [secs]             the same, but only until the first hit lands (hearts missing, not downed)
+##   button <name or text>   move the mouse onto a visible on-screen button (its node name, or the start of
+##                           its text) and click it, as a player would (the raid's prepare screen)
+##   defend [secs] [x y [x2 y2]]  defend a raid's night from a station (default: here; the second once both
+##                           hurdles are down) until it is over: shoots the raider nearest the lantern over the
+##                           hurdles, walks out only for one it cannot hit
+##   waitfor <secs> <what>   wait, standing, until `expect <what>` holds (fails after <secs>)
 ##   key <Name>              tap a key (Escape, E, Space, Enter, Down, ...)
 ##   hold <left|right|up|down|upleft|...> <secs>
 ##   aim x y, click, roll    the mouse at a world point, a left click, Space
@@ -32,6 +38,9 @@ extends Node
 ##       prompt <verb|none> | hp <n> | hurt (hearts missing) | glint <n> | restored <id> | notrestored <id> | enemies <n>
 ##       at x y <tol> | hud <text|none> | said <text> | banner <text|none> | paused <yes|no>
 ##       line <text|none> (the line on the dialogue box now)
+##       raid <state> (core/raids.gd: none, announced, postponed, pending, running, won, lost) | raidscreen <yes|no>
+##       defences <n> (hurdles standing) | repairs <yes|no> (the brief repairs after a lost night)
+##       battering (a raider is battering a hurdle) | wave <n> (the night's wave under way, from 1)
 ##   restart                 close the window as a player would; the runner starts the game again from the
 ##                           save and the route carries on at the next line
 ##   end                     pass (the end of the file passes too)
@@ -56,6 +65,7 @@ var _held := {}
 var _f0 := 0
 var _hurt := 0
 var _downs := 0
+var _landed_t := 0.0            # game time of the player's last arrow that counted (hit_landed)
 var _hooked: Node = null
 var _said: PackedStringArray = []
 var _grid: WalkGrid
@@ -126,6 +136,7 @@ func _process(_d: float) -> void:
 		p.downed.connect(func() -> void:
 			_downs += 1
 			out("  DOWNED"))
+		p.hit_landed.connect(func(_t: Node, _heavy: bool) -> void: _landed_t = now())
 	if _fighting and p != null and p.is_inside_tree():
 		_fight_gap = minf(_fight_gap, _door_gap(p.global_position))
 	if _busy or p == null:
@@ -368,6 +379,20 @@ func run(c: String) -> String:
 			out("CACHES picked up; Glint %d" % int(SaveGame.data.glint))
 		"hurt":
 			return await down(float(a[1]) if a.size() > 1 else 40.0, true)
+		"button":
+			return await press_button(c.substr(7).strip_edges())
+		"waitfor":
+			var t0 := now()
+			var want := PackedStringArray(["expect"]) + a.slice(2)
+			while expect(want) != "":
+				if now() - t0 > float(a[1]):
+					return "after %ss: %s" % [a[1], expect(want)]
+				await _sleep(0.1)
+			out("WAITFOR %s held after %.1fs  %s" % [" ".join(a.slice(2)), now() - t0, status()])
+		"defend":
+			var at := Vector2(float(a[2]), float(a[3])) if a.size() > 3 else Vector2.INF
+			var back := Vector2(float(a[4]), float(a[5])) if a.size() > 5 else Vector2.INF
+			return await defend(float(a[1]) if a.size() > 1 else 300.0, at, back)
 		"expect":
 			var problem := expect(a)
 			out(("  ok   %s" % c) if problem == "" else ("  MISS %s: %s" % [c, problem]))
@@ -442,6 +467,28 @@ func expect(a: PackedStringArray) -> String:
 			return "" if all.contains(rest.to_lower()) else "the last lines were: %s" % (" | ".join(_said) if _said.size() > 0 else "(nothing)")
 		"paused":
 			return "" if get_tree().paused == (a[2] == "yes") else "paused is %s" % get_tree().paused
+		"raid":
+			return "" if Raids.state() == a[2] else "the raid is %s" % Raids.state()
+		"raidscreen":
+			var screen := get_tree().get_first_node_in_group("raid_screen") as Control
+			var up := screen != null and screen.is_visible_in_tree()
+			return "" if up == (a[2] == "yes") else "the prepare screen is %s" % ("up" if up else "not up")
+		"defences":
+			var standing := 0
+			for b in get_tree().get_nodes_in_group("raid_defence"):
+				if b.has_method("standing") and b.standing():
+					standing += 1
+			return "" if standing == int(a[2]) else "%d hurdles stand" % standing
+		"battering":
+			for c2 in get_tree().get_nodes_in_group("enemy"):
+				if c2 is RaidCreature and not c2.dead and c2.blocker is RaidBarricade:
+					return ""
+			return "no raider is battering a hurdle"
+		"wave":
+			return "" if Raids.running() and int(Raids.rec().wave) + 1 == int(a[2]) else "the raid is %s at wave %d" % [Raids.state(), int(Raids.rec().wave) + 1]
+		"repairs":
+			var shown := not get_tree().get_nodes_in_group("raid_repair").filter(func(n: Node) -> bool: return not n.is_queued_for_deletion()).is_empty()
+			return "" if shown == (a[2] == "yes") else "the repairs are %s" % ("shown" if shown else "not shown")
 		"line":
 			var box := get_tree().get_first_node_in_group("dialogue_box")
 			var line: String = box.shown_line() if box != null else ""
@@ -525,6 +572,182 @@ func goto(target: Vector2, tol: float, until_zone := "") -> String:
 	if changed:
 		return "a door took the player to %s on the way" % SaveGame.data.zone
 	return "%s: stopped %d texels short at %s" % ["the walk grid has no way there" if no_path else "did not arrive", int(dist), p.global_position.round()]
+
+## The visible button named `what` (its node name, or the start of its text, either case), or null.
+func _find_button(node: Node, what: String) -> BaseButton:
+	if node is BaseButton and (node as CanvasItem).is_visible_in_tree():
+		var b := node as BaseButton
+		var text := String(b.get("text")) if b.get("text") != null else ""
+		if String(b.name) == what or (text != "" and text.to_lower().begins_with(what.to_lower())):
+			return b
+	for c in node.get_children():
+		var found := _find_button(c, what)
+		if found != null:
+			return found
+	return null
+
+## Moves the mouse onto a button and clicks it with real mouse events, through the pixel screen's scale.
+func press_button(what: String) -> String:
+	var b := _find_button(get_tree().root, what)
+	if b == null:
+		return "no visible button '%s'" % what
+	var centre := b.get_global_rect().get_center()      # in the game's 960 x 540 art grid
+	var main := get_tree().current_scene
+	var screen := centre
+	if main != null and main.get("screen") != null:
+		screen = main.screen.position + centre * main.scale_k
+	var move := InputEventMouseMotion.new()
+	move.position = screen
+	move.global_position = screen
+	Input.parse_input_event(move)
+	Input.warp_mouse(screen)
+	await _sleep(0.1)
+	for down: bool in [true, false]:
+		var e := InputEventMouseButton.new()
+		e.button_index = MOUSE_BUTTON_LEFT
+		e.pressed = down
+		e.position = screen
+		e.global_position = screen
+		Input.parse_input_event(e)
+		await _sleep(0.08)
+	await _sleep(0.2)
+	out("BUTTON %s  raid=%s  %s" % [what, Raids.state(), status()])
+	return ""
+
+## Defends a raid's night until it is over (won or lost) or `limit` seconds pass, as a player at the lantern
+## would: it holds `station` (default where it stands) and shoots the raider nearest the lantern whenever an
+## arrow can reach it (Arrow.walled_off: arrows fly over the hurdles, which are low solids), so it hits them
+## where they batter a hurdle it cannot walk through. It walks out only for a raider it cannot hit from where
+## it stands, and steps or rolls out of the lane of a telegraphed attack as `fight` does.
+## The line of fire is tested feet to feet, where the arrow flies and hits (actors/arrow.gd: the arrow's node
+## runs on the ground under the drawn shaft, parallel to the aim from the archer's chest to the target's), so
+## a raider backed against a wall is shot like any other.
+## With `fallback` given, it holds `station` while a hurdle stands and `fallback` once both are down (a player
+## falls back to what they defend). It never chases off after the nearest raider, as `fight` does: the lantern
+## falls in seconds once raiders reach it. Point blank it shoots only the toad, which spits from where it stands.
+## A raider coming for it within COMING is shot first, nearest first; otherwise the raider nearest the lantern.
+## It never gives ground (backing off, bounded or not, let the raiders take the lantern). Its dodges and walks
+## keep clear of open doors (`_door_safe`, as `fight`'s). Each hurt is logged with the raiders near it.
+## It fails, saying so, when raiders are up and no arrow has counted for STALL seconds.
+const STALL := 30.0
+const BESIDE := 60.0
+const COMING := 200.0               ## a raider coming for the archer this near is shot first
+
+func defend(limit: float, station := Vector2.INF, fallback := Vector2.INF) -> String:
+	var p := player()
+	var start := now()
+	if station == Vector2.INF:
+		station = p.global_position
+	var shots := 0
+	var rolls := 0
+	var hurt0 := _hurt
+	var g := grid()
+	var held := station
+	var hurt_seen := _hurt
+	_landed_t = now()
+	while now() - start < limit and Raids.running():
+		if not p.is_inside_tree() or p.is_defeated():
+			hold(Vector2.ZERO)
+			await _sleep(0.2)
+			continue
+		var es := enemies()
+		if es.is_empty():
+			_landed_t = now()                          # between waves nothing is there to hit
+			if p.global_position.distance_to(station) > 30.0:
+				await goto(station, 20.0)
+			else:
+				hold(Vector2.ZERO)
+				await _sleep(0.2)
+			continue
+		var lantern := get_tree().get_first_node_in_group("raid_lantern") as Node2D
+		var guard := lantern.global_position if lantern != null else station
+		# the target: a raider coming for the archer, nearest first (a player shoots what is about to hit them);
+		# else the raider nearest the lantern
+		var target: Node2D = null
+		for e: Node2D in es:
+			if str(e.get("state")) in ["approach", "windup", "attack"] and e.global_position.distance_to(p.global_position) < COMING \
+					and (target == null or e.global_position.distance_to(p.global_position) < target.global_position.distance_to(p.global_position)):
+				target = e
+		if target == null:
+			target = es[0]
+			for e: Node2D in es:
+				if e.global_position.distance_to(guard) < target.global_position.distance_to(guard):
+					target = e
+		var threat := _threat(p)
+		if threat != null and not p.is_rolling():
+			var dir := _attack_dir(threat, p)
+			var rel := p.global_position - threat.global_position
+			var side := rel - dir * rel.dot(dir)
+			side = side.normalized() if side.length() > 2.0 else dir.orthogonal()
+			if not g.is_free(WalkGrid.cell_of(p.global_position + side * 60.0)):
+				side = -side
+			side = _door_safe(p.global_position, side, DODGE_REACH)   # never dodge towards a door (as fight)
+			hold(side)
+			if p.roll_charges > 0:
+				await _sleep(0.03)
+				await tap(KEY_SPACE)
+				rolls += 1
+				await _sleep(0.28)
+			else:
+				await _sleep(0.12)
+			continue
+		# the station: by the street's mouth while a hurdle stands; once both are down, beside the lantern, where
+		# the lane's last leg and the strike spot are in sight
+		var night := Zones.current.get_node_or_null("RaidNight") as RaidNight
+		var standing := false
+		if night != null:
+			for b: RaidBarricade in night.barricades:
+				if is_instance_valid(b) and b.standing():
+					standing = true
+		station = held if standing or fallback == Vector2.INF else fallback
+		# hurt: say by whom, so a lost night can be read from the log
+		if _hurt != hurt_seen:
+			hurt_seen = _hurt
+			var near := []
+			for e: Node2D in es:
+				if e.global_position.distance_to(p.global_position) < 200.0:
+					near.append("%s %s %d" % [e.name, e.get("state"), int(e.global_position.distance_to(p.global_position))])
+			out("  defend: hurt at %s by one of [%s]" % [p.global_position.round(), ", ".join(near)])
+		if now() - _landed_t > STALL:
+			hold(Vector2.ZERO)
+			return "no arrow has counted for %.0fs with %d raiders up: %s %s at %s, the archer at %s" % [
+				STALL, es.size(), target.name, target.get("state"), target.global_position.round(), p.global_position.round()]
+		var space := p.get_world_2d().direct_space_state
+		var aim := target.global_position + Vector2(0, -24)
+		var d := p.global_position.distance_to(target.global_position)
+		var point_blank := d <= BESIDE and str(target.get("role")) == "shooter"
+		if point_blank or (d <= 320.0 and not Arrow.walled_off(space, p.global_position, target.global_position)):
+			hold(Vector2.ZERO)
+			aim_at(aim)
+			if not p.is_shooting() and not p.is_rolling():
+				await click()
+				shots += 1
+			await _sleep(0.05)
+			continue
+		# out of reach from here: to whichever station it can be hit from (this one first), else after it
+		var goal := target.global_position
+		for st: Vector2 in [station, held, fallback]:
+			if st != Vector2.INF and st.distance_to(target.global_position) <= 320.0 \
+					and not Arrow.walled_off(space, st, target.global_position):
+				goal = st
+				break
+		if goal != target.global_position and p.global_position.distance_to(goal) > 30.0:
+			# to that station with the routes' own walker (plans round the well, sidesteps when stuck)
+			await goto(goal, 24.0)
+			continue
+		var plan := g.path(p.global_position, goal, 30.0)
+		var want := goal
+		for i in range(mini(plan.size(), 60) - 1, -1, -1):
+			if g.clear_line(p.global_position, plan[i]):
+				want = plan[i]
+				break
+		hold(_door_safe(p.global_position, want - p.global_position, 40.0))
+		await _sleep(0.15)
+	hold(Vector2.ZERO)
+	out("DEFEND %.1fs raid=%s shots=%d rolls=%d hurt=%d  %s" % [now() - start, Raids.state(), shots, rolls, _hurt - hurt0, status()])
+	if Raids.running():
+		return "the night was still on after %.0fs" % limit
+	return ""
 
 ## Presses E at the focus and on through every line. Fails when nothing is in reach.
 func talk(expected: String) -> String:

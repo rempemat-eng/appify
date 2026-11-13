@@ -50,12 +50,14 @@ func _ready() -> void:
 	Zones.zone_changed.connect(_on_zone)
 	player.hit_landed.connect(func(_t: Node, heavy: bool) -> void: _shake = 0.16 if heavy else 0.1)
 	player.hurt.connect(func(_a: int) -> void: _shake = 0.12)
+	player.downed.connect(Raids.player_downed)   # a night under way is lost (before the zone reloads)
 	player.downed.connect(_on_downed)
 	Quests.started.connect(func(_id: String) -> void: autosave())
 	Quests.advanced.connect(func(_id: String, _s: int) -> void: autosave())
 	Quests.completed.connect(func(_id: String) -> void: autosave())
 	Quests.completed.connect(func(_id: String) -> void: _show_due_card.call_deferred())
 	Village.changed.connect(func(_id: String) -> void: autosave())
+	_setup_raid_screen()
 	pcam.follow_target = player
 	add_to_group("camera_nudge")
 	if args.has("bossfight"):
@@ -108,6 +110,20 @@ func _start_play_driver() -> void:
 		driver.out_dir = String(args["play-out"])
 	driver.follow = args.has("play-follow")
 	add_child(driver)
+
+## The raid's prepare screen (ui/raid_screen.gd), opened when core/raids.gd asks: on walking into town
+## with a raid announced, postponed or due. Raids' changes are saved as they happen.
+var raid_screen: RaidScreen
+
+func _setup_raid_screen() -> void:
+	raid_screen = RaidScreen.new()
+	raid_screen.name = "RaidScreen"
+	raid_screen.player = player
+	$UI.add_child(raid_screen)
+	Raids.prepare_requested.connect(func() -> void:
+		if hud.guidance and not Zones.in_lab():
+			raid_screen.open())
+	Raids.changed.connect(func(_st: String) -> void: autosave())
 
 func _setup_cast_label() -> void:
 	_cast_label = Label.new()

@@ -15,6 +15,8 @@ const VERSION := 1
 # JSON numbers must retain exact whole values through Godot's float-based parser.
 const MAX_EXACT_INTEGER := 9007199254740991
 const DEFAULT_PATH := "user://save_0.json"
+## The raid record's states (core/raids.gd STATES; kept here so the save does not depend on the autoload).
+const RAID_STATES := ["none", "announced", "postponed", "pending", "running", "won", "lost"]
 
 var data: Dictionary = fresh()
 var path := DEFAULT_PATH
@@ -58,6 +60,8 @@ static func fresh() -> Dictionary:
 		"village": {"restored": {}},
 		"paid": {},          # creatures that have paid their Glint (core/glint_cache.gd), "<camp>/<name>": true
 		"caches": [],        # Glint left where the player went down: {zone, x, y, glint}
+		# the one raid on the town (core/raids.gd): older saves load with this, no raid pending
+		"raid": {"id": "", "state": "none", "postponed": 0, "wave": 0, "layout": {}, "repairs": false},
 		"settings": {"reduced_motion": false, "pixel_scale": "fill"},
 	}
 
@@ -162,6 +166,13 @@ func _migrate(doc: Dictionary) -> Dictionary:
 	for cache: Dictionary in out.caches:
 		for key: String in ["x", "y", "glint"]:
 			cache[key] = int(cache[key])
+	# a save from before raids (12 Nov) gets the record above from fresh(): state "none", nothing pending,
+	# whatever its flags say; the raid is earned and announced from there (core/raids.gd)
+	for key: String in ["postponed", "wave"]:
+		out.raid[key] = int(out.raid[key])
+	# a state this build does not know (a hand-edited or damaged save) would freeze the raid: start it afresh
+	if not String(out.raid.state) in RAID_STATES:
+		out.raid.state = "none"
 	out.player.hp = int(out.player.hp)
 	out.player.max_hp = int(out.player.max_hp)
 	for r in out.village.restored:
@@ -220,6 +231,23 @@ func _document_error(doc: Dictionary) -> Error:
 			return ERR_INVALID_DATA
 		if record.has("state") and not record.state is String:
 			return ERR_INVALID_DATA
+	if doc.has("raid"):
+		if not doc.raid is Dictionary:
+			return ERR_INVALID_DATA
+		for key: String in ["id", "state"]:
+			if doc.raid.has(key) and not doc.raid[key] is String:
+				return ERR_INVALID_DATA
+		for key: String in ["postponed", "wave"]:
+			if doc.raid.has(key) and (not _whole_number(doc.raid[key]) or doc.raid[key] < 0):
+				return ERR_INVALID_DATA
+		if doc.raid.has("repairs") and not doc.raid.repairs is bool:
+			return ERR_INVALID_DATA
+		if doc.raid.has("layout"):
+			if not doc.raid.layout is Dictionary:
+				return ERR_INVALID_DATA
+			for kind: Variant in doc.raid.layout.values():
+				if not kind is String:
+					return ERR_INVALID_DATA
 	var settings: Dictionary = doc.get("settings", {})
 	if settings.has("reduced_motion") and not settings.reduced_motion is bool:
 		return ERR_INVALID_DATA
