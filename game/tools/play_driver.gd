@@ -23,8 +23,9 @@ extends Node
 ##   hurt [secs]             the same, but only until the first hit lands (hearts missing, not downed)
 ##   button <name or text>   move the mouse onto a visible on-screen button (its node name, or the start of
 ##                           its text) and click it, as a player would (the raid's prepare screen)
-##   defend [secs] [x y]     defend a raid's night from a station (default: here) until it is over: shoots the
-##                           raider nearest the lantern over the hurdles, walks out only for one it cannot hit
+##   defend [secs] [x y [x2 y2]]  defend a raid's night from a station (default: here; the second once both
+##                           hurdles are down) until it is over: shoots the raider nearest the lantern over the
+##                           hurdles, walks out only for one it cannot hit
 ##   waitfor <secs> <what>   wait, standing, until `expect <what>` holds (fails after <secs>)
 ##   key <Name>              tap a key (Escape, E, Space, Enter, Down, ...)
 ##   hold <left|right|up|down|upleft|...> <secs>
@@ -390,7 +391,8 @@ func run(c: String) -> String:
 			out("WAITFOR %s held after %.1fs  %s" % [" ".join(a.slice(2)), now() - t0, status()])
 		"defend":
 			var at := Vector2(float(a[2]), float(a[3])) if a.size() > 3 else Vector2.INF
-			return await defend(float(a[1]) if a.size() > 1 else 300.0, at)
+			var back := Vector2(float(a[4]), float(a[5])) if a.size() > 5 else Vector2.INF
+			return await defend(float(a[1]) if a.size() > 1 else 300.0, at, back)
 		"expect":
 			var problem := expect(a)
 			out(("  ok   %s" % c) if problem == "" else ("  MISS %s: %s" % [c, problem]))
@@ -619,15 +621,16 @@ func press_button(what: String) -> String:
 ## it stands, and steps or rolls out of the lane of a telegraphed attack as `fight` does.
 ## The line of fire is tested feet to feet, where the arrow flies and hits (actors/arrow.gd: the arrow's node
 ## runs on the ground under the drawn shaft, parallel to the aim from the archer's chest to the target's), so
-## a raider backed against a wall is shot like any other; one beside the archer is shot whatever the walls say.
-## A raider past every standing hurdle (or already on the archer) is fought with `fight`, the pilot every
-## other fight uses; the station's shooting is for the raiders still at the hurdles. Point blank it shoots only the toad (a shooter), which spits from where it stands.
+## a raider backed against a wall is shot like any other.
+## With `fallback` given, it holds `station` while a hurdle stands and `fallback` once both are down (a player
+## falls back to what they defend). It never chases off after the nearest raider, as `fight` does: the lantern
+## falls in seconds once raiders reach it. Point blank it shoots only the toad, which spits from where it stands.
 ## Its dodges and walks keep clear of open doors (`_door_safe`, as `fight`'s).
 ## It fails, saying so, when raiders are up and no arrow has counted for STALL seconds.
 const STALL := 30.0
 const BESIDE := 60.0
 
-func defend(limit: float, station := Vector2.INF) -> String:
+func defend(limit: float, station := Vector2.INF, fallback := Vector2.INF) -> String:
 	var p := player()
 	var start := now()
 	if station == Vector2.INF:
@@ -636,8 +639,7 @@ func defend(limit: float, station := Vector2.INF) -> String:
 	var rolls := 0
 	var hurt0 := _hurt
 	var g := grid()
-	var ground := {}
-	var reach_t := -99.0
+	var held := station
 	_landed_t = now()
 	while now() - start < limit and Raids.running():
 		if not p.is_inside_tree() or p.is_defeated():
@@ -677,34 +679,15 @@ func defend(limit: float, station := Vector2.INF) -> String:
 			else:
 				await _sleep(0.12)
 			continue
-		# a raider past every standing hurdle (or already on the archer) is fought as every fight is (`fight`:
-		# closes in, shoots, rolls out of telegraphed lanes), then back to the station; one still at the hurdles
-		# is shot from the station, over them
-		if now() - reach_t > 1.0:
-			reach_t = now()
-			g.forget()
-			ground = g.reachable(p.global_position)
+		# the station: by the street's mouth while a hurdle stands; once both are down, beside the lantern, where
+		# the lane's last leg and the strike spot are in sight
 		var night := Zones.current.get_node_or_null("RaidNight") as RaidNight
-		var front := -INF
+		var standing := false
 		if night != null:
 			for b: RaidBarricade in night.barricades:
 				if is_instance_valid(b) and b.standing():
-					front = maxf(front, b.lane_s)
-		var near_ground := false
-		for e: Node2D in es:
-			var through := night == null or night.progress(e.global_position) > front + 20.0
-			var on_me := e.global_position.distance_to(p.global_position) < 150.0
-			if (on_me or (through and e.global_position.distance_to(p.global_position) < 450.0)) \
-					and ground.has(g.nearest_free(e.global_position, 40.0)):
-				near_ground = true
-		if near_ground:
-			# a turn of `fight` at a time, so the station takes over again once the raiders through are freed;
-			# its "still near after N s" is only the end of the turn
-			var problem := await fight(3.0)
-			reach_t = -99.0
-			if problem != "" and not problem.contains("were still near") and Raids.running():
-				return problem
-			continue
+					standing = true
+		station = held if standing or fallback == Vector2.INF else fallback
 		if now() - _landed_t > STALL:
 			hold(Vector2.ZERO)
 			return "no arrow has counted for %.0fs with %d raiders up: %s %s at %s, the archer at %s" % [

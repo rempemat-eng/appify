@@ -79,7 +79,8 @@ expect defences 2
 shot 04_at_the_hurdle
 
 step defend the night from the square: three waves down the halt road
-defend 420 640 930
+# by the street's mouth while a hurdle stands, then south-east of the lantern, in sight of the lane's last leg
+defend 420 640 930 1010 1000
 expect raid won
 expect flag first_night_won
 expect glint 146
