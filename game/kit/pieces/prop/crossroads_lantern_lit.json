@@ -107,7 +107,7 @@
   "contact_ao": true,
   "light": {
    "radius": 40.0,
-   "colour": "lamp",
+   "colour": "dusk",
    "flicker": 0.1,
    "when": "night"
   }
@@ -147,7 +147,7 @@
   "blocks_shots": true
  },
  "audit": {
-  "size_class": null,
+  "size_class": "lamp",
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
   "sources": [

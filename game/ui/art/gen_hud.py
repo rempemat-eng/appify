@@ -133,17 +133,17 @@ SHARD = [
     '..odo..',
     '...o...',
 ]
-SHARD_HALF = [
-    '...o...',
-    '..ohO..',
-    '.ohlSO.',
-    '.olcSO.',
-    'ohlcSSO',
-    'olccSSO',
-    'olcmSSO',
-    '.ommSO.',
-    '..odO..',
-    '...o...',
+SHARD_HALF = [                # one blow of two: broken on a diagonal, the lit half above with half its
+    '...o...',                # heart, the spent half below as the empty socket, a crack between them
+    '..oho..',
+    '.ohlmo.',
+    '.olcmo.',
+    'ohlcOOO',
+    'olmOSSO',
+    'oOOSSSO',
+    '.OSSSO.',
+    '..OSO..',
+    '...O...',
 ]
 SHARD_FULL = {'o': NAP[0], 'd': NAP[1], 'm': NAP[2], 'l': NAP[3], 'h': NAP[4], 'c': CREAM[3]}
 SHARD_HALF_KEY = dict(SHARD_FULL, O=STONE[0], S=STONE[1])

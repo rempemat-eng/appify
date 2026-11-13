@@ -2181,6 +2181,6 @@
         2.5
       ]
     ],
-    "why_setts": "a ring of setts round the well, and one round the shard lantern across the square's axis (x 320): cx, cy, r0, r1 in world px. The lantern's is its own (`setts_spokes` names it by its middle): larger, older flags in three wide rings whose joints run out from the plinth like spokes, a cooler stone, a little smaller; the well's is small setts in close rings"
+    "why_setts": "a ring of setts round the well, and one round the shard lantern across the square's axis (x 320): cx, cy, r0, r1 in world px. The lantern's is its own (`setts_spokes` names it by its middle): larger, older flags in three wide rings, each breaking bond with the next, in the well's own stone, a little smaller (the first pass ran the joints out like spokes in a cooler stone, which read bare as a cut pie and darker than the well's: audit of 13 Nov, G1); the well's is small setts in close rings"
   }
 }

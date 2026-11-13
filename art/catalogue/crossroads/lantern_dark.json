@@ -1,7 +1,7 @@
 {
  "id": "crossroads/lantern_dark",
  "file": "game/zones/crossroads/art/lantern_dark.png",
- "sha256": "bf1d7f1c8e74f8eb671652e23aa5ad5d4009eb88eaaf5c6fd057040b615729b0",
+ "sha256": "fa42dfd829794f48660e25b3aa6bf81823532c1733c77fbc26dece42345da02d",
  "kind": "lamp",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 1
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
    "patches": 14,
-   "tones": 19.142857142857142,
-   "shapes": 31.428571428571427
+   "tones": 22.785714285714285,
+   "shapes": 37.142857142857146
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.624,
-  "tones_ratio": 0.709,
-  "shapes_ratio": 0.624,
+  "ratio": 0.738,
+  "tones_ratio": 0.844,
+  "shapes_ratio": 0.738,
   "passed": false,
   "group": "prop"
  },
@@ -44,8 +44,20 @@
     59,
     184
    ],
-   "message": "crossroads/lantern_dark: detail bar 0.62 of Eastward's prop band (19.1 tones, 31.4 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/lantern_dark: detail bar 0.74 of Eastward's prop band (22.8 tones, 37.1 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    7,
+    10,
+    59,
+    184
+   ],
+   "message": "crossroads/lantern_dark: 40% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 37% to 44%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-13",

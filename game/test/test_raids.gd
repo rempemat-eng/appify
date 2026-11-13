@@ -480,9 +480,18 @@ func test_the_lantern_shows_its_health_only_once_struck_and_each_blow_shows_on_i
 	assert_float(RaidLantern.dim(0.0, true)).is_equal(0.0)
 	lamp._process(RaidLantern.FLICKER + RaidLantern.SWELL + 0.1)
 	assert_bool(lamp.is_processing()).is_false()                       # finite: it stops by itself
-	# each wave's coming swells its light once
+	# each wave's coming pools its light once on the setts: rings from the foot outwards, then gone the
+	# same way, in whole steps; under reduced motion the whole pool, still, for as long
 	lamp.swell()
 	assert_bool(lamp.is_processing()).is_true()
+	var outer := RaidLantern.POOL.size() - 1
+	assert_array(RaidLantern.rings(RaidLantern.SWELL, false)).is_equal([outer])
+	assert_array(RaidLantern.rings(RaidLantern.SWELL * 0.5, false)).is_equal([0, 1, 2])
+	assert_array(RaidLantern.rings(RaidLantern.SWELL * 0.05, false)).is_equal([0])
+	assert_array(RaidLantern.rings(0.0, false)).is_empty()
+	assert_array(RaidLantern.rings(RaidLantern.SWELL * 0.5, true)).is_equal([0, 1, 2])
+	assert_array(RaidLantern.rings(RaidLantern.SWELL * 0.05, true)).is_equal([0, 1, 2])
+	assert_array(RaidLantern.rings(0.0, true)).is_empty()
 	lamp._process(RaidLantern.SWELL + 0.1)
 	assert_bool(lamp.is_processing()).is_false()
 	# the tracker names it and shows the same lights from the bell on
@@ -498,6 +507,16 @@ func test_the_lantern_shows_its_health_only_once_struck_and_each_blow_shows_on_i
 	var pic := load("res://zones/crossroads/art/lantern_lit.png") as Texture2D
 	assert_float(-RaidLantern.GLASS.position.y).is_less(float(pic.get_height()))
 	assert_float(RaidLantern.PIPS_ABOVE).is_greater(-RaidLantern.GLASS.position.y)
+	# ... and follows the arched head: full height under the crown, ARCH texels lower at the posts, so the
+	# dark never lies over the iron of the head's corners
+	var shape := RaidLantern.pane()
+	var mid := RaidLantern.GLASS.get_center().x
+	assert_bool(Geometry2D.is_point_in_polygon(Vector2(mid - 0.5, RaidLantern.GLASS.position.y + 1.5), shape)).is_true()
+	for side: float in [RaidLantern.GLASS.position.x + 0.5, RaidLantern.GLASS.end.x - 0.5]:
+		assert_bool(Geometry2D.is_point_in_polygon(Vector2(side, RaidLantern.GLASS.position.y + RaidLantern.ARCH - 1.5), shape)).is_false()
+		assert_bool(Geometry2D.is_point_in_polygon(Vector2(side, RaidLantern.GLASS.position.y + RaidLantern.ARCH + 1.5), shape)).is_true()
+		assert_bool(Geometry2D.is_point_in_polygon(Vector2(side, RaidLantern.GLASS.end.y - 0.5), shape)).is_true()
+	assert_bool(Geometry2D.triangulate_polygon(shape).is_empty()).is_false()      # a shape Godot can fill
 
 ## Matt, 13 Nov ("what are those brown things on the track?"): the hurdles are pictures, one run from wall to
 ## wall, standing, battered from half health, then broken and flat on the road. No number of theirs changed.

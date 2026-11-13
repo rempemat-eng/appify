@@ -1,7 +1,7 @@
 {
  "id": "crossroads/herbalist_damage",
  "file": "game/zones/crossroads/art/herbalist_damage.png",
- "sha256": "cc88d29bb580c27f41c1c1ad5d1e5e774674867be3a9108216aec3f73d9d9e28",
+ "sha256": "57ec74ec80bc699adc43f8362c91c00f8272a87b57c2b88f50b77281bccb1511",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 12,
-   "tones": 24.083333333333332,
-   "shapes": 35.833333333333336
+   "tones": 24.5,
+   "shapes": 36.833333333333336
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.712,
-  "tones_ratio": 0.892,
-  "shapes_ratio": 0.712,
+  "ratio": 0.731,
+  "tones_ratio": 0.907,
+  "shapes_ratio": 0.731,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     164,
     228
    ],
-   "message": "crossroads/herbalist_damage: detail bar 0.71 of Eastward's prop band (24.1 tones, 35.8 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/herbalist_damage: detail bar 0.73 of Eastward's prop band (24.5 tones, 36.8 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/herbalist",
  "file": "game/zones/crossroads/art/herbalist.png",
- "sha256": "d6bc26e337d2e574a7ad4977d1748f0d504417209e2a7a435a6649d3c61f1332",
+ "sha256": "e5c6ffc2e0a45edc3683860f3edfd5d2f5325897f60b874e51081c3e19dc8e36",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 1,
   "fault": 0,
-  "polish": 7
+  "polish": 8
  },
  "detail_bar": {
   "ours": {
    "patches": 115,
-   "tones": 22.234782608695653,
-   "shapes": 39.017391304347825
+   "tones": 22.452173913043477,
+   "shapes": 39.40869565217391
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.775,
-  "tones_ratio": 0.824,
-  "shapes_ratio": 0.775,
+  "ratio": 0.783,
+  "tones_ratio": 0.832,
+  "shapes_ratio": 0.783,
   "passed": false,
   "group": "prop"
  },
@@ -87,6 +87,18 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
+    197,
+    56,
+    239,
+    104
+   ],
+   "message": "crossroads/herbalist: the wood is lit from the right (luminance rises 43 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
     168,
     149,
     216,
@@ -128,7 +140,7 @@
     240,
     229
    ],
-   "message": "crossroads/herbalist: detail bar 0.78 of Eastward's prop band (22.2 tones, 39.0 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/herbalist: detail bar 0.78 of Eastward's prop band (22.5 tones, 39.4 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/lantern_lit_shadow",
  "file": "game/zones/crossroads/art/lantern_lit_shadow.png",
- "sha256": "f726f424dd50496a1cdc9926466142f81bce513098004d80e93db08999e5c52e",
+ "sha256": "2035ba9146a7e426a9e14c9fbedab4aa4ae61b4d302f42685ab348c85bc1ae8a",
  "kind": "lantern_lit_shadow",
  "biome": "valley",
  "H": 74.0,

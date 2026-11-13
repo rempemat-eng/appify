@@ -71,14 +71,54 @@ def _down(codes, k=1):
     return np.where(codes >= 0, (codes // 8) * 8 + np.maximum(codes % 8 - k, 0), codes)
 
 
+ROD = 4              # texels a rod is thick: a lit upper edge, two of body, a dark gap under it
+STAKES = 5           # uprights in a panel, between its posts
+BIND = 3             # rows of twisted binding along the top
+
+
+def _weave(seed, n, shade=False, gap=2):
+    """A hurdle's woven face (the kit wattle's parts, fences.wattle_front, drawn for a panel seen at an
+    angle): f(k, Z) gives the codes up column k of n at heights Z. Rods ROD texels thick, each one tone
+    along its whole length and differing rod to rod (grey-brown, red-brown, silvered), its upper edge lit
+    and a dark gap under it; STAKES uprights two texels wide that the rods pass over and under, turn
+    about; a twisted binding of BIND rows along the top. A face turned from the light (`shade`) is a
+    step down in its rods' bodies and lit edges, its gaps and its stakes' dark sides as they were, so it
+    keeps its weave and does not go to one flat dark."""
+    dn = 1 if shade else 0
+    rng = np.random.default_rng(seed)
+    nrod = (PANEL - BIND) // ROD + 1
+    tone = rng.choice([3, 3, 2], size=nrod)
+    mix = rng.random(nrod)
+    at = [int(round(n * (j + 0.5) / STAKES)) for j in range(STAKES)]
+    stake = {c: j for j, c0 in enumerate(at) for c in (c0, c0 + 1)}
+
+    def f(k, Z):
+        Z = np.asarray(Z, int)
+        r = Z // ROD
+        row = Z - r * ROD
+        t = np.where(row == 0, tone[np.clip(r, 0, nrod - 1)] - gap, np.maximum(tone[np.clip(r, 0, nrod - 1)] - dn, 2) + (row == ROD - 1))
+        out = ramp_mix(HAZELS, t, mix[np.clip(r, 0, nrod - 1)])
+        if k in stake:
+            j = stake[k]
+            behind = (r + j) % 2 == 0                               # the rod passes behind this stake
+            west = k == at[j]
+            out = np.where(behind, C('timber_warm', 4) if west else C('timber', 2), out)     # ... or rides over it
+        top = Z >= PANEL - BIND                                     # the binding: two strands twisted
+        tw = (k // 3) % 2 == 0                                      # each strand shows three texels, then dives
+        bind = np.where(Z == PANEL - 1, C('timber_warm', (5 if tw else 4) - dn),
+                        np.where(Z == PANEL - BIND, C('timber', 2), C('timber_warm', 4 - dn) if tw else C('timber', 3 - dn)))
+        return np.where(top, bind, out)
+    return f
+
+
 def _panel(a, pa, pb, seed, lean=0.0, sag=0.0, holes=(), shade=False):
     """One hurdle between two folds: its woven face (fences.wattle_front along the panel), column by
     column from the north. `lean` texels of its top pushed east, `sag` texels its middle drops; `holes`
     are bursts in the weave, (s0, s1, z0, z1) along the panel and up it."""
     (xa, ya), (xb, yb) = pa, pb
     length = math.hypot(xb - xa, yb - ya)
-    face = FN.wattle_front(PANEL, seed)
     n = int(abs(xb - xa))
+    face = _weave(seed, n, shade)
     cols = sorted(range(n + 1), key=lambda k: ya + (yb - ya) * k / n)
     gone = np.zeros(a.shape, bool)
     for k in cols:
@@ -87,11 +127,9 @@ def _panel(a, pa, pb, seed, lean=0.0, sag=0.0, holes=(), shade=False):
         s = t * length
         drop = int(round(sag * math.sin(math.pi * t)))
         zs = np.arange(0, PANEL - drop)
-        codes = np.asarray(face(np.full(zs.shape, s + 6.0), zs + drop * (zs > PANEL - 6)))
+        codes = np.asarray(face(k, zs))
         # the binding rides down with the sag
-        codes = np.where(zs >= PANEL - drop - 3, np.asarray(face(np.full(zs.shape, s + 6.0), zs + drop)), codes)
-        if shade:
-            codes = _down(codes, 1)                                     # turned from the light: a step down, its weave kept
+        codes = np.where(zs >= PANEL - drop - BIND, np.asarray(face(k, zs + drop)), codes)
         for z, c in zip(zs, codes):
             xs = int(round(AX + x + lean * z / PANEL))
             r = int(round(AY + gy - z))
@@ -140,7 +178,7 @@ def _broken_ends(a, gone):
     solid = a >= 0
     edge = gone & ~solid & (np.roll(solid, 1, axis=1) | np.roll(solid, -1, axis=1))
     Yi, Xi = np.indices(a.shape)
-    pick = edge & ((Yi // 3) % 2 == 0)
+    pick = edge & (Yi % 4 < 2)
     a[pick] = C('sand', 3)
     a[np.roll(pick, 1, axis=1) & gone & ~solid] = C('timber_warm', 4)
 
@@ -148,9 +186,10 @@ def _broken_ends(a, gone):
 def standing():
     p = V.Pic(W, H, AX, AY)
     js = joints()
+    for i in range(PANELS):                                         # the weave, then the posts it is tied to
+        _panel(p.a, js[i], js[i + 1], 101 + 7 * i, shade=(js[i + 1][0] < js[i][0]))
     for i in range(PANELS):
         _post(p.a, js[i][0], js[i][1], POST, seed=i)
-        _panel(p.a, js[i], js[i + 1], 101 + 7 * i, shade=(js[i + 1][0] < js[i][0]))
     _post(p.a, js[-1][0], js[-1][1], POST, seed=9)
     V.finish(p)
     return p
@@ -160,14 +199,15 @@ def battered():
     p = V.Pic(W, H, AX, AY)
     js = joints()
     lean = (7.0, 9.0, 6.0, 10.0, 7.0)
-    holes = {0: ((14, 30, 16, 34),), 1: ((4, 16, 22, 42), (30, 44, 8, 24)), 3: ((16, 34, 18, 42),)}
+    holes = {0: ((14, 30, 16, 34),), 1: ((4, 16, 22, 42), (30, 44, 8, 24)), 3: ((18, 36, 18, 42),)}
     gone = np.zeros(p.a.shape, bool)
     for i in range(PANELS):
-        _post(p.a, js[i][0], js[i][1], POST - 3 if i != 2 else 28, lean=lean[i], snapped=(i == 2), seed=i)
         gone |= _panel(p.a, js[i], js[i + 1], 101 + 7 * i, lean=(lean[i] + lean[i + 1]) / 2.0, sag=(5.0, 3.0, 6.0, 4.0)[i],
                        holes=holes.get(i, ()), shade=(js[i + 1][0] < js[i][0]))
-    _post(p.a, js[-1][0], js[-1][1], POST - 3, lean=lean[-1], seed=9)
     _broken_ends(p.a, gone)
+    for i in range(PANELS):
+        _post(p.a, js[i][0], js[i][1], POST - 3 if i != 2 else 28, lean=lean[i], snapped=(i == 2), seed=i)
+    _post(p.a, js[-1][0], js[-1][1], POST - 3, lean=lean[-1], seed=9)
     V.finish(p)
     return p
 
@@ -186,29 +226,28 @@ def broken():
         ox, oy = (2, 4) if i == 0 else (4, 12)
         # where a texel of the panel's height lies on the road: both fell east, away from the blows
         fall = (0.62, 0.22) if i == 0 else (0.62, -0.34)
-        rods = 7
-        for k in range(rods):
-            z = 4 + k * (PANEL - 8) / (rods - 1)
-            x0, y0 = AX + xa + ox + z * fall[0], AY + ya + oy + z * fall[1]
-            x1, y1 = AX + xb + ox + z * fall[0], AY + yb + oy + z * fall[1]
-            bays = 4
-            for b_ in range(bays):
-                if (i == 0 and k >= 4 and b_ == 1) or (i == 1 and k <= 2 and b_ == 3):
-                    continue                                    # torn where it took the blows
-                t0, t1 = b_ / bays, (b_ + 1) / bays
-                m = V.seg_mask(a.shape, x0 + (x1 - x0) * t0, y0 + (y1 - y0) * t0, x0 + (x1 - x0) * t1, y0 + (y1 - y0) * t1, 1.2)
-                over = (b_ + k) % 2 == 0
-                mix = (k * 0.37) % 1.0
-                a[m] = int(ramp_mix(HAZELS, np.array([3.2 if over else 2.2]), np.array([mix]))[0])
-                lit = m & ~np.roll(m, 1, axis=0)
-                a[lit] = int(ramp_mix(HAZELS, np.array([4.4 if over else 3.2]), np.array([mix]))[0])
-        for b_ in range(1, 4):
-            t = b_ / 4.0
-            sx, sy = AX + xa + (xb - xa) * t + ox, AY + ya + (yb - ya) * t + oy
-            m = V.seg_mask(a.shape, sx + 2 * fall[0], sy + 2 * fall[1], sx + (PANEL - 2) * fall[0], sy + (PANEL - 2) * fall[1], 1.3)
-            a[m] = C('timber', 3)
-            a[m & ~np.roll(m, 1, axis=0)] = C('timber_warm', 4)
-            a[m & ~np.roll(m, -1, axis=0)] = C('timber_cool', 1)
+        n = int(abs(xb - xa))
+        face = _weave(101 + 7 * i, n, gap=1)                    # lying open to the sky: no deep gaps
+        lay = np.zeros(a.shape, bool)
+        for k2 in range(2 * n + 1):                             # half steps, so the laid weave has no pinholes
+            t = k2 / (2.0 * n)
+            col = np.asarray(face(k2 // 2, np.arange(PANEL)))
+            for z2 in range(2 * PANEL):
+                z = z2 / 2.0
+                # torn where it took the blows: one end ragged, and a bite out of the other panel's side
+                if i == 0 and t > 0.66 + 0.16 * math.sin(z * 0.45) + 0.08 * ((int(z) // ROD) % 2):
+                    continue
+                if i == 1 and z < 15 + 4 * math.sin(t * 19.0) and t > 0.7:
+                    continue
+                x = int(round(AX + xa + (xb - xa) * t + ox + z * fall[0]))
+                y = int(round(AY + ya + (yb - ya) * t + oy + z * fall[1]))
+                a[y, x] = col[int(z)]
+                lay[y, x] = True
+        # its thickness: a lit edge to the north-west, one dark tone to the south-east
+        nw = lay & ~(np.roll(lay, 1, axis=0) & np.roll(lay, 1, axis=1))
+        a[nw & ~np.roll(lay, 1, axis=0)] = C('timber_warm', 4)
+        se = (np.roll(lay, 1, axis=0) | np.roll(lay, 1, axis=1)) & ~lay & (a < 0)
+        a[se] = C('timber_cool', 1)
     # the other panels' rods, loose: strands two texels thick, their broken ends pale
     for i in range(12):
         # (the south half of the run stands behind the next house's roof on the first night's pads: its
@@ -217,14 +256,16 @@ def broken():
         y = base[1] + 4 + (i % 6) * 6 + int(rng.integers(-2, 3))
         x = int(rng.integers(-16, -2))
         ln = int(rng.integers(12, 20))
-        ang = math.radians(float(rng.uniform(-30, 30)))
+        ang = math.radians(float(rng.uniform(-50, 50)))
         x1, y1 = x + ln * math.cos(ang), y + ln * math.sin(ang) * 0.6
         m = V.seg_mask(a.shape, AX + x, AY + y, AX + x1, AY + y1, 1.1)
         mix = (i * 0.37) % 1.0
         up = m & ~np.roll(m, 1, axis=0)
         a[m] = int(ramp_mix(HAZELS, np.array([2.6]), np.array([mix]))[0])
         a[up] = int(ramp_mix(HAZELS, np.array([4.0]), np.array([mix]))[0])
-        e = V.seg_mask(a.shape, AX + x1 - 2.0 * math.cos(ang), AY + y1 - 2.0 * math.sin(ang) * 0.6, AX + x1, AY + y1, 1.1) & m
+        # its pale broken end: east on one rod, west on the next
+        (ex, ey), sgn = ((x1, y1), -1.0) if i % 2 == 0 else ((x, y), 1.0)
+        e = V.seg_mask(a.shape, AX + ex + sgn * 2.0 * math.cos(ang), AY + ey + sgn * 2.0 * math.sin(ang) * 0.6, AX + ex, AY + ey, 1.1) & m
         a[e] = C('sand_warm', 4)
     # the stumps
     for i, (x, y) in enumerate(js):

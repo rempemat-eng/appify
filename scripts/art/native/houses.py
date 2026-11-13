@@ -968,6 +968,10 @@ def hipped_thatch(a, x0, x1, y_r, y_eave, rng, keep):
     L = np.where(front, base_f, L)
     L = np.where(west, 0.81, L)
     L = np.where(east, 0.54, L)
+    # the shaded hip still turns: its head under the ridge's end a step down, its foot by its own eave a
+    # step up in the square's bounced light (without the courses' lines it was one flat tone)
+    L = np.where(east & (hgt > span * 0.62), 0.49, L)
+    L = np.where(east & (X >= x1 - 8) & (hgt <= span * 0.62), 0.60, L)
     lit_e = np.zeros(a.shape, bool)
     shade_e = np.zeros(a.shape, bool)
     for k, eh in enumerate(edges_h):
@@ -994,12 +998,17 @@ def hipped_thatch(a, x0, x1, y_r, y_eave, rng, keep):
         L = np.where(butt2, L + 0.035, L)
         L = np.where(cast, L - 0.13, L)
         L = np.where(cast2, L - 0.06, L)
-        # on a hip end the courses run back from the eye, so each shows only as a line of shade under
-        # the course above it (two rows of straw on the lit hip keep their lit edge)
-        hcast = (west | east) & (d < 0) & (d >= -1.0) & (k % 2 == 0)
-        L = np.where(hcast, L - np.where(west, 0.08, 0.05), L)
+        # on a hip end the courses run back from the eye and show no butts: a line of shade there stood
+        # upright in the plane and read as a seam no edge of the roof explained (audit of 13 Nov, H2), so
+        # the hip ends carry only their combing
         lit_e |= butt | butt2
-        shade_e |= cast | cast2 | hcast
+        shade_e |= cast | cast2
+    # --- the front slope turns: in the ridge roll's shade at its head, rolling off into the eave at its foot
+    # (audit of 13 Nov, H1: one value from cap to lip read as a sheet) ---------------------------------------
+    under_cap = front & (Y >= y_r + 8) & (Y < y_r + 12)
+    L = np.where(under_cap, L - np.where(Y < y_r + 10, 0.12, 0.06), L)
+    roll = front & (Y >= lip - 9) & (Y < lip)
+    L = np.where(roll, L - np.where(Y >= lip - 4, 0.07, 0.035), L)
     # --- the planes' turns --------------------------------------------------------------------------------
     t_f = np.clip((lip - (Y + 0.5)) / max(1.0, span), 0, 1)
     xa_w, xa_e = x0 + hr * t_f, x1 - hr * t_f
@@ -3096,7 +3105,9 @@ def thatch_tear(d, base, info, cxw, rng):
     d[roofed & (d == code('void', 1))] = void
     # the thatch's section: packed straw seen from below, its cut ends in pairs, darker towards the loft
     sect = hole & (depth < over)
-    Ls = np.select([depth <= 1, depth <= 4, depth <= 6], [0.60, 0.54, 0.48], 0.43) + np.where((X // 2) % 2 == 0, 0.0, -0.03)
+    # (its upper third is the roof's own straw, a step under the slope, so at 1x it joins the roof and
+    # does not sit over the hole as a brown tuft: audit of 13 Nov, D1; the dark is kept for its lower ends)
+    Ls = np.select([depth <= 2, depth <= 4, depth <= 6], [0.67, 0.60, 0.50], 0.43) + np.where((X // 2) % 2 == 0, 0.0, -0.03)
     d[sect] = straw_codes(Ls)[sect]
     # loose straw hanging from it, two texels wide, every length
     x = int(xs.min()) + 1
@@ -3105,7 +3116,7 @@ def thatch_tear(d, base, info, cxw, rng):
             t0 = max(top[x], top[x + 1])
             ln = int(rng.integers(3, 12))
             st = hole & (X >= x) & (X < x + 2) & (Y >= t0 + over[t0, x]) & (Y < t0 + over[t0, x] + ln)
-            d[st] = straw_codes(np.full(d.shape, 0.57 if ln < 8 else 0.62))[st]
+            d[st] = straw_codes(np.full(d.shape, 0.66 if ln < 8 else 0.72))[st]      # loose straw: pale, in the light
             d[st & ~np.roll(st, -1, axis=0)] = code('sand_cool', 0)
         x += int(rng.integers(2, 5))
     # the sides' cut: the thatch's thickness where it was torn across, lit on the east side's inner face
