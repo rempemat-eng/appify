@@ -122,9 +122,9 @@ func blocker_ahead(creature: Node2D, s: float) -> Node2D:
 		return lantern
 	return null
 
-## The lantern's post in texels (the lit lantern's solid; data/raids/<id>.json lantern.box).
+## The lantern's plinth in texels (the lit lantern's solid; data/raids/<id>.json lantern.box).
 func lantern_box() -> Rect2:
-	var b: Array = def.get("lantern", {}).get("box", [307, 290, 10, 22])
+	var b: Array = def.get("lantern", {}).get("box", [344, 314, 16, 6])
 	return Rect2(Vector2(float(b[0]), float(b[1])) * DENSITY, Vector2(float(b[2]), float(b[3])) * DENSITY)
 
 func lantern_reach() -> float:

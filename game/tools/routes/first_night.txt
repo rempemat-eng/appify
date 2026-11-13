@@ -79,9 +79,9 @@ expect defences 2
 shot 04_at_the_hurdle
 
 step defend the night from the square: three waves down the halt road
-# by the street's mouth while a hurdle stands, then east of the lantern, in sight of the lane's last leg and
-# the strike spot, and just beyond a raider's notice (60 world px) of the strike spot
-defend 420 640 930 1130 1010
+# by the street's mouth while a hurdle stands, then south-east of the lantern, in sight of the lane's last leg
+# and the strike spot (338, 326 world px), and just beyond a raider's notice (60 world px) of it
+defend 420 640 930 1200 1020
 expect raid won
 expect flag first_night_won
 expect glint 146

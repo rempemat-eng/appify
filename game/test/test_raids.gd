@@ -328,7 +328,7 @@ func test_a_raider_marches_to_the_hurdle_and_batters_it_with_its_own_tell() -> v
 		c.step(0.1)
 	assert_object(c.blocker).is_null()
 	assert_str(c.state).is_equal("leash")
-	# the lantern blocks only beside its post: at the lane's end, not from across the well
+	# the lantern blocks only beside its plinth: at the lane's end, not from the well's side of the walk
 	c.global_position = night.point_at(night.length())
 	assert_object(night.blocker_ahead(c, night.length())).is_same(night.lantern)
 	c.global_position = night.point_at(night.length() - 60.0)
@@ -622,7 +622,12 @@ func test_a_creatures_body_fits_along_the_whole_lane() -> void:
 			blocked.append("%s at %s" % [(hit.collider as Node).name, (night.point_at(s) / 3.0).round()])
 		s += 3.0
 	assert_array(blocked).is_empty()
-	# the strike spot sorts in front of the well (its picture's foot is at y 320) and is clear of its picture
+	# the strike spot sorts in front of the well and the lantern (both pictures' feet are at y 320), is clear
+	# of the well's picture (x 269 to 307) and stands west of the lantern's plinth (x 344 to 360), so the
+	# raider is seen whole from the square, never behind the well's frame or the lantern
 	var end := night.point_at(night.length()) / 3.0
+	var plinth := night.lantern_box()
 	assert_float(end.y).is_greater(320.0)
+	assert_float(end.y * 3.0).is_greater(plinth.end.y)
 	assert_float(end.x).is_greater(307.0)
+	assert_float(end.x * 3.0).is_less(plinth.position.x)

@@ -30,7 +30,7 @@ goto 600 1096 10
 talk Morel
 expect said I mix the tonics
 expect quest a1_the_torn_roof none
-goto 936 1000 10
+goto 1056 1010 10
 talk ShardLantern
 expect said empty cradles
 goto 1260 1118 10

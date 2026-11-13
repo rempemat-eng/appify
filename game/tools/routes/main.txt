@@ -250,7 +250,7 @@ expect flag shard_taken:woodland
 step carry the shard home to the lantern
 door 12 408 woodland
 door 951 1356 crossroads
-goto 936 1000 10
+goto 1056 1010 10
 talk ShardLantern
 expect said You lift the shard
 expect flag shard_home:woodland
