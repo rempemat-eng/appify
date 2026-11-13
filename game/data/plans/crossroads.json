@@ -1361,7 +1361,9 @@
         "stack_rise": 10,
         "lawn_as": {
           "chimney": null
-        }
+        },
+        "thatch_form": "hipped",
+        "why_thatch_form": "(Matt, 13 Nov: \"the roof looks wrong\") the thatch drawn as a hipped roof seen from above the front, as the village's view shows every other roof: the front slope and a hip end each side, in courses, under a block-cut ridge cap (houses.hipped_building, hipped_thatch). `thatch: combed` and `hip` stay: the house below its eave, its shadow and the lawn round it are drawn as before. The hut keeps the combed roof until it is redrawn the same way"
       },
       "smithy": {
         "kind": "forge",
