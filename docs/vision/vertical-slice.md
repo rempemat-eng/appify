@@ -177,7 +177,8 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
    Walking out mid-night leaves it due. Quitting mid-night brings the screen back, from wave 1.
 
 Placeholders (art follow-ups): the hurdle, the lantern's health bar, the two repairs and the screen's lane
-map use the blockout's flat colours. There is no bell or horn sound yet.
+map use the blockout's flat colours. The horn, the bell, each wave, the hurdles, the lantern and the night's
+end have sounds since 13 Nov, and the night its own ambience (docs/vision/sound.md, "The Godot game").
 
 `test/test_raids.gd` holds the rules. `game/tools/routes/first_night.txt` plays the end of the slice with
 real input, from a save made just after *Home again* through the announcement, both postponements, a quit

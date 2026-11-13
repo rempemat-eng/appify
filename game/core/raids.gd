@@ -166,6 +166,7 @@ func ring() -> bool:
 	SaveGame.set_flag("%s_postponed" % current().id, false)
 	rec().wave = 0
 	_to_state("running")
+	Sound.play(&"raid_bell")
 	return true
 
 func wave_started(index: int) -> void:

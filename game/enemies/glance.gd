@@ -7,8 +7,8 @@ extends RefCounted
 ## which flashes the creature white and knocks it back. Finite (TIME seconds); under reduced motion the
 ## spark stands still at its full size instead of flying out.
 ##
-## Sound: the game has none yet. `clink(at)` is the one hook the sound work fills: every glance calls it,
-## and it plays whatever `on_clink` is set to (nothing today).
+## Sound: `clink(at)` is the one hook: every glance calls it, and it plays whatever `on_clink` is set to.
+## core/sound.gd sets it to the `glance` cue, a small dull clink (Sound.hook_glance).
 
 const TIME := 0.4
 const WORD := "clink"
@@ -18,7 +18,7 @@ const SPARK := Color("#f4f1e8")
 const RAYS := [Vector2(-1.0, -0.35), Vector2(-0.45, -1.0), Vector2(0.3, -1.0), Vector2(1.0, -0.5), Vector2(0.85, 0.25)]
 const RAY := 9.0        ## texels, a ray's full length
 
-## The sound hook: set by the sound work, e.g. `Glance.on_clink = func(at): $Player.play()`.
+## The sound hook, set by core/sound.gd (Sound.hook_glance).
 static var on_clink: Callable
 
 ## Called once for every arrow that glances off, at the glance's place (global texels).

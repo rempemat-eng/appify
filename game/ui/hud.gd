@@ -3,7 +3,8 @@ extends Control
 ## charges top left with the tracked quest on its own panel below them, Glint top right, and the interact
 ## prompt bottom right as a key cap with the last device's key. Pixel font and icons from UiStyle and
 ## ui/art (gen_hud.py), one texel per image pixel. It reads the player and the save; it changes nothing.
-## Esc's pause menu (ui/pause_menu.gd) is a child, shown while the tree is paused.
+## Esc's pause menu (ui/pause_menu.gd) is a child, shown while the tree is paused, and so is its Sound
+## panel (ui/sound_menu.gd).
 ## With no quest active the tracker shows the story's lead (Quests.lead: where to go on), and
 ## `show_card` puts a title card top centre for a few seconds (the opening and the build's closing
 ## beat, data/leads.json). The card never stops play; it fades unless reduced motion is on.
@@ -101,7 +102,11 @@ func _ready() -> void:
 	_card.add_child(card_lines)
 	_card.visible = false
 	add_child(_card)
-	add_child(preload("res://ui/pause_menu.gd").new())
+	var pause_menu: Control = preload("res://ui/pause_menu.gd").new()
+	add_child(pause_menu)
+	var sound_menu := SoundMenu.new()    # the Sound panel, beside the pause menu (ui/sound_menu.gd)
+	sound_menu.beside = pause_menu
+	add_child(sound_menu)
 
 ## Shows a title card for `secs` seconds: a title, a small line under it and a sentence or two.
 func show_card(title: String, subtitle: String, text: String, secs := 9.0) -> void:
@@ -163,6 +168,8 @@ func _process(delta: float) -> void:
 ## gain, a muted red for a loss). One finite tween; under reduced motion only the number changes.
 const GLINT_FLASH := 0.5
 func _glint_changed(from: int, to: int) -> void:
+	if to > from:
+		Sound.play(&"glint")             # before the reduced-motion return: that switch is not sound's
 	if from == to or SaveGame.setting("reduced_motion", false) or not is_inside_tree():
 		return
 	_glint.modulate = Color("#f5d49c") if to > from else Color("#d98a7a")

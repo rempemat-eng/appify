@@ -60,6 +60,7 @@ func batter(amount: int, _dir: Vector2 = Vector2.ZERO) -> bool:
 		return false
 	hp = maxi(hp - amount, 0)
 	_hit = HIT_TINT
+	Sound.play(&"hurdle_hit" if hp > 0 else &"hurdle_break")
 	queue_redraw()
 	if hp > 0:
 		return false

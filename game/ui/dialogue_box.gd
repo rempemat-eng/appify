@@ -41,6 +41,7 @@ func _open(speaker: String, lines: PackedStringArray) -> void:
 	_i = 0
 	_name.text = speaker
 	_show_line()
+	Sound.play(&"talk")
 	visible = true
 	_opened_frame = Engine.get_process_frames()  # the E that opened the box must not also skip its first line
 
@@ -76,6 +77,7 @@ func _gui_input(event: InputEvent) -> void:
 
 ## Finishes the current line, or moves to the next, or closes after the last.
 func advance() -> void:
+	Sound.play(&"talk")
 	if _shown < _text.text.length():
 		_shown = _text.text.length()
 		return

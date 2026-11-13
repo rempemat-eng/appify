@@ -178,12 +178,12 @@ func test_save_validation_preserves_previous_file_and_live_version() -> void:
 	SaveGame.add_glint(8)
 	assert_int(SaveGame.save(PATH)).is_equal(OK)
 	var bytes := FileAccess.get_file_as_bytes(PATH)
-	SaveGame.data.version = 2
+	SaveGame.data.version = SaveGame.VERSION + 1
 	var live := SaveGame.data.duplicate(true)
 	assert_int(SaveGame.save(PATH)).is_equal(ERR_UNAVAILABLE)
 	assert_dict(SaveGame.data).is_equal(live)
 	assert_bool(FileAccess.get_file_as_bytes(PATH) == bytes).is_true()
-	SaveGame.data.version = 1
+	SaveGame.data.version = SaveGame.VERSION
 	SaveGame.data.player = []
 	assert_int(SaveGame.save(PATH)).is_equal(ERR_INVALID_DATA)
 	assert_bool(FileAccess.get_file_as_bytes(PATH) == bytes).is_true()
@@ -231,7 +231,7 @@ func test_non_object_json_preserves_running_state() -> void:
 		assert_int(SaveGame.data.glint).is_equal(16)
 
 func test_future_target_is_protected_without_a_prior_load() -> void:
-	for version in [2, 999, 9007199254740992.0]:
+	for version in [SaveGame.VERSION + 1, 999, 9007199254740992.0]:
 		_write_document({"version": version, "extension": ["future"]})
 		var bytes := FileAccess.get_file_as_bytes(PATH)
 		SaveGame.add_glint(1)
