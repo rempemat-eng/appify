@@ -114,7 +114,10 @@ Every prop has a placement relation and a clearance.
   each (`rules.prop_gap`). Clutter against a wall (within a body of a building) is not
   free-standing, and props the plan stands together on purpose name each other with `with` (a
   stall's stock beside it). Two states that never meet (the dark lantern and the lit one) are not
-  compared. A plan that sets `"prop_clearance": true` holds these in `check:kit`
+  compared. Nothing stands in front of a building's door, within a body either side of it and two
+  bodies out, or as far out as the thing is tall: a notice board 42 px tall, 20 px out, hid the
+  library's door (`rules.prop_door`). The rubble a restore clears lies at its door by the story, and
+  the smith's anvil stands before her forge by the plan's `with`. A plan that sets `"prop_clearance": true` holds these in `check:kit`
   (`ground_rules --check`), whatever its other rules are: Crossroads does. The boxes are the
   scene's own (the kit library's reviewed boxes over the plan's).
 

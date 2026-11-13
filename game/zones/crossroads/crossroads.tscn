@@ -378,7 +378,7 @@ shape = SubResource("s12")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_notice_board"]
-position = Vector2(708.5, 667)
+position = Vector2(648.5, 691)
 shape = SubResource("s13")
 
 [node name="Solid_waystone" type="StaticBody2D" parent="Walls"]
@@ -1033,7 +1033,7 @@ centered = false
 offset = Vector2(-69, -158)
 
 [node name="NoticeBoard" type="Sprite2D" parent="Props"]
-position = Vector2(708, 672)
+position = Vector2(648, 696)
 texture = ExtResource("t30")
 centered = false
 offset = Vector2(-48, -128)
@@ -1682,7 +1682,7 @@ collision_mask = 0
 shape = SubResource("s36")
 
 [node name="NoticeBoard" type="Area2D" parent="Actors"]
-position = Vector2(708, 672)
+position = Vector2(648, 696)
 script = ExtResource("talk")
 speaker_id = "notice_board"
 marker_height = 108.0

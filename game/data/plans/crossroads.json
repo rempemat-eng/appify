@@ -582,7 +582,9 @@
         "restored": [
           "forge"
         ]
-      }
+      },
+      "with": "smithy",
+      "why": "the smith's anvil stands before her forge's mouth, where she works (`with`: the door rule lets it)"
     },
     {
       "id": "square_rubble_a",
@@ -839,10 +841,11 @@
       "speaker": "notice_board",
       "verb": "Read",
       "at": [
-        236,
-        224
+        216,
+        232
       ],
-      "colour": "#7a5a3a"
+      "colour": "#7a5a3a",
+      "why": "west of the library's door, its foot a cell off the wall, so the door and the way to it stand clear (13 Nov: at 236, 224 it stood in front of the door, where the bell tower's mark also goes)"
     },
     {
       "id": "waystone",
@@ -1363,7 +1366,9 @@
           "chimney": null
         },
         "thatch_form": "hipped",
-        "why_thatch_form": "(Matt, 13 Nov: \"the roof looks wrong\") the thatch drawn as a hipped roof seen from above the front, as the village's view shows every other roof: the front slope and a hip end each side, in courses, under a block-cut ridge cap (houses.hipped_building, hipped_thatch). `thatch: combed` and `hip` stay: the house below its eave, its shadow and the lawn round it are drawn as before. The hut keeps the combed roof until it is redrawn the same way"
+        "why_thatch_form": "(Matt, 13 Nov: \"the roof looks wrong\") the thatch drawn as a hipped roof seen from above the front, as the village's view shows every other roof: the front slope and a hip end each side, in courses, under a block-cut ridge cap (houses.hipped_building, hipped_thatch). `thatch: combed` and `hip` stay: the house below its eave, its shadow and the lawn round it are drawn as before. The hut keeps the combed roof until it is redrawn the same way",
+        "hip_h": 25,
+        "why_hip_h": "world px from the ridge's top to the eave's foot (the combed roof's is 35): the front slope brought down towards the gable houses' roof against wall (their slates show 29 px of depth over a 44 px wall, 0.66; this is 25 over the 36 px of wall the eave leaves showing, 0.69)"
       },
       "smithy": {
         "kind": "forge",
@@ -2147,7 +2152,13 @@
         352,
         316,
         14,
-        23
+        21
+      ]
+    ],
+    "setts_spokes": [
+      [
+        352,
+        316
       ]
     ],
     "puddles": [
@@ -2170,6 +2181,6 @@
         2.5
       ]
     ],
-    "why_setts": "a ring of setts round the well and its twin round the shard lantern, mirrored across the square's axis (x 320): cx, cy, r0, r1 in world px"
+    "why_setts": "a ring of setts round the well, and one round the shard lantern across the square's axis (x 320): cx, cy, r0, r1 in world px. The lantern's is its own (`setts_spokes` names it by its middle): larger, older flags in three wide rings whose joints run out from the plinth like spokes, a cooler stone, a little smaller; the well's is small setts in close rings"
   }
 }

@@ -316,7 +316,7 @@ shot 09_closing
 goto 1152 830 10
 talk Moss
 expect said The Col Path is still buried
-goto 708 716 10
+goto 648 740 10
 talk NoticeBoard
 expect said COL PATH TO THE FROSTLINE STILL BURIED
 goto 960 250 10

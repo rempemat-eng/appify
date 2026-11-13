@@ -36,7 +36,7 @@ expect said empty cradles
 goto 1260 1118 10
 talk Waystone
 expect said cracked through
-goto 708 716 10
+goto 648 740 10
 talk NoticeBoard
 expect said MARKET DAY
 

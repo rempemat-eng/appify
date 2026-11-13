@@ -1497,6 +1497,21 @@ class GroundRules(unittest.TestCase):
             {'id': 'tub_b', 'kind': 'flower_tub', 'solid': [186, 262, 10, 8], 'cond': None}])
         self.assertEqual(found, [])
 
+    def test_nothing_stands_in_front_of_a_door(self):
+        from scripts.review import ground_rules as GR
+        kit, plan = self.square([344, 314, 16, 6], [{'id': 'notice_board', 'kind': 'notice_board', 'solid': [225.5, 220, 21, 4], 'offset': [-48, -126], 'cond': None}])
+        plan['buildings'] = [{'id': 'library', 'rect': [200, 160, 96, 40], 'door': [248, 200]}]
+        kit['objects'].append({'id': 'library', 'kind': 'building', 'solid': [200, 160, 96, 40], 'cond': None})
+        # as it stood: the board's foot 20 px out from the door, the board 42 px tall, so it hid the door
+        found = [(f['check'], f['message']) for f in GR.prop_clearance(kit, plan)]
+        self.assertTrue(any(c == 'rules.prop_door' and 'notice_board' in m and 'library' in m for c, m in found), found)
+        # west of the door, it passes
+        kit['objects'][-2]['solid'] = [205.5, 228, 21, 4]
+        self.assertEqual([c for c, _ in ((f['check'], f['message']) for f in GR.prop_clearance(kit, plan)) if c == 'rules.prop_door'], [])
+        # the rubble a restore clears lies at its door by the story
+        kit['objects'].append({'id': 'fern_rubble', 'kind': 'rubble', 'solid': [240, 202, 30, 14], 'cond': {'not_restored': ['fern_cottage']}})
+        self.assertEqual([f['check'] for f in GR.prop_clearance(kit, plan) if f['check'] == 'rules.prop_door'], [])
+
     def test_states_that_never_meet_are_not_compared(self):
         from scripts.review import ground_rules as GR
         self.assertFalse(GR._coexist({'flags': ['home']}, {'not_flags': ['home']}))

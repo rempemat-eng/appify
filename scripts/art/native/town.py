@@ -576,6 +576,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         # a ring of setts round the well, the same size, laid in circles inside a kerb
         for sr in art.get('setts', []):
             cx, cy, r0, r1 = sr
+            spokes = [cx, cy] in art.get('setts_spokes', [])      # the shard lantern's ring, told from the well's
             disc = (((WX - cx) / r1) ** 2 + ((WY - cy) / (r1 * 0.86)) ** 2) < 1.0
             cv[disc] = C('stone_warm', 3)
             rr = r0
@@ -586,10 +587,16 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                 rad_ = np.hypot(ex_, ey_)
                 th_ = np.arctan2(ey_, ex_)
                 inside = disc & (rad_ < r1 - 2.0)
-                ring_w = 2.8
+                ring_w = 3.6 if spokes else 2.8
                 ri = np.floor(rad_ / ring_w).astype(int)
                 nring = np.maximum(3, (2 * math.pi * (ri + 0.5) * ring_w / 4.2).astype(int))
                 off = (ri * 0.37) % 1.0
+                if spokes:
+                    # (13 Nov) older, larger flags in three wide rings, their joints running out from the
+                    # plinth like spokes, twelve to the inner ring and twenty-four beyond it (the well's
+                    # are small setts in close rings, each ring's joints its own), a cooler stone
+                    nring = np.where(ri < 2, 12, 24)
+                    off = np.zeros(ri.shape)
                 si = np.floor((th_ / (2 * math.pi) + 0.5) * nring + off).astype(int)
                 key = ri * 1000 + si
                 fr = rad_ / ring_w - ri
@@ -598,6 +605,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                 hsh = (key * 2654435761) % 997
                 tone = np.where(hsh % 5 == 0, 3, np.where(hsh % 7 == 0, 5, 4))
                 famk = np.where(hsh % 3 == 0, FI['stone'], FI['stone_warm'])
+                if spokes:
+                    famk = np.where(hsh % 3 == 0, FI['stone_cool'], FI['stone'])
                 # lit north-west edge of each sett, shaded south-east
                 lit_e = (fr > 0.75) & (np.cos(th_ - 3.93) > 0.3) | (fa > 0.8) & (np.sin(th_) < 0)
                 dark_e = (fr < 0.32) & (np.cos(th_ - 0.785) > 0.3)

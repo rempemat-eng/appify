@@ -903,11 +903,11 @@ def combed_eave(a, rm, rx0, rx1, y_eave, rng, fam='sand'):
 # throw a line of shade on the course below, a block-cut ridge cap stitched with hazel, and an eave a
 # forearm thick, cut ends over a dark underside.
 # ------------------------------------------------------------------------------------------------
-HIP_RUN = 13.0           # world px from a front corner in to the ridge's end
-HIP_BACK = 6.6           # world px the ridge stands above the back eave on screen (the roof's far side)
+HIP_RUN = 20.0           # world px from a front corner in to the ridge's end: the ridge is that much shorter each side
+HIP_SIDE = 8.0           # world px a hip end's own eave runs up the screen from the front corner, before it tapers
 HIP_EAVE = 3.2           # world px of the eave's cut face
 HIP_COURSE = 4.4         # world px a course shows on the front slope
-HIP_CAP = 6.4            # world px of the ridge cap, its points included
+HIP_CAP = 5.4            # world px of the ridge cap, its points included
 
 
 def hipped_form(shape, x0, x1, y_r, y_eave, hr, back, th):
@@ -932,8 +932,8 @@ def hipped_form(shape, x0, x1, y_r, y_eave, hr, back, th):
     for cxc, side in ((x0 + 6, -1), (x1 - 6, 1)):                         # the eave's lower corners, rounded
         corner = eave & ((X - cxc) * side > 0) & (Y > y_eave - 6) & ((X - cxc) ** 2 + (Y - (y_eave - 6)) ** 2 > 36)
         eave &= ~corner
-    for cxc, side in ((x0 + 7, -1), (x1 - 7, 1)):                         # the back corners, a thatch's round
-        corner = body & ((X - cxc) * side > 0) & (Y < y_b + 7) & ((X - cxc) ** 2 + (Y - (y_b + 7)) ** 2 > 49)
+    for cxc, side in ((x0 + 5, -1), (x1 - 5, 1)):                         # the back corners, a thatch's round
+        corner = body & ((X - cxc) * side > 0) & (Y < y_b + 5) & ((X - cxc) ** 2 + (Y - (y_b + 5)) ** 2 > 25)
         west &= ~corner
         east &= ~corner
     # on a hip end the roof's height runs across the screen: t from the outer edge in to the ridge's end
@@ -948,8 +948,9 @@ def hipped_thatch(a, x0, x1, y_r, y_eave, rng, keep):
     OKLab lightness mapped onto the straw's own ramps (`straw_codes`), as the combed roof's was."""
     H, W = a.shape
     Y, X = np.mgrid[0:H, 0:W]
-    hr, back, th = q(HIP_RUN), q(HIP_BACK), q(HIP_EAVE)
+    hr, th = q(HIP_RUN), q(HIP_EAVE)
     lip = y_eave - th
+    back = max(3, (lip - y_r) - q(HIP_SIDE))                              # the ridge above the hip ends' back corners
     rm, front, west, east, eave, t = hipped_form(a.shape, x0, x1, y_r, y_eave, hr, back, th)
     fx = (X + 0.5 - x0) / max(1, x1 - x0)
     span = lip - y_r
@@ -2327,11 +2328,16 @@ def hipped_building(spec: dict, seed: int) -> 'V.Built':
     old = _building({k: v for k, v in spec.items() if k != 'thatch_form'}, seed)
     p, info = old.base, old.info
     a = p.a
-    L, R, y_e, y_r, y_eave = info['L'], info['R'], info['y_e'], info['y_r'], info['y_eave']
+    L, R, y_e, y_eave = info['L'], info['R'], info['y_e'], info['y_eave']
+    # `hip_h`: world px from the ridge's top to the eave's foot. The front slope is brought down towards
+    # the gable houses' (their slates show 29 world px of depth over a 44 px wall, 0.66): 25 over the 36 px
+    # of wall the eave leaves showing is 0.69, where the combed roof stood 35 over 36 (Matt's roof, 13 Nov)
+    y_r = y_eave - q(spec.get('hip_h', (y_eave - info['y_r']) / V.D))
     Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]]
     above = Y < y_eave
     a[above] = -1
-    a[(Y >= y_eave) & (Y < y_eave + 2) & ((X < L - 1) | (X > R))] = -1      # the old eave's outline under its overhang
+    under = (Y == y_eave) & ((X < L - 1) | (X > R))                         # under the eave's overhang, beside the wall
+    a[under] = -1                                                           # (the old eave's outline)
     rng = np.random.default_rng((seed * 9176 + 13) & 0xffffffff)
     keep = np.zeros(a.shape, bool)
     rx0, rx1 = info['rx']
@@ -2347,9 +2353,13 @@ def hipped_building(spec: dict, seed: int) -> 'V.Built':
             keep |= sm & (a // 8 == FI['slate_cool'])
             stack_shade(a, rm & ~sm, int(L + q(cx) - cw // 2) + cw + 1, y_foot - q(rise), y_foot)
     V.tidy(a, keep=keep | ~above)
-    V.outline(a)
+    # the outline round the new roof only: the house below the eave keeps the outline it has
+    lined = a.copy()
+    V.outline(lined)
+    new = (lined != a) & (above | under)
+    a[new] = lined[new]
     V.tidy(a, passes=1, keep=keep | ~above)
-    info.update(roof=rm, hipped=hp, pots=pots, calm=ndi.binary_dilation(rm, iterations=1))
+    info.update(roof=rm, hipped=hp, pots=pots, calm=ndi.binary_dilation(rm, iterations=1), y_r=y_r)
     dmg = old.damage
     if dmg is not None:
         d = dmg.a
@@ -3013,103 +3023,111 @@ def thatch_hole(d, base, info, cxw, rw, rh, rng):
 
 
 def thatch_tear(d, base, info, cxw, rng):
-    """The storm's hole in a hipped thatch (Matt's roof, 13 Nov): three courses ripped out, each a
-    different length, so the gap follows the courses and its sides are ragged. In it the roof's depth
-    shows: under the torn upper edges the thatch's own section (a hand and a half of packed straw, cut
-    ends, darker towards the loft) with strands hanging from it; two rafters running down the slope, the
-    east one snapped, and what is left of the hazel battens across them, one hanging; the loft dark
-    behind, darkest under the edges. The straw below the gap ends in a torn lip that catches the light,
-    its broken ends standing up into the dark. Returns the gap's mask."""
+    """The storm's hole in a hipped thatch (Matt's roof, 13 Nov): torn, not cut. Its outline is ragged
+    all round: a lobed gap wider than it is tall, its edge stepping in and out bundle by bundle (two to
+    five texels at a time, never a ruled line or a right angle), with a tongue of thatch left hanging
+    into it. In it the roof's depth shows: under the upper edge the thatch's own section, a hand and a
+    half of packed straw seen from below (cut ends, darker towards the loft, deepest where the edge
+    overhangs most), with loose straw hanging from it at every length; two rafters running down the
+    slope, the east one snapped, and what is left of the hazel battens across them, one hanging by an
+    end; the loft dark behind. The straw below the gap ends in a torn lip that catches the light, its
+    broken ends standing up into the dark. Returns the gap's mask."""
     hp = info['hipped']
     rm, front = info['roof'], hp['front']
-    cs = sorted(hp['courses'])                                    # rows of the courses' edges, top first
-    cy = info['y_r'] + (info['y_eave'] - info['y_r']) * 0.47
-    i = int(np.argmin([abs(c - cy) for c in cs]))
-    i = min(max(i, 1), len(cs) - 3)
-    y0, y1, y2, y3 = cs[i - 1], cs[i], cs[i + 1], cs[i + 2]
-    Y, X = np.mgrid[0:d.shape[0], 0:d.shape[1]]
-
-    def torn(xa, xb, ya, yb):
-        """One course's gap: its ends ragged in runs of rows."""
-        m = np.zeros(d.shape, bool)
-        y = ya
-        while y < yb:
-            n = int(rng.integers(2, 5))
-            ja, jb = int(rng.integers(-4, 4)), int(rng.integers(-3, 5))
-            m |= (Y >= y) & (Y < min(yb, y + n)) & (X >= xa + ja) & (X < xb + jb)
-            y += n
-        return m
-
-    up = torn(cxw - 33, cxw + 2, y0 + 2, y1 + 2)
-    mid = torn(cxw - 25, cxw + 35, y1 + 2, y2 + 2)
-    low = torn(cxw - 10, cxw + 25, y2 + 2, y3)
-    hole = ndi.binary_closing((up | mid | low), structure=np.ones((3, 3), bool)) & front
-    if hole.sum() < 40:
+    H, W = d.shape
+    Y, X = np.mgrid[0:H, 0:W]
+    cy = int(info['y_r'] + (info['y_eave'] - info['y_r']) * 0.5)
+    # the gap, column by column in bundles: each bundle of two to five texels has its own top and bottom
+    rx, ry = 31.0, 15.0
+    top = np.zeros(W, int)
+    bot = np.zeros(W, int)
+    x = int(cxw - rx - 2)
+    while x < cxw + rx + 2:
+        n = int(rng.integers(2, 6))
+        u = (x + n / 2.0 - cxw) / rx
+        if abs(u) < 1.0:
+            half = ry * math.sqrt(1 - u * u)
+            # lobes: the upper edge rides up over the west half (the wind's side), the lower sags east
+            t_ = cy - half * (1.0 + 0.25 * math.sin(u * 4.1 + 0.7)) + float(rng.integers(-3, 4)) - 3.0 * (u < -0.2)
+            b_ = cy + half * (0.8 + 0.2 * math.sin(u * 3.3 + 2.0)) + float(rng.integers(-3, 4)) + 3.0 * (u > 0.3)
+            if b_ - t_ >= 4:
+                top[x:x + n], bot[x:x + n] = int(round(t_)), int(round(b_))
+        x += n
+    hole = (Y >= top[None, :]) & (Y < bot[None, :]) & (bot[None, :] > top[None, :])
+    # a tongue of thatch still hanging into the gap from its upper edge, east of the middle
+    tx = int(cxw + 6)
+    for k, ln in enumerate((9, 12, 13, 10, 6)):
+        hole[:, tx + k * 2:tx + k * 2 + 2] &= Y[:, tx + k * 2:tx + k * 2 + 2] >= top[tx + k * 2] + ln
+    hole &= front
+    lab, n = ndi.label(hole)
+    if n > 1:
+        hole = lab == (1 + int(np.argmax(np.bincount(lab.ravel())[1:])))
+    if hole.sum() < 60:
         return hole
     void = code('void', 0)
     d[hole] = code('void', 1)
+    ys, xs = np.nonzero(hole)
+    y_top, y_bot = int(ys.min()), int(ys.max())
     # rafters down the slope (the east one snapped half way), battens across them (one hanging)
-    snap = (y1 + y2) // 2 + 2
-    for rx_, to in ((cxw - 19, None), (cxw + 13, snap)):
+    snap = cy + 2
+    for rx_, to in ((cxw - 16, None), (cxw + 17, snap)):
         raf = hole & (X >= rx_) & (X < rx_ + 5)
         if to is not None:
-            raf &= Y < to + (X - rx_)                             # its broken end, cut on the slant
+            raf &= Y < to + (X - rx_) * 2                         # its broken end, splintered on the slant
         d[raf] = code('timber', 2)
         d[raf & (X == rx_)] = code('timber_warm', 4)
         d[raf & (X == rx_ + 4)] = code('timber_cool', 1)
-    by0 = y0 + 10
-    bat = hole & (Y >= by0) & (Y < by0 + 3) & (X < cxw - 6)
-    by1 = y1 + 11
-    bat2 = hole & (Y >= by1) & (Y < by1 + 3) & (X < cxw + 4)
+    by0, by1 = cy - 5, cy + 6
+    bat = hole & (Y >= by0) & (Y < by0 + 3) & (X < cxw - 2)
+    bat2 = hole & (Y >= by1) & (Y < by1 + 3) & (X >= cxw - 22) & (X < cxw + 9)
     for b_, yy in ((bat, by0), (bat2, by1)):
         d[b_ & (Y == yy)] = code('timber_warm', 4)
         d[b_ & (Y == yy + 1)] = code('timber_cool', 3)
         d[b_ & (Y == yy + 2)] = code('timber_cool', 1)
-    hang = V.seg_mask(d.shape, cxw + 4, by1 + 1, cxw + 10, by1 + 12, 1.3) & hole
+    hang = V.seg_mask(d.shape, cxw + 9, by1 + 1, cxw + 14, by1 + 11, 1.3) & hole
     d[hang] = code('timber_cool', 3)
     d[hang & ~np.roll(hang, 1, axis=1)] = code('timber_warm', 4)
-    # under the edges that overhang it the loft is darkest, and what stands there is in their shade
-    roofed = hole & ~np.roll(hole, 10, axis=0)
+    # how far each texel lies under the upper edge
+    depth = np.where(hole, Y - top[None, :], 99)
+    over = np.where(hole, 7 + ((X // 3 + 1) * 5 % 4), 0)                # the undercut: seven to ten texels, bundle by bundle
+    roofed = hole & (depth < over + 5)
     tim = roofed & (d != code('void', 1))
     d[tim] = (d[tim] // 8) * 8 + np.maximum(d[tim] % 8 - 2, 0)
     d[roofed & (d == code('void', 1))] = void
-    # the thatch's section under each torn upper edge: packed straw, cut ends, darker towards the loft
-    depth = np.zeros(d.shape, int) + 99
-    for k in range(7, -1, -1):
-        depth[hole & ~np.roll(hole, k + 1, axis=0)] = np.minimum(depth[hole & ~np.roll(hole, k + 1, axis=0)], k)
-    sect = hole & (depth < 7)
-    Ls = np.select([depth <= 1, depth <= 4], [0.60, 0.54], 0.46) + np.where((X // 2) % 2 == 0, 0.0, -0.03)
+    # the thatch's section: packed straw seen from below, its cut ends in pairs, darker towards the loft
+    sect = hole & (depth < over)
+    Ls = np.select([depth <= 1, depth <= 4, depth <= 6], [0.60, 0.54, 0.48], 0.43) + np.where((X // 2) % 2 == 0, 0.0, -0.03)
     d[sect] = straw_codes(Ls)[sect]
-    # strands hanging from it, two texels wide, each its own length
-    cols = np.nonzero(hole.any(0))[0]
-    x = int(cols.min()) + 1
-    while x < cols.max() - 1:
-        if rng.random() < 0.5:
-            top = np.nonzero(hole[:, x] & hole[:, x + 1])[0]
-            if len(top):
-                ln = int(rng.integers(9, 15))
-                st = hole & (X >= x) & (X < x + 2) & (Y >= top.min() + 7) & (Y < top.min() + ln)
-                d[st] = straw_codes(np.full(d.shape, 0.57))[st]
-                d[st & ~np.roll(st, -1, axis=0)] = code('sand_cool', 0)
-        x += int(rng.integers(3, 6))
-    # the west side's cut: the thatch's thickness seen where it was torn across
-    side = hole & ~np.roll(hole, 3, axis=1) & ~sect
-    d[side] = straw_codes(np.full(d.shape, 0.54))[side]
+    # loose straw hanging from it, two texels wide, every length
+    x = int(xs.min()) + 1
+    while x < xs.max() - 1:
+        if rng.random() < 0.6 and hole[:, x].any() and hole[:, x + 1].any():
+            t0 = max(top[x], top[x + 1])
+            ln = int(rng.integers(3, 12))
+            st = hole & (X >= x) & (X < x + 2) & (Y >= t0 + over[t0, x]) & (Y < t0 + over[t0, x] + ln)
+            d[st] = straw_codes(np.full(d.shape, 0.57 if ln < 8 else 0.62))[st]
+            d[st & ~np.roll(st, -1, axis=0)] = code('sand_cool', 0)
+        x += int(rng.integers(2, 5))
+    # the sides' cut: the thatch's thickness where it was torn across, lit on the east side's inner face
+    west = hole & ~np.roll(hole, 3, axis=1) & ~sect
+    d[west] = straw_codes(np.full(d.shape, 0.48))[west]
+    east = hole & ~np.roll(hole, -2, axis=1) & ~sect
+    d[east] = straw_codes(np.full(d.shape, 0.68))[east]
     # the torn lip below the gap: the straw's broken ends catching the light, standing up into the dark
     below = np.roll(hole, 1, axis=0) & ~hole & rm & (base >= 0)
     d[below] = straw_codes(np.full(d.shape, 0.89))[below]
-    x = int(cols.min())
-    while x < cols.max():
-        bot = np.nonzero(hole[:, x])[0]
-        if len(bot) and rng.random() < 0.6:
-            ht = int(rng.integers(2, 6))
-            tf = hole & (X >= x) & (X < x + 2) & (Y > bot.max() - ht) & (Y <= bot.max())
+    x = int(xs.min())
+    while x < xs.max():
+        col = np.nonzero(hole[:, x])[0]
+        if len(col) and rng.random() < 0.65:
+            ht = int(rng.integers(2, 7))
+            tf = hole & (X >= x) & (X < x + 2) & (Y > col.max() - ht) & (Y <= col.max())
             d[tf] = straw_codes(np.full(d.shape, 0.81))[tf]
             d[tf & ~np.roll(tf, 1, axis=0)] = straw_codes(np.full(d.shape, 0.89))[tf & ~np.roll(tf, 1, axis=0)]
         x += int(rng.integers(2, 5))
-    # the roof's own straw at the gap's upper rim and sides lifted and shaded, a step down
-    rim = (np.roll(hole, -1, axis=0) | np.roll(hole, 1, axis=1) | np.roll(hole, -1, axis=1)) & ~hole & ~below & rm & (base >= 0)
-    d[rim] = (base[rim] // 8) * 8 + np.maximum(base[rim] % 8 - 1, 0)
+    # the roof's own straw round the gap lifted and shaded a step: above it and beside it
+    ring = ndi.binary_dilation(hole, iterations=2) & ~hole & ~below & rm & (base >= 0) & (Y <= y_bot)
+    d[ring] = (base[ring] // 8) * 8 + np.maximum(base[ring] % 8 - 1, 0)
     return hole
 
 

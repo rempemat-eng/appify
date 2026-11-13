@@ -11,7 +11,9 @@ road runs east to west, so the run stands north to south, up the screen, and a w
 shows only its top in the house's view (the kit's own north-south wattle is a thin line). So the
 hurdles stand as free-standing hurdles do, in a zigzag: four panels folded like a screen, each turned
 half towards the eye, so every woven face shows, the west-facing ones lit and the east-facing ones in
-shade, with a post driven into the road at each fold, its cut top pale. The zigzag is 12 world px deep
+shade, with a post driven into the road at each fold, its cut top pale: the first and the last stand at
+the walls' feet. The panels are 42 texels to the binding, 0.57 of a person (the fence class's lower
+bound, scripts/review/sizes.json), the posts 46. The zigzag is 12 world px deep
 round the pad's line; the barricade's solid stays the pad's own 6.
 
 Three pictures, one frame and one foot (the pad's middle, on the ground):
@@ -47,7 +49,7 @@ from scripts.art.native.palette import to_rgba
 ART = os.path.join(ROOT, 'game', 'kit', 'props', 'art', 'raid')
 SPAN = 144            # texels across the road (48 world px)
 PANEL = 42            # texels up to the binding
-POST = 54             # texels to a post's cut top
+POST = 46             # texels to a post's cut top: a hand over the binding (the kit's corner posts are 54)
 FOLD = 18             # texels each fold stands east or west of the pad's line
 PANELS = 4
 W, H = 96, 216        # the frame
@@ -55,9 +57,12 @@ AX, AY = 30, 134      # the pad's middle in the frame
 
 
 def joints():
-    """The folds, north to south: (x, y) texels from the pad's middle. The run starts and ends on the west."""
+    """The folds, north to south: (x, y) texels from the pad's middle. The run starts and ends on the east
+    fold: on the first night's pads (x 124 and 178) its north post then stands at the foot of the bakery's
+    wall under its west window, clear of the scaffold's poles, and at the wall's east corner, clear of its
+    door, and the first panel leads away from the wall, so only the post stands against it."""
     step = SPAN / PANELS
-    return [((-FOLD if i % 2 == 0 else FOLD), -SPAN / 2.0 + i * step) for i in range(PANELS + 1)]
+    return [((FOLD if i % 2 == 0 else -FOLD), -SPAN / 2.0 + i * step) for i in range(PANELS + 1)]
 
 
 def _down(codes, k=1):
@@ -86,7 +91,7 @@ def _panel(a, pa, pb, seed, lean=0.0, sag=0.0, holes=(), shade=False):
         # the binding rides down with the sag
         codes = np.where(zs >= PANEL - drop - 3, np.asarray(face(np.full(zs.shape, s + 6.0), zs + drop)), codes)
         if shade:
-            codes = np.where(codes % 8 >= 3, _down(codes, 2), _down(codes, 1))     # turned from the light
+            codes = _down(codes, 1)                                     # turned from the light: a step down, its weave kept
         for z, c in zip(zs, codes):
             xs = int(round(AX + x + lean * z / PANEL))
             r = int(round(AY + gy - z))
@@ -158,10 +163,10 @@ def battered():
     holes = {0: ((14, 30, 16, 34),), 1: ((4, 16, 22, 42), (30, 44, 8, 24)), 3: ((16, 34, 18, 42),)}
     gone = np.zeros(p.a.shape, bool)
     for i in range(PANELS):
-        _post(p.a, js[i][0], js[i][1], POST - 4 if i != 2 else 30, lean=lean[i], snapped=(i == 2), seed=i)
+        _post(p.a, js[i][0], js[i][1], POST - 3 if i != 2 else 28, lean=lean[i], snapped=(i == 2), seed=i)
         gone |= _panel(p.a, js[i], js[i + 1], 101 + 7 * i, lean=(lean[i] + lean[i + 1]) / 2.0, sag=(5.0, 3.0, 6.0, 4.0)[i],
                        holes=holes.get(i, ()), shade=(js[i + 1][0] < js[i][0]))
-    _post(p.a, js[-1][0], js[-1][1], POST - 4, lean=lean[-1], seed=9)
+    _post(p.a, js[-1][0], js[-1][1], POST - 3, lean=lean[-1], seed=9)
     _broken_ends(p.a, gone)
     V.finish(p)
     return p
@@ -173,37 +178,45 @@ def broken():
     a = p.a
     rng = np.random.default_rng(1311)
     js = joints()
-    # two panels lying flat: the weave seen from above, its rods running the way the panel fell
+    # two panels lying flat, thrown north-east of their feet: the weave seen from above. Each rod is a
+    # strand two to three texels thick lying along the panel, lit where it rides over a stake and a step
+    # down where it goes under the next; the stakes lie across them; a bite torn out where the blows fell
     for i in (0, 1):
         (xa, ya), (xb, yb) = js[i], js[i + 1]
-        face = FN.wattle_front(PANEL, 101 + 7 * i)
-        n = 36
-        for k in range(n + 1):
-            t = k / n
-            x, gy = xa + (xb - xa) * t + (6 if i == 0 else -2), ya + (yb - ya) * t + (10 if i == 0 else 16)
-            s = t * 51.0
-            zs = np.arange(4, PANEL - 2)
-            codes = np.asarray(face(np.full(zs.shape, s + 6.0), zs))
-            for z, c in zip(zs, codes):
-                if (z > 26 and 10 < s < 26 and i == 0) or (z < 16 and s > 34 and i == 1):
+        ox, oy = (2, 4) if i == 0 else (4, 12)
+        # where a texel of the panel's height lies on the road: both fell east, away from the blows
+        fall = (0.62, 0.22) if i == 0 else (0.62, -0.34)
+        rods = 7
+        for k in range(rods):
+            z = 4 + k * (PANEL - 8) / (rods - 1)
+            x0, y0 = AX + xa + ox + z * fall[0], AY + ya + oy + z * fall[1]
+            x1, y1 = AX + xb + ox + z * fall[0], AY + yb + oy + z * fall[1]
+            bays = 4
+            for b_ in range(bays):
+                if (i == 0 and k >= 4 and b_ == 1) or (i == 1 and k <= 2 and b_ == 3):
                     continue                                    # torn where it took the blows
-                # it fell away from the blows, north-east of its foot, and lies flat: the road's depth
-                # shows it shorter up the screen than across it
-                xs = int(round(AX + x + z * 0.62))
-                r = int(round(AY + gy - z * 0.34))
-                c = int(c) if c % 8 >= 5 else int(c) + 1          # lying open to the sky, a tone up
-                if 0 <= r < a.shape[0] and 0 <= xs < a.shape[1]:
-                    a[r, xs] = c
-                    if xs + 1 < a.shape[1] and a[r, xs + 1] < 0:
-                        a[r, xs + 1] = c
+                t0, t1 = b_ / bays, (b_ + 1) / bays
+                m = V.seg_mask(a.shape, x0 + (x1 - x0) * t0, y0 + (y1 - y0) * t0, x0 + (x1 - x0) * t1, y0 + (y1 - y0) * t1, 1.2)
+                over = (b_ + k) % 2 == 0
+                mix = (k * 0.37) % 1.0
+                a[m] = int(ramp_mix(HAZELS, np.array([3.2 if over else 2.2]), np.array([mix]))[0])
+                lit = m & ~np.roll(m, 1, axis=0)
+                a[lit] = int(ramp_mix(HAZELS, np.array([4.4 if over else 3.2]), np.array([mix]))[0])
+        for b_ in range(1, 4):
+            t = b_ / 4.0
+            sx, sy = AX + xa + (xb - xa) * t + ox, AY + ya + (yb - ya) * t + oy
+            m = V.seg_mask(a.shape, sx + 2 * fall[0], sy + 2 * fall[1], sx + (PANEL - 2) * fall[0], sy + (PANEL - 2) * fall[1], 1.3)
+            a[m] = C('timber', 3)
+            a[m & ~np.roll(m, 1, axis=0)] = C('timber_warm', 4)
+            a[m & ~np.roll(m, -1, axis=0)] = C('timber_cool', 1)
     # the other panels' rods, loose: strands two texels thick, their broken ends pale
     for i in range(12):
         # (the south half of the run stands behind the next house's roof on the first night's pads: its
         # rods stay near the line, so none shows past the roof's end)
         base = js[2] if i < 6 else js[3]
         y = base[1] + 4 + (i % 6) * 6 + int(rng.integers(-2, 3))
-        x = int(rng.integers(-14, 2))
-        ln = int(rng.integers(14, 24))
+        x = int(rng.integers(-16, -2))
+        ln = int(rng.integers(12, 20))
         ang = math.radians(float(rng.uniform(-30, 30)))
         x1, y1 = x + ln * math.cos(ang), y + ln * math.sin(ang) * 0.6
         m = V.seg_mask(a.shape, AX + x, AY + y, AX + x1, AY + y1, 1.1)

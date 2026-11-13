@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "b6cdf9eee06838fb7e1947d3eddf2d63ec9bd21151ac641ae6be4195894efbda",
+ "inputs": "d494d31a12fbf851518909cbd32bbf7b238512f8ed850ce9b8b965f8e2362cac",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -244,7 +244,7 @@
    "pots": [
     [
      183.5,
-     22
+     35
     ]
    ]
   },
@@ -703,8 +703,8 @@
    "kind": "notice_board",
    "png": "notice_board.png",
    "foot": [
-    708,
-    672
+    648,
+    696
    ],
    "offset": [
     -48,

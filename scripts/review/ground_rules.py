@@ -28,6 +28,10 @@ These checks read a zone's plan (world px) and say where it breaks a rule:
     rules.prop_gap          free-standing props on open ground (a square, paving) are either
                             touching or at least one body's width apart, so a body walks all
                             the way round each
+    rules.prop_door         nothing stands in front of a building's door, within a body's width
+                            either side of it and two bodies out from it, or as far out as the
+                            thing is tall (a tall board a little way out still hides the door);
+                            but the rubble a restore clears
 
 Existing checks enforce the rest: logic.tiers (one height per tier, faces and stairs agree),
 roads_clear in check:kit (no road under a building), logic.composition (structures with props),
@@ -448,7 +452,7 @@ def _rect_gap(r, s) -> float:
 
 def _apron_gap(r, ring) -> float:
     """How far a rectangle stands from a ring of setts (cx, cy, r0, r1): 0 or less when it stands on it."""
-    cx, cy, _r0, r1 = ring
+    cx, cy, _r0, r1 = ring[:4]
     best = math.inf
     n = 8
     for i in range(n + 1):
@@ -487,11 +491,16 @@ def prop_clearance(kit, plan, boxes=None):
             continue
         (walls if o.get('kind') == 'building' else props).append((o['id'], [float(v) for v in r], o.get('cond'), o.get('kind')))
     props = [p for p in props if p[3] not in NOT_PROPS]
+    dens = float(kit.get('density', 3.0))
+    rise = {o['id']: -float(o['offset'][1]) / dens for o in kit.get('objects', []) if o.get('offset')}
     # props the plan stands together on purpose (a stall's stock beside it): `with` names the other's id
     together = set()
     for k, dr in enumerate(plan.get('art', {}).get('dressing', [])):
         if dr.get('with'):
             together.add(frozenset((dr.get('id', '%s_%d' % (dr['kind'], k)), dr['with'])))
+    for pr in plan.get('props', []):
+        if pr.get('with'):
+            together.add(frozenset((pr['id'], pr['with'])))          # the smith's anvil before her forge
     by_wall = {pid for pid, r, _c, _k in props if any(_rect_gap(r, w[1]) < BODY for w in walls)}
     # each apron is its nearest prop's (the ring is laid round the well; the same ring serves the choked well)
     aprons = []
@@ -523,6 +532,19 @@ def prop_clearance(kit, plan, boxes=None):
             elif g < BODY:
                 out.append(_f('rules.prop_apron', f'{ida} stands {g:.1f} px from the apron of {who}: at least a body '
                               f'({BODY:g} px) clear', tuple(ring[:2])))
+    # nothing in front of a door: the way in stays open (the rubble a restore clears is the story's own)
+    for b in plan.get('buildings', []):
+        if not b.get('door'):
+            continue
+        dx, dy = b['door']
+        for pid, r, _c, kind in props:
+            if kind in ('rubble', 'well_choked') or frozenset((pid, b['id'])) in together:
+                continue
+            # as far out as the thing stands tall: its picture's rise above its foot (kit.json offset)
+            way = [dx - BODY, dy, 2 * BODY, max(2 * BODY, rise.get(pid, 0.0))]
+            if _rect_gap(r, way) < 0:
+                out.append(_f('rules.prop_door', f'{pid} stands in front of the door of {b["id"]}: keep the way in open '
+                              f'(a body either side of the door, two bodies out)', (dx, dy)))
     # two aprons never run into each other either
     for i, (ra, oa) in enumerate(aprons):
         for rb, ob in aprons[i + 1:]:
@@ -543,7 +565,13 @@ def scene_boxes(zone, plan, kit) -> dict:
         sys.path.insert(0, tools)
     try:
         import gen_village
-        return {k: v[0] for k, v in gen_village.solids(plan, kit).items()}
+        import gen_physics as PH
+        out = {k: v[0] for k, v in gen_village.solids(plan, kit).items()}
+        # the things people read (a notice board, a waystone) are solid on their drawn base
+        for o in kit.get('objects', []):
+            if o.get('kind') in gen_village.THING_BASE and o.get('png') and not o.get('cond'):
+                out[o['id']] = PH.drawn_base(os.path.join(ROOT, 'game', 'zones', zone, 'art', o['png']), o['foot'], o['offset'])
+        return out
     except Exception:           # a zone the village generator does not build: its kit's boxes stand
         return {}
 

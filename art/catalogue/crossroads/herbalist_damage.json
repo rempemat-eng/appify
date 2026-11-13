@@ -1,7 +1,7 @@
 {
  "id": "crossroads/herbalist_damage",
  "file": "game/zones/crossroads/art/herbalist_damage.png",
- "sha256": "10cf76e175ed499c39a8088f6000701c702f6b017e366053b59aeca10d7ea58f",
+ "sha256": "cc88d29bb580c27f41c1c1ad5d1e5e774674867be3a9108216aec3f73d9d9e28",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 11,
-   "tones": 23.0,
-   "shapes": 33.45454545454545
+   "patches": 12,
+   "tones": 24.083333333333332,
+   "shapes": 35.833333333333336
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.664,
-  "tones_ratio": 0.852,
-  "shapes_ratio": 0.664,
+  "ratio": 0.712,
+  "tones_ratio": 0.892,
+  "shapes_ratio": 0.712,
   "passed": false,
   "group": "prop"
  },
@@ -40,22 +40,18 @@
    "severity": "polish",
    "box": [
     18,
-    44,
+    61,
     164,
     228
    ],
-   "message": "crossroads/herbalist_damage: detail bar 0.66 of Eastward's prop band (23.0 tones, 33.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/herbalist_damage: detail bar 0.71 of Eastward's prop band (24.1 tones, 35.8 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-11-10",
+ "reviewed": "2026-11-13",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-10",
-  "note": "Round 8 review at 7e7d310b (PR #458, round 2 of the Crossroads remainder), docs/reviews/2026-11-08-crossroads-placed.md, round 8. Pass for these bytes (10cf76e1...). XR7-D1 passes: the straw round the hole is slumped combed bundles with lit tips and a shade line (largest one-tone straw run 47 texels, was 123), no longer flat flaps; the hole, battens, boards and crack read. The boards and the crack were re-drawn by the shifted random stream (not itemised in the PR) and still read. detail.bar 0.664 kept as a measurement (polish).",
-  "fix_list": [
-   "XR8-D1 (polish): the east lobe beside the hole (x 121-130, y 51-75) has combed streaks but no tips along its lower end, and its west light is weak (dL 0.05). The lower-left bundle is ringed by a dark line that reads as drawn."
-  ]
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
