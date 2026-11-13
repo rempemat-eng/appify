@@ -1757,8 +1757,8 @@ EXISTING = {
 # The size-guide review of the solid boxes restored in #417 (3 Nov): boxes that disagreed with the
 # art, in world px from the foot (docs/vision/placement-audit.md, "Solid boxes").
 REVIEWED_BOXES = {
-    'crossroads_lantern_lit': [-7.0, -5.0, 14, 5],      # was 10 x 22 deep up the post; now the plinth
-    'crossroads_lantern_dark': [-7.0, -5.0, 14, 5],
+    'crossroads_lantern_lit': [-8.0, -6.0, 16, 6],      # the shard lantern's plinth (13 Nov redraw: 16 x 6; was 14 x 5)
+    'crossroads_lantern_dark': [-8.0, -6.0, 16, 6],
     'crossroads_boulder': [-11.0, -6.0, 22, 6],         # was 12 wide under a 25 wide cluster
     'crossroads_bush': [-13.0, -6.0, 26, 6],            # was 16 wide under a 31 wide bush (woodland bushes: 85 %)
     'crossroads_well_choked': [-10.0, -16.0, 20, 16],   # was 24 x 20 round a 19 wide ring; now the well's own box

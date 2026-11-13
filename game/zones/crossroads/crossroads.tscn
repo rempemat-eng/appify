@@ -965,16 +965,16 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternDark" type="Sprite2D" parent="Props/If_lantern_dark"]
-position = Vector2(936, 936)
+position = Vector2(1056, 960)
 texture = ExtResource("t24")
 centered = false
-offset = Vector2(-42, -218)
+offset = Vector2(-33, -182)
 
 [node name="LanternDarkBody" type="StaticBody2D" parent="Props/If_lantern_dark"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Props/If_lantern_dark/LanternDarkBody"]
-position = Vector2(936, 928.5)
+position = Vector2(1056, 952.5)
 shape = SubResource("s34")
 
 [node name="If_lantern_lit" type="Node2D" parent="Props"]
@@ -982,16 +982,16 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternLit" type="Sprite2D" parent="Props/If_lantern_lit"]
-position = Vector2(936, 936)
+position = Vector2(1056, 960)
 texture = ExtResource("t25")
 centered = false
-offset = Vector2(-42, -218)
+offset = Vector2(-33, -182)
 
 [node name="LanternLitBody" type="StaticBody2D" parent="Props/If_lantern_lit"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Props/If_lantern_lit/LanternLitBody"]
-position = Vector2(936, 928.5)
+position = Vector2(1056, 952.5)
 shape = SubResource("s34")
 
 [node name="If_crater_smoke" type="Node2D" parent="Props"]
@@ -1378,7 +1378,7 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="DebrisB" type="Sprite2D" parent="Props/If_debris_b"]
-position = Vector2(1116, 936)
+position = Vector2(1176, 900)
 texture = ExtResource("t86")
 centered = false
 offset = Vector2(-45, -41)
@@ -1501,7 +1501,7 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternDarkShadow" type="Sprite2D" parent="Props/If_lantern_dark_shadow"]
-position = Vector2(912, 932)
+position = Vector2(1029, 956)
 texture = ExtResource("t99")
 centered = false
 offset = Vector2(0, 0)
@@ -1512,7 +1512,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternLitShadow" type="Sprite2D" parent="Props/If_lantern_lit_shadow"]
-position = Vector2(912, 932)
+position = Vector2(1029, 956)
 texture = ExtResource("t100")
 centered = false
 offset = Vector2(0, 0)
@@ -1714,7 +1714,7 @@ collision_mask = 0
 shape = SubResource("s36")
 
 [node name="ShardLantern" type="Area2D" parent="Actors"]
-position = Vector2(936, 960)
+position = Vector2(1056, 984)
 script = ExtResource("talk")
 speaker_id = "shard_lantern"
 marker_height = 40.0

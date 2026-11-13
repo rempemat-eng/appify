@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "54065f952c2656f051d370a792634148c37b164f731bbf2b7b6a8e5d30ea2f7f",
+ "inputs": "c2662b15f6d999bea2476969760d7c92becadfd6e5ca2cd76fba9eb93e9fe6c8",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -578,12 +578,12 @@
    "kind": "lantern",
    "png": "lantern_dark.png",
    "foot": [
-    936,
-    936
+    1056,
+    960
    ],
    "offset": [
-    -42,
-    -218
+    -33,
+    -182
    ],
    "cond": {
     "not_flags": [
@@ -591,10 +591,10 @@
     ]
    },
    "solid": [
-    307,
-    290,
-    10,
-    22
+    344,
+    314,
+    16,
+    6
    ]
   },
   {
@@ -602,12 +602,12 @@
    "kind": "lantern_lit",
    "png": "lantern_lit.png",
    "foot": [
-    936,
-    936
+    1056,
+    960
    ],
    "offset": [
-    -42,
-    -218
+    -33,
+    -182
    ],
    "cond": {
     "flags": [
@@ -615,10 +615,10 @@
     ]
    },
    "solid": [
-    307,
-    290,
-    10,
-    22
+    344,
+    314,
+    16,
+    6
    ]
   },
   {
@@ -1737,8 +1737,8 @@
    "kind": "debris",
    "png": "debris_b.png",
    "foot": [
-    1116,
-    936
+    1176,
+    900
    ],
    "offset": [
     -45,
@@ -1994,8 +1994,8 @@
    "kind": "shadow",
    "png": "lantern_dark_shadow.png",
    "foot": [
-    912,
-    932
+    1029,
+    956
    ],
    "offset": [
     0,
@@ -2014,8 +2014,8 @@
    "kind": "shadow",
    "png": "lantern_lit_shadow.png",
    "foot": [
-    912,
-    932
+    1029,
+    956
    ],
    "offset": [
     0,

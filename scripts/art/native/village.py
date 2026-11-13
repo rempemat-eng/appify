@@ -5134,6 +5134,173 @@ def VO_shift(m, dy, dx):
     return _shift(m, dy, dx)
 
 
+def p_shard_lantern(w, h, seed, lit=False):
+    """The shard lantern (Matt, 13 Nov: "why would i defend a lantern that's so odd"): not street
+    furniture but the thing the town was built round, as its lines say ("an iron lantern beside the well,
+    older than the town, with a dozen empty cradles"). A plinth of two worn slabs with moss in the joint; a
+    stone pedestal of three faces (lit west, front, shaded east) with a base and a capital and a channel
+    cut down its front; an iron bowl; a housing four times the glass of a street lamp: heavy corner
+    posts, an arched head, and inside it the cradles (a cup on a stem with two arms, two more hanging
+    from the head), brass against the dark glass; a bell roof with a rib, an eave and a brass finial.
+    Empty, the glass is dark with the sky on it and the channel a dark groove. With the woodland's shard
+    home (`lit`), the great shard stands in the middle cradle in the shard's own colours (the dusk ramp
+    of the Undercroft's shard, a pale core), its light fills the glass and runs down the channel ("light
+    runs down the iron"), and the other cradles stay empty against it: there are more to bring.
+    It keeps inside the lamp's size class (scripts/review/sizes.json: 52 x 178 texels at most)."""
+    rng = np.random.default_rng(seed)
+    p = _pic(w, h, up=54, side=2)
+    a, cx, yb = p.a, p.ax, p.ay
+    Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]]
+    dxc = X + 0.5 - cx                                      # east of the middle, in texels
+
+    def band(y0, y1, hw):
+        return (Y >= y0) & (Y < y1) & (np.abs(dxc) < hw)
+
+    # --- the plinth: two slabs, the lower as wide as the roof's eave ---------------------------------
+    top = lamp_plinth_hd(a, cx, yb, np.random.default_rng(seed + 11), slabs=((8.3, 4.0, 2.6), (6.6, 3.6, 2.0)))
+    # --- the pedestal: base, shaft of three faces, capital --------------------------------------------
+    ped_b = top + 2                                         # it stands on the slab's top plane
+    ped_t = ped_b - 28
+    shaft = band(ped_t + 4, ped_b - 3, 11)
+    west, east = shaft & (dxc < -5), shaft & (dxc >= 5)
+    _codes(a, shaft, 'stone_warm', 3)
+    _codes(a, west, 'stone_warm', np.where(dxc < -10, 5, 4))
+    _codes(a, east, 'stone_cool', np.where(dxc >= 10, 2, 1))
+    a[shaft & (dxc >= 5) & (dxc < 6)] = code('stone_cool', 0)       # the arris between front and east
+    a[shaft & (dxc >= -5) & (dxc < -4)] = code('stone_warm', 4)     # the front's lit arris
+    jy = ped_t + 15                                                 # two drums: a joint, the lower one's lip lit
+    a[shaft & (Y == jy)] = code('stone_cool', 1)
+    lip = shaft & (Y == jy + 1) & (dxc < 5)
+    a[lip] = FI['stone_warm'] * 8 + np.minimum(5, tone_of(a[lip]) + 1)
+    sibling_cells(a, shaft & (fam_of(a) == FI['stone_warm']) & (Y != jy), rng, ped_t + 4, ped_b - 3, cx - 11, cx + 11,
+                  ('stone_warm', 'stone'), share=0.4, step=(4, 5), maxrun=40)
+    base = band(ped_b - 3, ped_b, 13)
+    _codes(a, base, 'stone_warm', np.where(Y == ped_b - 3, 5, np.where(Y == ped_b - 2, 3, 2)) - (dxc >= 6))
+    a[base & (dxc >= 9)] = code('stone_cool', 1)
+    cap_ = band(ped_t, ped_t + 4, 14)
+    _codes(a, cap_, 'stone_warm', np.select([Y == ped_t, Y == ped_t + 1, Y == ped_t + 2], [5, 4, 3], 2) - (dxc >= 6))
+    a[cap_ & (dxc >= 10)] = code('stone_cool', 1)
+    a[cap_ & (Y == ped_t) & (dxc >= 6)] = code('stone_warm', 4)
+    _step_down(a, band(ped_t + 4, ped_t + 6, 11) & (dxc < 5), 1)   # the capital's shade on the shaft
+    _step_down(a, band(ped_b, ped_b + 1, 14) & (dxc > -9), 1)      # the pedestal's contact on the slab
+    # the channel down the front: a groove, or the shard's light running in it
+    ch = (Y >= ped_t + 4) & (Y < ped_b - 3) & (dxc >= -1) & (dxc < 1)
+    if lit:
+        a[ch & (dxc < 0)] = code('dusk', 5)
+        a[ch & (dxc >= 0)] = code('dusk', 3)
+        a[band(ped_b - 3, ped_b - 1, 2)] = code('dusk', 4)
+    else:
+        a[ch & (dxc < 0)] = code('stone_cool', 0)
+        a[ch & (dxc >= 0)] = code('stone_warm', 5)                  # the groove's lit east lip
+    # --- the iron bowl and the housing's foot ring ------------------------------------------------------
+    bowl_t = ped_t - 9
+    f = np.clip((ped_t - Y) / 9.0, 0, 1)
+    hw_b = 12.0 + 9.0 * f ** 0.6
+    bowl = (Y >= bowl_t) & (Y < ped_t) & (np.abs(dxc) < hw_b)
+    _codes(a, bowl, 'iron', cyl_tones(dxc / np.maximum(1, hw_b), 3) - (Y >= ped_t - 2))
+    ring_b = bowl_t
+    ring_t = ring_b - 4
+    gy1, gy0 = ring_t, ring_t - 60                                   # the glass: bottom and top rows
+    top_t = gy0 - 4
+    for (r0, r1) in ((ring_t, ring_b), (top_t, gy0)):
+        rg = band(r0, r1, 21)
+        _codes(a, rg, 'iron', np.select([Y == r0, Y == r1 - 1], [5, 1], 3) - (dxc >= 8))
+    if lit:
+        a[bowl & (dxc >= -1) & (dxc < 1)] = code('dusk', 4)        # the light running down the iron
+    # --- the housing: corner posts, the arched head, the glass -------------------------------------------
+    for sx, bt in ((-1, 3), (1, 2)):
+        post = (Y >= gy0) & (Y < gy1) & (dxc * sx >= 16) & (dxc * sx < 20)
+        u = (dxc - sx * 18.0) / 2.0
+        _codes(a, post, 'iron', cyl_tones(u, bt))
+    pane = (Y >= gy0) & (Y < gy1) & (np.abs(dxc) < 16)
+    arch = gy0 + 9.0 * (np.abs(dxc) / 16.0) ** 2.2                   # the head: a low arch between the posts
+    head = pane & (Y < arch)
+    _codes(a, head, 'iron', np.where(dxc < 0, 3, 2))
+    a[head & (Y >= arch - 1.2) & (dxc < 0)] = code('iron', 1)       # the arch's underside, in shade
+    a[head & (Y >= arch - 1.2) & (dxc >= 0)] = code('iron', 4)      # ... and where it faces the light
+    glass = pane & ~head
+    if lit:
+        _codes(a, glass, 'dusk', 2)
+    else:
+        _codes(a, glass, 'slate_cool', 1)
+        a[glass & (dxc >= 6)] = code('void', 1)
+        a[glass & (Y < arch + 4)] = code('void', 1)                 # the roof's shade inside
+        diag = (dxc + 16) + (Y - gy0) * 0.8                         # the sky on the pane: one broken streak
+        streak = glass & (np.abs(diag - 34) < 1.6) & (dxc < 2) & (Y > arch + 6) & (Y < gy1 - 8)
+        a[streak & ((Y < gy0 + 30) | (Y > gy0 + 36))] = code('sky', 2)
+        a[glass & (np.abs(diag - 40) < 1.0) & (dxc < -4) & (Y > gy0 + 34) & (Y < gy1 - 10)] = code('slate_cool', 2)
+    # the cradles: a cup on a stem with two arms, two hanging from the head
+    cup_m = np.zeros(a.shape, bool)
+    iron_m = np.zeros(a.shape, bool)
+    def cup(ux, uy, r):
+        """A cradle's cup, its rim at row uy: a bowl r wide each side and r - 1 deep."""
+        m = ((dxc - ux) / r) ** 2 + ((Y + 0.5 - uy) / max(1.0, r - 1.0)) ** 2 <= 1.0
+        return m & (Y >= uy) & glass
+    stem = glass & (np.abs(dxc) < 1.5) & (Y >= gy1 - 13)
+    mid = cup(0.0, gy1 - 18, 5.5)
+    iron_m |= stem
+    cup_m |= mid
+    for sx in (-1, 1):
+        arm = seg_mask(a.shape, cx, gy1 - 6, cx + sx * 9.5, gy1 - 15, 1.0) | seg_mask(a.shape, cx + sx * 9.5, gy1 - 15, cx + sx * 9.5, gy1 - 21, 1.0)
+        iron_m |= arm & glass
+        cup_m |= cup(sx * 9.5, gy1 - 26, 4.5)
+        chain = glass & (np.abs(dxc - sx * 8.5) < 1.0) & (Y < gy0 + 22) & ((Y // 2) % 2 == 0)
+        iron_m |= chain
+        cup_m |= cup(sx * 8.5, gy0 + 22, 4.0)
+    a[iron_m & ~cup_m] = code('iron', 1 if lit else 2)
+    _codes(a, cup_m, 'brass', np.where(dxc % 19 < 9.5, 3, 2) - (0 if lit else 1))
+    rim = cup_m & ~np.roll(cup_m, 1, axis=0)
+    a[rim] = code('brass', 4 if lit else 2)
+    if lit:
+        # the great shard in the middle cradle: a crystal of three faces and a point, pale at its heart
+        sy0, sy1 = gy1 - 48, gy1 - 16
+        fy = (Y + 0.5 - sy0) / (sy1 - sy0)
+        hw_s = np.select([fy < 0.28, fy < 0.8], [0.8 + 5.4 * (fy / 0.28), 6.2], 6.2 - 3.4 * (fy - 0.8) / 0.2)
+        lean = (0.5 - fy) * 3.0                                       # it leans a little east, as it fell
+        sh = glass & (fy >= 0) & (fy < 1) & (np.abs(dxc - lean) < hw_s)
+        us = (dxc - lean) / np.maximum(0.8, hw_s)
+        a[sh] = code('dusk', 5)                                       # the front face
+        a[sh & (us < -0.3)] = code('snow', 4)                         # the face towards the light
+        a[sh & (us >= 0.42)] = code('dusk', 4)                        # the east face, turning away
+        a[sh & (np.abs(us + 0.3) < 0.16) & (fy > 0.28)] = code('snow', 5)   # the ridge between the faces, its heart
+        a[sh & (fy < 0.28) & (us >= -0.05)] = code('dusk', 4)        # the point's east facet
+        a[sh & (fy < 0.28) & (us < -0.05)] = code('snow', 5)
+        a[sh & ~ndi.binary_erosion(sh) & (us >= 0.42)] = code('dusk', 3)   # its own edge, where it turns from the eye
+        # its light on the glass: nearest the crystal brightest, the frame's shade at the top and east
+        dist = ndi.distance_transform_edt(~sh)
+        halo = glass & ~sh & ~cup_m & ~iron_m
+        _codes(a, halo, 'dusk', np.select([dist < 4, dist < 11], [4, 3], 2))
+        a[halo & (Y < arch + 3)] = code('dusk', 1)
+        a[halo & (dxc >= 13)] = code('dusk', 1)
+        for (px, py) in ((-9, gy0 + 34), (6, gy0 + 15), (10, gy1 - 34)):   # glints in pairs
+            g = halo & (Y == py) & (dxc >= px) & (dxc < px + 2)
+            if g.sum() == 2:
+                a[g] = code('snow', 4)
+    # --- the roof: a bell of iron with a rib, an eave, brackets and a brass finial ------------------------
+    roof_b = top_t
+    roof_t = roof_b - 27
+    fr = np.clip((Y + 0.5 - roof_t) / 27.0, 0, 1)
+    hw_r = 3.0 + 22.0 * fr ** 1.7
+    roof = (Y >= roof_t) & (Y < roof_b) & (np.abs(dxc) < hw_r)
+    ur = dxc / np.maximum(1, hw_r)
+    _codes(a, roof, 'iron', np.select([ur < -0.82, ur < -0.38, ur < -0.06, ur < 0.06, ur < 0.8], [3, 5, 4, 5, 2], 3))
+    a[roof & (ur >= 0.06) & (ur < 0.14)] = code('iron', 1)          # the rib's shade on the east plane
+    eave = roof & (Y >= roof_b - 3)
+    _codes(a, eave, 'iron', np.where(Y == roof_b - 3, np.where(dxc < 2, 5, 3), np.where(dxc < 2, 3, 2)) - (Y == roof_b - 1))
+    _step_down(a, band(top_t, top_t + 2, 21), 1)                    # the eave's shade on the head ring
+    for sx, t in ((-1, 3), (1, 2)):                                 # a bracket under each eave corner
+        br = seg_mask(a.shape, cx + sx * 20.5, gy0 + 9, cx + sx * 23.5, top_t + 1, 1.3) & (a < 0)
+        a[br] = code('iron', t)
+    neck = band(roof_t - 3, roof_t, 2)
+    _codes(a, neck, 'iron', np.where(dxc < 0, 4, 2))
+    ball = ellipse_mask(a.shape, cx, roof_t - 6.5, 3.6, 3.6)
+    _codes(a, ball, 'brass', np.where((dxc < 0) & (Y < roof_t - 6), 5, np.where((dxc >= 1) | (Y >= roof_t - 4), 2, 4)))
+    spike = (Y >= roof_t - 18) & (Y < roof_t - 10) & (dxc >= -1) & (dxc < 1)
+    a[spike & (dxc < 0)] = code('iron', 4)
+    a[spike & (dxc >= 0)] = code('iron', 2)
+    return finish(p)
+
+
 PROPS_HD = {
     'barrel': p_barrel_hd,
     'cart': p_cart_hd,
@@ -5153,6 +5320,7 @@ PROPS_HD = {
     'woodpile': p_woodpile_hd,
     'stall': p_stall_hd,
     'waystone': p_waystone_hd,
-    'lantern': lambda w, h, s: p_lantern(w, h, s, lit=False, hd=True),
-    'lantern_lit': lambda w, h, s: p_lantern(w, h, s, lit=True, hd=True),
+    # the shard lantern (13 Nov): the housing that holds the shards, no longer a street lamp
+    'lantern': lambda w, h, s: p_shard_lantern(w, h, s, lit=False),
+    'lantern_lit': lambda w, h, s: p_shard_lantern(w, h, s, lit=True),
 }

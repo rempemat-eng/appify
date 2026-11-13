@@ -648,10 +648,10 @@
       "id": "lantern_dark",
       "kind": "lantern",
       "rect": [
-        307,
-        290,
-        10,
-        22
+        344,
+        314,
+        16,
+        6
       ],
       "solid": true,
       "colour": "#55504a",
@@ -660,16 +660,17 @@
           "shard_home:woodland"
         ]
       },
-      "why": "the shard lantern, empty"
+      "why": "the shard lantern, empty",
+      "why_place": "the shard lantern, across the gate walk from the well: the two stand as a pair either side of the square's middle (the axis x 320 that the gate walk and the green lane share), the well 32 px west of it and the lantern 32 px east, each on its own ring of setts, 18 px of open paving between the rings (Matt, 13 Nov: it stood on the well's ring, under its crank). The rect is its plinth, 16 x 6; a body walks all the way round both"
     },
     {
       "id": "lantern_lit",
       "kind": "lantern",
       "rect": [
-        307,
-        290,
-        10,
-        22
+        344,
+        314,
+        16,
+        6
       ],
       "solid": true,
       "colour": "#e8f0ff",
@@ -678,7 +679,8 @@
           "shard_home:woodland"
         ]
       },
-      "why": "the shard lantern holding the woodland's shard"
+      "why": "the shard lantern holding the woodland's shard",
+      "why_place": "the shard lantern, across the gate walk from the well: the two stand as a pair either side of the square's middle (the axis x 320 that the gate walk and the green lane share), the well 32 px west of it and the lantern 32 px east, each on its own ring of setts, 18 px of open paving between the rings (Matt, 13 Nov: it stood on the well's ring, under its crank). The rect is its plinth, 16 x 6; a body walks all the way round both"
     },
     {
       "id": "crater_smoke",
@@ -855,8 +857,8 @@
       "speaker": "shard_lantern",
       "verb": "Look",
       "at": [
-        312,
-        320
+        352,
+        328
       ],
       "colour": "#00000000",
       "radius": 22
@@ -1059,10 +1061,19 @@
           300
         ],
         [
+          262,
+          330
+        ],
+        [
           306,
-          312
+          334
+        ],
+        [
+          338,
+          326
         ]
-      ]
+      ],
+      "why": "round the south of the well to the lantern's south-west, where a raider stands in front of both pictures (13 Nov: the lantern moved east of the walk)"
     },
     {
       "id": "harbour_road",
@@ -1077,10 +1088,11 @@
           330
         ],
         [
-          316,
-          312
+          368,
+          326
         ]
-      ]
+      ],
+      "why": "to the lantern's south-east (13 Nov: the lantern moved east of the walk)"
     }
   ],
   "art": {
@@ -2017,8 +2029,8 @@
       {
         "kind": "debris",
         "at": [
-          372,
-          312
+          392,
+          300
         ],
         "size": [
           22,
@@ -2030,7 +2042,8 @@
             "shard_home:woodland"
           ]
         },
-        "id": "debris_b"
+        "id": "debris_b",
+        "why": "moved east of the lantern's ring on 13 Nov (it lay under the lantern's new plinth)"
       },
       {
         "kind": "debris",
@@ -2121,6 +2134,12 @@
         316,
         14,
         23
+      ],
+      [
+        352,
+        316,
+        14,
+        23
       ]
     ],
     "puddles": [
@@ -2142,6 +2161,7 @@
         6,
         2.5
       ]
-    ]
+    ],
+    "why_setts": "a ring of setts round the well and its twin round the shard lantern, mirrored across the square's axis (x 320): cx, cy, r0, r1 in world px"
   }
 }
