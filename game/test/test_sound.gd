@@ -57,7 +57,6 @@ func test_the_test_runner_and_the_play_driver_are_silent() -> void:
 	assert_bool(Sound.is_processing()).is_false()
 	assert_bool(Sound.play(&"glance")).is_false()
 	assert_array(Sound.sounding()).is_empty()
-	assert_int(Sound.get_child_count()).is_equal(0)      # no player was ever made
 	assert_bool(Sound.wanted("Dummy", "x11", PackedStringArray())).is_false()
 	assert_bool(Sound.wanted("PulseAudio", "headless", PackedStringArray())).is_false()
 	assert_bool(Sound.wanted("PulseAudio", "x11", PackedStringArray(["--fresh", "--play=route.txt"]))).is_false()

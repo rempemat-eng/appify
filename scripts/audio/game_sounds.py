@@ -796,9 +796,9 @@ def build() -> tuple[dict[str, bytes], dict[str, np.ndarray], dict]:
 
 
 def seam(x: np.ndarray) -> tuple[float, float]:
-    """A loop's join: the step from its last sample to its first, and the largest step anywhere inside it.
+    """A loop's join: the step from its last sample to its first, and the RMS of the steps inside it.
     A seamless loop's join is no larger than its own ordinary sample-to-sample movement."""
-    return float(abs(x[0] - x[-1])), float(np.max(np.abs(np.diff(x))))
+    return float(abs(x[0] - x[-1])), float(np.sqrt(np.mean(np.diff(x) ** 2)))
 
 
 def centroid(x: np.ndarray, sr: int) -> float:
@@ -825,7 +825,7 @@ def shape_failures(files: dict[str, bytes], signals: dict[str, np.ndarray]) -> l
                 bad.append(f'{path}: peaks at {level:.1f} dBFS, not -24')
             join, step = seam(x)
             if join > step:
-                bad.append(f'{path}: the loop joins with a step of {join:.5f}, larger than any step inside it ({step:.5f})')
+                bad.append(f'{path}: the loop joins with a step of {join:.5f}, larger than its ordinary step ({step:.5f} RMS)')
     total = sum(len(b) for p, b in files.items() if p.endswith('.wav'))
     if total > BUDGET_BYTES:
         bad.append(f'the palette is {total} bytes, over its {BUDGET_BYTES} byte budget')
@@ -859,7 +859,7 @@ def main() -> None:
         for path, x in signals.items():
             if path.startswith('ambience/'):
                 join, step = seam(x)
-                print(f'seam {path}: join step {join:.6f}, largest step inside {step:.6f}')
+                print(f'seam {path}: join step {join:.6f}, RMS step inside {step:.6f}')
         print(f'total {sum(len(b) for p, b in files.items() if p.endswith(".wav"))} bytes of WAV')
         return
     failures = shape_failures(files, signals)
