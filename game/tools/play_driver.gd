@@ -611,12 +611,12 @@ func press_button(what: String) -> String:
 ## The line of fire is tested feet to feet, where the arrow flies and hits (actors/arrow.gd: the arrow's node
 ## runs on the ground under the drawn shaft, parallel to the aim from the archer's chest to the target's), so
 ## a raider backed against a wall is shot like any other; one beside the archer is shot whatever the walls say.
-## A melee raider coming for the archer is kept off: within KEEP_OFF it steps away across open ground (as a
-## player backs off a charging boar) and shoots once there is room; cornered, it shoots where it stands.
+## A raider on the archer's own ground near it (past a broken hurdle, or come round) is fought with `fight`,
+## the pilot every other fight uses; the station's shooting is for the raiders behind the hurdles, which no
+## walk reaches. Point blank it shoots only the toad (a shooter), which spits from where it stands.
 ## It fails, saying so, when raiders are up and no arrow has counted for STALL seconds.
 const STALL := 30.0
 const BESIDE := 60.0
-const KEEP_OFF := 120.0
 
 func defend(limit: float, station := Vector2.INF) -> String:
 	var p := player()
@@ -627,6 +627,8 @@ func defend(limit: float, station := Vector2.INF) -> String:
 	var rolls := 0
 	var hurt0 := _hurt
 	var g := grid()
+	var ground := {}
+	var reach_t := -99.0
 	_landed_t = now()
 	while now() - start < limit and Raids.running():
 		if not p.is_inside_tree() or p.is_defeated():
@@ -665,25 +667,23 @@ func defend(limit: float, station := Vector2.INF) -> String:
 			else:
 				await _sleep(0.12)
 			continue
-		# a striker coming for the archer: back off it across open ground, if there is room
-		var chaser: Node2D = null
+		# a raider on the archer's own ground (past the hurdles, or round them) near the archer: fought as
+		# every fight is (`fight`: closes in, shoots, rolls out of telegraphed lanes), then back to the station
+		if now() - reach_t > 1.0:
+			reach_t = now()
+			g.forget()
+			ground = g.reachable(p.global_position)
+		var near_ground := false
 		for e: Node2D in es:
-			if str(e.get("role")) != "shooter" and str(e.get("state")) in ["approach", "windup", "attack"] \
-					and e.global_position.distance_to(p.global_position) < KEEP_OFF \
-					and (chaser == null or e.global_position.distance_to(p.global_position) < chaser.global_position.distance_to(p.global_position)):
-				chaser = e
-		if chaser != null and not p.is_rolling():
-			var away := chaser.global_position.direction_to(p.global_position)
-			var step := Vector2.ZERO
-			for turn: float in [0.0, 0.5, -0.5, 1.0, -1.0]:
-				var to := p.global_position + away.rotated(turn) * 60.0
-				if g.is_free(WalkGrid.cell_of(to)) and g.clear_line(p.global_position, to):
-					step = away.rotated(turn)
-					break
-			if step != Vector2.ZERO:
-				hold(step)
-				await _sleep(0.15)
-				continue
+			if e.global_position.distance_to(p.global_position) < 450.0 and ground.has(g.nearest_free(e.global_position, 40.0)):
+				near_ground = true
+		if near_ground:
+			var problem := await fight(maxf(limit - (now() - start), 1.0))
+			_landed_t = now()
+			reach_t = -99.0
+			if problem != "" and Raids.running():
+				return problem
+			continue
 		if now() - _landed_t > STALL:
 			hold(Vector2.ZERO)
 			return "no arrow has counted for %.0fs with %d raiders up: %s %s at %s, the archer at %s" % [
@@ -691,7 +691,8 @@ func defend(limit: float, station := Vector2.INF) -> String:
 		var space := p.get_world_2d().direct_space_state
 		var aim := target.global_position + Vector2(0, -24)
 		var d := p.global_position.distance_to(target.global_position)
-		if d <= BESIDE or (d <= 320.0 and not Arrow.walled_off(space, p.global_position, target.global_position)):
+		var point_blank := d <= BESIDE and str(target.get("role")) == "shooter"
+		if point_blank or (d <= 320.0 and not Arrow.walled_off(space, p.global_position, target.global_position)):
 			hold(Vector2.ZERO)
 			aim_at(aim)
 			if not p.is_shooting() and not p.is_rolling():
