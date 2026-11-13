@@ -25,6 +25,7 @@ extends Node
 ##                           its text) and click it, as a player would (the raid's prepare screen)
 ##   defend [secs] [x y]     defend a raid's night from a station (default: here) until it is over: shoots the
 ##                           raider nearest the lantern over the hurdles, walks out only for one it cannot hit
+##   waitfor <secs> <what>   wait, standing, until `expect <what>` holds (fails after <secs>)
 ##   key <Name>              tap a key (Escape, E, Space, Enter, Down, ...)
 ##   hold <left|right|up|down|upleft|...> <secs>
 ##   aim x y, click, roll    the mouse at a world point, a left click, Space
@@ -38,6 +39,7 @@ extends Node
 ##       line <text|none> (the line on the dialogue box now)
 ##       raid <state> (core/raids.gd: none, announced, postponed, pending, running, won, lost) | raidscreen <yes|no>
 ##       defences <n> (hurdles standing) | repairs <yes|no> (the brief repairs after a lost night)
+##       battering (a raider is battering a hurdle) | wave <n> (the night's wave under way, from 1)
 ##   restart                 close the window as a player would; the runner starts the game again from the
 ##                           save and the route carries on at the next line
 ##   end                     pass (the end of the file passes too)
@@ -60,6 +62,7 @@ var _held := {}
 var _f0 := 0
 var _hurt := 0
 var _downs := 0
+var _landed_t := 0.0            # game time of the player's last arrow that counted (hit_landed)
 var _hooked: Node = null
 var _said: PackedStringArray = []
 var _grid: WalkGrid
@@ -125,6 +128,7 @@ func _process(_d: float) -> void:
 		p.downed.connect(func() -> void:
 			_downs += 1
 			out("  DOWNED"))
+		p.hit_landed.connect(func(_t: Node, _heavy: bool) -> void: _landed_t = now())
 	if _busy or p == null:
 		return
 	if follow:
@@ -367,6 +371,14 @@ func run(c: String) -> String:
 			return await down(float(a[1]) if a.size() > 1 else 40.0, true)
 		"button":
 			return await press_button(c.substr(7).strip_edges())
+		"waitfor":
+			var t0 := now()
+			var want := PackedStringArray(["expect"]) + a.slice(2)
+			while expect(want) != "":
+				if now() - t0 > float(a[1]):
+					return "after %ss: %s" % [a[1], expect(want)]
+				await _sleep(0.1)
+			out("WAITFOR %s held after %.1fs  %s" % [" ".join(a.slice(2)), now() - t0, status()])
 		"defend":
 			var at := Vector2(float(a[2]), float(a[3])) if a.size() > 3 else Vector2.INF
 			return await defend(float(a[1]) if a.size() > 1 else 300.0, at)
@@ -456,6 +468,13 @@ func expect(a: PackedStringArray) -> String:
 				if b.has_method("standing") and b.standing():
 					standing += 1
 			return "" if standing == int(a[2]) else "%d hurdles stand" % standing
+		"battering":
+			for c2 in get_tree().get_nodes_in_group("enemy"):
+				if c2 is RaidCreature and not c2.dead and c2.blocker is RaidBarricade:
+					return ""
+			return "no raider is battering a hurdle"
+		"wave":
+			return "" if Raids.running() and int(Raids.rec().wave) + 1 == int(a[2]) else "the raid is %s at wave %d" % [Raids.state(), int(Raids.rec().wave) + 1]
 		"repairs":
 			var shown := not get_tree().get_nodes_in_group("raid_repair").filter(func(n: Node) -> bool: return not n.is_queued_for_deletion()).is_empty()
 			return "" if shown == (a[2] == "yes") else "the repairs are %s" % ("shown" if shown else "not shown")
@@ -589,6 +608,13 @@ func press_button(what: String) -> String:
 ## arrow can reach it (Arrow.walled_off: arrows fly over the hurdles, which are low solids), so it hits them
 ## where they batter a hurdle it cannot walk through. It walks out only for a raider it cannot hit from where
 ## it stands, and steps or rolls out of the lane of a telegraphed attack as `fight` does.
+## The line of fire is tested feet to feet, where the arrow flies and hits (actors/arrow.gd: the arrow's node
+## runs on the ground under the drawn shaft, parallel to the aim from the archer's chest to the target's), so
+## a raider backed against a wall is shot like any other; one beside the archer is shot whatever the walls say.
+## It fails, saying so, when raiders are up and no arrow has counted for STALL seconds.
+const STALL := 30.0
+const BESIDE := 60.0
+
 func defend(limit: float, station := Vector2.INF) -> String:
 	var p := player()
 	var start := now()
@@ -598,6 +624,7 @@ func defend(limit: float, station := Vector2.INF) -> String:
 	var rolls := 0
 	var hurt0 := _hurt
 	var g := grid()
+	_landed_t = now()
 	while now() - start < limit and Raids.running():
 		if not p.is_inside_tree() or p.is_defeated():
 			hold(Vector2.ZERO)
@@ -605,6 +632,7 @@ func defend(limit: float, station := Vector2.INF) -> String:
 			continue
 		var es := enemies()
 		if es.is_empty():
+			_landed_t = now()                          # between waves nothing is there to hit
 			if p.global_position.distance_to(station) > 30.0:
 				await goto(station, 20.0)
 			else:
@@ -634,9 +662,14 @@ func defend(limit: float, station := Vector2.INF) -> String:
 			else:
 				await _sleep(0.12)
 			continue
+		if now() - _landed_t > STALL:
+			hold(Vector2.ZERO)
+			return "no arrow has counted for %.0fs with %d raiders up: %s %s at %s, the archer at %s" % [
+				STALL, es.size(), target.name, target.get("state"), target.global_position.round(), p.global_position.round()]
 		var space := p.get_world_2d().direct_space_state
 		var aim := target.global_position + Vector2(0, -24)
-		if p.global_position.distance_to(target.global_position) <= 320.0 and not Arrow.walled_off(space, p.global_position, aim):
+		var d := p.global_position.distance_to(target.global_position)
+		if d <= BESIDE or (d <= 320.0 and not Arrow.walled_off(space, p.global_position, target.global_position)):
 			hold(Vector2.ZERO)
 			aim_at(aim)
 			if not p.is_shooting() and not p.is_rolling():
@@ -645,7 +678,7 @@ func defend(limit: float, station := Vector2.INF) -> String:
 			await _sleep(0.05)
 			continue
 		# out of reach from here: back to the station when it can be hit from there, else after it
-		var from_station := station.distance_to(target.global_position) <= 320.0 and not Arrow.walled_off(space, station, aim)
+		var from_station := station.distance_to(target.global_position) <= 320.0 and not Arrow.walled_off(space, station, target.global_position)
 		var goal := station if from_station else target.global_position
 		var plan := g.path(p.global_position, goal, 30.0)
 		var want := goal

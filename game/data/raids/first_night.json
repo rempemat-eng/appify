@@ -8,8 +8,8 @@
   "why_announce_if": "the raid comes from the lantern's light (attention), and is announced only once the homecoming quest is over, so beat 8 follows beat 7 (a decision for Matt)",
   "postpones": 2,
   "lane": "halt_road",
-  "lane_points": [[0, 300], [200, 300], [262, 294], [300, 296]],
-  "why_lane_points": "the plan's halt_road to the square's edge, then round the north of the well (its box 278-298 x 304-320) to the lantern's west side, clear of its post (307-317 x 290-312): the plan's own last leg runs through the well and ends inside the post (audit of #483, B2). The plan is left as it is; test_raids.gd holds that no point of this lane lies inside a solid",
+  "lane_points": [[0, 300], [200, 300], [262, 330], [300, 332], [316, 321]],
+  "why_lane_points": "the plan's halt_road to the square's edge, then round the south of the well (its solid 278-298 x 304-320) to the south-east of the lantern's post (307-317 x 290-312): the plan's own last leg runs through the well and ends inside the post (audit of #483, B2). The strike spot (316, 321) stands in front of both pictures (the well's sorts at y 320 and spans x 269-307, the lantern's sorts at 312), so the raider is not hidden behind the well's frame (audit round 2, P1). The plan is left as it is; test_raids.gd holds that a creature's body fits along the whole lane",
   "pads": [
     { "id": "pad_halt_street", "at": [124, 312], "span": 48, "why": "inside the street between the bakery (foot at y 288) and the herbalist's (top at y 336): its span closes the street wall to wall, so the halt road is shut until it breaks" },
     { "id": "pad_street_mouth", "at": [178, 312], "span": 48, "why": "the street's mouth onto the square, the same span from wall to wall. Replaces the plan's pad_halt_gate (210, 300), which stands in the open square where a hurdle can be walked round (audit of #483, B1). Where the pads go is Matt's open decision (vertical-slice.md, Open for Matt 6): move them here, in the raid's data" }
@@ -35,7 +35,8 @@
   "notice": 60,
   "why_notice": "world px: nearer than this, with nothing solid between, a marching creature turns on the player (the camps notice at 100; a raider keeps to its road longer)",
   "batter": { "damage": 1, "elite_damage": 2, "placeholder": true },
-  "first_wave_after": 2.0,
+  "first_wave": { "near": "square", "within": 60, "at_least": 2.0, "or_after": 25.0,
+    "why": "wave 1 waits for the player to come within `within` world px of the plan's place `near` (the square), or `or_after` seconds, and never comes sooner than `at_least`: the bell is rung on the screen where the player walked in (the garden walk, about 20 s from the square), and two boarlets break a hurdle in about 8 s (audit round 2, R2-2). Not a combat number" },
   "wave_gap": 3.0,
   "spawn_spacing": 1.0,
   "waves": [

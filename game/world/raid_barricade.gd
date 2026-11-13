@@ -17,6 +17,7 @@ const WOOD := Color("#a88a64")         ## the blockout's building wood, one step
 const INK := Color("#1E1917")
 const POST := Color("#5a4632")
 const LIT := Color("#d8c0a0")
+const SHADE := Color(0.06, 0.08, 0.04, 0.24)   ## the creatures' contact shadow (enemies/creature_look.gd)
 const PIP := Color("#f5d49c")
 const PIP_EMPTY := Color("#3a3030")
 
@@ -78,34 +79,62 @@ func _ink_rect(r: Rect2, colour: Color) -> void:
 	draw_rect(r.grow(1.0), INK)
 	draw_rect(r, colour)
 
+## The ground contact shadow of an upright piece standing on `foot` (texels), `width` wide and `h` high: the
+## one sun (data/sun.json via TerrainGround.sun(): a texel h up lands cast.x h east, cast.y h south).
+func _cast(foot: Vector2, width: float, h: float) -> void:
+	var c := TerrainGround.sun() * h
+	draw_colored_polygon(PackedVector2Array([foot, foot + Vector2(width, 0), foot + Vector2(width, 0) + c, foot + c]), SHADE)
+
+## The panels' feet on the ground, down the span (texels): one panel per 16 world px.
+func _panel_feet(r: Rect2) -> Array[float]:
+	var out: Array[float] = []
+	var panels := maxi(1, roundi(r.size.y / 48.0))
+	var step := r.size.y / panels
+	for i in panels:
+		out.append(r.position.y + step * (i + 1))
+	return out
+
 func _draw() -> void:
 	var s := _size()
 	var r := Rect2(-s / 2.0, s)
-	if hp <= 0:
-		# broken: two rails lying on the road
-		draw_rect(Rect2(r.position + Vector2(0, s.y * 0.3), Vector2(s.x, 6)), POST)
-		draw_rect(Rect2(r.position + Vector2(s.x * 0.2, s.y * 0.7), Vector2(s.x * 0.8, 6)), WOOD)
-		return
-	var wood := LIT if _hit > 0.0 else WOOD
 	var vertical := s.y >= s.x
 	var rise := 24.0                    # the rails stand this high above the ground (texels)
+	if hp <= 0:
+		# broken: per panel, the two post stumps still standing and the rails down on the road, split in two
+		# with a gap and their ends knocked askew, in ink outline so the open road reads as open
+		if vertical:
+			for fy in _panel_feet(r):
+				for x: float in [-11.0, 5.0]:
+					_ink_rect(Rect2(Vector2(x, fy - 8.0), Vector2(6, 8)), POST)
+				_ink_rect(Rect2(Vector2(-16, fy - 3.0), Vector2(13, 4)), WOOD)
+				_ink_rect(Rect2(Vector2(0, fy - 6.0), Vector2(15, 4)), WOOD)
+				_ink_rect(Rect2(Vector2(-9, fy + 4.0), Vector2(20, 4)), POST)
+		else:
+			_ink_rect(Rect2(Vector2(r.position.x, -4), Vector2(s.x * 0.45, 4)), WOOD)
+			_ink_rect(Rect2(Vector2(r.position.x + s.x * 0.55, -1), Vector2(s.x * 0.45, 4)), WOOD)
+		return
+	var wood := LIT if _hit > 0.0 else WOOD
 	if vertical:
-		# across an east-west road: hurdle panels down the span (one per 16 world px), each two posts and two
-		# rails, outlined in the house ink so the placeholder reads on the brown road
-		var panels := maxi(1, roundi(s.y / 48.0))
-		var step := s.y / panels
-		for i in panels:
-			var y := r.position.y + step * (i + 1) - 4.0
-			for k in 2:
-				_ink_rect(Rect2(Vector2(-13, y - rise + 4 + k * 9), Vector2(26, 5)), wood)
+		# across an east-west road: hurdle panels down the span, each two posts and two rails, outlined in
+		# the house ink so the placeholder reads on the brown road; each post and rail casts a contact shadow
+		for fy in _panel_feet(r):
 			for x: float in [-11.0, 5.0]:
-				_ink_rect(Rect2(Vector2(x, y - rise), Vector2(6, rise + 4)), POST)
+				_cast(Vector2(x, fy), 6.0, rise + 4.0)
+			for k in 2:
+				var h := rise - k * 9.0
+				var c := TerrainGround.sun() * h
+				draw_rect(Rect2(Vector2(-13, fy) + c, Vector2(26, 2)), SHADE)
+			for k in 2:
+				_ink_rect(Rect2(Vector2(-13, fy - rise + k * 9), Vector2(26, 5)), wood)
+			for x: float in [-11.0, 5.0]:
+				_ink_rect(Rect2(Vector2(x, fy - rise - 4.0), Vector2(6, rise + 4)), POST)
 	else:
 		for i in 3:
 			var x := r.position.x + (s.x - 6.0) * float(i) / 2.0
-			draw_rect(Rect2(Vector2(x, -rise), Vector2(6, rise + 6)), POST)
+			_cast(Vector2(x, 0), 6.0, rise + 6.0)
+			_ink_rect(Rect2(Vector2(x, -rise), Vector2(6, rise + 6)), POST)
 		for k in 2:
-			draw_rect(Rect2(Vector2(r.position.x, -rise + 4 + k * 9), Vector2(s.x, 5)), wood)
+			_ink_rect(Rect2(Vector2(r.position.x, -rise + 4 + k * 9), Vector2(s.x, 5)), wood)
 	# its health as pips over it, once it has been hit
 	if hp < max_hp:
 		var w := 5.0

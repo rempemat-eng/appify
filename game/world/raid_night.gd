@@ -36,6 +36,7 @@ var _queue: Array = []                 ## roles still to come in this wave
 var _spawned := 0
 var _spawn_t := 0.0
 var _gap_t := 0.0
+var _wait_t := 0.0                     ## seconds since the bell, until wave 1 comes
 var _alive := 0
 var _started := false
 var _over := false
@@ -147,7 +148,7 @@ func start() -> void:
 	wave = -1
 	_alive = 0
 	_queue = []
-	_gap_t = float(def.get("first_wave_after", 2.0))
+	_wait_t = 0.0
 	slots = SliceAttackSlots.new()
 	slots.name = "RaidSlots"
 	add_child(slots)
@@ -204,6 +205,12 @@ func _physics_process(delta: float) -> void:
 		return
 	if _alive > 0:
 		return
+	if wave < 0:
+		# wave 1 waits for the player to reach the square (or a while), so the hurdles can be held
+		_wait_t += delta
+		if first_wave_due(_wait_t, _player_at()):
+			_next_wave()
+		return
 	var waves: Array = def.get("waves", [])
 	if wave >= waves.size() - 1 and wave >= 0:
 		_end(true)
@@ -211,6 +218,37 @@ func _physics_process(delta: float) -> void:
 	_gap_t -= delta
 	if _gap_t <= 0.0:
 		_next_wave()
+
+## True when wave 1 may come, `waited` seconds after the bell with the player at `at` (texels; INF: none):
+## never before `first_wave.at_least`; then once the player is within `within` world px of the plan's place
+## `near`, or after `or_after` seconds whatever happens.
+func first_wave_due(waited: float, at: Vector2) -> bool:
+	var fw: Dictionary = def.get("first_wave", {})
+	if waited < float(fw.get("at_least", 2.0)):
+		return false
+	if waited >= float(fw.get("or_after", 25.0)):
+		return true
+	var place := near_place()
+	if at == Vector2.INF or place.size == Vector2.ZERO:
+		return false
+	var p := at / DENSITY
+	var nearest := Vector2(clampf(p.x, place.position.x, place.end.x), clampf(p.y, place.position.y, place.end.y))
+	return p.distance_to(nearest) <= float(fw.get("within", 60.0))
+
+## The plan's place wave 1 waits for the player to near (world px), or an empty Rect2.
+func near_place() -> Rect2:
+	var id := String(def.get("first_wave", {}).get("near", ""))
+	for place: Dictionary in Village.plans.get(String(def.get("zone", "")), {}).get("places", []):
+		if place.get("id", "") == id:
+			var r: Array = place.rect
+			return Rect2(float(r[0]), float(r[1]), float(r[2]), float(r[3]))
+	return Rect2()
+
+func _player_at() -> Vector2:
+	if not is_inside_tree():
+		return Vector2.INF
+	var p := get_tree().get_first_node_in_group("player") as Node2D
+	return p.global_position if p != null and p.is_inside_tree() else Vector2.INF
 
 func _next_wave() -> void:
 	wave += 1

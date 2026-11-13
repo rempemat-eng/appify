@@ -272,7 +272,7 @@ func test_the_night_stands_the_hurdles_and_three_waves_come_and_are_freed() -> v
 	var counts := []
 	for w in 3:
 		# the gap before the wave, then one creature a spawn_spacing
-		for i in 12:
+		for i in 30:     # wave 1 waits up to first_wave.or_after (the player is far from the square)
 			night._physics_process(1.0)
 		var wave := _creatures(night)
 		counts.append(wave.size())
@@ -337,7 +337,7 @@ func test_a_raider_marches_to_the_hurdle_and_batters_it_with_its_own_tell() -> v
 func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_the_next_visit() -> void:
 	var night := _into_town()
 	Raids.ring()
-	for i in 4:
+	for i in 28:
 		night._physics_process(1.0)
 	assert_int(_creatures(night).size()).is_greater(0)
 	night.lantern.batter(night.lantern.max_hp)
@@ -491,7 +491,7 @@ func test_a_won_night_clears_away_and_sets_out_the_bell_towers_mark() -> void:
 	Raids.ring()
 	night.set_physics_process(false)
 	for w in 3:
-		for i in 12:
+		for i in 30:     # wave 1 waits up to first_wave.or_after (the player is far from the square)
 			night._physics_process(1.0)
 		_free_all(night)
 		await get_tree().process_frame
@@ -541,3 +541,88 @@ func test_moss_never_talks_of_the_raid_while_one_of_her_quests_could_start() -> 
 	# the Frostline in the build: her brief for the Col hut, which starts on talking to her, comes first
 	var entry: Dictionary = Dialogue.speakers.moss.entries[0]
 	assert_array(entry.get("if", {}).get("not_flags", [])).contains(["zone_built:frostline"])
+
+# --- the audit of #483, round 2 ------------------------------------------------------------------
+## R2-2: wave 1 waits for the player to come near the square (or a while), so the hurdles can be held.
+func test_the_first_wave_waits_for_the_player_at_the_square() -> void:
+	var night := _into_town()
+	var square := night.near_place()
+	assert_bool(square.has_area()).is_true()
+	var centre := square.get_center() * 3.0
+	var far := Vector2(30, 70) * 3.0                                   # the garden walk, where the bell is rung
+	var fw: Dictionary = Raids.defs.first_night.first_wave
+	assert_bool(night.first_wave_due(float(fw.at_least) - 0.1, centre)).is_false()   # never at once
+	assert_bool(night.first_wave_due(float(fw.at_least), centre)).is_true()
+	assert_bool(night.first_wave_due(10.0, far)).is_false()
+	assert_bool(night.first_wave_due(float(fw.or_after), far)).is_true()   # not for ever
+	var within := float(fw.within)
+	assert_bool(night.first_wave_due(5.0, (square.position + Vector2(-(within - 5.0), 20)) * 3.0)).is_true()
+	assert_bool(night.first_wave_due(5.0, (square.position + Vector2(-(within + 5.0), 20)) * 3.0)).is_false()
+	# in the scene: the bell rung on the garden walk, nothing comes until the player walks to the square
+	Raids.ring()
+	for i in 10:
+		night._physics_process(1.0)
+	assert_int(night.wave).is_equal(-1)
+	assert_int(night.creatures().size()).is_equal(0)
+	Zones.player.global_position = centre
+	night._physics_process(0.1)
+	assert_int(night.wave).is_equal(0)
+
+## R2-1, the game's side: a real arrow, shot from the street as a player shoots it, frees a toad backed
+## against the bakery's south wall (its body is a circle at its feet; the arrow's node flies on the ground).
+func test_a_real_arrow_hits_a_toad_pressed_against_the_bakery_wall() -> void:
+	var night: RaidNight = await _rung_town()
+	for b: RaidBarricade in night.barricades:
+		b.batter(b.hp)
+	var toad := RaidCreature.new()
+	toad.role = "shooter"
+	toad.night = night
+	toad.slots = night.slots
+	toad.position = Vector2(135.0 * 3.0, 288.0 * 3.0 + 12.0)          # touching the bakery's wall face
+	night.camp.add_child(toad)
+	toad.set_physics_process(false)
+	await get_tree().physics_frame
+	var hp := toad.hp
+	for from: Vector2 in [Vector2(135, 326) * 3.0, Vector2(160, 320) * 3.0, Vector2(110, 318) * 3.0]:
+		var archer := Node2D.new()
+		Zones.current.actors.add_child(archer)
+		archer.global_position = from
+		var arrow := Arrow.new()
+		Zones.current.actors.add_child(arrow)
+		# the player's own shot: from the bow at chest height, along the aim from the chest to the target's
+		arrow.setup(from, 30.0, (toad.global_position + Vector2(0, -24)) - (from + Vector2(0, -24)), archer)
+		for i in 30:
+			await get_tree().physics_frame
+		archer.queue_free()
+	assert_int(toad.hp).override_failure_message("a toad against the wall took no arrow").is_less_equal(hp - 3)
+	# and the line the pilot tests (feet to feet) is clear from there, where the old one (24 texels up) was not
+	var space := night.get_world_2d().direct_space_state
+	assert_bool(Arrow.walled_off(space, Vector2(135, 326) * 3.0, toad.global_position)).is_false()
+	assert_bool(Arrow.walled_off(space, Vector2(135, 326) * 3.0, toad.global_position + Vector2(0, -24))).is_true()
+	toad.queue_free()
+
+## P1 and B2 together: a creature's whole body fits along the lane (not only its centre), from the halt road
+## to the strike spot, which stands in front of the well's picture.
+func test_a_creatures_body_fits_along_the_whole_lane() -> void:
+	var night: RaidNight = await _rung_town()
+	for b: RaidBarricade in night.barricades:
+		b.batter(b.hp)
+	await get_tree().physics_frame
+	var space := night.get_world_2d().direct_space_state
+	var body := CircleShape2D.new()
+	body.radius = 12.0
+	var q := PhysicsShapeQueryParameters2D.new()
+	q.shape = body
+	q.collision_mask = 1
+	var blocked := []
+	var s := RaidNight.SPAWN_IN * 3.0                                  # from where the creatures appear
+	while s <= night.length():
+		q.transform = Transform2D(0.0, night.point_at(s))
+		for hit: Dictionary in space.intersect_shape(q, 4):
+			blocked.append("%s at %s" % [(hit.collider as Node).name, (night.point_at(s) / 3.0).round()])
+		s += 3.0
+	assert_array(blocked).is_empty()
+	# the strike spot sorts in front of the well (its picture's foot is at y 320) and is clear of its picture
+	var end := night.point_at(night.length()) / 3.0
+	assert_float(end.y).is_greater(320.0)
+	assert_float(end.x).is_greater(307.0)

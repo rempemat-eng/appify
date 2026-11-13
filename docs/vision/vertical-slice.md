@@ -162,9 +162,11 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
    the camps' look and pay no fight Glint. Both pads are in the raid's own data: `pad_halt_street` in the
    street between the bakery and the herbalist's, and `pad_street_mouth` where the street opens on the
    square. Each hurdle spans the street wall to wall, so nothing walks round it. The lane is the plan's
-   `halt_road` to the square's edge, then the raid's own points round the north of the well to the
-   lantern's west side (the plan's last leg ran through the well). A raider strikes the lantern only
-   from beside its post.
+   `halt_road` to the square's edge, then the raid's own points round the south of the well to the
+   south-east of the lantern's post, where the raider stands in front of the well's picture (the plan's
+   last leg ran through the well). A raider strikes the lantern only from beside its post. Wave 1 waits
+   until the player comes within 60 px of the square (or 25 s), because the bell is rung where the player
+   walked in, about 20 s from the street.
 5. **Win.** A purse of 30 Glint is paid once and `first_night_won` is set. The hurdles and the lantern's
    bar clear away. The bell tower is offered as a restore (`bell_tower`, 50 Glint, act 1's id and price):
    its mark stands before the library's door from then on, and Hale points to it. Its picture (the
