@@ -66,7 +66,7 @@ button Ring the bell
 expect raid running
 expect raidscreen no
 expect defences 2
-expect hud Hold the lantern
+expect hud Hold the shard lantern
 expect enemies 0
 # the station: on the square just east of the street's mouth, in bow range of both hurdles
 goto 640 930 20

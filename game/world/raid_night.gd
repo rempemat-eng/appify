@@ -12,6 +12,7 @@ extends Node2D
 ## when the player comes near. Villagers are never a target: Hale and Moss stay where they are, unhurt.
 ## Its time is counted in physics steps (no clock, nothing while the tree is paused), and each wave comes
 ## when the one before is freed. Positions in the data are world px; here they are texels (x3).
+## The lantern shows no health until it is first struck, and each wave's coming swells its light once.
 
 const DENSITY := 3.0
 const STOP := 40.0            ## texels: a marching creature stops this far short of a standing hurdle
@@ -180,7 +181,7 @@ func _stand_defences() -> void:
 		barricades.append(b)
 
 func _light_the_lantern() -> void:
-	# the bar hangs from the post's foot (data lantern.foot), else from the lane's end
+	# its health and its struck light are drawn from the plinth's foot (data lantern.foot), else the lane's end
 	var foot: Variant = def.get("lantern", {}).get("foot")
 	var at := Vector2(float(foot[0]), float(foot[1])) * DENSITY if foot is Array else point_at(length())
 	lantern = RaidLantern.new()
@@ -258,6 +259,8 @@ func _next_wave() -> void:
 	_spawn_t = 0.0
 	_gap_t = float(def.get("wave_gap", 3.0))
 	Raids.wave_started(wave)
+	if is_instance_valid(lantern):
+		lantern.swell()                # they have come for its light: it shows which thing that is
 	_card(String(def.get("title", "")), "Wave %d of %d, down the halt road" % [wave + 1, waves.size()], "", CARD)
 
 func _spawn(role: String) -> void:
@@ -293,13 +296,13 @@ func _end(won: bool) -> void:
 	_queue.clear()
 	if won:
 		var purse := Raids.win()
-		_card(String(def.get("title", "")), "The lantern held", "The village's purse: %d Glint. Hale will want a word about the old bell." % purse, 6.0)
+		_card(String(def.get("title", "")), "The shard lantern held", "The village's purse: %d Glint. Hale will want a word about the old bell." % purse, 6.0)
 	else:
 		for c: RaidCreature in creatures():
 			c.leave()
 		Raids.lose("lantern")
 		Raids.loss_untold = ""
-		_card(String(def.get("title", "")), "The shardstruck reached the lantern",
+		_card(String(def.get("title", "")), "The shardstruck reached the shard lantern",
 			"They scatter back down the halt road. A few things need mending; they will come again on your next walk into town.", 7.0)
 	_clear_defences()
 	ended.emit(won)

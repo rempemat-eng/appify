@@ -312,4 +312,4 @@ func tracker_text() -> String:
 	if not running():
 		return ""
 	var def := current()
-	return "%s: Hold the lantern (wave %d of %d)" % [def.get("title", def.id), int(rec().get("wave", 0)) + 1, (def.waves as Array).size()]
+	return "%s: Hold the shard lantern (wave %d of %d)" % [def.get("title", def.id), int(rec().get("wave", 0)) + 1, (def.waves as Array).size()]

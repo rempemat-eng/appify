@@ -168,24 +168,24 @@ def battered():
 
 
 def broken():
-    """The posts' stumps, two panels thrown flat to the east, the others' rods scattered across the road."""
+    """The posts' stumps, the two north panels thrown flat to the east, the others' rods scattered by the line."""
     p = V.Pic(W, H, AX, AY)
     a = p.a
     rng = np.random.default_rng(1311)
     js = joints()
     # two panels lying flat: the weave seen from above, its rods running the way the panel fell
-    for i in (0, 2):
+    for i in (0, 1):
         (xa, ya), (xb, yb) = js[i], js[i + 1]
         face = FN.wattle_front(PANEL, 101 + 7 * i)
         n = 36
         for k in range(n + 1):
             t = k / n
-            x, gy = xa + (xb - xa) * t + 6, ya + (yb - ya) * t + 10
+            x, gy = xa + (xb - xa) * t + (6 if i == 0 else -2), ya + (yb - ya) * t + (10 if i == 0 else 16)
             s = t * 51.0
             zs = np.arange(4, PANEL - 2)
             codes = np.asarray(face(np.full(zs.shape, s + 6.0), zs))
             for z, c in zip(zs, codes):
-                if (z > 26 and 10 < s < 26 and i == 0) or (z < 16 and s > 34 and i == 2):
+                if (z > 26 and 10 < s < 26 and i == 0) or (z < 16 and s > 34 and i == 1):
                     continue                                    # torn where it took the blows
                 # it fell away from the blows, north-east of its foot, and lies flat: the road's depth
                 # shows it shorter up the screen than across it
@@ -198,10 +198,12 @@ def broken():
                         a[r, xs + 1] = c
     # the other panels' rods, loose: strands two texels thick, their broken ends pale
     for i in range(12):
-        base = js[1] if i < 6 else js[3]
-        y = base[1] + 6 + (i % 6) * 5 + int(rng.integers(-2, 3))
-        x = int(rng.integers(-12, 10))
-        ln = int(rng.integers(18, 34))
+        # (the south half of the run stands behind the next house's roof on the first night's pads: its
+        # rods stay near the line, so none shows past the roof's end)
+        base = js[2] if i < 6 else js[3]
+        y = base[1] + 4 + (i % 6) * 6 + int(rng.integers(-2, 3))
+        x = int(rng.integers(-14, 2))
+        ln = int(rng.integers(14, 24))
         ang = math.radians(float(rng.uniform(-30, 30)))
         x1, y1 = x + ln * math.cos(ang), y + ln * math.sin(ang) * 0.6
         m = V.seg_mask(a.shape, AX + x, AY + y, AX + x1, AY + y1, 1.1)
