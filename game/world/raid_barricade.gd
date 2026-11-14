@@ -20,6 +20,8 @@ const LIT := Color("#d8c0a0")
 const SHADE := Color(0.06, 0.08, 0.04, 0.24)   ## the creatures' contact shadow (enemies/creature_look.gd)
 const PIP := Color("#f5d49c")
 const PIP_EMPTY := Color("#3a3030")
+const STUMP := 8.0                       ## texels: a broken panel's post stumps stand this high
+const LYING := 4.0                       ## texels: a fallen rail's highest end off the road (its contact shadow)
 
 var pad_id := ""
 var kind: Dictionary = {}
@@ -85,6 +87,13 @@ func _cast(foot: Vector2, width: float, h: float) -> void:
 	var c := TerrainGround.sun() * h
 	draw_colored_polygon(PackedVector2Array([foot, foot + Vector2(width, 0), foot + Vector2(width, 0) + c, foot + c]), SHADE)
 
+## The contact shadow of a piece lying on the road (`r`, texels, drawn by `_ink_rect`), raised `h` off it at
+## its highest: its outlined box moved by the one sun, drawn under the piece so only a sliver shows east and
+## south of it.
+func _cast_lying(r: Rect2, h: float) -> void:
+	var box := r.grow(1.0)
+	draw_rect(Rect2(box.position + TerrainGround.sun() * h, box.size), SHADE)
+
 ## The panels' feet on the ground, down the span (texels): one panel per 16 world px.
 func _panel_feet(r: Rect2) -> Array[float]:
 	var out: Array[float] = []
@@ -101,17 +110,30 @@ func _draw() -> void:
 	var rise := 24.0                    # the rails stand this high above the ground (texels)
 	if hp <= 0:
 		# broken: per panel, the two post stumps still standing and the rails down on the road, split in two
-		# with a gap and their ends knocked askew, in ink outline so the open road reads as open
+		# with a gap and their ends knocked askew, in ink outline so the open road reads as open. Each piece
+		# keeps a small contact shadow by the one sun, as the standing hurdle's do: the stumps cast from their
+		# feet, the fallen rails a sliver (all shadows first, so none falls across a piece)
 		if vertical:
-			for fy in _panel_feet(r):
+			var feet := _panel_feet(r)
+			for fy in feet:
 				for x: float in [-11.0, 5.0]:
-					_ink_rect(Rect2(Vector2(x, fy - 8.0), Vector2(6, 8)), POST)
+					_cast(Vector2(x, fy), 6.0, STUMP)
+				_cast_lying(Rect2(Vector2(-16, fy - 3.0), Vector2(13, 4)), LYING)
+				_cast_lying(Rect2(Vector2(0, fy - 6.0), Vector2(15, 4)), LYING)
+				_cast_lying(Rect2(Vector2(-9, fy + 4.0), Vector2(20, 4)), LYING)
+			for fy in feet:
+				for x: float in [-11.0, 5.0]:
+					_ink_rect(Rect2(Vector2(x, fy - STUMP), Vector2(6, STUMP)), POST)
 				_ink_rect(Rect2(Vector2(-16, fy - 3.0), Vector2(13, 4)), WOOD)
 				_ink_rect(Rect2(Vector2(0, fy - 6.0), Vector2(15, 4)), WOOD)
 				_ink_rect(Rect2(Vector2(-9, fy + 4.0), Vector2(20, 4)), POST)
 		else:
-			_ink_rect(Rect2(Vector2(r.position.x, -4), Vector2(s.x * 0.45, 4)), WOOD)
-			_ink_rect(Rect2(Vector2(r.position.x + s.x * 0.55, -1), Vector2(s.x * 0.45, 4)), WOOD)
+			var left := Rect2(Vector2(r.position.x, -4), Vector2(s.x * 0.45, 4))
+			var right := Rect2(Vector2(r.position.x + s.x * 0.55, -1), Vector2(s.x * 0.45, 4))
+			_cast_lying(left, LYING)
+			_cast_lying(right, LYING)
+			_ink_rect(left, WOOD)
+			_ink_rect(right, WOOD)
 		return
 	var wood := LIT if _hit > 0.0 else WOOD
 	if vertical:

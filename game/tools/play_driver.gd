@@ -77,7 +77,7 @@ var _doors: Array = []          # the current zone's Door nodes (`_door_rects`),
 var _doors_zone: Node = null
 var _fighting := false         # while `fight` runs, `_process` keeps the nearest the player came to a door
 var _fight_gap := 1e9
-var _door_turns := 0           # how often `_door_safe` turned the pilot from a door (the FIGHT line logs it)
+var _door_turns := 0           # how often the pilot was turned from a door: `_door_safe` turns plus `fight`'s step-out ticks (the FIGHT line logs it)
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -883,7 +883,9 @@ func _away_from_doors(from: Vector2, rects: Array) -> Vector2:
 ## Fights whatever is near: aims the mouse at the nearest enemy and clicks, steps or rolls sideways out
 ## of the lane of a telegraphed attack, closes in when out of range or when a wall is in the way.
 ## Downed, it walks back to where the fight began and goes on (up to MAX_DOWNS times; the log counts
-## them). It never dodges or closes in towards a door, and steps out of DOOR_MARGIN of one first.
+## them). It never dodges or closes in towards a door, and steps out of DOOR_MARGIN of one first, except
+## that the Thornback's arena rule wins over a door, the walk back after being downed does not steer
+## round doors, and when every turn is blocked it goes straight away from the nearest door (`_door_safe`).
 ## Ends when no enemy that can be walked to is left in the zone, or after `limit` seconds (a failure).
 func fight(limit: float) -> String:
 	var p := player()
