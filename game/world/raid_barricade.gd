@@ -8,7 +8,9 @@ extends StaticBody2D
 ## Across an east-west road it is drawn from its pictures (scripts/art/kit/hurdles.py; Matt, 13 Nov: "what
 ## are those brown things on the track?"): a zigzag of woven wattle hurdles from wall to wall, standing,
 ## then battered (from half its health down: leaning, the weave burst), then broken (stumps and rods flat on
-## the road, under everyone). Its contact shadow is laid by the one sun from the picture's sheet. Any other
+## the road, under everyone). Its contact shadow is laid by the one sun from the picture's sheet, drawn by
+## this node; the picture is a child sprite (`Picture`) over it, since a texture drawn in `_draw` after the
+## shadow's polygons comes out a blank white frame in the compatibility renderer. Any other
 ## way round (no pad asks for it yet) keeps the blockout's placeholder. A hit tints it for HIT_TINT seconds
 ## (a colour, not a movement, so reduced motion keeps it); nothing about it loops.
 
@@ -38,6 +40,7 @@ var hp := 10
 var max_hp := 10
 var _hit := 0.0
 var _shape: CollisionShape2D
+var _picture: Sprite2D                   ## the hurdle's picture, over this node's own shadow drawing
 
 func _ready() -> void:
 	add_to_group("raid_defence")
@@ -51,6 +54,14 @@ func _ready() -> void:
 	rect.size = _size()
 	_shape.shape = rect
 	add_child(_shape)
+	if pictured():
+		_picture = Sprite2D.new()
+		_picture.name = "Picture"
+		_picture.centered = false
+		var foot: Array = sheet().foot
+		_picture.position = -Vector2(float(foot[0]), float(foot[1]))
+		add_child(_picture)
+		_show_picture()
 
 ## The footprint in texels: `depth` along the lane, `span` across it, turned to the nearer axis (the
 ## placeholder is drawn on the pixel grid, never rotated).
@@ -68,7 +79,7 @@ func batter(amount: int, _dir: Vector2 = Vector2.ZERO) -> bool:
 		return false
 	hp = maxi(hp - amount, 0)
 	_hit = HIT_TINT
-	queue_redraw()
+	_refresh()
 	if hp > 0:
 		return false
 	if pictured():
@@ -84,7 +95,19 @@ func _process(delta: float) -> void:
 	if _hit > 0.0:
 		_hit = maxf(_hit - delta, 0.0)
 		if _hit == 0.0:
-			queue_redraw()
+			_refresh()
+
+## Its state or its struck tint changed: the shadow (or the placeholder) is drawn again and the picture set.
+func _refresh() -> void:
+	queue_redraw()
+	_show_picture()
+
+## The child sprite shows the state's picture, a step lit while struck.
+func _show_picture() -> void:
+	if _picture == null:
+		return
+	_picture.texture = load(ART + String(sheet().states[look()].png))
+	_picture.modulate = HIT_LIT if _hit > 0.0 else Color.WHITE
 
 ## A flat rectangle with a one-texel ink outline (UiStyle.INK, the house outline colour).
 func _ink_rect(r: Rect2, colour: Color) -> void:
@@ -129,9 +152,9 @@ func pictured() -> bool:
 	var s := _size()
 	return s.y >= s.x and is_equal_approx(s.y, float(sheet().get("span", -1)) * DENSITY)
 
+## The pictured hurdle's own drawing is its shadow only; `Picture` stands over it.
 func _draw_pictured() -> void:
 	var st: Dictionary = sheet().states[look()]
-	var foot: Array = sheet().foot
 	# its contact shadow: each panel's ground line thrown by the one sun, the panels' shadows joined into one
 	# shape so no fold is shaded twice
 	var ground: Array = st.ground
@@ -152,7 +175,6 @@ func _draw_pictured() -> void:
 			shade.append(panel)
 	for poly in shade:
 		draw_colored_polygon(poly, SHADE)
-	draw_texture(load(ART + String(st.png)), -Vector2(float(foot[0]), float(foot[1])), HIT_LIT if _hit > 0.0 else Color.WHITE)
 
 func _draw() -> void:
 	if pictured():

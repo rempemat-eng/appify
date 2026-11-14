@@ -517,6 +517,13 @@ func test_the_lantern_shows_its_health_only_once_struck_and_each_blow_shows_on_i
 		assert_bool(Geometry2D.is_point_in_polygon(Vector2(side, RaidLantern.GLASS.position.y + RaidLantern.ARCH + 1.5), shape)).is_true()
 		assert_bool(Geometry2D.is_point_in_polygon(Vector2(side, RaidLantern.GLASS.end.y - 0.5), shape)).is_true()
 	assert_bool(Geometry2D.triangulate_polygon(shape).is_empty()).is_false()      # a shape Godot can fill
+	# the dark pane has a canvas item of its own, under the lights and over the lantern's picture: the lights
+	# are textures, and a texture drawn after a polygon by one item comes out blank in the real game
+	var glass := lamp.get_node("Glass") as Node2D
+	assert_object(glass).is_not_null()
+	assert_bool(glass.show_behind_parent).is_true()
+	assert_bool(glass.z_as_relative).is_true()
+	assert_int(glass.z_index).is_equal(0)
 
 ## Matt, 13 Nov ("what are those brown things on the track?"): the hurdles are pictures, one run from wall to
 ## wall, standing, battered from half health, then broken and flat on the road. No number of theirs changed.
@@ -529,24 +536,41 @@ func test_the_hurdles_are_drawn_from_their_pictures_in_three_states() -> void:
 		assert_int(b.max_hp).is_equal(10)
 		assert_vector((b.get_node("Shape") as CollisionShape2D).shape.size).is_equal(Vector2(18, 144))   # 6 x 48 world px
 		assert_str(b.look()).is_equal("standing")
+		# the picture is a child sprite over the node's own shadow drawing (drawn in _draw after the shadow's
+		# polygons it came out a blank white frame in the real game), its foot on the pad
+		var pic := b.get_node("Picture") as Sprite2D
+		assert_object(pic).is_not_null()
+		assert_bool(pic.centered).is_false()
+		assert_vector(pic.position).is_equal(-Vector2(float(sheet.foot[0]), float(sheet.foot[1])))
+		assert_bool(pic.show_behind_parent).is_false()
+		assert_int(pic.z_index).is_equal(0)
+		assert_bool(pic.z_as_relative).is_true()                      # it sorts and sinks with its hurdle
+		assert_str(pic.texture.resource_path).is_equal(RaidBarricade.ART + String(sheet.states.standing.png))
 	for state: String in ["standing", "battered", "broken"]:
 		var st: Dictionary = sheet.states[state]
 		var tex := load(RaidBarricade.ART + String(st.png)) as Texture2D
 		assert_object(tex).is_not_null()
 		assert_vector(Vector2(tex.get_size())).is_equal(Vector2(float(sheet.frame[0]), float(sheet.frame[1])))
 	var b0: RaidBarricade = night.barricades[0]
+	var pic0 := b0.get_node("Picture") as Sprite2D
 	# its ground line runs from wall to wall: the pad's whole span
 	var ground: Array = sheet.states.standing.ground
 	assert_float(float(ground[0][1])).is_equal(-72.0)
 	assert_float(float(ground[ground.size() - 1][1])).is_equal(72.0)
 	b0.batter(4)
 	assert_str(b0.look()).is_equal("standing")
+	assert_str(pic0.texture.resource_path).is_equal(RaidBarricade.ART + String(sheet.states.standing.png))
+	assert_object(pic0.modulate).is_equal(RaidBarricade.HIT_LIT)    # struck: a step lit, a colour and no movement
+	b0._process(RaidBarricade.HIT_TINT + 0.01)
+	assert_object(pic0.modulate).is_equal(Color.WHITE)
 	b0.batter(1)
 	assert_str(b0.look()).is_equal("battered")                      # from half its health down
+	assert_str(pic0.texture.resource_path).is_equal(RaidBarricade.ART + String(sheet.states.battered.png))
 	b0.batter(4)
 	assert_str(b0.look()).is_equal("battered")
 	b0.batter(1)
 	assert_str(b0.look()).is_equal("broken")
+	assert_str(pic0.texture.resource_path).is_equal(RaidBarricade.ART + String(sheet.states.broken.png))
 	assert_int(b0.z_index).is_equal(-8)                              # the wreckage lies under everyone
 	assert_bool(b0.z_as_relative).is_false()
 

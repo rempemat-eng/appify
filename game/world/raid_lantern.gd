@@ -33,6 +33,7 @@ var hp := 12
 var _struck := 0.0
 var _swell := 0.0
 var _pool: Node2D
+var _glass: Node2D                    ## the struck glass's dark, a canvas item of its own under the lights
 
 func _ready() -> void:
 	add_to_group("raid_lantern")
@@ -44,6 +45,13 @@ func _ready() -> void:
 	_pool.z_index = -8
 	_pool.draw.connect(_draw_pool)
 	add_child(_pool)
+	# the dark pane is a polygon and the lights are textures: in the compatibility renderer a texture drawn
+	# after a polygon by the same canvas item comes out blank, so each has its own item (as the hurdles do)
+	_glass = Node2D.new()
+	_glass.name = "Glass"
+	_glass.show_behind_parent = true   # under the lights, still over the lantern's picture
+	_glass.draw.connect(_draw_glass)
+	add_child(_glass)
 	set_process(false)
 
 func standing() -> bool:
@@ -59,6 +67,7 @@ func batter(amount: int, _dir: Vector2 = Vector2.ZERO) -> bool:
 	_struck = FLICKER
 	set_process(true)
 	queue_redraw()
+	_glass.queue_redraw()
 	if hp == 0:
 		fell.emit()
 		return true
@@ -74,6 +83,7 @@ func _process(delta: float) -> void:
 	_struck = maxf(_struck - delta, 0.0)
 	_swell = maxf(_swell - delta, 0.0)
 	queue_redraw()
+	_glass.queue_redraw()
 	_pool.queue_redraw()
 	if _struck == 0.0 and _swell == 0.0:
 		set_process(false)
@@ -141,11 +151,13 @@ func _draw_pool() -> void:
 			pts.append(Vector2(roundf(cos(a) * half), roundf(sin(a) * half * POOL_FLAT)))
 		_pool.draw_colored_polygon(pts, Color(POOL[i][1], POOL_ALPHA))
 
-func _draw() -> void:
+func _draw_glass() -> void:
 	var still: bool = SaveGame.setting("reduced_motion", false)
 	var d := dim(_struck, still)
 	if d > 0.0:
-		draw_colored_polygon(pane(), Color(DARK, DARK.a * d))
+		_glass.draw_colored_polygon(pane(), Color(DARK, DARK.a * d))
+
+func _draw() -> void:
 	if not hurt():
 		return
 	var row := lights(hp, max_hp)
