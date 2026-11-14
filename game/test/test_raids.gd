@@ -595,6 +595,20 @@ func test_the_hurdles_are_drawn_from_their_pictures_in_three_states() -> void:
 	assert_int(b0.z_index).is_equal(-8)                              # the wreckage lies under everyone
 	assert_bool(b0.z_as_relative).is_false()
 
+## The night's lantern is gone from the raid the moment the night ends, as the hurdles are, even while its
+## lights fade (0.6 s without reduced motion): nothing that asks for the raid's lantern finds a fading one.
+func test_the_lantern_is_no_longer_the_raids_once_the_night_ends_while_it_fades() -> void:
+	SaveGame.data.settings.reduced_motion = false
+	var night: RaidNight = await _rung_town()
+	var lamp := night.lantern
+	assert_object(get_tree().get_first_node_in_group("raid_lantern")).is_same(lamp)
+	night._end(true)
+	assert_str(Raids.state()).is_equal("won")
+	assert_bool(is_instance_valid(lamp) and lamp.is_inside_tree()).is_true()   # still fading out
+	assert_object(get_tree().get_first_node_in_group("raid_lantern")).is_null()
+	assert_int(get_tree().get_nodes_in_group("raid_defence").size()).is_equal(0)
+	assert_object(night.lantern).is_null()
+
 ## B2: the lane goes round the well, not through it: no point of it lies inside a solid, and its end stands
 ## beside the lantern's post, within the reach a raider strikes from.
 func test_no_point_of_the_lane_lies_inside_a_solid_and_it_ends_beside_the_lantern() -> void:

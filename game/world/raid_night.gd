@@ -321,6 +321,8 @@ func _clear_defences() -> void:
 	lantern = null
 	for n in gone:
 		n.remove_from_group("raid_defence")
+		if n.is_in_group("raid_lantern"):
+			n.remove_from_group("raid_lantern")   # no longer the night's lantern while its lights fade
 		if SaveGame.setting("reduced_motion", false) or not n.is_inside_tree():
 			n.queue_free()
 		else:
