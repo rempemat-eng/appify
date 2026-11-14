@@ -147,7 +147,8 @@
  "reviewed": "2026-11-13",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-14",
+  "note": "PR #488 round 2b at e7a805aa, sha256 e5c6ffc2. detail.bar 0.78 [0,34,240,229] rejected under ruling 1 (docs/reviews/2026-11-08-crossroads-placed.md round 7; eastward-edges.md 11.9 as amended 13 Nov for the coursed roof). Re-measured through Eastward's pipe: walls 1.09 to 1.25 (floor 0.82); roof, stack out, 12.3 to 16.1 tones and 35 to 43 shapes a patch (floor 11.9 / 27.9); whole roof noise 27.7 to 29.1 % raw (calm line 32 %); between the courses about 7 % (line 15 %). Form by eye: front, darker east hip, west hip with a lit arris, ridge roll with ligger, thick eave lip, stack with cap, pot, apron and cast shade. logic.scale (195 against 200) and the seven detail.light leads are polish and rejected: curtains, panes, door and the east hip are local colour or the shaded plane. Polish H-a to H-d."
  }
 }

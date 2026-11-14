@@ -51,7 +51,8 @@
  "reviewed": "2026-11-13",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-14",
+  "note": "PR #488 round 2b at e7a805aa, sha256 57ec74ec. A ragged tear with slumped straw, a bared rafter and a dark interior; three boards nailed over the east window with a leaning batten, nail heads with rust runs; a crack in the stone; debris at the foot. Sits on the new roof with no seam. detail.bar 0.73 [18,61,164,228] stands as polish (an overlay of few parts). Polish D-a."
  }
 }

@@ -63,7 +63,8 @@
  "reviewed": "2026-11-13",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-14",
+  "note": "PR #488 round 2b at e7a805aa, sha256 fc775b28. logic.scale [8,14,52,208] rejected: the box is a 144-texel run down the road plus the rise; each post measures 50 texels and each panel 42 (hurdle.json rise 42), inside the fence class of 41 to 67, chest high on Bramble in the real frames. Woven panels with sails, alternately lit and shaded round the zigzag, round posts with a lit west edge, a dark east edge and cut tops. detail.bar 0.64 stands as polish, level with the approved kit fence (0.64). Polish U-a, U-b."
  }
 }
