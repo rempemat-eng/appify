@@ -463,7 +463,7 @@ function resolveBinary(name, env = process.env) {
   return null;
 }
 /** The Python that `python3` starts, with the packages the art checks draw and encode with. */
-function probePython(run = spawnSync) {
+function probePython(run = spawnSync, command = 'python3') {
   const code = [
     'import sys, json',
     'out = {"python": sys.version.split()[0]}',
@@ -476,12 +476,32 @@ function probePython(run = spawnSync) {
     'except Exception: out["zlib"] = None',
     'print(json.dumps(out))',
   ].join('\n');
-  const got = run('python3', ['-c', code], { encoding: 'utf8' });
+  const got = run(command, ['-c', code], { encoding: 'utf8' });
   try {
     return JSON.parse(got.stdout);
   } catch {
     return { python: null, pillow: null, numpy: null, scipy: null, zlib: null };
   }
+}
+/** Every Python the checks start: `python3` (the npm scripts) and `$PYTHON` when it is set
+ * (check:art-repro and three Godot tests use it in place of python3). */
+function probePythons(env = process.env, probe = probePython) {
+  const python = probe(spawnSync, 'python3');
+  return env.PYTHON ? { python, envPython: probe(spawnSync, env.PYTHON) } : { python };
+}
+/** The first reason one of those Pythons cannot be trusted with PNG bytes, or null. */
+function artBytesProblems({ python, envPython }) {
+  const first = artBytesProblem(python);
+  if (first || !envPython) return first;
+  const second = artBytesProblem(envPython);
+  return second && `PYTHON is set and check:art-repro starts it in place of python3: ${second}`;
+}
+/** A fast route's time limit in seconds. A failing step waits for a picture of the failure, and
+ * no frame is drawn in fixed step, so it would otherwise sit under the lock for 900 s. */
+const FAST_TIMEOUT = 180;
+/** What a route step adds to its environment (the engine launcher of a fast step apart). */
+function routeEnv(step, out) {
+  return { PLAYTEST_OUT: out, ...(step.fast ? { PLAYTEST_TIMEOUT: String(FAST_TIMEOUT) } : {}) };
 }
 /** The Godot binary's bytes: the same path with another binary behind it is another toolchain. */
 function probeGodot(name = process.env.GODOT || 'godot') {
@@ -491,7 +511,7 @@ function probeGodot(name = process.env.GODOT || 'godot') {
 }
 /** What a result was made with. A result is reused only when every part is the same. */
 const part = (value) => value || 'none';
-function toolchainKey({ node, python = {}, godot }) {
+function toolchainKey({ node, python = {}, envPython, godot }) {
   return [
     `node ${part(node)}`,
     `python ${part(python.python)}`,
@@ -499,6 +519,11 @@ function toolchainKey({ node, python = {}, godot }) {
     `numpy ${part(python.numpy)}`,
     `scipy ${part(python.scipy)}`,
     `zlib ${part(python.zlib)}`,
+    ...(envPython
+      ? [
+          `PYTHON ${part(envPython.python)} Pillow ${part(envPython.pillow)} numpy ${part(envPython.numpy)} scipy ${part(envPython.scipy)} zlib ${part(envPython.zlib)}`,
+        ]
+      : []),
     `godot ${part(godot)}`,
   ].join('; ');
 }
@@ -549,7 +574,7 @@ function executeStep(root, folder, tree) {
       const env = { ...process.env };
       let setup = 'date +%s > "$STAMP"; ';
       if (step.kind === 'route') {
-        env.PLAYTEST_OUT = path.join(folder, tree.slice(0, 12), name);
+        Object.assign(env, routeEnv(step, path.join(folder, tree.slice(0, 12), name)));
         if (step.fast) {
           const launcher = fastEngine(path.join(folder, tree.slice(0, 12), 'fast-engine'));
           if (launcher) env.GODOT = launcher; // without one playtest.sh reports the missing binary
@@ -661,6 +686,10 @@ async function main(argv) {
     return usage(`--repeat takes a whole number of 1 or more, not "${value('repeat')}"`);
   if (!/^\d+(\.\d+)?$/.test(value('budget', '0')))
     return usage(`--budget takes seconds, not "${value('budget')}"`);
+  if (mode === 'routes' && flags.includes('--final'))
+    return usage(
+      '`routes` plays the named routes only and is never the final chain: leave --final out, or run `stream:checks -- --final` without `routes`',
+    );
   if (fast && mode !== 'routes')
     return usage(
       '--fast is only for `playtest:repeat -- <route> --fast`; the inner loop and --final never play in fixed step',
@@ -687,21 +716,23 @@ async function main(argv) {
   }
   const base = value('base');
   const changed = changedPaths(root, base ?? 'origin/main');
-  let python = null;
+  let pythons = null;
   // art and kit checks compare PNG bytes: stop before minutes are spent on an encoder that differs
   const artReady = () => {
-    python = probePython();
-    const problem = artBytesProblem(python);
+    pythons = probePythons();
+    const problem = artBytesProblems(pythons);
     if (problem) {
       console.error(`stream-checks: ${problem}`);
       return false;
     }
     const pins = hostedPins(hosted(WORKFLOWS.verify));
-    const off = Object.entries(pins || {}).filter(([name, version]) => python[name] !== version);
-    if (off.length)
-      console.error(
-        `stream-checks: warning: hosted Verify pins ${off.map(([name, version]) => `${name} ${version} (here ${python[name]})`).join(', ')}; generated art can differ.`,
-      );
+    for (const [label, python] of Object.entries(pythons)) {
+      const off = Object.entries(pins || {}).filter(([name, version]) => python[name] !== version);
+      if (off.length)
+        console.error(
+          `stream-checks: warning: hosted Verify pins ${off.map(([name, version]) => `${name} ${version} (here ${String(python[name])})`).join(', ')} (${label === 'python' ? 'python3' : '$PYTHON'}); generated art can differ.`,
+        );
+    }
     return true;
   };
   if (words[0] === 'verify-game') {
@@ -748,7 +779,7 @@ async function main(argv) {
     head: git(root, ['rev-parse', 'HEAD']),
     how: toolchainKey({
       node: process.versions.node,
-      python: python ?? probePython(),
+      ...(pythons ?? probePythons()),
       godot: probeGodot(),
     }),
     resultsFile: path.join(folder, 'results.jsonl'),
@@ -777,6 +808,10 @@ module.exports = {
   toolchainKey,
   probePython,
   artBytesProblem,
+  artBytesProblems,
+  probePythons,
+  routeEnv,
+  FAST_TIMEOUT,
   hostedPins,
   main,
   globToRegExp,

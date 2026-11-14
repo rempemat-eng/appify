@@ -12,6 +12,10 @@ const {
   changedPaths,
   toolchainKey,
   artBytesProblem,
+  artBytesProblems,
+  probePythons,
+  routeEnv,
+  FAST_TIMEOUT,
   hostedPins,
   main: cli,
   globToRegExp,
@@ -340,6 +344,13 @@ function testFastPlan({ routes, workflows, game }) {
       `${mode} never plays in fixed step`,
     );
   assert.deepEqual(FAST_ARGS, ['--fixed-fps', '60', '--disable-render-loop']);
+  // round 2, N1: a failing fast route would wait 900 s for a picture that is never drawn
+  assert.deepEqual(routeEnv(fast[1], '/out'), {
+    PLAYTEST_OUT: '/out',
+    PLAYTEST_TIMEOUT: String(FAST_TIMEOUT),
+  });
+  assert.ok(FAST_TIMEOUT <= 300);
+  assert.deepEqual(routeEnv({ kind: 'route' }, '/out'), { PLAYTEST_OUT: '/out' });
 }
 async function testFastRunsAreLabelledAndKeptApart(folder) {
   const routes = [{ name: 'main', files: [] }];
@@ -415,6 +426,13 @@ function testToolchainKey() {
   ].map(toolchainKey);
   assert.equal(new Set([key, ...others]).size, others.length + 1, 'each part changes the key');
   assert.match(toolchainKey({ node: '24.19.0' }), /python none; Pillow none; .*godot none$/);
+  // round 2, N3: with PYTHON set, the Python that check:art-repro starts is in the key too
+  const withEnv = toolchainKey({ ...tools, envPython: { ...python, zlib: '1.3.1.zlib-ng' } });
+  assert.notEqual(withEnv, key);
+  assert.match(
+    withEnv,
+    /zlib 1\.3; PYTHON 3\.12\.3 Pillow 12\.3\.0 numpy 2\.5\.3 scipy 1\.18\.1 zlib 1\.3\.1\.zlib-ng; godot/,
+  );
 }
 
 /** The preflight for plans with an art or kit check: no byte comparison on a foreign PNG encoder. */
@@ -440,6 +458,22 @@ function testArtBytesPreflight() {
     scipy: '1.18.1',
   });
   assert.equal(hostedPins('run: npm ci'), null);
+  // round 2, N3: `$PYTHON` is probed when set, and a bad one stops the plan like a bad python3
+  const asked = [];
+  const probe = (_run, command) => {
+    asked.push(command);
+    return command === 'python3' ? python : { ...python, zlib: '1.3.1.zlib-ng' };
+  };
+  assert.deepEqual(probePythons({}, probe), { python });
+  const both = probePythons({ PYTHON: '/opt/py/bin/python' }, probe);
+  assert.deepEqual(asked, ['python3', 'python3', '/opt/py/bin/python']);
+  assert.match(artBytesProblems(both), /^PYTHON is set .*zlib 1\.3\.1\.zlib-ng/);
+  assert.equal(artBytesProblems({ python, envPython: python }), null);
+  assert.equal(artBytesProblems({ python }), null);
+  assert.match(
+    artBytesProblems({ python: { ...python, pillow: null }, envPython: python }),
+    /no Pillow/,
+  );
 }
 
 /** Audit N2: a repeat that is not a whole number of 1 or more is a usage error, not "passed". */
@@ -463,6 +497,10 @@ async function testRepeatMustBeAWholeNumber() {
       2,
       'fast runs are not repeated',
     );
+    // round 2, N2: `routes` is never the final chain
+    assert.equal(await cli(['routes', 'main', '--final']), 2);
+    assert.equal(await cli(['routes', 'main', '--final', '--fast']), 2);
+    assert.match(said.at(-1), /`routes` plays the named routes only and is never the final chain/);
   } finally {
     console.error = error;
   }

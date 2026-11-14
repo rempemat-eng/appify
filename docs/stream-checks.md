@@ -47,14 +47,14 @@ Hosted workflows with no local counterpart, with or without `--final`: `kit-buil
 
 `check:kit` and `check:review` (inside `verify` and `verify:game`) and `check:art-repro` compare freshly written PNGs with the committed ones byte for byte. The pixels depend on Pillow, numpy and scipy; the bytes also depend on the zlib that Pillow loads. Pillow's wheel does not carry a zlib of its own: it takes the machine's `libz.so.1`. Hosted CI (Ubuntu) has the original zlib, and the committed PNGs are its output. Some sandbox images put zlib-ng first in the loader's path, and some also patch their system Pillow to write PNGs at another compression level. On such a machine identical pixels come out as other bytes, and `python3 -m scripts.art.kit.build --check` reports `stale or missing` on an unchanged `main`. That is the machine, not the change, and a PNG written there must never be committed.
 
-The runner checks this before any plan with `verify`, `verify:game` or `check:art-repro`: it asks `python3` for the zlib Pillow reports (`PIL.features.version('zlib')`) and stops with exit 2 when there is no Pillow or the zlib is zlib-ng. It warns when Pillow, numpy or scipy differ from the versions hosted Verify pins. To get a Python that passes:
+The runner checks this before any plan with `verify`, `verify:game` or `check:art-repro`: it asks `python3`, and `$PYTHON` when that is set (`check:art-repro` and three Godot tests start it in place of `python3`), for the zlib Pillow reports (`PIL.features.version('zlib')`) and stops with exit 2 when there is no Pillow or the zlib is zlib-ng. It warns when Pillow, numpy or scipy differ from the versions hosted Verify pins. To get a Python that passes:
 
 1. Make a venv with the wheels hosted CI pins (the `pip install` line in `.github/workflows/verify.yml`: Pillow, numpy and scipy with exact versions) on the Python minor it uses. Unmodified wheels from PyPI, not the image's own packages.
 2. Find the distribution's original zlib (on Ubuntu and Debian `/lib/x86_64-linux-gnu/libz.so.1`; `ldconfig -p | grep libz` lists what is there, and the one to avoid has `zlib-ng` in the name it links to).
 3. Put a small `python3` launcher first on `PATH` that sets `LD_PRELOAD` to that file and then starts the venv's Python. `LD_PRELOAD` is inherited by the Pythons that the checks start themselves. `LD_LIBRARY_PATH` is not enough where the Python binary has an rpath of its own.
 4. Check it on an unchanged `main`: `python3 -c "from PIL import features; print(features.version('zlib'))"` prints a plain version such as `1.3`, and `python3 -m scripts.art.kit.build --check` ends with `up to date`. Only then are local art results worth anything.
 
-The Python, Pillow, numpy, scipy and zlib versions are part of the key a result is kept under (below), so a result made with one Python is never reused with another.
+The Python, Pillow, numpy, scipy and zlib versions (of `python3`, and of `$PYTHON` when set) are part of the key a result is kept under (below), so a result made with one Python is never reused with another.
 
 ## Results survive a restart
 
@@ -72,11 +72,11 @@ It refuses, with exit 2, any diff that changes more than `game/`, `docs/` and `*
 
 ## The fast playtest (`--fast`): a quick look, never a result
 
-`npm run playtest:repeat -- <route> --fast` plays a route once with Godot's `--fixed-fps 60 --disable-render-loop`: a fixed step and no drawing, about ten times faster than real time. It is off unless asked for, exists only for `playtest:repeat`, and is refused with `--final`, in the inner loop and together with `--repeat`. Its steps have ids of their own (`route-fast:<name>#1`), a cache key of their own, and `FAST` on every result line, so a fast pass is never reused or counted as a real run.
+`npm run playtest:repeat -- <route> --fast` plays a route once with Godot's `--fixed-fps 60 --disable-render-loop`: a fixed step and no drawing, about ten times faster than real time. It is off unless asked for, exists only for `playtest:repeat` (which itself refuses `--final`: naming routes is never the final chain), and is refused with `--final`, in the inner loop and together with `--repeat`. Its steps have ids of their own (`route-fast:<name>#1`), a cache key of their own, and `FAST` on every result line, so a fast pass is never reused or counted as a real run.
 
 - **Fast runs are deterministic.** The same tree gives the same log every time. Three fast runs are one sample: they say nothing about flakiness, which is what the three repeats are for. That is why `--fast` plays once.
 - **It can hide timing bugs.** On a loaded machine the real game gets late inputs, uneven frame times and several physics steps in one frame; in fixed step none of that happens. In the audit of #489 a fight that put the player down once in both real runs never did in fixed step, and ended in half the time. Code that waits on drawn frames or on the wall clock (effects that start when they come on screen, the dialogue box's frame guard, the hurt blink) behaves differently too.
-- **No pictures.** `shot` waits for a drawn frame and fast mode draws none, so a route with a `shot` line is refused in fast mode. Making pictures work needs a change under `game/tools/`, which this tooling does not make. Never cite a picture or a result from a fast run in a PR or to an auditor.
+- **No pictures.** `shot` waits for a drawn frame and fast mode draws none, so a route with a `shot` line is refused in fast mode. Making pictures work needs a change under `game/tools/`, which this tooling does not make. Never cite a picture or a result from a fast run in a PR or to an auditor. For the same reason a fast route that fails cannot take its `fail.png`: it waits for a frame that is never drawn and ends only at the time limit, which fast steps set to 180 s (in place of 900), and its last message is lost. It still ends as `FAIL`; play it without `--fast` to see why.
 
 Use it to find out quickly whether a route's steps still line up after an edit. Then play the route for real: the three counted repeats, `--final`, hosted CI and an auditor never use it.
 
