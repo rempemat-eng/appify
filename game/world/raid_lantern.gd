@@ -7,7 +7,8 @@ extends Node2D
 ##
 ## Unhurt, it shows nothing (Matt, 13 Nov: "why does the lantern have a health bar?"). From the first
 ## blow its health stands over its roof as a row of lights, the HUD's own kind of meter (hearts for
-## Bramble, lights for the lantern: ui/art/shard_*.png, one light for two blows). Each blow shows on the
+## Bramble, lights for the lantern: ui/art/shard_*.png, one light for two health: a raider's blow, damage 1, breaks
+## half a light and the elite's, damage 2, a whole one; data/raids/first_night.json). Each blow shows on the
 ## lantern itself: its glass (the pane under its arched head, `pane`) goes dark and comes back, twice, in
 ## FLICKER seconds; under reduced motion it is dark once for that long, with no flicker. When a wave comes
 ## its light pools once on the setts at its foot (`swell`): three hard-edged rings on the shard's own ramp

@@ -525,6 +525,27 @@ func test_the_lantern_shows_its_health_only_once_struck_and_each_blow_shows_on_i
 	assert_bool(glass.z_as_relative).is_true()
 	assert_int(glass.z_index).is_equal(0)
 
+## One light is two health, not two blows: with the data's own damage (first_night.json: a raider's blow 1,
+## the elite's 2) the elite's blow empties one whole light, and a raider's blow after it leaves a half light.
+func test_the_elites_blow_empties_a_whole_light_and_a_raiders_half_of_one() -> void:
+	var night: RaidNight = await _rung_town()
+	var lamp := night.lantern
+	assert_int(lamp.max_hp).is_equal(12)                               # the data's own numbers, unchanged
+	assert_int(night.batter_damage("rusher")).is_equal(1)
+	assert_int(night.batter_damage("elite")).is_equal(2)
+	assert_int(RaidLantern.lights(lamp.hp, lamp.max_hp).size()).is_equal(6)
+	lamp.batter(night.batter_damage("elite"))
+	assert_int(lamp.hp).is_equal(10)
+	assert_array(RaidLantern.lights(lamp.hp, lamp.max_hp)).is_equal(["full", "full", "full", "full", "full", "empty"])
+	lamp.batter(night.batter_damage("rusher"))
+	assert_int(lamp.hp).is_equal(9)
+	assert_array(RaidLantern.lights(lamp.hp, lamp.max_hp)).is_equal(["full", "full", "full", "full", "half", "empty"])
+	# the tracker's row is the same row
+	var hud: Control = auto_free(load("res://ui/hud.gd").new())
+	add_child(hud)
+	hud._show_lantern(lamp)
+	assert_str(hud.shown_text().lantern).is_equal("9/12")
+
 ## Matt, 13 Nov ("what are those brown things on the track?"): the hurdles are pictures, one run from wall to
 ## wall, standing, battered from half health, then broken and flat on the road. No number of theirs changed.
 func test_the_hurdles_are_drawn_from_their_pictures_in_three_states() -> void:

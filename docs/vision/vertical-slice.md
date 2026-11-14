@@ -188,9 +188,10 @@ lantern have a health bar?", then "why would i defend a lantern that's so odd"):
   empty until the woodland's shard is home, then the shard alight in the middle cradle in the shard's own
   violet. It stands across the gate walk from the well, each on its own ring of setts.
 - **Its health** shows only once it is struck: a row of six lights over its roof (the HUD's meter style,
-  one light for two blows), and the same row under the tracker's line from the bell, so the player knows
-  what to protect before the first blow. Each blow darkens its glass for a moment; each wave's coming
-  swells its light once. Both are finite and still under reduced motion.
+  one light for two health: a raider's blow breaks half a light, the elite's a whole one), and the same
+  row under the tracker's line from the bell, so the player knows what to protect before the first blow.
+  Each blow darkens its glass for a moment; each wave's coming swells its light once. Both are finite and
+  still under reduced motion.
 - **The words** name it the same everywhere: "the shard lantern" (the tracker, the prepare screen, the
   cards). The prepare screen and Hale say what it holds and why they come; the lantern says so itself
   when looked at.

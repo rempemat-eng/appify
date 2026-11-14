@@ -120,7 +120,7 @@ KEY = [
 KEY_KEY = {'o': INK, 'h': STONE[4], 'l': STONE[3], 'm': STONE[3], 'd': STONE[1]}
 
 # the shard lantern's health (world/raid_lantern.gd, the tracker): a light in the shard's violet (the
-# nap ramp) with a pale heart, as a heart is a heart; half a light for one blow of two; its socket empty
+# nap ramp) with a pale heart, as a heart is a heart; one light for two health, half a light for one; its socket empty
 SHARD = [
     '...o...',
     '..oho..',
@@ -133,7 +133,7 @@ SHARD = [
     '..odo..',
     '...o...',
 ]
-SHARD_HALF = [                # one blow of two: broken on a diagonal, the lit half above with half its
+SHARD_HALF = [                # one health of two: broken on a diagonal, the lit half above with half its
     '...o...',                # heart, the spent half below as the empty socket, a crack between them
     '..oho..',
     '.ohlmo.',
