@@ -2,8 +2,18 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { spawnSync } = require('node:child_process');
 const {
   APP_ONLY,
+  FAST_ARGS,
+  ART_BYTE_STEPS,
+  leftToFinal,
+  reusableRecord,
+  changedPaths,
+  toolchainKey,
+  artBytesProblem,
+  hostedPins,
+  main: cli,
   globToRegExp,
   workflowPaths,
   hostedRuns,
@@ -22,6 +32,449 @@ const ids = (steps) => steps.map((step) => step.id);
 const sorted = (list) => [...list].sort((x, y) => x.localeCompare(y));
 const trigger = (key, globs) =>
   `on:\n  pull_request:\n    ${key}:\n${globs.map((glob) => `      - '${glob}'\n`).join('')}jobs:\n`;
+
+const stub = (failing) => {
+  const calls = [];
+  const execute = async (step) => {
+    calls.push(step.id);
+    return { exit: failing.has(step.id) ? 1 : 0, seconds: 1, waited: 0, log: `${step.id}.log` };
+  };
+  return { calls, execute, failing };
+};
+const chain = (folder, name, more) => {
+  const lines = [];
+  return {
+    lines,
+    options: {
+      tree: 't',
+      head: 'h',
+      how: 'tools',
+      resultsFile: path.join(folder, `${name}.jsonl`),
+      log: (line) => lines.push(line),
+      ...more,
+    },
+  };
+};
+
+/** Audit B1: an older pass must not outlive a later failure on the same tree. */
+async function testNewestRecordDecides(folder) {
+  const steps = [{ id: 'verify', command: 'npm', args: ['run', 'verify'] }];
+  const { calls, execute, failing } = stub(new Set());
+  const { options } = chain(folder, 'newest', { steps, execute });
+  assert.equal((await runChain(options)).rows[0].note, 'ran');
+  failing.add('verify');
+  assert.equal((await runChain({ ...options, fresh: true })).ok, false, 'the --fresh run fails');
+  calls.length = 0;
+  const after = await runChain(options);
+  assert.deepEqual(calls, ['verify'], 'the pass before the failure is not reused');
+  assert.equal(after.ok, false);
+  assert.deepEqual(
+    after.earlier.map((record) => [record.id, record.exit]),
+    [['verify', 1]],
+  );
+  failing.clear();
+  calls.length = 0;
+  assert.equal((await runChain(options)).ok, true);
+  assert.deepEqual(calls, ['verify'], 'it runs again until its newest record is a pass');
+  calls.length = 0;
+  assert.equal((await runChain(options)).rows[0].note.startsWith('reused'), true);
+  assert.equal(calls.length, 0);
+  // the rule itself, on plain records
+  const record = (id, exit, state = 'done') => ({ id, tree: 't', how: 'tools', state, exit });
+  const verify = { id: 'verify' };
+  assert.equal(
+    reusableRecord([record('verify', 0), record('verify', 1)], verify, 't', 'tools'),
+    null,
+  );
+  assert.ok(reusableRecord([record('verify', 1), record('verify', 0)], verify, 't', 'tools'));
+  assert.equal(
+    reusableRecord([record('verify', 0), record('verify', 0, 'moved')], verify, 't', 'tools'),
+    null,
+    'a run the tree moved under is a failure too',
+  );
+  assert.ok(
+    reusableRecord(
+      [record('verify', 0), record('verify', undefined, 'started')],
+      verify,
+      't',
+      'tools',
+    ),
+    'an unfinished start is no result either way',
+  );
+}
+
+/** Audit B2: three of three cannot be collected over retries. */
+async function testRouteFailureVoidsEveryRun(folder) {
+  const routes = [{ name: 'main', files: ['game/tools/routes/main.txt'] }];
+  const steps = plan({ changed: [], routes, mode: 'routes', extra: ['main'] });
+  const { calls, execute, failing } = stub(new Set(['route:main#2']));
+  const { options, lines } = chain(folder, 'routes', { steps, execute, mode: 'routes' });
+  assert.equal((await runChain(options)).ok, false);
+  assert.deepEqual(calls, ['route:main#1', 'route:main#2']);
+  failing.clear();
+  calls.length = 0;
+  lines.length = 0;
+  const retry = await runChain(options);
+  assert.deepEqual(
+    calls,
+    ['route:main#1', 'route:main#2', 'route:main#3'],
+    'run 1 passed before the failure, so it does not count',
+  );
+  assert.equal(retry.ok, true);
+  assert.deepEqual(
+    retry.earlier.map((record) => record.id),
+    ['route:main#2'],
+  );
+  assert.ok(
+    lines.some((line) => /^EARLIER route:main#2 .*exit 1/.test(line)),
+    lines.join('\n'),
+  );
+  assert.match(
+    lines.at(-2),
+    /3 passed \(0 reused\), 0 failed, 0 not run, 1 earlier failure on this tree/,
+  );
+  calls.length = 0;
+  const again = await runChain(options);
+  assert.equal(calls.length, 0, 'three passes in a row after the last failure are reused');
+  assert.equal(again.earlier.length, 1, 'and the failure is still named');
+  // with --keep-going a later run can pass after the failure: it counts, the earlier one does not
+  const { options: kept } = chain(folder, 'routes-kept', { steps, execute, mode: 'routes' });
+  failing.add('route:main#2');
+  await runChain({ ...kept, keepGoing: true });
+  failing.clear();
+  calls.length = 0;
+  await runChain(kept);
+  assert.deepEqual(calls, ['route:main#1', 'route:main#2']);
+  // another route's failure voids nothing here
+  const other = { id: 'route:other#1', tree: 't', how: 'tools', state: 'done', exit: 1 };
+  const pass = { id: 'route:main#1', tree: 't', how: 'tools', state: 'done', exit: 0 };
+  assert.ok(reusableRecord([pass, other], steps[1], 't', 'tools'));
+  assert.equal(
+    reusableRecord([pass, { ...other, id: 'route:main#3' }], steps[1], 't', 'tools'),
+    null,
+  );
+}
+
+/** Audit B3: a rename must show the path it left as well as the one it made. */
+function testRenamesShowBothPaths() {
+  const repo = fs.mkdtempSync(path.join(os.tmpdir(), 'stream-checks-git-'));
+  try {
+    const env = { ...process.env };
+    for (const key of Object.keys(env)) if (key.startsWith('GIT_')) delete env[key];
+    const git = (...args) => {
+      const got = spawnSync(
+        'git',
+        [
+          '-c',
+          'user.name=t',
+          '-c',
+          'user.email=t@example.invalid',
+          '-c',
+          'commit.gpgsign=false',
+          ...args,
+        ],
+        { cwd: repo, env, encoding: 'utf8' },
+      );
+      assert.equal(got.status, 0, got.stderr);
+    };
+    const body = 'extends Node\n'.repeat(40);
+    for (const file of ['game/actors/player.gd', 'scripts/art/gen.py', 'lib/a.ts']) {
+      fs.mkdirSync(path.join(repo, path.dirname(file)), { recursive: true });
+      fs.writeFileSync(path.join(repo, file), `# ${file}\n${body}`);
+    }
+    fs.mkdirSync(path.join(repo, 'docs'));
+    git('init', '-q', '-b', 'main');
+    git('add', '--all');
+    git('commit', '-q', '-m', 'base');
+    git('checkout', '-q', '-b', 'work');
+    git('mv', 'game/actors/player.gd', 'game/actors/hero.gd');
+    git('mv', 'scripts/art/gen.py', 'docs/gen.md');
+    git('mv', 'lib/a.ts', 'game/a.txt');
+    git('commit', '-q', '-m', 'moves');
+    const saved = { ...process.env };
+    for (const key of Object.keys(process.env)) if (key.startsWith('GIT_')) delete process.env[key];
+    let changed;
+    try {
+      changed = changedPaths(repo, 'main');
+    } finally {
+      Object.assign(process.env, saved);
+    }
+    assert.deepEqual(changed, [
+      'docs/gen.md',
+      'game/a.txt',
+      'game/actors/hero.gd',
+      'game/actors/player.gd',
+      'lib/a.ts',
+      'scripts/art/gen.py',
+    ]);
+    assert.deepEqual(
+      touchedProtected(changed),
+      ['game/actors/player.gd'],
+      'the guard sees the move',
+    );
+    assert.equal(gameOnly(changed), false, 'verify:game refuses a diff that removes lib/a.ts');
+    assert.ok(ids(plan({ changed, workflows: {} })).includes('verify'));
+  } finally {
+    fs.rmSync(repo, { recursive: true, force: true });
+  }
+}
+
+/** Audit B4: check:godot's tests read files outside game/; the final head always runs it. */
+function testGodotOutsideGame({ routes, workflows }) {
+  for (const file of [
+    'scripts/art/kit/build.py',
+    'scripts/art/house_palette.py',
+    'scripts/review/kit_scene.py',
+    'scripts/progression/weapon_lines.py',
+    'art/house-palette.json',
+  ])
+    assert.ok(ids(plan({ changed: [file], routes, workflows })).includes('check:godot'), file);
+  assert.ok(!ids(plan({ changed: ['scripts/a.cjs'], routes, workflows })).includes('check:godot'));
+  for (const changed of [['docs/a.md'], ['scripts/a.cjs'], ['lib/a.ts'], []])
+    assert.deepEqual(
+      ids(plan({ changed, routes, workflows, mode: 'final' })).slice(0, 4),
+      ['protected-paths', 'check:godot', 'verify', 'check:art-repro'],
+      `--final with ${changed}`,
+    );
+}
+
+/** Audit B5: files under docs/ that the art generators and steps of `check` read or compare. */
+function testDocsThatChecksRead({ routes, workflows }) {
+  for (const file of [
+    'docs/vision/research/blockout/blockout-v52.json',
+    'docs/vision/regions/route-meets.md',
+    'docs/vision/cliff-core/demo.png',
+    'docs/vision/icon-sheet.png',
+    'docs/vision/icon-sheet-2x.png',
+  ]) {
+    assert.deepEqual(
+      ids(plan({ changed: [file], routes, workflows })),
+      ['protected-paths', 'verify', 'check:art-repro'],
+      file,
+    );
+    assert.equal(gameOnly([file, 'game/a.gd']), false, `verify:game refuses ${file}`);
+  }
+  for (const file of [
+    'docs/vision/asset-ledger.md',
+    'docs/vision/prop-logic.md',
+    'docs/vision/placement-audit.md',
+    'docs/vision/regions/sunstone-basin-fire-country.md',
+  ])
+    assert.deepEqual(
+      ids(plan({ changed: [file], routes, workflows })),
+      ['protected-paths', 'verify'],
+      file,
+    );
+  assert.deepEqual(ids(plan({ changed: ['docs/vision/art-style.md'], routes, workflows })), [
+    'protected-paths',
+  ]);
+}
+
+/** Audit B6: the summary says which mode ran and what is left to --final. */
+function testModeAndLeftToFinal({ routes, workflows, game }) {
+  const options = { changed: game, routes, workflows };
+  assert.deepEqual(leftToFinal(options), [
+    `verify (verify:game left out ${APP_ONLY.length} app-only steps and the two exports)`,
+    'check:art-repro',
+    'routes main',
+  ]);
+  // a game code change plays no route in the inner loop: every route is named as left
+  assert.deepEqual(
+    leftToFinal({ ...options, changed: ['game/actors/enemy.gd'] }).at(-1),
+    'routes first_night, main',
+  );
+  assert.deepEqual(leftToFinal({ ...options, mode: 'final' }), []);
+  assert.deepEqual(
+    leftToFinal({ changed: [], routes, workflows, mode: 'routes', extra: ['main'] }),
+    ['check:godot', 'verify', 'check:art-repro'],
+  );
+  assert.deepEqual(leftToFinal({ changed: ['docs/a.md'], routes, workflows }), [
+    'check:godot',
+    'verify',
+    'check:art-repro',
+  ]);
+}
+async function testSummaryNamesModeAndNothingSelected(folder) {
+  const steps = plan({ changed: ['lib/a.ts'], workflows: {} });
+  const { execute } = stub(new Set());
+  const inner = chain(folder, 'mode', { steps, execute, left: ['check:art-repro', 'routes main'] });
+  await runChain(inner.options);
+  assert.match(inner.lines.at(-2), /^stream-checks: inner mode, tree t head h: \d+ passed/);
+  assert.match(
+    inner.lines.at(-1),
+    /not the final chain\. Left to .*--final.*: check:art-repro; routes main$/,
+  );
+  const final = chain(folder, 'mode-final', { steps, execute, mode: 'final' });
+  await runChain(final.options);
+  assert.match(final.lines.at(-1), /^stream-checks: final mode, /);
+  assert.ok(!final.lines.some((line) => line.includes('Left to')));
+  // Audit N3: a plan with no check says so and counts nothing as passed
+  const empty = chain(folder, 'empty', {
+    steps: plan({ changed: [], workflows: { verify: '', godot: '', art: '', playtest: '' } }).slice(
+      0,
+      1,
+    ),
+    execute,
+    left: ['verify'],
+  });
+  const got = await runChain(empty.options);
+  assert.equal(got.nothing, true);
+  assert.match(empty.lines.at(-2), /nothing selected for this diff, so no check ran/);
+  assert.ok(!empty.lines.some((line) => /\d+ passed/.test(line)));
+  const guarded = chain(folder, 'empty-guard', {
+    steps: [{ id: 'protected-paths', kind: 'protected' }],
+    execute,
+    changed: ['game/actors/player.gd'],
+  });
+  assert.equal((await runChain(guarded.options)).ok, false, 'a protected path still fails it');
+  assert.ok(guarded.lines.some((line) => /0 passed .*1 failed/.test(line)));
+}
+
+/** The opt-in fast mode: its own step id and cache key, labelled lines, never in a counted plan. */
+function testFastPlan({ routes, workflows, game }) {
+  const fast = plan({ changed: [], routes, mode: 'routes', extra: ['main'], fast: true });
+  assert.deepEqual(
+    ids(fast),
+    ['protected-paths', 'route-fast:main#1'],
+    'once: repeats prove nothing',
+  );
+  assert.equal(fast[1].fast, true);
+  for (const mode of ['inner', 'final'])
+    assert.ok(
+      plan({ changed: game, routes, workflows, mode, fast: true }).every(
+        (step) => !step.fast && !step.id.includes('fast'),
+      ),
+      `${mode} never plays in fixed step`,
+    );
+  assert.deepEqual(FAST_ARGS, ['--fixed-fps', '60', '--disable-render-loop']);
+}
+async function testFastRunsAreLabelledAndKeptApart(folder) {
+  const routes = [{ name: 'main', files: [] }];
+  const fastSteps = plan({ changed: [], routes, mode: 'routes', extra: ['main'], fast: true });
+  const realSteps = plan({ changed: [], routes, mode: 'routes', extra: ['main'], repeat: 1 });
+  const { calls, execute } = stub(new Set());
+  const fast = chain(folder, 'fast', { steps: fastSteps, execute, mode: 'routes (FAST)' });
+  await runChain(fast.options);
+  const record = readRecords(fast.options.resultsFile).at(-1);
+  assert.equal(record.id, 'route-fast:main#1');
+  assert.equal(record.how, 'tools; fast --fixed-fps 60 --disable-render-loop');
+  assert.ok(fast.lines.includes('[stream-checks] FAST PASS route-fast:main#1 (1s, waited 0s)'));
+  assert.ok(fast.lines.some((line) => /^PASS +route-fast:main#1 +1s {2}FAST ran$/.test(line)));
+  assert.ok(
+    fast.lines.some((line) => /1 FAST route run .*not one of the counted repeats/.test(line)),
+  );
+  // a fast pass is never reused as a real run, nor a real pass as a fast one
+  calls.length = 0;
+  await runChain({ ...fast.options, steps: realSteps, mode: 'routes' });
+  assert.deepEqual(calls, ['route:main#1']);
+  assert.equal(
+    reusableRecord([{ ...record, id: 'route:main#1' }], realSteps[1], 't', 'tools'),
+    null,
+  );
+  calls.length = 0;
+  fast.lines.length = 0;
+  await runChain(fast.options);
+  assert.equal(calls.length, 0);
+  assert.ok(fast.lines.some((line) => / FAST reused, finished /.test(line)));
+}
+
+/** Audit N4: --base reaches the verify:game step, which would otherwise compare with origin/main. */
+function testBasePassedToVerifyGame({ routes, workflows, game }) {
+  const step = (base) =>
+    plan({ changed: game, routes, workflows, base }).find((s) => s.id === 'verify:game');
+  assert.deepEqual(step('HEAD~2').args, ['run', 'verify:game', '--', '--base=HEAD~2']);
+  assert.deepEqual(step(undefined).args, ['run', 'verify:game']);
+}
+
+/** Audit N6: an empty budget starts nothing, not even the first step. */
+async function testZeroBudgetStartsNothing(folder) {
+  const { calls, execute } = stub(new Set());
+  const { options } = chain(folder, 'budget', {
+    steps: [{ id: 'verify', command: 'npm', args: ['run', 'verify'] }],
+    execute,
+    budget: 0,
+  });
+  const got = await runChain(options);
+  assert.deepEqual([calls.length, got.complete, got.rows[0].note], [0, false, 'budget']);
+}
+
+/** Audit B7: every part of the toolchain is in the key a result is reused under. */
+function testToolchainKey() {
+  const python = {
+    python: '3.12.3',
+    pillow: '12.3.0',
+    numpy: '2.5.3',
+    scipy: '1.18.1',
+    zlib: '1.3',
+  };
+  const tools = { node: '24.19.0', python, godot: 'sha256:aa' };
+  const key = toolchainKey(tools);
+  assert.equal(
+    key,
+    'node 24.19.0; python 3.12.3; Pillow 12.3.0; numpy 2.5.3; scipy 1.18.1; zlib 1.3; godot sha256:aa',
+  );
+  const others = [
+    { ...tools, node: '24.22.3' },
+    { ...tools, godot: 'sha256:bb' },
+    { ...tools, godot: undefined },
+    ...Object.keys(python).map((part) => ({ ...tools, python: { ...python, [part]: 'other' } })),
+    { ...tools, python: { ...python, zlib: '1.3.1.zlib-ng' } },
+  ].map(toolchainKey);
+  assert.equal(new Set([key, ...others]).size, others.length + 1, 'each part changes the key');
+  assert.match(toolchainKey({ node: '24.19.0' }), /python none; Pillow none; .*godot none$/);
+}
+
+/** The preflight for plans with an art or kit check: no byte comparison on a foreign PNG encoder. */
+function testArtBytesPreflight() {
+  const python = {
+    python: '3.12.3',
+    pillow: '12.3.0',
+    numpy: '2.5.3',
+    scipy: '1.18.1',
+    zlib: '1.3',
+  };
+  assert.equal(artBytesProblem(python), null);
+  assert.match(
+    artBytesProblem({ ...python, zlib: '1.3.1.zlib-ng' }),
+    /zlib 1\.3\.1\.zlib-ng.*kit\.build --check/,
+  );
+  assert.match(artBytesProblem({ ...python, zlib: null }), /unknown/);
+  assert.match(artBytesProblem({ ...python, pillow: null }), /no Pillow/);
+  assert.deepEqual(ART_BYTE_STEPS, ['verify', 'verify:game', 'check:art-repro']);
+  assert.deepEqual(hostedPins("pip install 'Pillow==12.3.0' 'numpy==2.5.3' 'scipy==1.18.1'"), {
+    pillow: '12.3.0',
+    numpy: '2.5.3',
+    scipy: '1.18.1',
+  });
+  assert.equal(hostedPins('run: npm ci'), null);
+}
+
+/** Audit N2: a repeat that is not a whole number of 1 or more is a usage error, not "passed". */
+async function testRepeatMustBeAWholeNumber() {
+  const error = console.error;
+  const said = [];
+  console.error = (line) => said.push(line);
+  try {
+    for (const bad of [
+      '--repeat=abc',
+      '--repeat=0',
+      '--repeat=-1',
+      '--repeat=1.5',
+      '--budget=soon',
+    ])
+      assert.equal(await cli(['routes', 'main', bad]), 2, bad);
+    assert.equal(await cli(['--fast']), 2, '--fast is not for the inner loop');
+    assert.equal(await cli(['--final', '--fast']), 2, 'nor for the final chain');
+    assert.equal(
+      await cli(['routes', 'main', '--fast', '--repeat=3']),
+      2,
+      'fast runs are not repeated',
+    );
+  } finally {
+    console.error = error;
+  }
+  assert.match(said[0], /--repeat takes a whole number of 1 or more, not "abc"/);
+}
 
 async function main() {
   // GitHub's path filters: * stays inside a folder, ** crosses folders, **/ may match none
@@ -125,6 +578,11 @@ async function main() {
     'verify',
     'check:art-repro',
   ]);
+  testGodotOutsideGame({ routes, workflows });
+  testDocsThatChecksRead({ routes, workflows });
+  testModeAndLeftToFinal({ routes, workflows, game });
+  testFastPlan({ routes, workflows, game });
+  testBasePassedToVerifyGame({ routes, workflows, game });
   assert.ok(
     ids(plan({ changed: ['game/data/sun.json'], routes, workflows })).includes('check:art-repro'),
   );
@@ -173,11 +631,15 @@ async function main() {
     got = await runChain({ ...base, tree: 't1' });
     assert.deepEqual(
       calls,
-      ['route:first_night#2', 'route:first_night#3'],
-      'passes are not repeated',
+      ['route:first_night#1', 'route:first_night#2', 'route:first_night#3'],
+      'passes of other steps are not repeated; the failed route starts its count again',
     );
     assert.deepEqual([got.ok, got.complete], [true, true]);
-    assert.equal(got.rows.filter((row) => row.note.startsWith('reused')).length, 3);
+    assert.equal(got.rows.filter((row) => row.note.startsWith('reused')).length, 2);
+    assert.deepEqual(
+      got.earlier.map((record) => record.id),
+      ['route:first_night#2'],
+    );
     calls.length = 0;
     await runChain({ ...base, tree: 't2' });
     assert.equal(calls.length, 5, 'another tree runs everything');
@@ -223,11 +685,20 @@ async function main() {
       allow: ['game/actors/player.gd'],
     });
     assert.equal(got.ok, true);
+    await testNewestRecordDecides(folder);
+    await testRouteFailureVoidsEveryRun(folder);
+    await testSummaryNamesModeAndNothingSelected(folder);
+    await testFastRunsAreLabelledAndKeptApart(folder);
+    await testZeroBudgetStartsNothing(folder);
   } finally {
     fs.rmSync(folder, { recursive: true, force: true });
   }
+  testRenamesShowBothPaths();
+  testToolchainKey();
+  testArtBytesPreflight();
+  await testRepeatMustBeAWholeNumber();
   console.log(
-    'Stream check runner: plans, hosted path filters, verify:game and resumed results pass.',
+    'Stream check runner: plans, hosted path filters, verify:game, resumed results, voided route runs, renames, the toolchain key and the fast mode pass.',
   );
 }
 main().catch((error) => {
