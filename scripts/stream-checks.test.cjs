@@ -56,6 +56,8 @@ const chain = (folder, name, more) => {
   };
 };
 
+const made = (id, exit, state = 'done') => ({ id, tree: 't', how: 'tools', state, exit });
+
 /** Audit B1: an older pass must not outlive a later failure on the same tree. */
 async function testNewestRecordDecides(folder) {
   const steps = [{ id: 'verify', command: 'npm', args: ['run', 'verify'] }];
@@ -80,25 +82,16 @@ async function testNewestRecordDecides(folder) {
   assert.equal((await runChain(options)).rows[0].note.startsWith('reused'), true);
   assert.equal(calls.length, 0);
   // the rule itself, on plain records
-  const record = (id, exit, state = 'done') => ({ id, tree: 't', how: 'tools', state, exit });
   const verify = { id: 'verify' };
+  assert.equal(reusableRecord([made('verify', 0), made('verify', 1)], verify, 't', 'tools'), null);
+  assert.ok(reusableRecord([made('verify', 1), made('verify', 0)], verify, 't', 'tools'));
   assert.equal(
-    reusableRecord([record('verify', 0), record('verify', 1)], verify, 't', 'tools'),
-    null,
-  );
-  assert.ok(reusableRecord([record('verify', 1), record('verify', 0)], verify, 't', 'tools'));
-  assert.equal(
-    reusableRecord([record('verify', 0), record('verify', 0, 'moved')], verify, 't', 'tools'),
+    reusableRecord([made('verify', 0), made('verify', 0, 'moved')], verify, 't', 'tools'),
     null,
     'a run the tree moved under is a failure too',
   );
   assert.ok(
-    reusableRecord(
-      [record('verify', 0), record('verify', undefined, 'started')],
-      verify,
-      't',
-      'tools',
-    ),
+    reusableRecord([made('verify', 0), made('verify', undefined, 'started')], verify, 't', 'tools'),
     'an unfinished start is no result either way',
   );
 }
@@ -234,7 +227,7 @@ function testGodotOutsideGame({ routes, workflows }) {
     assert.deepEqual(
       ids(plan({ changed, routes, workflows, mode: 'final' })).slice(0, 4),
       ['protected-paths', 'check:godot', 'verify', 'check:art-repro'],
-      `--final with ${changed}`,
+      `--final with ${changed.join(', ')}`,
     );
 }
 

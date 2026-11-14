@@ -490,8 +490,8 @@ function probeGodot(name = process.env.GODOT || 'godot') {
   return `sha256:${crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')}`;
 }
 /** What a result was made with. A result is reused only when every part is the same. */
+const part = (value) => value || 'none';
 function toolchainKey({ node, python = {}, godot }) {
-  const part = (value) => value || 'none';
   return [
     `node ${part(node)}`,
     `python ${part(python.python)}`,
@@ -634,6 +634,14 @@ async function verifyGame({ root, changed, run = runProcess, log = console.log }
   return { ok: failed.length === 0, refused: false };
 }
 
+function usage(why) {
+  console.error(
+    (why ? `stream-checks: ${why}\n` : '') +
+      'Usage: stream-checks.cjs [--final] [--plan] [--fresh] [--keep-going] [--budget=<s>] [--base=<ref>] [--allow=<path>]\n' +
+      '       stream-checks.cjs routes <name>... [--repeat=<n> | --fast]\n       stream-checks.cjs verify-game [--base=<ref>]',
+  );
+  return 2;
+}
 async function main(argv) {
   const root = path.resolve(__dirname, '..');
   const flags = argv.filter((arg) => arg.startsWith('--'));
@@ -643,14 +651,6 @@ async function main(argv) {
   const known = /^--(final|plan|fresh|keep-going|fast|(base|budget|repeat|allow)=.+)$/;
   const mode = words[0] === 'routes' ? 'routes' : flags.includes('--final') ? 'final' : 'inner';
   const fast = flags.includes('--fast');
-  const usage = (why) => {
-    console.error(
-      `${why ? `stream-checks: ${why}\n` : ''}` +
-        'Usage: stream-checks.cjs [--final] [--plan] [--fresh] [--keep-going] [--budget=<s>] [--base=<ref>] [--allow=<path>]\n' +
-        '       stream-checks.cjs routes <name>... [--repeat=<n> | --fast]\n       stream-checks.cjs verify-game [--base=<ref>]',
-    );
-    return 2;
-  };
   if (
     flags.some((flag) => !known.test(flag)) ||
     (words.length && !['routes', 'verify-game'].includes(words[0]))
