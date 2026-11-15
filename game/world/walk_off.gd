@@ -7,10 +7,14 @@ extends Node
 ## `toward` at her own walking pace for LEAVE seconds (about 60 texels: gone in the open, before the
 ## path runs under the willow), fading out over the last FADE.
 ##
-## She never walks through the player. If he stands within CLEAR texels of her lane she takes the
-## nearest lane to the side away from him that is free of solids and comes no nearer to him than CLEAR
-## (or than she already is, when he stands closer than that); with no such lane she fades where she
-## stands. Under reduced motion she always fades where she stands, over STILL_FADE, with no movement.
+## She never walks through the player. If he stands within CLEAR texels of her lane she steps aside,
+## away from him, by a few texels (SIDESTEPS) and walks on toward `toward` past him (audit of #491: a lane
+## turned south took her off the road into the meadow), on two legs that are free of solids and come no
+## nearer to him than CLEAR (or than she already is, when he stands closer than that). When no such
+## two-leg path exists she takes the nearest single lane to the side away from him that keeps the same
+## distance; with no such lane she fades where she stands. The walk takes LEAVE and fades over FADE
+## whichever path she takes. Under reduced motion she always fades where she stands, over STILL_FADE,
+## with no movement.
 ## Finite either way. Looks and the talk area only: the quest's own flags say where she stands from the
 ## next zone load.
 
@@ -22,10 +26,17 @@ const STILL_FADE := 0.6          ## the fade in place: reduced motion, or no fre
 const CLEAR := 30.0              ## texels she keeps from the player's feet
 ## Lanes tried in order, as turns from the straight one in degrees; positive is the side away from the player.
 const TURNS := [0.0, 35.0, 50.0, 70.0, 90.0, -35.0, -50.0, -70.0, -90.0, 120.0, -120.0, 180.0]
+## The step aside, tried after the straight lane and before the other TURNS. All turns are from the
+## straight lane, to the side away from the player; the straightest leg on toward `toward` is tried first.
+const SIDESTEPS := [12.0, 16.0, 20.0]      ## how far she steps aside, in texels
+const STEP_TURNS := [70.0, 90.0]           ## the turn of the step aside
+const ON_TURNS := [0.0, 10.0, 20.0, 30.0]  ## the turn of the leg on toward `toward` after it
 
 var who: Interactable
 var toward := Vector2.ZERO           ## a point in the zone, in texels
-var _dir := Vector2.ZERO             ## zero: fading where she stands
+var _path := PackedVector2Array()   ## the corners she walks through, from where she stands; empty: fading in place
+var _leg := -1                      ## the leg her body faces along
+var _origin := Vector2.ZERO          ## her position where the path starts
 var _speed := 0.0
 var _t := 0.0
 var _life := LEAVE
@@ -54,13 +65,13 @@ func _ready() -> void:
 		await get_tree().physics_frame
 		if not is_instance_valid(who) or not who.is_inside_tree():
 			return
-		_dir = choose_lane(who.global_position, toward, player.global_position if player != null else Vector2.INF,
+		_path = choose_path(who.global_position, toward, player.global_position if player != null else Vector2.INF,
 			reach(_speed), _grid())
-	if _dir == Vector2.ZERO:
+	if _path.is_empty():
 		_life = STILL_FADE
 		_fade = STILL_FADE
-	elif body != null:
-		body.walking = _dir
+	_origin = who.position
+	_walk_to(0.0)
 	_started = true
 
 func _grid() -> RefCounted:
@@ -106,6 +117,49 @@ static func choose_lane(from: Vector2, toward: Vector2, player: Vector2, length:
 		return dir
 	return Vector2.ZERO
 
+## The path from `from`: the straight lane when it is clear; else a step aside away from the player and on
+## toward `toward` past him, both legs clear of solids and never within the keep distance of him; else
+## the single lane choose_lane gives. Corners from `from`, `length` texels in all; empty: fade in place.
+static func choose_path(from: Vector2, toward: Vector2, player: Vector2, length: float, grid: RefCounted) -> PackedVector2Array:
+	var dir := choose_lane(from, toward, player, length, grid)
+	var straight := (toward - from).normalized()
+	if dir == Vector2.ZERO and (straight == Vector2.ZERO or length <= 0.0):
+		return PackedVector2Array()
+	if not dir.is_equal_approx(straight) and player.is_finite():
+		var keep := minf(CLEAR, from.distance_to(player) - 0.5)
+		var away := -1.0 if straight.cross(player - from) > 0.0 else 1.0
+		for on: float in ON_TURNS:
+			for side: float in SIDESTEPS:
+				for step: float in STEP_TURNS:
+					var mid := from + straight.rotated(deg_to_rad(step) * away) * side
+					var to := mid + straight.rotated(deg_to_rad(on) * away) * (length - side)
+					if distance_to_stretch(player, from, mid) < keep or distance_to_stretch(player, mid, to) < keep:
+						continue
+					if grid != null and not (grid.clear_line(from, mid) and grid.clear_line(mid, to)):
+						continue
+					return PackedVector2Array([from, mid, to])
+	if dir == Vector2.ZERO:
+		return PackedVector2Array()
+	return PackedVector2Array([from, from + dir * length])
+
+## Puts her `d` texels along her path and faces her body the way the leg she is on goes.
+func _walk_to(d: float) -> void:
+	var at := 0
+	var p := Vector2.ZERO
+	while at < _path.size() - 1:
+		var leg := _path[at + 1] - _path[at]
+		if d <= leg.length() or at == _path.size() - 2:
+			p = _path[at] - _path[0] + leg.normalized() * minf(d, leg.length())
+			break
+		d -= leg.length()
+		at += 1
+	who.position = _origin + p
+	if at != _leg and _path.size() > 1:
+		_leg = at
+		var body := _body()
+		if body != null:
+			body.walking = (_path[at + 1] - _path[at]).normalized()
+
 func _process(delta: float) -> void:
 	if not _started:
 		return
@@ -113,7 +167,7 @@ func _process(delta: float) -> void:
 	if _t >= _life:
 		_gone()
 		return
-	who.position += _dir * _speed * delta
+	_walk_to(_speed * _t)
 	who.modulate.a = clampf((_life - _t) / _fade, 0.0, 1.0)
 
 func _gone() -> void:
