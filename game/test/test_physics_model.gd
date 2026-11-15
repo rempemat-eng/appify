@@ -241,13 +241,14 @@ func test_the_willow_blocks_only_its_trunk() -> void:
 
 func test_crossroads_solids_follow_the_reviewed_boxes() -> void:
 	# the kit library's boxes reviewed against the art (3 Nov) never reached the playable zone: the lantern's
-	# solid ran 22 world px up its post, the hollow oak's was 24 px wide in a 66 px trunk
+	# solid ran 22 world px up its post, the hollow oak's was 24 px wide in a 66 px trunk. The shard lantern's
+	# box is its plinth, 16 x 6 world px since its redraw of 13 Nov (it was 14 x 5)
 	var zone := _enter("crossroads")
 	var oak := (zone.get_node("Walls/Solid_oak_6/Shape") as CollisionShape2D).shape as RectangleShape2D
 	assert_vector(oak.size).is_equal(Vector2(66, 15))
 	SaveGame.reset()
 	var lantern := (zone.get_node("Props/If_lantern_dark/LanternDarkBody/Shape") as CollisionShape2D).shape as RectangleShape2D
-	assert_vector(lantern.size).is_equal(Vector2(42, 15))
+	assert_vector(lantern.size).is_equal(Vector2(48, 18))
 	# the notice board and the waystone block their drawn base, not only the 5 px post of their talk area
 	var board := (zone.get_node("Walls/Solid_notice_board/Shape") as CollisionShape2D).shape as RectangleShape2D
 	assert_vector(board.size).is_equal(Vector2(63, 12))

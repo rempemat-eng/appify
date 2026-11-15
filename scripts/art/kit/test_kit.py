@@ -2645,5 +2645,70 @@ from scripts.art.kit.sets.test_brackens import BrackensSet  # noqa: E402,F401
 from scripts.art.kit.sets.test_act1 import Act1Set  # noqa: E402,F401
 
 
+
+class RaidHurdles(unittest.TestCase):
+    """Hale's hurdle barricade (scripts/art/kit/hurdles.py; Matt, 13 Nov: "what are those brown things on
+    the track?"): the pictures are what the painter draws, on the house palette, one frame and foot for
+    the three states, the run from wall to wall with a post at each end, chest high."""
+
+    @classmethod
+    def setUpClass(cls):
+        from scripts.art.kit import hurdles
+        cls.HU = hurdles
+        cls.sheet = hurdles.sheet()
+
+    def pic(self, state):
+        import numpy as np
+        from PIL import Image
+        return np.asarray(Image.open(os.path.join(self.HU.ART, self.sheet['states'][state]['png'])).convert('RGBA'))
+
+    def test_pictures_are_what_the_painter_draws(self):
+        self.assertEqual(self.HU.check(), 0)
+
+    def test_one_frame_and_foot_for_the_three_states(self):
+        self.assertEqual(sorted(self.sheet['states']), ['battered', 'broken', 'standing'])
+        for state in self.sheet['states']:
+            a = self.pic(state)
+            self.assertEqual([a.shape[1], a.shape[0]], self.sheet['frame'], state)
+        self.assertEqual(self.sheet['span'], 48)
+
+    def test_on_the_house_palette_with_hard_alpha(self):
+        import numpy as np
+        house = {tuple(int(v) for v in c) for c in __import__('scripts.art.native.palette', fromlist=['LUT']).LUT[:, :3]}
+        for state in self.sheet['states']:
+            a = self.pic(state)
+            self.assertTrue(set(np.unique(a[..., 3]).tolist()) <= {0, 255}, state)
+            cols = {tuple(int(v) for v in c) for c in np.unique(a[a[..., 3] > 0][:, :3], axis=0)}
+            self.assertTrue(cols <= house, '%s: %d colours off the house palette' % (state, len(cols - house)))
+
+    def test_the_run_spans_the_road_wall_to_wall_and_stands_chest_high(self):
+        ax, ay = self.sheet['foot']
+        ground = self.sheet['states']['standing']['ground']
+        self.assertEqual((ground[0][1], ground[-1][1]), (-72, 72))          # 48 world px, the pad's span
+        self.assertEqual(len(ground), self.HU.PANELS + 1)
+        # the zigzag keeps within 6 world px of the pad's line either side
+        self.assertTrue(all(abs(x) <= 18 for x, _y in ground))
+        # the panels are the fence class's height (sizes.json: 41 to 67 texels) and the posts a hand over them
+        self.assertTrue(41 <= self.HU.PANEL <= 67 and self.HU.PANEL < self.HU.POST <= 54)
+        a = self.pic('standing')[..., 3] > 0
+        # a post stands at each end of the run: drawn from its foot up to its cut top
+        for x, y in (ground[0], ground[-1]):
+            col = a[ay + y - self.HU.POST + 2:ay + y, ax + x]
+            self.assertTrue(col.all(), 'no post at the end (%d, %d)' % (x, y))
+        # and the run is one piece from end to end: every ground row between the walls is drawn
+        rows = a[ay - 72:ay + 72].any(1)
+        self.assertTrue(rows.all())
+
+    def test_the_wreckage_lies_flat_and_low(self):
+        st = self.sheet['states']['broken']
+        self.assertTrue(st['flat'])
+        self.assertEqual(st['ground'], [])
+        ax, ay = self.sheet['foot']
+        a = self.pic('broken')[..., 3] > 0
+        ys = a.any(1).nonzero()[0]
+        # nothing of it stands higher than a stump over the run's north end
+        self.assertGreaterEqual(int(ys.min()), ay - 72 - 16)       # a stump (11), its splinters (3), the outline
+
+
 if __name__ == '__main__':
     unittest.main()

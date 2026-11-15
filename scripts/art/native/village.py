@@ -5134,6 +5134,369 @@ def VO_shift(m, dy, dx):
     return _shift(m, dy, dx)
 
 
+SHARD_LANTERN_STONE = 1113      # one pedestal for both states: the stone never re-rolls when the shard comes home
+
+
+def p_shard_lantern(w, h, seed, lit=False):
+    """The shard lantern (Matt, 13 Nov: "why would i defend a lantern that's so odd"): not street
+    furniture but the thing the town was built round, as its lines say ("an iron lantern beside the well,
+    older than the town, with a dozen empty cradles"). A plinth of two worn slabs with moss in the joint; a
+    stone pedestal of three faces (lit west, front, shaded east) with a base and a capital and a channel
+    cut down its front to a small cup at its foot; a brass collar and an iron bowl with a slot over the
+    channel; a housing four times the glass of a street lamp: heavy corner posts, an arched head, and
+    inside it a floor plate and an iron tree carrying brass cradles (a cup on the stem, one on each arm,
+    two more hanging on rods from the head), a ring of cups round an empty middle; a hipped cap of iron
+    plates in three planes (lit west, front, shaded east) with hip ribs, standing seams, a riveted eave
+    and a brass finial.
+    Empty, the glass is dark: the cap's shade at its top, the far posts seen through it, one glint at its
+    upper left, and nothing bright where the shard belongs. With the woodland's shard home (`lit`), the
+    great shard stands in the middle cradle in the shard's own colours (the dusk ramp of the Undercroft's
+    shard round a small pale core), its light fills the glass, tints the frame's inner faces and runs
+    down the channel ("light runs down the iron") to pool in the cup, and the other cradles stay empty
+    against it: there are more to bring.
+    Both states are one picture apart from the glass, the frame's inner faces and the light in the
+    channel (the stone is drawn from one fixed seed, not the prop's), so nothing jumps when they swap.
+    It keeps inside the lamp's size class (scripts/review/sizes.json: 52 x 178 texels at most)."""
+    srng = np.random.default_rng(SHARD_LANTERN_STONE)
+    p = _pic(w, h, up=54, side=2)
+    a, cx, yb = p.a, p.ax, p.ay
+    Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]]
+    dxc = X + 0.5 - cx                                      # east of the middle, in texels
+    xm = int(cx)                                            # the first column east of the middle
+    keep = np.zeros(a.shape, bool)                          # single texels the tidy must leave: rivets, glints
+
+    def band(y0, y1, hw):
+        return (Y >= y0) & (Y < y1) & (np.abs(dxc) < hw)
+
+    def put(y, x0, x1, fam, t):
+        a[y, x0:x1] = code(fam, t)
+
+    # --- the plinth: two slabs, the lower as wide as the cap's eave -----------------------------------
+    top = lamp_plinth_hd(a, cx, yb, np.random.default_rng(SHARD_LANTERN_STONE + 11),
+                         slabs=((8.3, 4.0, 2.6), (6.6, 3.6, 2.0)))
+    # --- the pedestal: base, shaft of three faces, capital --------------------------------------------
+    ped_b = top + 2                                         # it stands on the slab's top plane
+    ped_t = ped_b - 28
+    shaft = band(ped_t + 4, ped_b - 3, 11)
+    west, east = shaft & (dxc < -5), shaft & (dxc >= 5)
+    _codes(a, shaft, 'stone_warm', 3)
+    _codes(a, west, 'stone_warm', np.where(dxc < -10, 5, 4))
+    _codes(a, east, 'stone_cool', np.where(dxc >= 10, 2, 1))        # its far rim catches the square's light
+    a[shaft & (dxc >= 5) & (dxc < 6)] = code('stone_cool', 0)       # the arris between front and east
+    a[shaft & (dxc >= -5) & (dxc < -4)] = code('stone_warm', 4)     # the front's lit arris
+    jy = ped_t + 15                                                 # two drums: a joint, the lower one's lip lit
+    a[shaft & (Y == jy)] = code('stone_cool', 1)
+    a[shaft & (Y == jy) & (dxc >= 5)] = code('stone_cool', 0)       # the joint carried across the east face
+    lip = shaft & (Y == jy + 1) & (dxc < 5)
+    a[lip] = FI['stone_warm'] * 8 + np.minimum(5, tone_of(a[lip]) + 1)
+    a[shaft & (Y == jy + 1) & (dxc >= 6) & (dxc < 10)] = code('stone_cool', 2)
+    sibling_cells(a, shaft & (fam_of(a) == FI['stone_warm']) & (Y != jy), srng, ped_t + 4, ped_b - 3, cx - 11, cx + 11,
+                  ('stone_warm', 'stone'), share=0.4, step=(4, 5), maxrun=40)
+    # a spall off the east face's lower drum, and a tooling mark on its upper one
+    for (sx_, sy_, n_, t_) in ((xm + 7, jy + 5, 2, 0), (xm + 8, jy + 6, 2, 0), (xm + 6, ped_t + 8, 3, 2)):
+        put(sy_, sx_, sx_ + n_, 'stone_cool', t_)
+    base = band(ped_b - 3, ped_b, 13)
+    _codes(a, base, 'stone_warm', np.where(Y == ped_b - 3, 5, np.where(Y == ped_b - 2, 3, 2)) - (dxc >= 6))
+    a[base & (dxc >= 9)] = code('stone_cool', 1)
+    cap_ = band(ped_t, ped_t + 4, 14)
+    _codes(a, cap_, 'stone_warm', np.select([Y == ped_t, Y == ped_t + 1, Y == ped_t + 2], [5, 4, 3], 2) - (dxc >= 6))
+    a[cap_ & (dxc >= 10)] = code('stone_cool', 1)
+    a[cap_ & (Y == ped_t) & (dxc >= 6)] = code('stone_warm', 4)
+    _step_down(a, band(ped_t + 4, ped_t + 6, 11) & (dxc < 5), 1)   # the capital's shade on the shaft
+    _step_down(a, band(ped_b, ped_b + 1, 14) & (dxc > -9), 1)      # the pedestal's contact on the slab
+    # --- the iron bowl on its brass collar, and the housing's foot ring ---------------------------------
+    bowl_t = ped_t - 9
+    f = np.clip((ped_t - Y) / 9.0, 0, 1)
+    hw_b = 12.0 + 9.0 * f ** 0.6
+    bowl = (Y >= bowl_t) & (Y < ped_t) & (np.abs(dxc) < hw_b)
+    _codes(a, bowl, 'iron', cyl_tones(dxc / np.maximum(1, hw_b), 3) - (Y >= ped_t - 2))
+    collar = bowl & (Y >= ped_t - 2)                                 # the smith's band where iron sits on stone
+    ub = dxc / np.maximum(1, hw_b)
+    _codes(a, collar, 'brass', np.select([ub < -0.3, ub < 0.35], [5, 4], 2) - 2 * (Y == ped_t - 1))
+    ring_b = bowl_t
+    ring_t = ring_b - 4
+    gy1, gy0 = ring_t, ring_t - 60                                   # the glass: bottom and top rows
+    top_t = gy0 - 4
+    for (r0, r1) in ((ring_t, ring_b), (top_t, gy0)):
+        rg = band(r0, r1, 21)
+        _codes(a, rg, 'iron', np.select([Y == r0, Y == r1 - 1], [5, 1], 3) - (dxc >= 8))
+    # --- the channel: a slot in the bowl, a groove down the stone to a cup at the foot -------------------
+    # its west wall in shade, its floor, its east lip lit; the same cut in both states, and with the shard
+    # home the light runs in it, brightest under the housing and stepping down the dusk ramp to the cup
+    ch_t, ch_b = bowl_t, ped_b - 3
+    rows = np.arange(ch_t, ch_b)
+    glow = np.select([rows < ch_t + 3, rows < ped_t + 4, rows < ped_t + 10, rows < ped_t + 20], [9, 5, 4, 3], 2)
+    for y_, g_ in zip(rows, glow):
+        stone_row = y_ >= ped_t
+        if y_ == jy:                                                 # the course joint breaks it
+            continue
+        if stone_row:
+            a[y_, xm - 2] = code('stone_cool', 0)
+            a[y_, xm] = code('stone_warm', 5 if y_ < jy else 4)
+        elif y_ < ped_t - 2:
+            a[y_, xm] = code('iron', 4)
+        if lit:
+            a[y_, xm - 1] = code('snow', 4) if g_ == 9 else code('dusk', g_)
+        else:
+            a[y_, xm - 1] = code('stone_cool', 1) if stone_row else code('iron', 0)
+    cup_y = ped_b - 3                                                # the cup the channel empties into
+    if lit:
+        put(cup_y, xm - 2, xm + 2, 'dusk', 2)
+        put(cup_y, xm - 1, xm + 1, 'dusk', 4)
+        put(cup_y + 1, xm - 2, xm + 2, 'dusk', 2)
+    else:
+        for y_ in (cup_y, cup_y + 1):
+            put(y_, xm - 2, xm - 1, 'stone_cool', 0)
+            put(y_, xm - 1, xm + 1, 'stone_cool', 1)
+            put(y_, xm + 1, xm + 2, 'stone_warm', 5)
+    put(cup_y + 2, xm - 2, xm + 2, 'stone_cool', 0)
+    # --- the housing: corner posts, the arched head, the glass -------------------------------------------
+    for sx, bt in ((-1, 3), (1, 2)):
+        post = (Y >= gy0) & (Y < gy1) & (dxc * sx >= 16) & (dxc * sx < 20)
+        u = (dxc - sx * 18.0) / 2.0
+        _codes(a, post, 'iron', cyl_tones(u, bt))
+    pane = (Y >= gy0) & (Y < gy1) & (np.abs(dxc) < 16)
+    arch = gy0 + 9.0 * (np.abs(dxc) / 16.0) ** 2.2                   # the head: a low arch between the posts
+    head = pane & (Y < arch)
+    _codes(a, head, 'iron', np.where(dxc < 0, 3, 2))
+    soffit = head & (Y >= arch - 1.2)
+    a[soffit & (dxc < 0)] = code('iron', 1)                          # the arch's underside, in shade
+    a[soffit & (dxc >= 0)] = code('iron', 4)                         # ... and where it faces the light
+    glass = pane & ~head
+    px0, px1 = xm - 16, xm + 16                                      # the pane's columns
+    inside = np.zeros(a.shape, bool)                                 # what stands inside, in front of the far glass
+
+    def metal(m, hi, mid, lo):
+        """Wrought iron inside the glass: its west and top edges lit, its east and underside dark."""
+        m = m & glass
+        w_, n_ = m & ~np.roll(m, 1, axis=1), m & ~np.roll(m, 1, axis=0)
+        e_, s_ = m & ~np.roll(m, -1, axis=1), m & ~np.roll(m, -1, axis=0)
+        a[m] = code('iron', mid)
+        a[e_ | s_] = code('iron', lo)
+        a[w_ | n_] = code('iron', hi)
+        inside[m] = True
+
+    def cradle(x0, yr, wd, deep, hollow):
+        """A cradle: a shallow brass cup seen a little from above, x0 its west column, yr its far rim's
+        row, wd wide, its body `deep` rows: the far rim, the hollow between the rims (empty: the dark of
+        the glass), the lit near rim, the body turning under, a dark underside."""
+        k = 1 if lit else 0
+        put(yr, x0 + 1, x0 + wd - 1, 'brass', 3 + k)
+        put(yr + 1, x0, x0 + wd, 'brass', 3 + k)
+        put(yr + 1, x0, x0 + 1, 'brass', 5)
+        put(yr + 1, x0 + 1, x0 + 2, 'brass', 4)
+        a[yr + 1, x0 + 2:x0 + wd - 2] = hollow
+        put(yr + 2, x0, x0 + wd, 'brass', 4 + k)
+        put(yr + 2, x0, x0 + 2, 'brass', 5)
+        put(yr + 2, x0 + wd - 2, x0 + wd, 'brass', 3 + k)
+        for j in range(deep):
+            xa, xb = x0 + 1 + j, x0 + wd - 1 - j
+            put(yr + 3 + j, xa, xb, 'brass', 2 + k)
+            put(yr + 3 + j, xa, xa + max(2, (xb - xa) * 2 // 5), 'brass', 3 + k)
+        xa, xb = x0 + 1 + deep, x0 + wd - 1 - deep
+        put(yr + 3 + deep, xa, xb, 'brass', 1 + k)
+        inside[yr:yr + 4 + deep, x0:x0 + wd] |= a[yr:yr + 4 + deep, x0:x0 + wd] // 8 == FI['brass']
+        inside[yr + 1, x0 + 2:x0 + wd - 2] = True
+
+    # where things stand: the floor plate, the tree, the five cups (a ring round the empty middle)
+    plate_y = gy1 - 6
+    mid_x, mid_y, mid_w = xm - 6, gy1 - 21, 12                       # the middle cradle, on the stem
+    side_y, side_w = gy1 - 28, 9                                     # one on each arm
+    up_y, up_w = gy1 - 40, 7                                         # two hanging on rods from the head
+    wx_side, wx_up = xm - 14, xm - 12
+    ex_side, ex_up = 2 * xm - wx_side - side_w, 2 * xm - wx_up - up_w
+    tones = (3, 1, 0) if lit else (4, 3, 1)                          # against the shard's light the iron is a shape
+    if lit:
+        _codes(a, glass, 'dusk', 2)
+    else:
+        # the empty glass: the cap's shade under the head, then the far side of the housing through it,
+        # lighter towards the floor, in broad bands a tone apart that fall the way the glint does
+        v = (Y - gy0) - 0.6 * dxc                                   # the shade falls east, as the light does
+        bi = np.select([(Y < arch + 4) | (v < 9), v < 20, v < 31, v < 42], [0, 1, 2, 3], 4)
+        bg = np.array([code('void', 1), code('slate_cool', 1), code('slate', 1), code('slate_cool', 2), code('slate', 2)])
+        a[glass] = bg[bi][glass]
+        # the far posts and the far arch, a tone up from what lies behind them
+        far = np.array([code('slate_cool', 1), code('slate_cool', 2), code('slate_cool', 2), code('slate', 2), code('slate_cool', 3)])
+        for bx in (px0 + 2, px1 - 4):
+            fp = glass & (X >= bx) & (X < bx + 2) & (Y >= arch + 3)
+            a[fp] = far[bi][fp]
+        back = glass & (Y >= arch + 2) & (Y < arch + 3.2) & (np.abs(dxc) < 13)
+        a[back] = code('slate_cool', 1)
+        # sibling clusters (slate for slate_cool and the other way, the same tone), so no band is one flat run
+        swap = {FI['slate']: FI['slate_cool'], FI['slate_cool']: FI['slate']}
+        for (sx_, sy_, n_) in ((xm - 6, gy0 + 15, 3), (xm - 5, gy0 + 16, 3), (xm + 4, gy0 + 13, 4), (xm + 5, gy0 + 14, 2),
+                               (xm - 3, gy0 + 27, 3), (xm - 2, gy0 + 28, 3), (xm + 7, gy0 + 31, 3), (xm + 6, gy0 + 32, 3), (xm + 2, gy0 + 23, 4), (xm + 3, gy0 + 24, 2),
+                               (xm - 7, gy0 + 35, 3), (xm - 6, gy0 + 36, 3), (xm + 1, gy0 + 34, 4), (xm + 2, gy0 + 35, 3),
+                               (xm - 2, gy0 + 47, 4), (xm - 1, gy0 + 48, 3), (xm + 6, gy0 + 50, 3), (xm + 6, gy0 + 51, 2)):
+            for x_ in range(sx_, sx_ + n_):
+                c_ = int(a[sy_, x_])
+                if c_ // 8 in swap:
+                    a[sy_, x_] = swap[c_ // 8] * 8 + c_ % 8
+        a[glass & (dxc >= 14)] = code('void', 1)                     # the east post's shade inside
+        a[glass & (Y == gy1 - 1) & (dxc < 14)] = code('slate', 1)    # the sill's lip
+    # the floor plate: an iron disc, its far rim catching the light
+    plate = glass & ellipse_mask(a.shape, cx, plate_y + 2.5, 10.5, 2.6)
+    _codes(a, plate, 'iron', 2)
+    a[plate & ~np.roll(plate, 1, axis=0)] = code('dusk', 4) if lit else code('iron', 4)
+    a[plate & ~np.roll(plate, -1, axis=0)] = code('iron', 1)
+    inside |= plate
+    # the tree: a stem from the plate to the middle cup, an arm bending up to each side cup, collars
+    # where the arms leave the stem and where the stem stands on the plate; the rods from the head
+    stem = (X >= xm - 2) & (X < xm + 2) & (Y >= mid_y + 5) & (Y < plate_y + 1)
+    arms = np.zeros(a.shape, bool)
+    for sx in (-1, 1):
+        ax_ = cx + sx * 9.5
+        arms |= seg_mask(a.shape, cx + sx * 2.0, plate_y - 2.5, ax_, plate_y - 7.5, 1.5)
+        arms |= (np.abs(X + 0.5 - ax_) < 1.5) & (Y >= side_y + 5) & (Y < plate_y - 7)
+    metal(stem | arms, *tones)
+    for (cy_, hw_) in ((plate_y - 4, 3), (plate_y - 1, 3)):         # the collars: a lit band over a dark one
+        put(cy_, xm - hw_, xm + hw_, 'iron', tones[0])
+        put(cy_ + 1, xm - hw_, xm + hw_, 'iron', tones[2])
+        inside[cy_:cy_ + 2, xm - hw_:xm + hw_] = True
+    for rx in (wx_up + up_w // 2, ex_up + up_w // 2):
+        rod = glass & (X == rx) & (Y < up_y + 1)
+        a[rod] = code('iron', tones[1])
+        a[np.roll(rod, 1, axis=1) & glass] = code('iron', tones[2])
+        inside |= rod | (np.roll(rod, 1, axis=1) & glass)
+    hollow = code('dusk', 1) if lit else code('void', 1)
+    cradle(wx_up, up_y, up_w, 1, hollow)
+    cradle(ex_up, up_y, up_w, 1, hollow)
+    cradle(wx_side, side_y, side_w, 2, hollow)
+    cradle(ex_side, side_y, side_w, 2, hollow)
+    if not lit:
+        cradle(mid_x, mid_y, mid_w, 2, hollow)
+        # one glint on the pane, at its upper left, in two-texel steps; nothing bright where the shard belongs
+        for i in range(4):
+            gx, gy_ = px0 + 5 - i, gy0 + 10 + 2 * i
+            a[gy_:gy_ + 2, gx:gx + 2] = code('slate', 4 if i < 2 else 3)
+    else:
+        # the great shard in the middle cradle: a violet crystal of three faces and a point, with a small
+        # pale core where the faces meet, standing in the cup (the near rim is drawn over its foot)
+        sy0, sy1 = mid_y - 29, mid_y + 2
+        fy = (Y + 0.5 - sy0) / (sy1 - sy0)
+        hw_s = np.select([fy < 0.28, fy < 0.8], [0.8 + 4.8 * (fy / 0.28), 5.6], 5.6 - 3.0 * (fy - 0.8) / 0.2)
+        lean = (0.5 - fy) * 3.0                                       # it leans a little east, as it fell
+        sh = glass & (fy >= 0) & (fy < 1) & (np.abs(dxc - lean) < hw_s)
+        us = (dxc - lean) / np.maximum(0.8, hw_s)
+        a[sh] = code('dusk', 4)                                       # the front face
+        a[sh & (us < -0.3)] = code('dusk', 5)                         # the face towards the light
+        a[sh & (us >= 0.42)] = code('dusk', 3)                        # the east face, turning away
+        a[sh & (fy < 0.28) & (us >= -0.05)] = code('dusk', 3)         # the point's east facet
+        a[sh & (fy < 0.28) & (us < -0.05)] = code('dusk', 5)
+        a[sh & (fy > 0.84)] = code('dusk', 3)                         # its foot, down in the cradle
+        a[sh & (fy > 0.84) & (us < -0.3)] = code('dusk', 4)
+        ridge = sh & (np.abs(us + 0.3) < 0.2)                         # the heart: the ridge between the faces
+        a[ridge & (fy > 0.2) & (fy < 0.7)] = code('snow', 3)
+        a[ridge & (fy > 0.28) & (fy < 0.6)] = code('snow', 5)
+        a[sh & (us < -0.3) & ~ridge & (fy > 0.28) & (fy < 0.84)] = code('snow', 2)   # the west face, pale with it
+        a[sh & ~ndi.binary_erosion(sh) & (us >= 0.42)] = code('dusk', 2)   # its own edge, where it turns from the eye
+        # its light on the glass: nearest the crystal brightest, the frame's shade at the top and east
+        dist = ndi.distance_transform_edt(~sh)
+        halo = glass & ~sh & ~inside
+        _codes(a, halo, 'dusk', np.select([dist < 3, dist < 6, dist < 12], [5, 4, 3], 2))
+        # the light comes off the crystal's faces in rays: broad wedges a step apart, on the cool sibling,
+        # so the glass is lit glass and not a flat violet
+        ang = np.arctan2(Y + 0.5 - (sy0 + sy1) / 2.0, dxc - 0.0)
+        ray = (np.floor((ang + math.pi) / (math.pi / 7.0)).astype(int) % 2 == 0)
+        far = halo & (dist >= 6)
+        a[far & ray] = FI['dusk_cool'] * 8 + np.clip(tone_of(a[far & ray]) - 1, 1, 5)
+        a[halo & (Y < arch + 3)] = code('dusk', 1)
+        a[halo & (dxc >= 14)] = code('dusk_cool', 1)
+        a[halo & (dxc < -14) & (Y > arch + 6)] = code('dusk', 3)        # the west pane's edge, lit from inside
+        for (gx, gy_) in ((xm - 12, gy0 + 27), (xm + 6, gy0 + 13), (xm + 11, gy0 + 27)):   # glints in pairs
+            if halo[gy_, gx] and halo[gy_, gx + 1]:
+                put(gy_, gx, gx + 2, 'snow', 4)
+        stood = a.copy()
+        cradle(mid_x, mid_y, mid_w, 2, hollow)
+        a[sh & (Y <= mid_y + 1)] = stood[sh & (Y <= mid_y + 1)]      # it stands in the cup, in front of the far rim
+        # the shard's light on the housing: the posts' inner faces, the arch's underside, the sill's top
+        a[(Y >= arch + 2) & (Y < gy1) & (X == px0 - 1)] = code('dusk', 4)
+        a[(Y >= arch + 2) & (Y < gy1) & (X == px1)] = code('dusk', 2)
+        a[soffit & (Y >= arch - 1.2)] = code('dusk', 2)
+        a[(Y == gy1) & (np.abs(dxc) < 16)] = code('dusk', 3)
+    # --- the cap: iron plates in three planes, hipped; ribs, seams, a riveted eave; a brass finial --------
+    roof_b = top_t
+    roof_t = roof_b - 27
+    eave_t = roof_b - 4
+    fr = np.clip((Y + 0.5 - roof_t) / 27.0, 0, 1)
+    hw_r = 3.0 + 22.0 * fr ** 1.7
+    xf = 1.5 + 7.0 * fr                                              # the front plane's half-width
+    roof = (Y >= roof_t) & (Y < roof_b) & (np.abs(dxc) < hw_r)
+    planes = roof & (Y < eave_t)
+    pw, pf, pe = planes & (dxc <= -xf), planes & (np.abs(dxc) < xf), planes & (dxc >= xf)
+    _codes(a, pw, 'iron', 4)
+    _codes(a, pf, 'iron', 3)
+    _codes(a, pe, 'iron', 2)
+    # the plates: one lap across all three planes (a dark line, a lit line under it)
+    lap = roof_t + 12
+    _step_down(a, planes & (Y == lap), 2)
+    lapl = planes & (Y == lap + 1)
+    a[lapl] = (a[lapl] // 8) * 8 + np.minimum(5, tone_of(a[lapl]) + 1)
+    # standing seams on the front plane, running to the finial: a lit side and a shade side
+    for sgn in (-1, 0, 1):
+        sx_ = np.floor(cx - 0.5 + sgn * xf * 0.3).astype(int)
+        seam = pf & (X == sx_) & ((Y > lap + 1) if sgn else ((Y > roof_t + 4) & (Y < lap)))
+        a[seam] = code('iron', 4)
+        a[np.roll(seam, 1, axis=1) & pf] = code('iron', 1)
+    # the upper east plate turns further from the light
+    a[pe & (Y < lap)] = code('iron', 1)
+    # the hips: a lit rib on the west one with its shade on the front plane, a dark rib on the east one
+    # with a lit line beside it
+    wrib = planes & (np.floor(cx - xf).astype(int) == X)
+    erib = planes & (np.floor(cx + xf).astype(int) == X)
+    a[wrib] = code('iron', 5)
+    a[np.roll(wrib, 1, axis=1) & pf & ~wrib] = code('iron', 2)
+    a[erib] = code('iron', 0)
+    a[np.roll(erib, -1, axis=1) & pf & ~erib] = code('iron', 4)
+    # a sheen at each plate's upper left
+    for (sx_, sy_, t_) in ((xm - 11, roof_t + 15, 5), (xm + 7, roof_t + 15, 3)):
+        a[sy_:sy_ + 2, sx_:sx_ + 2] = code('iron', t_)
+    # soot under the finial's collar, rust where the east eave holds the wet: clusters, one tone each
+    for (sx_, sy_, n_, fam_, t_) in ((xm, roof_t + 2, 2, 'iron', 1), (xm - 1, roof_t + 3, 3, 'iron', 1), (xm, roof_t + 4, 2, 'iron', 1),
+                                     (xm + 15, eave_t - 3, 2, 'brass', 1), (xm + 15, eave_t - 2, 3, 'brass', 1), (xm + 17, eave_t - 1, 3, 'brass', 1),
+                                     (xm - 17, eave_t - 1, 3, 'brass', 1), (xm - 16, eave_t - 2, 2, 'brass', 1)):
+        row = a[sy_, sx_:sx_ + n_]
+        row[row >= 0] = code(fam_, t_)
+    # the eave: a rolled edge (a lit line, the band, its underside) with a row of rivets
+    eave = roof & (Y >= eave_t)
+    ew, ee = eave & (dxc <= -8.5), eave & (dxc >= 8.5)
+    ef = eave & ~ew & ~ee
+    for m_, (t0, t1, t2) in ((ew, (5, 3, 2)), (ef, (4, 2, 1)), (ee, (3, 2, 1))):
+        _codes(a, m_, 'iron', np.select([Y == eave_t, Y < roof_b - 1], [t0, t1], t2))
+    a[eave & (X == xm - 9) & (Y > eave_t)] = code('iron', 5)        # the hips' corners on the band
+    a[eave & (X == xm + 8) & (Y > eave_t)] = code('iron', 0)
+    for rx, t_ in ((xm - 21, 5), (xm - 13, 5), (xm - 5, 4), (xm + 4, 4), (xm + 12, 4), (xm + 20, 4)):
+        a[roof_b - 2, rx] = code('iron', t_)                        # a lit head over its shadow
+        a[roof_b - 1, rx] = code('iron', 0)
+        keep[roof_b - 2:roof_b, rx] = True
+    _step_down(a, band(top_t, top_t + 2, 21), 1)                    # the eave's shade on the head ring
+    for sx, t in ((-1, 3), (1, 2)):                                 # a bracket under each eave corner
+        br = seg_mask(a.shape, cx + sx * 20.5, gy0 + 9, cx + sx * 23.5, top_t + 1, 1.3) & (a < 0)
+        a[br] = code('iron', t)
+    neck = band(roof_t - 3, roof_t, 2)
+    _codes(a, neck, 'iron', np.where(dxc < 0, 4, 2))
+    ball = ellipse_mask(a.shape, cx, roof_t - 6.5, 3.6, 3.6)
+    _codes(a, ball, 'brass', np.where((dxc < 0) & (Y < roof_t - 6), 5, np.where((dxc >= 1) | (Y >= roof_t - 4), 2, 4)))
+    spike = (Y >= roof_t - 18) & (Y < roof_t - 10) & (dxc >= -1) & (dxc < 1)
+    a[spike & (dxc < 0)] = code('iron', 4)
+    a[spike & (dxc >= 0)] = code('iron', 2)
+    # --- close the silhouette --------------------------------------------------------------------------
+    # finish()'s last tidy takes an outline texel on a 45 degree slope for a lone pixel, which left the
+    # cap's slopes open; so the outline is kept here, and above the housing its east side is closed in
+    # the edge tone (an east edge is never broken to the lit tone)
+    keep |= (a >= 0) & (fam_of(a) == FI['snow'])
+    if not lit:
+        keep |= (a == code('slate', 4)) | (a == code('slate', 3))
+    tidy(a, keep=keep)
+    body = a >= 0
+    outline(a)
+    line = (a >= 0) & ~body
+    a[line & (Y < gy0 + 10) & (dxc > 0) & (tone_of(a) == 1)] = code('iron', 6)
+    a[line & (Y < roof_t) & (dxc > 0) & (fam_of(a) == FI['brass'])] = code('brass', 6)
+    tidy(a, passes=1, keep=keep | line)
+    return p
+
+
 PROPS_HD = {
     'barrel': p_barrel_hd,
     'cart': p_cart_hd,
@@ -5153,6 +5516,7 @@ PROPS_HD = {
     'woodpile': p_woodpile_hd,
     'stall': p_stall_hd,
     'waystone': p_waystone_hd,
-    'lantern': lambda w, h, s: p_lantern(w, h, s, lit=False, hd=True),
-    'lantern_lit': lambda w, h, s: p_lantern(w, h, s, lit=True, hd=True),
+    # the shard lantern (13 Nov): the housing that holds the shards, no longer a street lamp
+    'lantern': lambda w, h, s: p_shard_lantern(w, h, s, lit=False),
+    'lantern_lit': lambda w, h, s: p_shard_lantern(w, h, s, lit=True),
 }

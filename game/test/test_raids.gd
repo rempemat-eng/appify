@@ -269,6 +269,7 @@ func test_the_night_stands_the_hurdles_and_three_waves_come_and_are_freed() -> v
 		assert_int(b.collision_layer).is_equal(17)    # stops feet, not arrows
 	assert_object(night.lantern).is_not_null()
 	assert_int(night.lantern.hp).is_equal(12)
+	assert_bool(night.lantern.hurt()).is_false()          # unhurt: nothing is drawn over it
 	var counts := []
 	for w in 3:
 		# the gap before the wave, then one creature a spawn_spacing
@@ -328,7 +329,7 @@ func test_a_raider_marches_to_the_hurdle_and_batters_it_with_its_own_tell() -> v
 		c.step(0.1)
 	assert_object(c.blocker).is_null()
 	assert_str(c.state).is_equal("leash")
-	# the lantern blocks only beside its post: at the lane's end, not from across the well
+	# the lantern blocks only beside its plinth: at the lane's end, not from the well's side of the walk
 	c.global_position = night.point_at(night.length())
 	assert_object(night.blocker_ahead(c, night.length())).is_same(night.lantern)
 	c.global_position = night.point_at(night.length() - 60.0)
@@ -346,7 +347,7 @@ func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_the_nex
 	assert_int(_creatures(night).size()).is_equal(0)                  # they go back down the road
 	assert_int(get_tree().get_nodes_in_group("raid_repair").size()).is_equal(2)
 	assert_int(get_tree().get_nodes_in_group("raid_defence").size()).is_equal(0)   # the hurdles go with the night
-	assert_object(night.lantern).is_null()                                          # and the lantern's bar
+	assert_object(night.lantern).is_null()                                          # and the lantern's lights
 	assert_int(int(SaveGame.data.glint)).is_equal(116)
 	# getting up in town keeps them; the next walk in clears them and offers the night again
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()
@@ -448,6 +449,165 @@ func test_no_creature_sized_gap_is_left_across_the_lane_at_either_hurdle() -> vo
 	await get_tree().physics_frame
 	q.transform = Transform2D(0.0, Vector2(first.global_position.x, 312.0 * 3.0))
 	assert_bool(space.intersect_shape(q, 1).is_empty()).is_true()
+
+## Matt, 13 Nov ("why does the lantern have a health bar?"): the lantern shows nothing until it is struck;
+## then a row of lights, one for two health, in the HUD's meter style, and the same row in the tracker from
+## the bell. A blow darkens its glass for FLICKER seconds: a flicker, or one steady dark under reduced motion.
+func test_the_lantern_shows_its_health_only_once_struck_and_each_blow_shows_on_it() -> void:
+	var night: RaidNight = await _rung_town()
+	var lamp := night.lantern
+	assert_bool(lamp.hurt()).is_false()
+	assert_bool(lamp.is_processing()).is_false()                       # nothing runs while nothing happens
+	assert_array(RaidLantern.lights(12, 12)).is_equal(["full", "full", "full", "full", "full", "full"])
+	assert_array(RaidLantern.lights(11, 12)).is_equal(["full", "full", "full", "full", "full", "half"])
+	assert_array(RaidLantern.lights(4, 12)).is_equal(["full", "full", "empty", "empty", "empty", "empty"])
+	assert_array(RaidLantern.lights(0, 12)).is_equal(["empty", "empty", "empty", "empty", "empty", "empty"])
+	# its lights are pictures that exist, as the hearts are
+	for state: String in ["full", "half", "empty"]:
+		assert_bool(ResourceLoader.exists("res://ui/art/shard_%s.png" % state)).is_true()
+	lamp.batter(1)
+	assert_bool(lamp.hurt()).is_true()
+	assert_int(lamp.hp).is_equal(11)                                   # the number is the data's own
+	assert_bool(lamp.is_processing()).is_true()
+	# the blow: dark, back, dark, back; then nothing. Under reduced motion one steady dark, no flicker
+	assert_float(RaidLantern.dim(RaidLantern.FLICKER, false)).is_equal(1.0)
+	assert_float(RaidLantern.dim(RaidLantern.FLICKER * 0.6, false)).is_equal(0.0)
+	assert_float(RaidLantern.dim(RaidLantern.FLICKER * 0.4, false)).is_equal(1.0)
+	assert_float(RaidLantern.dim(RaidLantern.FLICKER * 0.1, false)).is_equal(0.0)
+	assert_float(RaidLantern.dim(0.0, false)).is_equal(0.0)
+	for left: float in [RaidLantern.FLICKER, RaidLantern.FLICKER * 0.6, RaidLantern.FLICKER * 0.1]:
+		assert_float(RaidLantern.dim(left, true)).is_equal(1.0)
+	assert_float(RaidLantern.dim(0.0, true)).is_equal(0.0)
+	lamp._process(RaidLantern.FLICKER + RaidLantern.SWELL + 0.1)
+	assert_bool(lamp.is_processing()).is_false()                       # finite: it stops by itself
+	# each wave's coming pools its light once on the setts: rings from the foot outwards, then gone the
+	# same way, in whole steps; under reduced motion the whole pool, still, for as long
+	lamp.swell()
+	assert_bool(lamp.is_processing()).is_true()
+	var outer := RaidLantern.POOL.size() - 1
+	assert_array(RaidLantern.rings(RaidLantern.SWELL, false)).is_equal([outer])
+	assert_array(RaidLantern.rings(RaidLantern.SWELL * 0.5, false)).is_equal([0, 1, 2])
+	assert_array(RaidLantern.rings(RaidLantern.SWELL * 0.05, false)).is_equal([0])
+	assert_array(RaidLantern.rings(0.0, false)).is_empty()
+	assert_array(RaidLantern.rings(RaidLantern.SWELL * 0.5, true)).is_equal([0, 1, 2])
+	assert_array(RaidLantern.rings(RaidLantern.SWELL * 0.05, true)).is_equal([0, 1, 2])
+	assert_array(RaidLantern.rings(0.0, true)).is_empty()
+	lamp._process(RaidLantern.SWELL + 0.1)
+	assert_bool(lamp.is_processing()).is_false()
+	# the tracker names it and shows the same lights from the bell on
+	assert_str(Raids.tracker_text()).contains("Hold the shard lantern")
+	var hud: Control = auto_free(load("res://ui/hud.gd").new())
+	add_child(hud)
+	assert_str(hud.shown_text().lantern).is_equal("")                  # no raid's row until the HUD is told of one
+	hud._show_lantern(lamp)
+	assert_str(hud.shown_text().lantern).is_equal("11/12")
+	hud._show_lantern(null)
+	assert_str(hud.shown_text().lantern).is_equal("")
+	# the glass the blow darkens lies inside the lit lantern's picture, over its housing
+	var pic := load("res://zones/crossroads/art/lantern_lit.png") as Texture2D
+	assert_float(-RaidLantern.GLASS.position.y).is_less(float(pic.get_height()))
+	assert_float(RaidLantern.PIPS_ABOVE).is_greater(-RaidLantern.GLASS.position.y)
+	# ... and follows the arched head: full height under the crown, ARCH texels lower at the posts, so the
+	# dark never lies over the iron of the head's corners
+	var shape := RaidLantern.pane()
+	var mid := RaidLantern.GLASS.get_center().x
+	assert_bool(Geometry2D.is_point_in_polygon(Vector2(mid - 0.5, RaidLantern.GLASS.position.y + 1.5), shape)).is_true()
+	for side: float in [RaidLantern.GLASS.position.x + 0.5, RaidLantern.GLASS.end.x - 0.5]:
+		assert_bool(Geometry2D.is_point_in_polygon(Vector2(side, RaidLantern.GLASS.position.y + RaidLantern.ARCH - 1.5), shape)).is_false()
+		assert_bool(Geometry2D.is_point_in_polygon(Vector2(side, RaidLantern.GLASS.position.y + RaidLantern.ARCH + 1.5), shape)).is_true()
+		assert_bool(Geometry2D.is_point_in_polygon(Vector2(side, RaidLantern.GLASS.end.y - 0.5), shape)).is_true()
+	assert_bool(Geometry2D.triangulate_polygon(shape).is_empty()).is_false()      # a shape Godot can fill
+	# the dark pane has a canvas item of its own, under the lights and over the lantern's picture: the lights
+	# are textures, and a texture drawn after a polygon by one item comes out blank in the real game
+	var glass := lamp.get_node("Glass") as Node2D
+	assert_object(glass).is_not_null()
+	assert_bool(glass.show_behind_parent).is_true()
+	assert_bool(glass.z_as_relative).is_true()
+	assert_int(glass.z_index).is_equal(0)
+
+## One light is two health, not two blows: with the data's own damage (first_night.json: a raider's blow 1,
+## the elite's 2) the elite's blow empties one whole light, and a raider's blow after it leaves a half light.
+func test_the_elites_blow_empties_a_whole_light_and_a_raiders_half_of_one() -> void:
+	var night: RaidNight = await _rung_town()
+	var lamp := night.lantern
+	assert_int(lamp.max_hp).is_equal(12)                               # the data's own numbers, unchanged
+	assert_int(night.batter_damage("rusher")).is_equal(1)
+	assert_int(night.batter_damage("elite")).is_equal(2)
+	assert_int(RaidLantern.lights(lamp.hp, lamp.max_hp).size()).is_equal(6)
+	lamp.batter(night.batter_damage("elite"))
+	assert_int(lamp.hp).is_equal(10)
+	assert_array(RaidLantern.lights(lamp.hp, lamp.max_hp)).is_equal(["full", "full", "full", "full", "full", "empty"])
+	lamp.batter(night.batter_damage("rusher"))
+	assert_int(lamp.hp).is_equal(9)
+	assert_array(RaidLantern.lights(lamp.hp, lamp.max_hp)).is_equal(["full", "full", "full", "full", "half", "empty"])
+	# the tracker's row is the same row
+	var hud: Control = auto_free(load("res://ui/hud.gd").new())
+	add_child(hud)
+	hud._show_lantern(lamp)
+	assert_str(hud.shown_text().lantern).is_equal("9/12")
+
+## Matt, 13 Nov ("what are those brown things on the track?"): the hurdles are pictures, one run from wall to
+## wall, standing, battered from half health, then broken and flat on the road. No number of theirs changed.
+func test_the_hurdles_are_drawn_from_their_pictures_in_three_states() -> void:
+	var night: RaidNight = await _rung_town()
+	var sheet := RaidBarricade.sheet()
+	assert_int(int(sheet.span)).is_equal(48)
+	for b: RaidBarricade in night.barricades:
+		assert_bool(b.pictured()).is_true()
+		assert_int(b.max_hp).is_equal(10)
+		assert_vector((b.get_node("Shape") as CollisionShape2D).shape.size).is_equal(Vector2(18, 144))   # 6 x 48 world px
+		assert_str(b.look()).is_equal("standing")
+		# the picture is a child sprite over the node's own shadow drawing (drawn in _draw after the shadow's
+		# polygons it came out a blank white frame in the real game), its foot on the pad
+		var pic := b.get_node("Picture") as Sprite2D
+		assert_object(pic).is_not_null()
+		assert_bool(pic.centered).is_false()
+		assert_vector(pic.position).is_equal(-Vector2(float(sheet.foot[0]), float(sheet.foot[1])))
+		assert_bool(pic.show_behind_parent).is_false()
+		assert_int(pic.z_index).is_equal(0)
+		assert_bool(pic.z_as_relative).is_true()                      # it sorts and sinks with its hurdle
+		assert_str(pic.texture.resource_path).is_equal(RaidBarricade.ART + String(sheet.states.standing.png))
+	for state: String in ["standing", "battered", "broken"]:
+		var st: Dictionary = sheet.states[state]
+		var tex := load(RaidBarricade.ART + String(st.png)) as Texture2D
+		assert_object(tex).is_not_null()
+		assert_vector(Vector2(tex.get_size())).is_equal(Vector2(float(sheet.frame[0]), float(sheet.frame[1])))
+	var b0: RaidBarricade = night.barricades[0]
+	var pic0 := b0.get_node("Picture") as Sprite2D
+	# its ground line runs from wall to wall: the pad's whole span
+	var ground: Array = sheet.states.standing.ground
+	assert_float(float(ground[0][1])).is_equal(-72.0)
+	assert_float(float(ground[ground.size() - 1][1])).is_equal(72.0)
+	b0.batter(4)
+	assert_str(b0.look()).is_equal("standing")
+	assert_str(pic0.texture.resource_path).is_equal(RaidBarricade.ART + String(sheet.states.standing.png))
+	assert_object(pic0.modulate).is_equal(RaidBarricade.HIT_LIT)    # struck: a step lit, a colour and no movement
+	b0._process(RaidBarricade.HIT_TINT + 0.01)
+	assert_object(pic0.modulate).is_equal(Color.WHITE)
+	b0.batter(1)
+	assert_str(b0.look()).is_equal("battered")                      # from half its health down
+	assert_str(pic0.texture.resource_path).is_equal(RaidBarricade.ART + String(sheet.states.battered.png))
+	b0.batter(4)
+	assert_str(b0.look()).is_equal("battered")
+	b0.batter(1)
+	assert_str(b0.look()).is_equal("broken")
+	assert_str(pic0.texture.resource_path).is_equal(RaidBarricade.ART + String(sheet.states.broken.png))
+	assert_int(b0.z_index).is_equal(-8)                              # the wreckage lies under everyone
+	assert_bool(b0.z_as_relative).is_false()
+
+## The night's lantern is gone from the raid the moment the night ends, as the hurdles are, even while its
+## lights fade (0.6 s without reduced motion): nothing that asks for the raid's lantern finds a fading one.
+func test_the_lantern_is_no_longer_the_raids_once_the_night_ends_while_it_fades() -> void:
+	SaveGame.data.settings.reduced_motion = false
+	var night: RaidNight = await _rung_town()
+	var lamp := night.lantern
+	assert_object(get_tree().get_first_node_in_group("raid_lantern")).is_same(lamp)
+	night._end(true)
+	assert_str(Raids.state()).is_equal("won")
+	assert_bool(is_instance_valid(lamp) and lamp.is_inside_tree()).is_true()   # still fading out
+	assert_object(get_tree().get_first_node_in_group("raid_lantern")).is_null()
+	assert_int(get_tree().get_nodes_in_group("raid_defence").size()).is_equal(0)
+	assert_object(night.lantern).is_null()
 
 ## B2: the lane goes round the well, not through it: no point of it lies inside a solid, and its end stands
 ## beside the lantern's post, within the reach a raider strikes from.
@@ -564,9 +724,13 @@ func test_the_first_wave_waits_for_the_player_at_the_square() -> void:
 		night._physics_process(1.0)
 	assert_int(night.wave).is_equal(-1)
 	assert_int(night.creatures().size()).is_equal(0)
+	# the tracker does not count a wave that has not come (#483 polish): it says they are coming
+	assert_str(Raids.tracker_text()).contains("the shardstruck are coming")
+	assert_str(Raids.tracker_text()).not_contains("wave 1")
 	Zones.player.global_position = centre
 	night._physics_process(0.1)
 	assert_int(night.wave).is_equal(0)
+	assert_str(Raids.tracker_text()).contains("wave 1 of 3")
 
 ## R2-1, the game's side: a real arrow, shot from the street as a player shoots it, frees a toad backed
 ## against the bakery's south wall (its body is a circle at its feet; the arrow's node flies on the ground).
@@ -622,7 +786,12 @@ func test_a_creatures_body_fits_along_the_whole_lane() -> void:
 			blocked.append("%s at %s" % [(hit.collider as Node).name, (night.point_at(s) / 3.0).round()])
 		s += 3.0
 	assert_array(blocked).is_empty()
-	# the strike spot sorts in front of the well (its picture's foot is at y 320) and is clear of its picture
+	# the strike spot sorts in front of the well and the lantern (both pictures' feet are at y 320), is clear
+	# of the well's picture (x 269 to 307) and stands west of the lantern's plinth (x 344 to 360), so the
+	# raider is seen whole from the square, never behind the well's frame or the lantern
 	var end := night.point_at(night.length()) / 3.0
+	var plinth := night.lantern_box()
 	assert_float(end.y).is_greater(320.0)
+	assert_float(end.y * 3.0).is_greater(plinth.end.y)
 	assert_float(end.x).is_greater(307.0)
+	assert_float(end.x * 3.0).is_less(plinth.position.x)

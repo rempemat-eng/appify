@@ -12,6 +12,8 @@
     640,
     560
   ],
+  "prop_clearance": true,
+  "why_prop_clearance": "held by scripts/review/ground_rules.py (rules.prop_overlap, prop_apron, prop_gap; check:kit): no prop's footprint on another's footprint or apron, free-standing props on the square touching or a body (8 px) apart (Matt, 13 Nov)",
   "stages": [
     {
       "id": "broken",
@@ -580,7 +582,9 @@
         "restored": [
           "forge"
         ]
-      }
+      },
+      "with": "smithy",
+      "why": "the smith's anvil stands before her forge's mouth, where she works (`with`: the door rule lets it)"
     },
     {
       "id": "square_rubble_a",
@@ -648,10 +652,10 @@
       "id": "lantern_dark",
       "kind": "lantern",
       "rect": [
-        307,
-        290,
-        10,
-        22
+        344,
+        314,
+        16,
+        6
       ],
       "solid": true,
       "colour": "#55504a",
@@ -660,16 +664,17 @@
           "shard_home:woodland"
         ]
       },
-      "why": "the shard lantern, empty"
+      "why": "the shard lantern, empty",
+      "why_place": "the shard lantern, across the gate walk from the well: the two stand as a pair either side of the square's middle (the axis x 320 that the gate walk and the green lane share), the well 32 px west of it and the lantern 32 px east, each on its own ring of setts, 18 px of open paving between the rings (Matt, 13 Nov: it stood on the well's ring, under its crank). The rect is its plinth, 16 x 6; a body walks all the way round both"
     },
     {
       "id": "lantern_lit",
       "kind": "lantern",
       "rect": [
-        307,
-        290,
-        10,
-        22
+        344,
+        314,
+        16,
+        6
       ],
       "solid": true,
       "colour": "#e8f0ff",
@@ -678,7 +683,8 @@
           "shard_home:woodland"
         ]
       },
-      "why": "the shard lantern holding the woodland's shard"
+      "why": "the shard lantern holding the woodland's shard",
+      "why_place": "the shard lantern, across the gate walk from the well: the two stand as a pair either side of the square's middle (the axis x 320 that the gate walk and the green lane share), the well 32 px west of it and the lantern 32 px east, each on its own ring of setts, 18 px of open paving between the rings (Matt, 13 Nov: it stood on the well's ring, under its crank). The rect is its plinth, 16 x 6; a body walks all the way round both"
     },
     {
       "id": "crater_smoke",
@@ -835,10 +841,11 @@
       "speaker": "notice_board",
       "verb": "Read",
       "at": [
-        236,
-        224
+        216,
+        232
       ],
-      "colour": "#7a5a3a"
+      "colour": "#7a5a3a",
+      "why": "west of the library's door, its foot a cell off the wall, so the door and the way to it stand clear (13 Nov: at 236, 224 it stood in front of the door, where the bell tower's mark also goes)"
     },
     {
       "id": "waystone",
@@ -855,8 +862,8 @@
       "speaker": "shard_lantern",
       "verb": "Look",
       "at": [
-        312,
-        320
+        352,
+        328
       ],
       "colour": "#00000000",
       "radius": 22
@@ -1059,10 +1066,19 @@
           300
         ],
         [
+          262,
+          330
+        ],
+        [
           306,
-          312
+          334
+        ],
+        [
+          338,
+          326
         ]
-      ]
+      ],
+      "why": "round the south of the well to the lantern's south-west, where a raider stands in front of both pictures (13 Nov: the lantern moved east of the walk)"
     },
     {
       "id": "harbour_road",
@@ -1077,10 +1093,11 @@
           330
         ],
         [
-          316,
-          312
+          368,
+          326
         ]
-      ]
+      ],
+      "why": "to the lantern's south-east (13 Nov: the lantern moved east of the walk)"
     }
   ],
   "art": {
@@ -1347,7 +1364,11 @@
         "stack_rise": 10,
         "lawn_as": {
           "chimney": null
-        }
+        },
+        "thatch_form": "hipped",
+        "why_thatch_form": "(Matt, 13 Nov: \"the roof looks wrong\") the thatch drawn as a hipped roof seen from above the front, as the village's view shows every other roof: the front slope and a hip end each side, in courses, under a block-cut ridge cap (houses.hipped_building, hipped_thatch). `thatch: combed` and `hip` stay: the house below its eave, its shadow and the lawn round it are drawn as before. The hut keeps the combed roof until it is redrawn the same way",
+        "hip_h": 25,
+        "why_hip_h": "world px from the ridge's top to the eave's foot (the combed roof's is 35): the front slope brought down towards the gable houses' roof against wall (their slates show 29 px of depth over a 44 px wall, 0.66; this is 25 over the 36 px of wall the eave leaves showing, 0.69)"
       },
       "smithy": {
         "kind": "forge",
@@ -1715,10 +1736,10 @@
       {
         "kind": "kit_lantern",
         "at": [
-          292,
+          288,
           200
         ],
-        "why": "the gate lane's lamps"
+        "why": "the gate lane's lamps, each one cell outside the lane's edge (13 Nov: the west one stood 4 px nearer than the east)"
       },
       {
         "kind": "kit_lantern",
@@ -1794,7 +1815,8 @@
           10,
           8
         ],
-        "why": "Moss's stock"
+        "why": "Moss's stock",
+        "with": "stall"
       },
       {
         "kind": "crates",
@@ -1805,7 +1827,9 @@
         "size": [
           12,
           10
-        ]
+        ],
+        "with": "stall",
+        "why": "Moss's stock, with the barrel west of the stall"
       },
       {
         "kind": "woodpile",
@@ -2017,8 +2041,8 @@
       {
         "kind": "debris",
         "at": [
-          372,
-          312
+          392,
+          300
         ],
         "size": [
           22,
@@ -2030,7 +2054,8 @@
             "shard_home:woodland"
           ]
         },
-        "id": "debris_b"
+        "id": "debris_b",
+        "why": "moved east of the lantern's ring on 13 Nov (it lay under the lantern's new plinth)"
       },
       {
         "kind": "debris",
@@ -2084,13 +2109,14 @@
       {
         "kind": "bench",
         "at": [
-          272,
+          288,
           368
         ],
         "size": [
           24,
           6
-        ]
+        ],
+        "why": "under the well, as its twin stands under the lantern (13 Nov: it was centred on the lantern's old place)"
       },
       {
         "kind": "flower_tub",
@@ -2121,6 +2147,18 @@
         316,
         14,
         23
+      ],
+      [
+        352,
+        316,
+        14,
+        21
+      ]
+    ],
+    "setts_spokes": [
+      [
+        352,
+        316
       ]
     ],
     "puddles": [
@@ -2142,6 +2180,7 @@
         6,
         2.5
       ]
-    ]
+    ],
+    "why_setts": "a ring of setts round the well, and one round the shard lantern across the square's axis (x 320): cx, cy, r0, r1 in world px. The lantern's is its own (`setts_spokes` names it by its middle): larger, older flags in three wide rings, each breaking bond with the next, in the well's own stone, a little smaller (the first pass ran the joints out like spokes in a cooler stone, which read bare as a cut pie and darker than the well's: audit of 13 Nov, G1); the well's is small setts in close rings"
   }
 }

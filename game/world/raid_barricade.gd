@@ -5,9 +5,14 @@ extends StaticBody2D
 ## so the player shoots across it. Marching creatures stop short of it and batter it (world/raid_night.gd
 ## blocker_ahead, enemies/raid_creature.gd); at no health it breaks, its body goes, and the lane is open.
 ##
-## No picture yet: it is drawn in the blockout's placeholder style (flat rectangles in the blockout's wood
-## colours, game/tools/gen_blockout.py), an art follow-up. A hit tints it for HIT_TINT seconds (a colour,
-## not a movement, so reduced motion keeps it); nothing about it loops.
+## Across an east-west road it is drawn from its pictures (scripts/art/kit/hurdles.py; Matt, 13 Nov: "what
+## are those brown things on the track?"): a zigzag of woven wattle hurdles from wall to wall, standing,
+## then battered (from half its health down: leaning, the weave burst), then broken (stumps and rods flat on
+## the road, under everyone). Its contact shadow is laid by the one sun from the picture's sheet, drawn by
+## this node; the picture is a child sprite (`Picture`) over it, since a texture drawn in `_draw` after the
+## shadow's polygons comes out a blank white frame in the compatibility renderer. Any other
+## way round (no pad asks for it yet) keeps the blockout's placeholder. A hit tints it for HIT_TINT seconds
+## (a colour, not a movement, so reduced motion keeps it); nothing about it loops.
 
 signal broke
 
@@ -20,6 +25,11 @@ const LIT := Color("#d8c0a0")
 const SHADE := Color(0.06, 0.08, 0.04, 0.24)   ## the creatures' contact shadow (enemies/creature_look.gd)
 const PIP := Color("#f5d49c")
 const PIP_EMPTY := Color("#3a3030")
+const ART := "res://kit/props/art/raid/"
+const HIT_LIT := Color(1.28, 1.22, 1.12)   ## the struck picture, a step towards the light
+static var _sheet: Dictionary = {}         ## hurdle.json, read once
+const STUMP := 8.0                       ## texels: a broken panel's post stumps stand this high
+const LYING := 4.0                       ## texels: a fallen rail's highest end off the road (its contact shadow)
 
 var pad_id := ""
 var kind: Dictionary = {}
@@ -30,6 +40,7 @@ var hp := 10
 var max_hp := 10
 var _hit := 0.0
 var _shape: CollisionShape2D
+var _picture: Sprite2D                   ## the hurdle's picture, over this node's own shadow drawing
 
 func _ready() -> void:
 	add_to_group("raid_defence")
@@ -43,6 +54,14 @@ func _ready() -> void:
 	rect.size = _size()
 	_shape.shape = rect
 	add_child(_shape)
+	if pictured():
+		_picture = Sprite2D.new()
+		_picture.name = "Picture"
+		_picture.centered = false
+		var foot: Array = sheet().foot
+		_picture.position = -Vector2(float(foot[0]), float(foot[1]))
+		add_child(_picture)
+		_show_picture()
 
 ## The footprint in texels: `depth` along the lane, `span` across it, turned to the nearer axis (the
 ## placeholder is drawn on the pixel grid, never rotated).
@@ -61,9 +80,13 @@ func batter(amount: int, _dir: Vector2 = Vector2.ZERO) -> bool:
 	hp = maxi(hp - amount, 0)
 	_hit = HIT_TINT
 	Sound.play(&"hurdle_hit" if hp > 0 else &"hurdle_break")
-	queue_redraw()
+	_refresh()
 	if hp > 0:
 		return false
+	if pictured():
+		# its wreckage lies flat on the road: over the ground and its shadows, under everyone (as the zone's debris)
+		z_as_relative = false
+		z_index = -8
 	_shape.set_deferred("disabled", true)
 	collision_layer = 0
 	broke.emit()
@@ -73,7 +96,19 @@ func _process(delta: float) -> void:
 	if _hit > 0.0:
 		_hit = maxf(_hit - delta, 0.0)
 		if _hit == 0.0:
-			queue_redraw()
+			_refresh()
+
+## Its state or its struck tint changed: the shadow (or the placeholder) is drawn again and the picture set.
+func _refresh() -> void:
+	queue_redraw()
+	_show_picture()
+
+## The child sprite shows the state's picture, a step lit while struck.
+func _show_picture() -> void:
+	if _picture == null:
+		return
+	_picture.texture = load(ART + String(sheet().states[look()].png))
+	_picture.modulate = HIT_LIT if _hit > 0.0 else Color.WHITE
 
 ## A flat rectangle with a one-texel ink outline (UiStyle.INK, the house outline colour).
 func _ink_rect(r: Rect2, colour: Color) -> void:
@@ -86,6 +121,13 @@ func _cast(foot: Vector2, width: float, h: float) -> void:
 	var c := TerrainGround.sun() * h
 	draw_colored_polygon(PackedVector2Array([foot, foot + Vector2(width, 0), foot + Vector2(width, 0) + c, foot + c]), SHADE)
 
+## The contact shadow of a piece lying on the road (`r`, texels, drawn by `_ink_rect`), raised `h` off it at
+## its highest: its outlined box moved by the one sun, drawn under the piece so only a sliver shows east and
+## south of it.
+func _cast_lying(r: Rect2, h: float) -> void:
+	var box := r.grow(1.0)
+	draw_rect(Rect2(box.position + TerrainGround.sun() * h, box.size), SHADE)
+
 ## The panels' feet on the ground, down the span (texels): one panel per 16 world px.
 func _panel_feet(r: Rect2) -> Array[float]:
 	var out: Array[float] = []
@@ -95,24 +137,80 @@ func _panel_feet(r: Rect2) -> Array[float]:
 		out.append(r.position.y + step * (i + 1))
 	return out
 
+## The picture's sheet: frame, foot and each state's ground line and rise (scripts/art/kit/hurdles.py).
+static func sheet() -> Dictionary:
+	if _sheet.is_empty():
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(ART + "hurdle.json"))
+		_sheet = parsed if parsed is Dictionary else {"span": -1}
+	return _sheet
+
+## Which picture shows: "standing", "battered" from half its health down, "broken" at none.
+func look() -> String:
+	return "broken" if hp <= 0 else ("battered" if hp * 2 <= max_hp else "standing")
+
+## True when its pictures fit: across an east-west road, on a pad as wide as they were drawn for.
+func pictured() -> bool:
+	var s := _size()
+	return s.y >= s.x and is_equal_approx(s.y, float(sheet().get("span", -1)) * DENSITY)
+
+## The pictured hurdle's own drawing is its shadow only; `Picture` stands over it.
+func _draw_pictured() -> void:
+	var st: Dictionary = sheet().states[look()]
+	# its contact shadow: each panel's ground line thrown by the one sun, the panels' shadows joined into one
+	# shape so no fold is shaded twice
+	var ground: Array = st.ground
+	var cast := TerrainGround.sun() * float(st.rise)
+	var shade: Array[PackedVector2Array] = []
+	for i in range(ground.size() - 1):
+		var a := Vector2(float(ground[i][0]), float(ground[i][1]))
+		var b := Vector2(float(ground[i + 1][0]), float(ground[i + 1][1]))
+		var panel := PackedVector2Array([a, b, b + cast, a + cast])
+		var joined := false
+		for k in shade.size():
+			var merged := Geometry2D.merge_polygons(shade[k], panel)
+			if merged.size() == 1:
+				shade[k] = merged[0]
+				joined = true
+				break
+		if not joined:
+			shade.append(panel)
+	for poly in shade:
+		draw_colored_polygon(poly, SHADE)
+
 func _draw() -> void:
+	if pictured():
+		_draw_pictured()
+		return
 	var s := _size()
 	var r := Rect2(-s / 2.0, s)
 	var vertical := s.y >= s.x
 	var rise := 24.0                    # the rails stand this high above the ground (texels)
 	if hp <= 0:
 		# broken: per panel, the two post stumps still standing and the rails down on the road, split in two
-		# with a gap and their ends knocked askew, in ink outline so the open road reads as open
+		# with a gap and their ends knocked askew, in ink outline so the open road reads as open. Each piece
+		# keeps a small contact shadow by the one sun, as the standing hurdle's do: the stumps cast from their
+		# feet, the fallen rails a sliver (all shadows first, so none falls across a piece)
 		if vertical:
-			for fy in _panel_feet(r):
+			var feet := _panel_feet(r)
+			for fy in feet:
 				for x: float in [-11.0, 5.0]:
-					_ink_rect(Rect2(Vector2(x, fy - 8.0), Vector2(6, 8)), POST)
+					_cast(Vector2(x, fy), 6.0, STUMP)
+				_cast_lying(Rect2(Vector2(-16, fy - 3.0), Vector2(13, 4)), LYING)
+				_cast_lying(Rect2(Vector2(0, fy - 6.0), Vector2(15, 4)), LYING)
+				_cast_lying(Rect2(Vector2(-9, fy + 4.0), Vector2(20, 4)), LYING)
+			for fy in feet:
+				for x: float in [-11.0, 5.0]:
+					_ink_rect(Rect2(Vector2(x, fy - STUMP), Vector2(6, STUMP)), POST)
 				_ink_rect(Rect2(Vector2(-16, fy - 3.0), Vector2(13, 4)), WOOD)
 				_ink_rect(Rect2(Vector2(0, fy - 6.0), Vector2(15, 4)), WOOD)
 				_ink_rect(Rect2(Vector2(-9, fy + 4.0), Vector2(20, 4)), POST)
 		else:
-			_ink_rect(Rect2(Vector2(r.position.x, -4), Vector2(s.x * 0.45, 4)), WOOD)
-			_ink_rect(Rect2(Vector2(r.position.x + s.x * 0.55, -1), Vector2(s.x * 0.45, 4)), WOOD)
+			var left := Rect2(Vector2(r.position.x, -4), Vector2(s.x * 0.45, 4))
+			var right := Rect2(Vector2(r.position.x + s.x * 0.55, -1), Vector2(s.x * 0.45, 4))
+			_cast_lying(left, LYING)
+			_cast_lying(right, LYING)
+			_ink_rect(left, WOOD)
+			_ink_rect(right, WOOD)
 		return
 	var wood := LIT if _hit > 0.0 else WOOD
 	if vertical:

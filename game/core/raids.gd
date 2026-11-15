@@ -39,6 +39,10 @@ var _from := ""          ## the zone the player was in before the one now loadin
 ## How the last night was lost, until the zone has said so on screen: "down" when the player went down (the
 ## zone reloads, so the card shows on getting up), "" once told. Not saved: a quit after a loss tells nothing.
 var loss_untold := ""
+## False from the bell until wave 1 comes (world/raid_night.gd holds it back until the player nears the
+## square), so the tracker says the shardstruck are coming instead of counting a wave not there yet. Not
+## saved: a night cut short comes back to the screen, and the bell resets it.
+var wave_begun := false
 
 func _ready() -> void:
 	load_dir(DIR)
@@ -165,6 +169,7 @@ func ring() -> bool:
 		return false
 	SaveGame.set_flag("%s_postponed" % current().id, false)
 	rec().wave = 0
+	wave_begun = false
 	_to_state("running")
 	Sound.play(&"raid_bell")
 	return true
@@ -172,6 +177,7 @@ func ring() -> bool:
 func wave_started(index: int) -> void:
 	if running():
 		rec().wave = index
+		wave_begun = true
 
 ## The lantern held through the last wave: the purse, the reward's flags and the offered restore.
 func win() -> int:
@@ -313,4 +319,6 @@ func tracker_text() -> String:
 	if not running():
 		return ""
 	var def := current()
-	return "%s: Hold the lantern (wave %d of %d)" % [def.get("title", def.id), int(rec().get("wave", 0)) + 1, (def.waves as Array).size()]
+	if not wave_begun:
+		return "%s: Hold the shard lantern (the shardstruck are coming)" % def.get("title", def.id)
+	return "%s: Hold the shard lantern (wave %d of %d)" % [def.get("title", def.id), int(rec().get("wave", 0)) + 1, (def.waves as Array).size()]
