@@ -41,6 +41,7 @@ extends Node
 ##       prompt <verb|none> | hp <n> | hurt (hearts missing) | glint <n> | restored <id> | notrestored <id> | enemies <n>
 ##       at x y <tol> | hud <text|none> | said <text> | banner <text|none> | paused <yes|no>
 ##       line <text|none> (the line on the dialogue box now)
+##       uifocus <text|none> (the start of the text, or the node name, of the control with the keyboard focus)
 ##       setting <key> <value> (a setting in the save: reduced_motion true, pixel_scale whole, ambience false)
 ##       raid <state> (core/raids.gd: none, announced, postponed, pending, running, won, lost) | raidscreen <yes|no>
 ##       defences <n> (hurdles standing) | repairs <yes|no> (the brief repairs after a lost night)
@@ -519,6 +520,12 @@ func expect(a: PackedStringArray) -> String:
 		"repairs":
 			var shown := not get_tree().get_nodes_in_group("raid_repair").filter(func(n: Node) -> bool: return not n.is_queued_for_deletion()).is_empty()
 			return "" if shown == (a[2] == "yes") else "the repairs are %s" % ("shown" if shown else "not shown")
+		"uifocus":
+			var owner := get_viewport().gui_get_focus_owner()
+			var label := "none" if owner == null else (String(owner.get("text")) if owner.get("text") != null and String(owner.get("text")) != "" else String(owner.name))
+			if rest == "none":
+				return "" if owner == null else "the focus is on '%s'" % label
+			return "" if owner != null and (label.to_lower().begins_with(rest.to_lower()) or String(owner.name) == rest) else "the focus is on '%s'" % label
 		"line":
 			var box := get_tree().get_first_node_in_group("dialogue_box")
 			var line: String = box.shown_line() if box != null else ""
