@@ -40,9 +40,9 @@ const STEP_TURNS := [70.0, 90.0, 110.0]    ## the turn of the step aside (past 9
 const ON_TURNS := [0.0, 10.0, 20.0, 30.0]  ## the turn of the leg on toward `toward` after it
 const MIN_ALPHA := 0.1                     ## fainter than this, her box may meet his
 const MIN_WALK := 12.0                     ## a cut path shorter than this: she fades in place instead
-## Audit 3 of #495: a short sidestep that ends by a tree reads as a ghost, not as going home. When her body
-## starts clear of his and the path she would take gains less than this toward `toward` (along the
-## straight line from where she stands), she fades where she stands instead.
+## Audits 3 and 4 of #495: a short sidestep that ends by a tree reads as a ghost, not as going home. When
+## the path she would take gains less than this toward `toward` (along the straight line from where she
+## stands), she fades where she stands instead.
 const MIN_PROGRESS := 25.0
 const STUB := 6.0                          ## a cut path ending this little past a corner ends at the corner
 
@@ -153,8 +153,8 @@ static func choose_lane(from: Vector2, toward: Vector2, player: Vector2, length:
 ## choose_lane gives. The first that is clear of solids and stays clear of him all the way (path_clear)
 ## is taken whole. With none, one is cut where it stops being clear, when that leaves at least MIN_WALK:
 ## the one that gains most toward `toward` when her body starts clear of his, else the one that stays
-## clear longest (stepping off him). When her body starts clear and the path gains less than
-## MIN_PROGRESS toward `toward`, she fades in place. `her` holds her walking boxes by facing
+## clear longest (stepping off him). When the path gains less than MIN_PROGRESS toward `toward`,
+## whether her body starts clear of his or not (audit 4 of #495), she fades in place. `her` holds her walking boxes by facing
 ## (walk_boxes), `his` his drawn box and `her_now` her drawn box where she stands (drawn_box), all about
 ## the feet; empty boxes leave only the keep distance to check. `facing` is the one her body shows now.
 static func choose_path(from: Vector2, toward: Vector2, player: Vector2, length: float, grid: RefCounted,
@@ -201,7 +201,7 @@ static func choose_path(from: Vector2, toward: Vector2, player: Vector2, length:
 			break
 		best = walked
 		best_score = score
-	if best.is_empty() or (boxes and start_clear and progress(best, straight) < MIN_PROGRESS):
+	if best.is_empty() or (boxes and progress(best, straight) < MIN_PROGRESS):
 		return PackedVector2Array()
 	return best
 

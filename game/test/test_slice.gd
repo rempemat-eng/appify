@@ -543,7 +543,8 @@ func test_hale_never_walks_through_a_player_who_stands_in_her_way() -> void:
 	# south of her: where the route crossroads_first talks from, about (58, 13), and (45, -10), (30, 20),
 	# (40, 30)
 	for spot: Vector2 in [Vector2(52, 0), Vector2(36, 0), Vector2(20, 0), Vector2(80, 0), Vector2(58, 13), Vector2(45, -10),
-			Vector2(10, 0), Vector2(30, 20), Vector2(40, 30)]:
+			Vector2(10, 0), Vector2(30, 20), Vector2(40, 30),
+			Vector2(25, 0), Vector2(28, 0), Vector2(20, 10), Vector2(15, 15), Vector2(25, -20), Vector2(32, -15)]:
 		SaveGame.reset()
 		var player := _attach()
 		assert_bool(Zones.go_to("woodland", "start")).is_true()
@@ -555,6 +556,8 @@ func test_hale_never_walks_through_a_player_who_stands_in_her_way() -> void:
 		player.global_position = from + ((toward - from).normalized() * spot.x if on_line else spot)
 		var stood := player.global_position
 		var straight := (toward - from).normalized()
+		for i in 10:             # as in play: she has turned to him, in her talk pose, before he talks
+			await get_tree().process_frame
 		await _slice_talk("Actors/HaleOnThePath/Hale")
 		var nearest := INF
 		var moved := 0.0
@@ -605,19 +608,15 @@ func test_hale_never_walks_through_a_player_who_stands_in_her_way() -> void:
 						overlap = moved_over
 		assert_float(nearest).override_failure_message(
 			"%s: Hale came within %.1f texels of him" % [spot, nearest]).is_greater_equal(keep - 0.01)
-		# audit 3 of #495: when her body starts clear of his she walks on toward the door (net progress along
-		# her straight line, at least 10 texels) or fades where she stands, never a short sidestep that ends
-		# by a tree; when it already covers his, she steps off him, away from him (audit of #491: at 20 and 36
-		# east she turned south, off the road into the meadow)
+		# audits 3 and 4 of #495: whether her body starts clear of his or not, she walks on toward the door
+		# (net progress along her straight line, at least 10 texels where she is last seen) or fades where
+		# she stands, never a short sidestep that ends by a tree (audit of #491: at 20 and 36 east she turned
+		# south, off the road into the meadow)
 		var gained := (last - from).dot(straight)
 		var faded := moved < 0.5
-		if started_clear:
-			if not faded:
-				assert_float(gained).override_failure_message("%s: last seen at %s" % [spot, last]).is_greater_equal(10.0)
-		else:
-			assert_bool(faded).override_failure_message("%s: she stayed in his body" % spot).is_false()
-			assert_float(last.distance_to(stood)).override_failure_message("%s: last seen at %s" % [spot, last]).is_greater(from.distance_to(stood))
-			assert_float(moved).override_failure_message("%s: she did not walk (%.1f)" % [spot, moved]).is_greater_equal(WalkOff.MIN_WALK)
+		if not faded:
+			assert_float(gained).override_failure_message("%s (%s): last seen at %s" % [
+				spot, "clear" if started_clear else "overlapping", last]).is_greater_equal(10.0)
 		assert_int(shown).is_greater(10)                           # she is seen going, not popped
 		assert_bool(hale.is_visible_in_tree()).is_false()
 		assert_bool(hale.usable()).is_false()
