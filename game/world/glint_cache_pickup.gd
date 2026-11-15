@@ -3,7 +3,7 @@ extends Area2D
 ## A cache of Glint lying where the player went down (core/glint_cache.gd). Walking over it picks it up.
 ## It is drawn with the HUD's own Glint mark on a small shadow: one still drawing, nothing loops. Picked
 ## up, the mark rises and fades for RISE seconds and is gone; under reduced motion it is gone at once.
-## No sound (the build has none).
+## Its sound is the `cache` cue (core/sound.gd); the Glint's own two notes follow from the HUD's count.
 
 signal collected(glint: int)
 
@@ -44,6 +44,7 @@ func _on_body(body: Node) -> void:
 		return
 	_taken = true
 	var got := GlintCache.collect(cache)
+	Sound.play(&"cache")
 	collected.emit(got)
 	set_deferred("monitoring", false)
 	if SaveGame.setting("reduced_motion", false):

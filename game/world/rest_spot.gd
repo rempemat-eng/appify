@@ -50,6 +50,7 @@ func interact() -> void:
 	player.heal_full()
 	_save(player)
 	_start_hush()
+	Sound.play(&"rest")
 	rested.emit()
 	await Dialogue.talk(speaker_id)
 	_resting = false

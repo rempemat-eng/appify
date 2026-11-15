@@ -74,6 +74,7 @@ func _march(delta: float) -> void:
 		facing = global_position.direction_to(block.global_position) if global_position.distance_to(block.global_position) > 1.0 \
 			else night.direction_at(lane_s)
 		_blow = false
+		Sound.tell(role)
 		hsm.dispatch(&"windup")
 		return
 	var goal := night.point_at(lane_s + 40.0 * DENSITY)

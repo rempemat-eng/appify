@@ -1,0 +1,36 @@
+{
+	"caches": [],
+	"flags": {
+		"seen:opening": true,
+		"visited:woodland": true
+	},
+	"glint": 12,
+	"paid": {},
+	"player": {
+		"hp": 5,
+		"max_hp": 5
+	},
+	"quests": {},
+	"raid": {
+		"id": "",
+		"layout": {},
+		"postponed": 0,
+		"repairs": false,
+		"state": "none",
+		"wave": 0
+	},
+	"settings": {
+		"ambience": false,
+		"gentle_sound": true,
+		"pixel_scale": "fill",
+		"reduced_motion": false,
+		"sound_effects": false
+	},
+	"spawn": "start",
+	"tracked": "",
+	"version": 2,
+	"village": {
+		"restored": {}
+	},
+	"zone": "woodland"
+}

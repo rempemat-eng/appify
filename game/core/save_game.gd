@@ -11,12 +11,14 @@ extends Node
 signal loaded
 signal saved(path: String)
 
-const VERSION := 1
+const VERSION := 2
 # JSON numbers must retain exact whole values through Godot's float-based parser.
 const MAX_EXACT_INTEGER := 9007199254740991
 const DEFAULT_PATH := "user://save_0.json"
 ## The raid record's states (core/raids.gd STATES; kept here so the save does not depend on the autoload).
 const RAID_STATES := ["none", "announced", "postponed", "pending", "running", "won", "lost"]
+## The sound settings and their defaults (version 2; ui/sound_menu.gd shows them, core/sound.gd reads them).
+const SOUND_SETTINGS := {"sound_effects": true, "ambience": true, "gentle_sound": false}
 
 var data: Dictionary = fresh()
 var path := DEFAULT_PATH
@@ -62,7 +64,9 @@ static func fresh() -> Dictionary:
 		"caches": [],        # Glint left where the player went down: {zone, x, y, glint}
 		# the one raid on the town (core/raids.gd): older saves load with this, no raid pending
 		"raid": {"id": "", "state": "none", "postponed": 0, "wave": 0, "layout": {}, "repairs": false},
-		"settings": {"reduced_motion": false, "pixel_scale": "fill"},
+		# sound (core/sound.gd, ui/sound_menu.gd): effects and ambience on, Gentle sound off, since version 2
+		"settings": {"reduced_motion": false, "pixel_scale": "fill",
+			"sound_effects": true, "ambience": true, "gentle_sound": false},
 	}
 
 func reset() -> void:
@@ -147,7 +151,8 @@ func load_save(from: String = "") -> Error:
 	return OK
 
 ## Versionless/explicit-0 documents are the legacy partial shape; v1 existed both before
-## and after village was added. No gameplay shape changes here, so VERSION stays 1.
+## and after village was added. Version 2 (13 Nov) added the three sound settings: a save from
+## before sound loads with effects and ambience on and Gentle sound off, whatever else it holds.
 ## Empty means refused; accepted documents are detached copies, including unknown fields.
 func _migrate(doc: Dictionary) -> Dictionary:
 	if _document_error(doc) != OK:
@@ -159,6 +164,14 @@ func _migrate(doc: Dictionary) -> Dictionary:
 			0:
 				# v0 -> v1: add the version marker; defaults are filled below.
 				v = 1
+			1:
+				# v1 -> v2: the sound settings, at their defaults (the switches did not exist before, so
+				# a v1 save holds no choice). A document with no settings at all is filled below.
+				if out.has("settings"):
+					for key: String in SOUND_SETTINGS:
+						if not out.settings.has(key):
+							out.settings[key] = SOUND_SETTINGS[key]
+				v = 2
 		out.version = v
 	_fill_missing(out, fresh())
 	out.version = VERSION
@@ -253,6 +266,9 @@ func _document_error(doc: Dictionary) -> Error:
 		return ERR_INVALID_DATA
 	if settings.has("pixel_scale") and not settings.pixel_scale is String:
 		return ERR_INVALID_DATA
+	for key: String in SOUND_SETTINGS:
+		if settings.has(key) and not settings[key] is bool:
+			return ERR_INVALID_DATA
 	return OK
 
 func _target_error(target: String) -> Error:

@@ -21,6 +21,7 @@ func press() -> void:
 		return
 	SaveGame.set_flag(flag)
 	Village.changed.emit(flag)
+	Sound.play(&"plate")
 	pressed.emit()
 
 func _on_body(body: Node) -> void:
