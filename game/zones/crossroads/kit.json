@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "49f2843cc4cb8faf2ac6cf33b021e08ed4c38eea6220f4c6299806063db4f786",
+ "inputs": "380b23e474b90faecbacf12b4eae531760997d31c2691dca21bae3b091477932",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -2145,9 +2145,9 @@
    ],
    "stands": 65,
    "solid": [
-    224,
+    216,
     336,
-    24,
+    32,
     8
    ],
    "shadow": {
