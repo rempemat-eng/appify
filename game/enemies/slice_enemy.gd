@@ -176,6 +176,7 @@ func _update_state(delta: float) -> void:
 			facing = global_position.direction_to(target.global_position)
 			if distance <= reach() and _can_commit() and slots.acquire(self):
 				_reserved = true
+				Sound.tell(role)
 				committed.emit()
 				hsm.dispatch(&"windup")
 			elif role == "shooter" and distance < 45.0 * DENSITY:
@@ -209,6 +210,7 @@ func _update_state(delta: float) -> void:
 					shot.source = self
 					get_parent().add_child(shot)
 					shot.global_position = global_position + facing * 18.0
+				Sound.strike(role)
 				released.emit()
 		"attack":
 			if role == "shooter":
@@ -271,6 +273,7 @@ func take_hit(amount: int, dir: Vector2, _knockback: float = 200.0) -> bool:
 		hsm.set_active(false)
 		collision_layer = 0
 		velocity = Vector2.ZERO
+		Sound.play(&"enemy_freed")
 		died.emit()
 		# Placeholder freedom animation: creature shrinks out; no loot/reward authority.
 		var tween := create_tween()

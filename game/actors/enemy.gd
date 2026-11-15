@@ -235,6 +235,7 @@ func _reset_t() -> void:
 	_t = 0.0
 
 func _windup_enter() -> void:
+	Sound.play(&"tell_mossling")
 	_t = 0.0
 	_run_in = false
 	attack_dir = global_position.direction_to(target.global_position)
@@ -247,6 +248,7 @@ func _windup(delta: float) -> void:
 		hsm.dispatch(&"strike")
 
 func _lunge_enter() -> void:
+	Sound.play(&"enemy_strike")
 	_t = 0.0
 	_struck = false
 
@@ -355,6 +357,7 @@ func _die() -> void:
 	hsm.set_active(false)
 	collision_layer = 0
 	velocity = Vector2.ZERO
+	Sound.play(&"enemy_freed")
 	died.emit()
 	var tw := create_tween()
 	tw.tween_property(sprite, "scale", Vector2(1.3, 0.6), 0.08)

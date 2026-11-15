@@ -210,7 +210,8 @@ lantern have a health bar?", then "why would i defend a lantern that's so odd"):
   when looked at.
 
 Placeholders left (art follow-ups): the two repairs and the screen's lane map use the blockout's flat
-colours.
+colours. The horn, the anvil that begins the night, each wave, the hurdles, the lantern and the night's end have sounds
+since 13 Nov, and the night its own ambience (docs/vision/sound.md, "The Godot game").
 
 `test/test_raids.gd` holds the rules. `game/tools/routes/first_night.txt` plays the end of the slice with
 real input, from a save made just after *Home again* through the announcement, both postponements, a quit

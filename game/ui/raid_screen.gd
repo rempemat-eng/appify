@@ -139,6 +139,7 @@ func _on_ring() -> void:
 
 func _on_later() -> void:
 	if Raids.postpone():
+		Sound.play(&"ui_cancel")
 		close()
 
 # --- contents ---------------------------------------------------------------------------------
@@ -227,6 +228,7 @@ static func _along(lane: PackedVector2Array, at: Vector2) -> float:
 
 func _on_pad(id: String) -> void:
 	Raids.cycle_pad(id)
+	Sound.play(&"ui_confirm")
 	_refresh()
 
 ## The lane as a diagram: the road from the halt on the left to the lantern on the right, a hurdle drawn

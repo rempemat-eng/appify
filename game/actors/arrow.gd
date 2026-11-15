@@ -116,6 +116,8 @@ func _on_body(body: Node) -> void:
 		var counted: Variant = body.take_hit(1, dir, KNOCKBACK)
 		if counted == null or bool(counted):
 			struck.emit(body)
+	else:
+		Sound.play(&"arrow_wall")        # it stopped at a solid
 	queue_free()
 
 func _draw() -> void:

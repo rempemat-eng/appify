@@ -70,8 +70,9 @@ func batter(amount: int, _dir: Vector2 = Vector2.ZERO) -> bool:
 	queue_redraw()
 	_glass.queue_redraw()
 	if hp == 0:
-		fell.emit()
+		fell.emit()                      # the night is lost: its own cue is the sound of this blow
 		return true
+	Sound.play(&"lantern_hit")
 	return false
 
 ## A wave has come for it: its light pools once at its foot.
