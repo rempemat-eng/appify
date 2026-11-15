@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "8fb8d93531b5bae3ede46b3e5b07bc13c7783dc3272d848d4edc65a8c8bd88ab",
+ "inputs": "a4a011cd48d3377ae34c970430ab8ddaf7e9881cc31586734b2f8a246bd7a991",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -57,6 +57,8 @@
   "north_cottages.png",
   "north_cottages_damage.png",
   "notice_board.png",
+  "repair_boards.png",
+  "repair_cart.png",
   "sacks_12.png",
   "smithy.png",
   "smithy_damage.png",
@@ -2087,6 +2089,50 @@
     ]
    },
    "solid": null
+  }
+ ],
+ "repairs": [
+  {
+   "id": "boards_on_a_window",
+   "kind": "window_boards",
+   "png": "repair_boards.png",
+   "foot": [
+    1575,
+    843
+   ],
+   "offset": [
+    -24,
+    -93
+   ],
+   "stands": 93,
+   "solid": null
+  },
+  {
+   "id": "cart_on_its_side",
+   "kind": "cart_wreck",
+   "png": "repair_cart.png",
+   "foot": [
+    708,
+    1032
+   ],
+   "offset": [
+    -68,
+    -54
+   ],
+   "stands": 54,
+   "solid": [
+    224,
+    336,
+    24,
+    8
+   ],
+   "shadow": {
+    "png": "repair_cart_shadow.png",
+    "offset": [
+     -56,
+     -24
+    ]
+   }
   }
  ]
 }
