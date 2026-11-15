@@ -185,6 +185,17 @@ on the screen, the three waves and the win, to Hale's offer.
 
 ## Open for Matt
 
+Matt answered part of this list on 12 and 13 Nov (`decisions-2026-11-13.md`). Those answers are recorded
+there with what each needs; none is built yet, so the sections above still describe the game as it plays.
+
+- **Item 4 is settled:** the first night stays in the slice, as a one-off. Raids return only as story
+  sieges once more shards are home.
+- **Item 6 is settled in part.** A lost night: if the raiders break the shard lantern the shard dims and
+  the square looks worse until a night is held, and no progress or Glint is lost. The signal is Hale
+  striking her anvil, not a bell. The bell tower is the slice's one optional Glint purchase, with its
+  cupola drawn so that paying changes the square (today its mark can be paid and changes no picture).
+  Still open in item 6: where the pads go (the plan's, or the raid's own), and the purse of 30.
+
 1. The forge first (reasons in beat 5), with the apothecary as act 1's first restore.
 2. The smith is a new villager, Hale, rather than one of the fourteen; Morel (the alchemist) appears in the slice only as a neighbour who joins in act 1.
 3. Restores are paid at a "restore here" mark on the building itself, not at the hut's workbench (7.3 allows either).
