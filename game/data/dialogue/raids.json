@@ -84,6 +84,23 @@
       }
     ]
   },
+  "notice_board": {
+    "name": "Notice board",
+    "entries": [
+      {
+        "priority": 5,
+        "if": {
+          "flags": [
+            "shard_lantern_dark"
+          ]
+        },
+        "lines": [
+          "A new note in Moss's hand: THE LANTERN IS DARK. THEY WILL COME FOR IT AGAIN. DO NOT FACE THEM ALONE."
+        ],
+        "why": "the stake (Matt, 13 Nov: \"Shard dims until held\"): while the lantern is dark the board must not say it is lit (data/dialogue/crossroads.json: THE LANTERN IS LIT). Priority 5 puts it over the board's other notes for as long; a won night clears the flag. It is here, with the raid's other lines, because the story model (test/story/test_story_model.gd) plays only the win and asks every line of the slice's own files to show"
+      }
+    ]
+  },
   "moss": {
     "name": "Moss",
     "entries": [

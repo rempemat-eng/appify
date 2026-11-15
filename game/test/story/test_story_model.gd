@@ -14,8 +14,8 @@ extends GdUnitTestSuite
 ##
 ## Raids (core/raids.gd) are modelled as one more thing in their zone: once a raid is earned it can be
 ## defended and won (the purse, its flags), and the restore it offers gets its mark (world/raid_night.gd sets
-## it out at runtime, so it is added here from the raid's data). A lost night changes nothing that lasts (its
-## repairs clear on the next walk in), so the model only plays the win. Announcing and postponing are
+## it out at runtime, so it is added here from the raid's data). A lost night takes no Glint, quest or restore (the lantern is dark and
+## its repairs show until a night is held, which the win undoes), so the model only plays the win. Announcing and postponing are
 ## the raid's own state machine, held by test/test_raids.gd.
 ##
 ## The model mirrors the game's own code paths (Dialogue.talk, RestoreSite.interact, SealLever.interact,
