@@ -39,6 +39,7 @@ const ZONE_BUILT := "zone_built:"
 var defs: Dictionary = {}
 var leads: Array = []
 var cards: Array = []
+var beats: Dictionary = {}
 
 func _ready() -> void:
 	load_dir(DIR)
@@ -46,6 +47,7 @@ func _ready() -> void:
 	if typeof(doc) == TYPE_DICTIONARY:
 		leads = doc.get("leads", [])
 		cards = doc.get("cards", [])
+		beats = doc.get("beats", {})
 	SaveGame.loaded.connect(shelve_unbuilt)
 	# The save was read before this autoload woke (core/save_game.gd boot). Zones, which answers
 	# "zone_built:<zone>", wakes after this one (project.godot's autoload order) and reads its table in
@@ -111,6 +113,12 @@ func due_card() -> Dictionary:
 		if not SaveGame.has_flag("seen:" + str(card.get("id", ""))) and check(card.get("if")):
 			return card
 	return {}
+
+## The beat for a world event (data/leads.json "beats", keyed by the event string, e.g. "camp:meadow"):
+## {"title", "subtitle", "seconds"}, or {} when the event has none.
+func beat(event: String) -> Dictionary:
+	var b: Variant = beats.get(event)
+	return b if typeof(b) == TYPE_DICTIONARY else {}
 
 ## The lead shown while no quest is active: {"title", "text"} of the first entry of data/leads.json
 ## whose condition holds, or {}.

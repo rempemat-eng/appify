@@ -424,3 +424,76 @@ func test_the_number_keys_swap_the_character_only_with_debug_controls() -> void:
 	g._unhandled_input(two)
 	assert_str(String(g.player.character)).is_equal(String(Player.CAST[1]))
 	assert_str(String(g.player.character)).is_not_equal(was)
+
+# --- the beat when the meadow camp is cleared (15 Nov) ---------------------------------------
+func _free_the_meadow(g: Node2D) -> Camp:
+	var camp := Zones.current.get_node("Actors/MeadowCamp") as Camp
+	for c in camp.get_children():
+		if c.has_signal("died"):
+			g.player.global_position = (c as Node2D).global_position + Vector2(48, 0)
+			c.call("take_hit", 99, Vector2.LEFT, 0.0)
+	return camp
+
+## When the last mossling of the meadow goes, the HUD says the meadow is quiet for a few seconds and
+## motes lift off the ground where the camp stood, once and then gone.
+func test_the_meadow_cleared_gets_a_short_card_and_a_settle_effect_that_ends() -> void:
+	SaveGame.set_flag("seen:opening")
+	var g := _game()
+	await _ticks(2)
+	var hud: Control = g.get_node("UI/HUD")
+	assert_str(Zones.current.zone_id).is_equal("woodland")
+	assert_str(hud.shown_text().banner).is_equal("")
+	Quests.notify("talk:stone_sign")
+	var camp := _free_the_meadow(g)
+	await _frames(2)
+	assert_bool(camp.is_cleared()).is_true()
+	assert_str(hud.shown_text().banner).is_equal("The meadow is quiet")
+	assert_str(hud.shown_text().banner_text).is_equal("")
+	assert_str(hud.shown_text().quest_step).is_equal("Return to the sign by the stones")
+	var settle := Zones.current.get_node_or_null("Actors/CampSettle") as CampSettle
+	assert_object(settle).is_not_null()
+	# over the meadow: within the three mosslings' places (735 to 765, 1476 to 1525 texels)
+	assert_bool(Rect2(700, 1450, 100, 100).has_point(settle.global_position)).override_failure_message(str(settle.global_position)).is_true()
+	await get_tree().create_timer(CampSettle.LIFE + 0.3).timeout
+	assert_bool(is_instance_valid(settle)).override_failure_message("the settle effect is still there after its life").is_false()
+	# the card goes too, on its own clock
+	assert_float(float(Quests.beat("camp:meadow").seconds)).is_less_equal(5.0)
+	await get_tree().create_timer(float(Quests.beat("camp:meadow").seconds) - CampSettle.LIFE + 0.2).timeout
+	assert_str(hud.shown_text().banner).is_equal("")
+	# nothing of it is saved, and a load into the cleared meadow says nothing
+	assert_bool(SaveGame.data.flags.keys().any(func(f: String) -> bool: return f.contains("beat") or f.contains("settle"))).is_false()
+	Zones.go_to("woodland", "start")
+	await _frames(3)
+	assert_str(hud.shown_text().banner).is_equal("")
+	assert_object(Zones.current.get_node_or_null("Actors/CampSettle")).is_null()
+
+func test_the_settle_effect_is_finite_and_static_under_reduced_motion() -> void:
+	assert_array(CampSettle.parts(CampSettle.LIFE, false)).is_empty()
+	assert_array(CampSettle.parts(CampSettle.LIFE, true)).is_empty()
+	assert_array(CampSettle.parts(CampSettle.LIFE + 5.0, false)).is_empty()
+	# moving: the motes rise and fade
+	var early := CampSettle.parts(0.5, false)
+	var late := CampSettle.parts(1.4, false)
+	assert_int(late.size()).is_equal(CampSettle.MOTES.size())
+	assert_float(float(late[0].at.y)).is_less(float(early[0].at.y))
+	assert_float(float(late[0].alpha)).is_less(float(early[0].alpha))
+	for p: Dictionary in late:           # on the world's grid, never between texels
+		assert_vector(p.at).is_equal((p.at / CampSettle.TEXEL).round() * CampSettle.TEXEL)
+	# reduced motion: the same still picture from the first frame to the last
+	var still := CampSettle.parts(0.0, true)
+	assert_int(still.size()).is_equal(CampSettle.MOTES.size())
+	for t: float in [0.3, 0.8, 1.2, CampSettle.LIFE - 0.01]:
+		assert_array(CampSettle.parts(t, true)).is_equal(still)
+	# only the meadow has a beat: the Undercroft's camps and the Thornback's say nothing
+	for id: String in ["undercroft_rooms", "undercroft_stair_hall", "thornback"]:
+		assert_dict(Quests.beat("camp:" + id)).is_empty()
+	# and with the picture modes' guidance off there is no card and no effect
+	SaveGame.set_flag("seen:opening")
+	var g := _game()
+	await _ticks(2)
+	var hud: Control = g.get_node("UI/HUD")
+	hud.guidance = false
+	_free_the_meadow(g)
+	await _frames(2)
+	assert_str(hud.shown_text().banner).is_equal("")
+	assert_object(Zones.current.get_node_or_null("Actors/CampSettle")).is_null()

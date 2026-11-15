@@ -179,6 +179,7 @@ func _on_zone(zone: Zone) -> void:
 	pcam.teleport_position()
 	snap_camera()
 	_set_out_caches(zone)
+	_watch_camps(zone)
 	_show_due_card()
 	autosave()
 
@@ -190,6 +191,32 @@ func _set_out_caches(zone: Zone) -> void:
 		pickup.position = Vector2(float(cache.x), float(cache.y))
 		pickup.collected.connect(func(_glint: int) -> void: autosave())
 		zone.actors.add_child(pickup)
+
+## A camp cleared in play gets its beat, when data/leads.json has one for it ("beats", "camp:<id>"): a
+## short card and a brief settle effect where the camp stood (world/camp_settle.gd). Only the moment
+## itself: a camp already cleared when the zone loads says nothing.
+func _watch_camps(zone: Zone) -> void:
+	for camp in zone.actors.get_children():
+		if not camp is Camp or (camp as Camp).is_cleared() or Quests.beat("camp:" + (camp as Camp).camp_id).is_empty():
+			continue
+		var middle := Vector2.ZERO
+		var n := 0
+		for c in camp.get_children():
+			if c is Node2D and c.has_signal("died"):
+				middle += (c as Node2D).global_position
+				n += 1
+		if n > 0:
+			(camp as Camp).cleared.connect(_on_camp_cleared.bind(camp, middle / float(n)), CONNECT_ONE_SHOT)
+
+func _on_camp_cleared(camp: Camp, middle: Vector2) -> void:
+	var beat := Quests.beat("camp:" + camp.camp_id)
+	if beat.is_empty() or not hud.guidance or Zones.in_lab() or not is_instance_valid(camp) or not camp.is_inside_tree():
+		return
+	hud.show_card(str(beat.get("title", "")), str(beat.get("subtitle", "")), str(beat.get("text", "")), float(beat.get("seconds", 4.0)))
+	var settle := CampSettle.new()
+	settle.name = "CampSettle"
+	camp.get_parent().add_child(settle)
+	settle.global_position = middle
 
 ## The story's title cards (data/leads.json): the opening on a new game, the closing beat when the last
 ## quest of this build is done. Each shows once a save; a card waits for an open dialogue to close.
