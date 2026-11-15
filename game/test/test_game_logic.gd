@@ -397,3 +397,30 @@ func test_of_two_plain_neighbours_the_nearer_has_the_prompt() -> void:
 	assert_str(await _stand(player, Vector2(1345, 925))).is_equal("HaleSquare")
 	assert_str(await _stand(player, Vector2(1352, 925))).is_equal("SmithySite")
 	assert_str(await _stand(player, Vector2(1345, 925))).is_equal("HaleSquare")
+
+## The number keys swap the playable character only when the game was started with --debug-controls
+## (15 Nov: they did in every build, and every cast member but Bramble has no bow to shoot yet).
+func test_the_number_keys_swap_the_character_only_with_debug_controls() -> void:
+	SaveGame.set_flag("seen:opening")
+	var g := _game()
+	await _ticks(2)
+	g.args.erase("debug-controls")
+	var was := String(g.player.character)
+	for shift: bool in [false, true]:
+		for code: int in [KEY_1, KEY_2, KEY_5, KEY_0]:
+			var key := InputEventKey.new()
+			key.keycode = code as Key
+			key.shift_pressed = shift
+			key.pressed = true
+			g._unhandled_input(key)
+			assert_str(String(g.player.character)).override_failure_message(
+				"key %s (shift %s) swapped the character without --debug-controls" % [OS.get_keycode_string(code), shift]).is_equal(was)
+	assert_bool(g.debug_controls()).is_false()
+	# with the flag the same key picks the second of the cast, as before
+	g.args["debug-controls"] = true
+	var two := InputEventKey.new()
+	two.keycode = KEY_2
+	two.pressed = true
+	g._unhandled_input(two)
+	assert_str(String(g.player.character)).is_equal(String(Player.CAST[1]))
+	assert_str(String(g.player.character)).is_not_equal(was)

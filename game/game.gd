@@ -13,7 +13,8 @@ extends Node2D
 ## --at=x,y (stand at a world point), --camp[=dx,dy] (set the woodland enemy camp north of the player,
 ## to see and fight the creatures; it is not placed in any zone yet). --camp --quit ends after
 ## camp setup and the following frame unless another selected mode owns completion.
-## --debug-controls shows the optional character-selection debug label (hidden by default).
+## --debug-controls turns on the character keys (1 to 0, Shift+1 to 4) and shows their label. Without
+## it the number keys do nothing in any build: every cast member but Bramble has no bow to shoot yet.
 ## --play=<route file> hands the keys and the mouse to the play driver (tools/play_driver.gd), with
 ## --play-out=<dir> and --play-follow. See docs/godot.md.
 
@@ -125,9 +126,13 @@ func _setup_raid_screen() -> void:
 			raid_screen.open())
 	Raids.changed.connect(func(_st: String) -> void: autosave())
 
+## True when the game was started with --debug-controls: the character keys act and their label shows.
+func debug_controls() -> bool:
+	return args.has("debug-controls")
+
 func _setup_cast_label() -> void:
 	_cast_label = Label.new()
-	_cast_label.visible = args.has("debug-controls")
+	_cast_label.visible = debug_controls()
 	_cast_label.position = Vector2(8, 520)
 	_cast_label.add_theme_font_size_override("font_size", 8)
 	$UI.add_child(_cast_label)
@@ -251,9 +256,10 @@ func _process(delta: float) -> void:
 	pcam.follow_offset = (_look + Vector2(0, -8.0 * DENSITY)).round() + shake
 
 func _unhandled_input(event: InputEvent) -> void:
-	# debug character select: 1 to 0 pick the first ten of Player.CAST, Shift+1 to 4 the rest
+	# debug character select, only with --debug-controls: 1 to 0 pick the first ten of Player.CAST,
+	# Shift+1 to 4 the rest
 	# (not while paused: this node keeps running under the pause menu, the keys must not act through it)
-	if event is InputEventKey and event.pressed and not event.echo and not get_tree().paused:
+	if debug_controls() and event is InputEventKey and event.pressed and not event.echo and not get_tree().paused:
 		var k: int = event.keycode
 		if k >= KEY_0 and k <= KEY_9:
 			var i := (k - KEY_1) if k != KEY_0 else 9
