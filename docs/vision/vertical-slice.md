@@ -24,11 +24,11 @@ Total: about 60 to 90 minutes, matching 12.2's test (45 to 70 for a strong playe
 ### Notes on each beat
 
 1. **Arrival.** No tutorial text. The path from `start` funnels past the sign, so the first "!" the player sees is the sign's (8.3: show, do not explain). The Mossling follows a step behind.
-2. **The sign quest** is already in the game (`woodland_stones`). It is the slice's first fight and pays what the forge needs, so the money loop is felt before it is explained. "Freed" in the text, not "killed": the mosslings run back into the trees.
-3. **Hale** stands on the east path, so a player who runs east first meets her before the sign. That is fine: her lines point back to the sign's pouch if the Glint is short. She hides once *The road home* starts, as if she walked on ahead.
+2. **The sign quest** is already in the game (`woodland_stones`). It is the slice's first fight and pays what the forge needs, so the money loop is felt before it is explained. "Freed" in the text, not "killed": the mosslings run back into the trees. When the last one goes the HUD says so for four seconds ("The meadow is quiet"), and a few motes of the fallen light lift off the meadow and go out (15 Nov; `game/world/camp_settle.gd`, still under reduced motion).
+3. **Hale** stands on the east path, so a player who runs east first meets her before the sign. That is fine: her lines point back to the sign's pouch if the Glint is short. Her words say she goes ahead, and she does (15 Nov): as her talk closes she walks off east along the path and fades out after a few steps (0.8 s, in the open before the willow), and there is nothing left to talk to there. She takes a lane round the player if he stands in her way, never through him. Under reduced motion she fades where she stands, without walking. She stands at her post on the square when the player arrives (`walks_off` in the quest, `game/world/walk_off.gd`).
 4. **Broken Crossroads.** The entry is the garden walk on the terrace (the woodland's east door), so the player passes the hut and its beds first and sees the square from above before walking down the gate stair: the home is shown before the town. Moss is the town's voice (the stall is the one thing open). Morel, the alchemist from Codex's fourteen, stands outside the herbalist's he will reopen in act 1 as the apothecary; in the slice he only foreshadows (his tonics, the fever in the mosslings).
 5. **Forge, not apothecary.** Reasons: (a) 12.2's test asks the player to upgrade a weapon, and gear is Bramble's first loop (fight, loot, upgrade); (b) the smith is the prologue's mover in 8.2 and 7.4 ("a smith from Crossroads (forge)"); (c) the apothecary brews from crops, which the slice only plants at its end, and 8.2 ties it to the circle's act-1 beat (the gardener's daughter, or Morel); (d) the forge's defence kind, the hurdle barricade, is what fills the first night's two pads. The apothecary is the first restore of act 1. The restore is paid at a "restore here" mark on the building, instantly, with no timer (7.3).
-6. **The Undercroft** is three rooms and the chamber in a row under the stone circle, reached by the hatch Hale unbars. Defeat here follows Matt's rule: the player keeps all gear, and a fifth of the Glint earned since last home drops as a cache at the spot, picked up again on the next run. The Thornback, a boar in a bramble shell, is freed: when its health runs out the bramble shell cracks and falls away and it lies down calm beside the shard. Cairn is a granite figure half sunk in the chamber wall; looking at him after the shard is taken makes his eye slits glow once. He stands up in act 1.
+6. **The Undercroft** is three rooms and the chamber in a row under the stone circle, reached by the hatch Hale unbars. Defeat here follows Matt's rule: the player keeps all gear, and a fifth of the Glint earned since last home drops as a cache at the spot, picked up again on the next run. Each of the three rooms is a camp of its own (15 Nov, `game/data/camps.json`): a room whose creatures are all freed stays empty when the player gets up again, and a room left half done is whole again. The Thornback, a boar in a bramble shell, is freed: when its health runs out the bramble shell cracks and falls away and it lies down calm beside the shard. Cairn is a granite figure half sunk in the chamber wall; looking at him after the shard is taken makes his eye slits glow once. He stands up in act 1.
 7. **The homecoming.** Walking the shard home is the slice's emotional beat: the lantern lights, the well clears and the crater stops smoking (7.10, the village reacts to the story). The villager quest (*Home again*) is 12.2's "one villager" quest and repairs a second building in front of the player. Its seeds are the two beds 12.2 asks for; they grow by outings, not by clock.
 8. **The first night.** The lit lantern is the attention the raid comes from. It is announced when the player next comes home, can be postponed twice, and then begins the next time the player walks into town; the prepare screen is never timed. Losing costs nothing but brief repairs. **Built 12 Nov** (below, "The first night as built"), after Codex's enemies, on the plan's lane and the existing woodland creatures.
 
@@ -80,7 +80,10 @@ quest changes; portable mode can also override XDG isolation. Do not use
 
 Current controls: WASD/arrows move, mouse aims, left click fires Bramble's bow,
 Space rolls, E interacts; E/Enter advances dialogue (first finishes the text,
-then advances/closes it). Finish each conversation before moving on. The old
+then advances/closes it). The pause menu (Esc) shows these beside its four rows,
+read from the input map (`game/ui/controls_panel.gd`, 15 Nov): only what the game
+reads today, so the bound but unbuilt actions (right click, Q, F, R, M, Tab) are
+not listed. Finish each conversation before moving on. The old
 melee-combo helper is not bound to the attack action.
 
 - [ ] Start in the woodland. Approach the weathered sign and read it.
@@ -128,7 +131,11 @@ does not place the later `circle_stones`/`cairn` interactions or
 The scenario explicitly leaves those shards absent and `circle_awake` false.
 Do not substitute its earlier state-seeding tests for a manual route.
 Planting two beds and a first weapon upgrade in the older beat table are
-outside the accepted scenario's completion evidence. The first-night raid has
+outside the accepted scenario's completion evidence, and since 15 Nov nobody in
+the slice speaks of them: Hale no longer asks for a blade, Morel offers no
+flasks or tonics and does not ask to come along, and Moss and Ada say nothing of
+seeds or beds (`game/test/test_words.gd` holds the list). The lines come back
+with the systems. The first-night raid has
 its own route and suite (below).
 
 Source references: [input bindings](../../game/core/inputs.gd),
@@ -172,6 +179,12 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
    lights clear away. The bell tower is offered as a restore (`bell_tower`, 50 Glint, act 1's id and price):
    its mark stands before the library's door from then on, and Hale points to it. Its picture (the
    cupola) comes with stage 1, so paying it changes no picture yet.
+   The build's closing card ("The valley holds", "Here the story rests, for now") waits for the win as
+   well as for *Home again* and *The torn roof* (15 Nov; it used to show with the two quests alone,
+   before the night had been played): it follows the night's own card when the roof was done first, and
+   comes with the roof otherwise. While the night is owed and no quest is active the tracker names it:
+   "The lit lantern" before the announcement, "The first night" while it is put off, due or lost
+   (`game/data/leads.json`).
 6. **Loss.** The night is lost when the lantern falls or the player goes down; a card says so, on
    getting up for the second. Defeat keeps the usual cache rule. Nothing is taken. Brief repairs show (boards on the smithy's window, a cart on its side)
    until the next walk in, which clears them and offers the night again with both postponements back.
@@ -202,9 +215,22 @@ since 13 Nov, and the night its own ambience (docs/vision/sound.md, "The Godot g
 
 `test/test_raids.gd` holds the rules. `game/tools/routes/first_night.txt` plays the end of the slice with
 real input, from a save made just after *Home again* through the announcement, both postponements, a quit
-on the screen, the three waves and the win, to Hale's offer.
+on the screen, the three waves and the win, to Hale's offer, and then *The torn roof* to the closing card.
+`routes/main.txt` ends with every quest done, the night announced and put off, and no closing card.
 
 ## Open for Matt
+
+Matt answered part of this list between 12 and 14 Nov (`decisions-2026-11-13.md`, which says for each
+line whether it is his, with its date, or Claude A's reading). None is built yet, so the sections above
+still describe the game as it plays.
+
+- **Item 6, from Matt (13 Nov).** A lost night: if the raiders break the shard lantern it goes dark and
+  the square looks worse until a night is held, and no progress or Glint is lost. The bell tower is
+  rebuilt later and rung for the wolf moon.
+- **Claude A's reading, not yet confirmed by Matt** (items 4 and 6): the first night stays in the slice;
+  raids return only as story sieges once more shards are home; the bell tower is the slice's one
+  optional Glint purchase (today its mark can be paid and changes no picture).
+- Still open in item 6: where the pads go (the plan's, or the raid's own), and the purse of 30.
 
 1. The forge first (reasons in beat 5), with the apothecary as act 1's first restore.
 2. The smith is a new villager, Hale, rather than one of the fourteen; Morel (the alchemist) appears in the slice only as a neighbour who joins in act 1.

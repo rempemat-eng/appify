@@ -1,5 +1,12 @@
 {
-  "_about": "What the HUD says when no quest is active, and the story's title cards (core/quests.gd: lead, due_card). `leads`: the first entry whose `if` holds shows in the quest tracker, so the player always has a line saying where the story goes on. `cards`: shown once a save, top centre, for `seconds` (ui/hud.gd show_card); the flag seen:<id> records it. Conditions are quest conditions (core/quests.gd). The closing entries hold only while the Frostline is not built (the flag zone_built:frostline, core/quests.gd): when it lands, Moss's loaf takes over.",
+  "_about": "What the HUD says when no quest is active, and the story's title cards (core/quests.gd: lead, due_card). `leads`: the first entry whose `if` holds shows in the quest tracker, so the player always has a line saying where the story goes on. `cards`: shown once a save, top centre, for `seconds` (ui/hud.gd show_card); the flag seen:<id> records it. Conditions are quest conditions (core/quests.gd). The closing card and its lead wait for the first night to be won (the flag first_night_won, core/raids.gd) as well as for Home again and The torn roof; until then the lead names the night, before it is announced and while it is put off or lost. The closing entries hold only while the Frostline is not built (the flag zone_built:frostline, core/quests.gd): when it lands, Moss's loaf takes over. `beats`: a short card (a title and one small line, for `seconds`) shown at the moment a world event happens, keyed by the event as the quests hear it (\"camp:<id>\": that camp's last creature freed); game.gd shows it with a brief settle effect (world/camp_settle.gd). A beat is not saved and never shows on a load.",
+  "beats": {
+    "camp:meadow": {
+      "title": "The meadow is quiet",
+      "subtitle": "The mosslings have run back into the trees",
+      "seconds": 4
+    }
+  },
   "cards": [
     {
       "id": "opening",
@@ -23,6 +30,9 @@
         "done": [
           "home_again",
           "a1_the_torn_roof"
+        ],
+        "flags": [
+          "first_night_won"
         ],
         "not_flags": [
           "zone_built:frostline"
@@ -125,6 +135,41 @@
         "done": [
           "home_again",
           "a1_the_torn_roof"
+        ],
+        "flags": [
+          "first_night_announced"
+        ],
+        "not_flags": [
+          "first_night_won",
+          "zone_built:frostline"
+        ]
+      },
+      "title": "The first night",
+      "text": "The shardstruck are camped on the halt road. They come the next time you walk into Crossroads"
+    },
+    {
+      "if": {
+        "done": [
+          "home_again",
+          "a1_the_torn_roof"
+        ],
+        "not_flags": [
+          "first_night_announced",
+          "first_night_won",
+          "zone_built:frostline"
+        ]
+      },
+      "title": "The lit lantern",
+      "text": "Its light carries past the halt road. Something will answer it when you next walk into Crossroads"
+    },
+    {
+      "if": {
+        "done": [
+          "home_again",
+          "a1_the_torn_roof"
+        ],
+        "flags": [
+          "first_night_won"
         ],
         "not_flags": [
           "zone_built:frostline"

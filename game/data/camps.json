@@ -1,0 +1,12 @@
+{
+  "_about": "Camps that are made of several camps (world/camp.gd). A Camp node whose id is a key here holds one camp for each room: `rooms` lists them, each with its own camp id, the plan room it stands in (data/plans/<zone>.json `rooms`) and the node names of its creatures. A room's camp follows the camp rules on its own: when its last creature is freed it sets camp_cleared:<its id> and reports camp:<its id>, and it stays empty from then on. The whole camp is cleared when every room is. Glint is paid under the whole camp's id (`<camp>/<name>`), so nothing here changes who has paid.",
+  "undercroft_rooms": {
+    "zone": "undercroft",
+    "why": "its five creatures stand in three rooms. As one camp, going down in the seal room brought back the stair hall and the root corridor (the mechanics review, 14 Nov)",
+    "rooms": [
+      { "id": "undercroft_stair_hall", "room": "stair_hall", "creatures": ["Rusher1", "Shooter2"] },
+      { "id": "undercroft_root_corridor", "room": "root_corridor", "creatures": ["Shield3", "Rusher4"] },
+      { "id": "undercroft_seal_room", "room": "seal_room", "creatures": ["Elite5"] }
+    ]
+  }
+}

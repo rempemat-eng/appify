@@ -10,12 +10,12 @@
         "if": { "done": ["under_the_stones"] },
         "lines": [
           "You hear it? The lantern hums. Moss says the Ferns are on their way back from the halt farm.",
-          "Bring me your blade whenever you like. The anvil's ready."
+          "The anvil's ready, and half the town's hinges are waiting on it."
         ]
       },
       {
         "if": { "step": ["under_the_stones", "lantern"] },
-        "lines": ["That's the light that fell? Put it in the lantern by the well. The old folk said that's what it was for."]
+        "lines": ["That's the light that fell? Put it in the shard lantern on the square. The old folk said that's what it was for."]
       },
       {
         "if": { "active": ["under_the_stones"] },
@@ -65,13 +65,10 @@
         "lines": ["Talk to Moss at the stall first. She knows who's still here and who ran."]
       },
       {
-        "if": { "active": ["road_to_crossroads"] },
-        "lines": ["East along the path, then the garden walk down to the square. I'll be right behind you."]
-      },
-      {
         "lines": [
           "Bramble! You're alive. I came out to see where the star fell and couldn't find my way back in the dark.",
-          "Half of Crossroads ran to the halt farm when the storm hit. Walk back with me?"
+          "Half of Crossroads ran to the halt farm when the storm hit. Come back to town. It's east along this path, then the garden walk down to the square.",
+          "I'll go on ahead and see what's left of my smithy. You'll catch me up."
         ]
       }
     ]
@@ -81,7 +78,7 @@
     "entries": [
       {
         "if": { "done": ["home_again"] },
-        "lines": ["The Ferns are home and their beds are dug. Two packets of valley seed, on the house. Plant them on your terrace."]
+        "lines": ["The Ferns are home and their chimney's smoking. That's a second fire on the square, and a week ago there was none."]
       },
       {
         "if": { "step": ["home_again", "welcome"] },
@@ -108,7 +105,7 @@
       {
         "if": { "step": ["road_to_crossroads", "moss"] },
         "lines": [
-          "Bramble. And Hale with you! I thought the woods had you both.",
+          "Bramble! Hale's only just come in ahead of you. I thought the woods had you both.",
           "It's me and the stall, mostly. The well's choked, the bakery's cold, the Ferns are at the halt farm.",
           "And there's a crater in the park that still smokes. Talk to Hale. If her forge burns, we can mend the rest."
         ]
@@ -131,8 +128,8 @@
       {
         "if": { "done": ["under_the_stones"] },
         "lines": [
-          "The roof of my herbalist's is in the bakery's yard. When you're back from the hills, help me put it on again.",
-          "Until then, nothing to brew with. Your terrace beds will change that."
+          "The roof of my herbalist's is in the bakery's yard. Once the Ferns are settled, help me put it on again.",
+          "Until then there's nothing to brew with, and nowhere dry to brew it."
         ]
       },
       {
@@ -148,13 +145,13 @@
     "entries": [
       {
         "if": { "done": ["home_again"] },
-        "lines": ["We'll dig your beds over in the morning. The least we can do."]
+        "lines": ["The kettle's on our own fire again. We won't forget it, Bramble."]
       },
       {
         "if": { "restored": ["fern_cottage"] },
         "lines": [
           "Our door! We slept in a hay loft for a week.",
-          "Thank you, Bramble. When the beds are dug, come and see what grows."
+          "Thank you, Bramble. I never thought I'd be so glad of my own front step."
         ]
       },
       {
@@ -168,13 +165,13 @@
       {
         "if": { "done": ["home_again", "a1_the_torn_roof"] },
         "lines": [
-          "A fresh note in Moss's hand: APOTHECARY OPEN. THE FERNS ARE HOME.",
+          "A fresh note in Moss's hand: MOREL HAS A ROOF AGAIN. THE FERNS ARE HOME.",
           "Under it: COL PATH TO THE FROSTLINE STILL BURIED. WORD HERE WHEN IT OPENS."
         ]
       },
       {
         "if": { "done": ["under_the_stones"] },
-        "lines": ["A new note: THE BELL TOWER WILL WARN OF RAIDERS. DO NOT FACE THEM ALONE. (No bounties pinned yet.)"]
+        "lines": ["A new note in Moss's hand: THE LANTERN IS LIT. IF ANYTHING COMES FOR ITS LIGHT, DO NOT FACE IT ALONE."]
       },
       {
         "lines": ["Torn notices. One survives: MARKET DAY, SATURDAY. The rest the storm took."]
@@ -196,10 +193,10 @@
       },
       {
         "if": { "step": ["under_the_stones", "lantern"] },
-        "lines": ["You lift the shard into the lantern's cradle. Light runs down the iron and into the well."]
+        "lines": ["You lift the shard into the lantern's cradle. Its light spills over the setts and across the walk to the well, and far down the water stirs."]
       },
       {
-        "lines": ["An iron lantern beside the well, older than the town, with a dozen empty cradles."]
+        "lines": ["The shard lantern, alone on its ring of setts across the walk from the well. Older than the town, with a dozen empty cradles."]
       }
     ]
   },

@@ -3,7 +3,7 @@
   "title": "The torn roof",
   "kind": "village",
   "region": "valley",
-  "summary": "Morel's herbalist's lost half its roof in the storm. With it open again, he could brew tonics for the road.",
+  "summary": "Morel's herbalist's lost half its roof in the storm. With the roof back on, it is the town's apothecary again.",
   "start": {
     "on": "talk:morel",
     "if": {
