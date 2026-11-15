@@ -146,8 +146,8 @@ func _refresh() -> void:
 	var def := Raids.current()
 	_title.text = String(def.get("title", ""))
 	var forced := Raids.postpones_left() <= 0
-	_sub.text = "The shardstruck gather on the halt road, drawn by the lantern"
-	_text.text = "A horn from the halt road. %s%s Ring the bell when you are ready, then hold the lantern through %d waves." % [
+	_sub.text = "The shardstruck gather on the halt road, drawn by the shard in the lantern"
+	_text.text = "A horn from the halt road. The shard you set in the lantern draws them: its light is the light lodged in them. %s%s Ring the bell when you are ready, then hold the shard lantern through %d waves. If they break it, the night is lost." % [
 		"They will not wait another night. " if forced and Raids.postponed() > 0 else "", _pads_sentence(def), (def.get("waves", []) as Array).size()]
 	_later.visible = not forced
 	_later.text = "Not tonight (%d left)" % Raids.postpones_left()
@@ -241,7 +241,8 @@ func _draw_map() -> void:
 	var lx := MAP.x - 24.0
 	_map.draw_rect(Rect2(Vector2(lx - 2, y - 14), Vector2(4, 22)), POST)
 	_map.draw_rect(Rect2(Vector2(lx - 6, y - 22), Vector2(12, 9)), LAMP)
-	_map.draw_string(font, Vector2(lx - 26, y + 24), "Lantern", HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.SIZE, UiStyle.DIM)
+	var name_w := font.get_string_size("Shard lantern", HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.SIZE).x
+	_map.draw_string(font, Vector2(minf(lx - name_w / 2.0, MAP.x - name_w - 2.0), y + 24), "Shard lantern", HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.SIZE, UiStyle.DIM)
 	var def := Raids.current()
 	var n := 0
 	for id: String in _pad_x:

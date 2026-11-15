@@ -66,8 +66,9 @@ button Ring the bell
 expect raid running
 expect raidscreen no
 expect defences 2
-expect hud Hold the lantern
+expect hud Hold the shard lantern
 expect hud the shardstruck are coming
+expect lantern unhurt
 expect enemies 0
 # the station: on the square just east of the street's mouth, in bow range of both hurdles
 goto 640 930 20
@@ -80,13 +81,14 @@ expect defences 2
 shot 04_at_the_hurdle
 
 step defend the night from the square: three waves down the halt road
-# by the street's mouth while a hurdle stands, then east of the lantern, in sight of the lane's last leg and
-# the strike spot, and just beyond a raider's notice (60 world px) of the strike spot
-defend 420 640 930 1130 1010
+# by the street's mouth while a hurdle stands, then south-east of the lantern, in sight of the lane's last leg
+# and the strike spot (338, 326 world px), and just beyond a raider's notice (60 world px) of it
+defend 420 640 930 1200 1020
 expect raid won
 expect flag first_night_won
 expect glint 146
 expect defences 0
+expect lantern gone
 shot 05_held
 
 step Hale offers the bell tower
