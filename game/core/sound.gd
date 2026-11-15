@@ -301,12 +301,18 @@ func steer(dt: float) -> void:
 	var slot := _loop_ids.find(want) if want != &"" else -1
 	if want != &"" and slot == -1:
 		slot = 0 if _loop_gain[0] <= _loop_gain[1] else 1
-		_loop_players[slot].stream = _loop_stream(want)
-		_loop_players[slot].stream_paused = false
-		_loop_players[slot].volume_linear = 0.0
-		_loop_players[slot].play()
-		_loop_ids[slot] = want
-		_loop_gain[slot] = 0.0
+		if _loop_ids[slot] != &"" and _loop_gain[slot] > 0.0:
+			# a third loop asked for while two are crossing (two doors in quick succession): both players
+			# still sound, and taking one would cut its loop off mid-note. Both fall; the new loop starts
+			# on whichever is silent first.
+			slot = -1
+		else:
+			_loop_players[slot].stream = _loop_stream(want)
+			_loop_players[slot].stream_paused = false
+			_loop_players[slot].volume_linear = 0.0
+			_loop_players[slot].play()
+			_loop_ids[slot] = want
+			_loop_gain[slot] = 0.0
 	var seconds := HOLD_FADE if held else CROSSFADE
 	for i in _loop_players.size():
 		if _loop_ids[i] == &"":
