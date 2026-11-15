@@ -2,7 +2,8 @@ extends PanelContainer
 ## The pause menu (lane R, 25 Oct: reduced motion could only be set by editing the save). It shows while
 ## the tree is paused (Esc or Start toggles that in game.gd) and offers Resume, Reduced motion, Pixel
 ## scale (fill or whole) and Quit. Beside it, on a panel of its own, the controls as they are bound now
-## (ui/controls_panel.gd: text only, so the menu keeps its four rows). Keyboard and gamepad move the
+## (ui/controls_panel.gd: text only, so the menu keeps its four rows); below it where the window shows
+## too little of the grid for the two side by side. Keyboard and gamepad move the
 ## focus (ui_up / ui_down, ui_accept);
 ## the mouse and touch tap. PixelScreen supplies the actual screen projection so
 ## rows retain at least 44 logical display points without changing world scale.
@@ -132,19 +133,54 @@ func _position_in_safe_area() -> void:
 		return
 	size = get_combined_minimum_size()
 	position = (_safe_pixels.get_center() - _screen_offset) / _screen_scale - size / 2.0
+	# Where the window shows too little of the grid for the controls beside the menu, the two stand one
+	# above the other, and the menu moves up by just enough for the pair to sit centred in what is shown.
+	var seen := visible_grid()
+	var want := _controls.get_combined_minimum_size() if _controls != null else Vector2.ZERO
+	if stacked(Rect2(position, size), want, seen, CONTROLS_GAP):
+		position.y = seen.position.y + floorf((seen.size.y - (size.y + CONTROLS_GAP + want.y)) / 2.0)
 	queue_redraw()
 
-## The controls panel stands to the menu's right, top edges level. On a grid too narrow for that it
-## goes to the menu's left, and it never leaves the art grid.
+## The part of the art grid the window shows, inside its safe area, in art texels: the whole grid until
+## PixelScreen has said otherwise (fit_screen). A window narrower than the grid at its scale (a phone
+## held upright with pixel scale "whole") shows only the grid's middle.
+func visible_grid() -> Rect2:
+	var grid := Rect2(Vector2.ZERO, UiStyle.GRID)
+	if _screen_scale <= 0.0:
+		return grid
+	var seen := Rect2((_safe_pixels.position - _screen_offset) / _screen_scale, _safe_pixels.size / _screen_scale)
+	seen = seen.intersection(grid)
+	return seen if seen.has_area() else grid
+
+## Where the controls panel of size `want` goes beside a menu at `own`, inside `seen`: to the menu's
+## right with the top edges level; else to its left; else below it; else above it. Whichever it is, the
+## panel is then kept inside `seen` (the rectangle the window shows, not the whole art grid).
+## True when the controls fit on neither side of the menu but the two fit one above the other in `seen`.
+static func stacked(own: Rect2, want: Vector2, seen: Rect2, gap: float) -> bool:
+	if want == Vector2.ZERO:
+		return false
+	var right := own.end.x + gap + want.x <= seen.end.x
+	var left := own.position.x - gap - want.x >= seen.position.x
+	return not right and not left and own.size.y + gap + want.y <= seen.size.y
+
+static func controls_place(own: Rect2, want: Vector2, seen: Rect2, gap: float) -> Vector2:
+	var at := Vector2(own.end.x + gap, own.position.y)
+	if at.x + want.x > seen.end.x:
+		if own.position.x - gap - want.x >= seen.position.x:
+			at.x = own.position.x - gap - want.x
+		else:
+			at.x = own.get_center().x - want.x / 2.0
+			at.y = own.end.y + gap
+			if at.y + want.y > seen.end.y and own.position.y - gap - want.y >= seen.position.y:
+				at.y = own.position.y - gap - want.y
+	at.x = clampf(at.x, seen.position.x, maxf(seen.end.x - want.x, seen.position.x))
+	at.y = clampf(at.y, seen.position.y, maxf(seen.end.y - want.y, seen.position.y))
+	return at.round()
+
 func _place_controls() -> void:
-	var own := Rect2(global_position, size)
 	var want := _controls.get_combined_minimum_size()
 	_controls.size = want
-	var at := Vector2(own.end.x + CONTROLS_GAP, own.position.y)
-	if at.x + want.x > UiStyle.GRID.x and own.position.x - CONTROLS_GAP - want.x >= 0.0:
-		at.x = own.position.x - CONTROLS_GAP - want.x
-	at.y = clampf(at.y, 0.0, maxf(UiStyle.GRID.y - want.y, 0.0))
-	_controls.global_position = at.round()
+	_controls.global_position = controls_place(Rect2(global_position, size), want, visible_grid(), CONTROLS_GAP)
 
 ## The focus mark: a small gold chevron left of the focused row.
 func _draw() -> void:

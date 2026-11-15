@@ -159,3 +159,55 @@ func test_the_controls_stand_beside_the_pause_menu_and_add_no_row_to_it() -> voi
 	get_tree().paused = false
 	await await_idle_frame()
 	assert_bool(controls.is_visible_in_tree()).is_false()
+
+## The audit of #491: on a phone held upright (402 x 874) with pixel scale "whole" the window shows only
+## the grid's middle (x 279 to 681), and the panel, kept inside the whole grid, stood at x 571 to 807,
+## cut off. It is placed inside what the window shows: beside the menu where that fits, else below it.
+func test_the_controls_panel_stays_inside_what_the_window_shows() -> void:
+	const Screen := preload("res://main/pixel_screen.gd")
+	for spec: Array in [[402, 874, "whole"], [402, 874, "fill"], [375, 667, "whole"], [1920, 1080, "fill"], [960, 540, "whole"], [874, 402, "fill"]]:
+		var screen: Control = auto_free(Control.new())
+		screen.size = UiStyle.GRID
+		add_child(screen)
+		var menu: PanelContainer = preload("res://ui/pause_menu.gd").new()
+		screen.add_child(menu)
+		var window := Vector2(spec[0], spec[1])
+		var k: float = Screen.choose_scale(window, spec[2])
+		var offset := ((window - Screen.ART * k) / 2.0).floor()
+		assert_bool(menu.fit_screen(window, k, offset, 1.0, Rect2(Vector2.ZERO, window))).is_true()
+		get_tree().paused = true
+		for i in 5:
+			await get_tree().process_frame
+		var controls := menu.get_node("Controls") as ControlsPanel
+		var seen: Rect2 = menu.visible_grid()
+		var own := menu.get_global_rect()
+		var beside := controls.get_global_rect()
+		var what := "%s %s: panel %s, menu %s, the window shows %s" % [window, spec[2], beside, own, seen]
+		assert_bool(controls.is_visible_in_tree()).is_true()
+		if beside.size.x <= seen.size.x and beside.size.y <= seen.size.y:
+			assert_bool(seen.grow(0.5).encloses(beside)).override_failure_message("cut off. " + what).is_true()
+		else:
+			# a window too small for the panel at this scale: as much of it as fits, from its top left
+			assert_vector(beside.position).override_failure_message(what).is_equal(seen.position.round())
+		if own.size.y + beside.size.y + 6.0 <= seen.size.y or own.size.x + beside.size.x + 6.0 <= seen.size.x:
+			assert_bool(own.intersects(beside)).override_failure_message("over the menu. " + what).is_false()
+		get_tree().paused = false
+		await get_tree().process_frame
+		screen.remove_child(menu)
+		menu.free()
+
+func test_where_the_controls_panel_goes() -> void:
+	const Menu := preload("res://ui/pause_menu.gd")
+	var want := Vector2(236, 150)
+	var grid := Rect2(0, 0, 960, 540)
+	# room on the right: beside the menu, tops level
+	assert_vector(Menu.controls_place(Rect2(395, 170, 170, 200), want, grid, 6.0)).is_equal(Vector2(571, 170))
+	# no room on the right, room on the left
+	assert_vector(Menu.controls_place(Rect2(700, 170, 170, 200), want, grid, 6.0)).is_equal(Vector2(458, 170))
+	# the audit's case: the window shows x 279 to 681 only: below the menu, centred on it
+	var seen := Rect2(279, 0, 402, 540)
+	var at := Menu.controls_place(Rect2(395, 150, 170, 200), want, seen, 6.0)
+	assert_vector(at).is_equal(Vector2(362, 356))
+	assert_bool(seen.encloses(Rect2(at, want))).is_true()
+	# no room below either: above
+	assert_vector(Menu.controls_place(Rect2(395, 330, 170, 200), want, seen, 6.0)).is_equal(Vector2(362, 174))
