@@ -17,7 +17,7 @@ What is built now (this PR) is the village and quest half: the chain below as qu
 | 5 | The first restored service: **the forge** | the old smithy, east of the square | Hale | *The cold forge*: pays 30 Glint at the "restore here" mark by the smithy door; Hale lights the forge and gives the first upgrade | the forge (tier 1: upgrade and salvage); one free upgrade (placeholder) | rubble and boards gone from the smithy; the forge glows; Hale moves from the square to her anvil; the hatch under the stone circle is unbarred | 4 to 6 |
 | 6 | The Undercroft and the Thornback | the hatch by the stone circle, then three rooms and the chamber under it | the Thornback; Cairn asleep in the wall (a look, no more) | *Under the stones*: frees the shardstruck in three rooms (Codex's grunt, lunger, shooter and swarmer), then the Thornback; takes the great shard | **60 Glint** on return; loot from the rooms (the valley family, Common to Rare; Codex) | none until the shard comes home | 20 to 30 |
 | 7 | The first homecoming change | the square, then the Ferns' cottage | Moss, Hale, **Ada Fern** (placeholder villager) | Sets the shard in the lantern; *Home again*: clears the Ferns' door (20 Glint), welcomes Ada home, plants two beds | **25 Glint**, two packets of valley seed | the lantern lit; the well clear; the crater stops smoking; the Ferns' cottage open; your beds dug over; a new note on the board | 8 to 12 |
-| 8 | The first prepared raid: **the first night** | the square: one lane (the halt road), two pads | Hale, Moss; the shardstruck drawn by the lit lantern | Announced on the next return home; "ring the bell" on the prepare screen (untimed, both pads prefilled with Hale's hurdle barricade); three waves | a modest Glint purse; the bell tower offered for stage 1 | brief repairs only (boards on a window, a cart on its side), cleared on the next visit | 10 to 15 |
+| 8 | The first prepared raid: **the first night** | the square: one lane (the halt road), two pads | Hale, Moss; the shardstruck drawn by the lit lantern | Announced on the next return home; "sound the anvil" on the prepare screen (Hale strikes it) (untimed, both pads prefilled with Hale's hurdle barricade); three waves | a modest Glint purse; the bell tower offered for stage 1 | the shard lantern dark and brief repairs (boards on a window, a cart on its side) until a night is held | 10 to 15 |
 
 Total: about 60 to 90 minutes, matching 12.2's test (45 to 70 for a strong player).
 
@@ -156,8 +156,9 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
 2. **Announced on the next walk into town.** This means walking into Crossroads from another zone. A load
    or getting up after a defeat does not count, so an older save is never ambushed. The announcement is the
    prepare screen itself. It is untimed and the player stands still behind it. It names the halt road and
-   shows the lane, with both pads holding Hale's hurdle barricade. Its buttons are "Ring the bell" and
-   "Not tonight (n left)". A pad tap cycles between the hurdle and empty, and the layout is remembered.
+   shows the lane, with both pads holding Hale's hurdle barricade. Its buttons are "Sound the anvil" and
+   "Not tonight (n left)" (Matt, 13 Nov: night one is called by Hale striking her anvil, with a card and a
+   spark off the anvil at each of the three blows; the bell is rebuilt later and rung for the wolf moon). A pad tap cycles between the hurdle and empty, and the layout is remembered.
 3. **Postponed twice.** "Not tonight" puts it off until the next walk in. After two, the next walk in
    brings the screen without "Not tonight". Moss mentions the camp while it is put off. Quitting on the
    screen brings it back on the next start.
@@ -173,22 +174,33 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
    lantern's plinth, where the raider stands in front of both pictures (13 Nov: the lantern moved off the
    well's ring to the east of the gate walk, 352, 320; the plan's `halt_road` lane holds the same points).
    A raider strikes the lantern only from beside its plinth. Wave 1 waits
-   until the player comes within 60 px of the square (or 25 s), because the bell is rung where the player
+   until the player comes within 60 px of the square (or 25 s), because the anvil is sounded where the player
    walked in, about 20 s from the street.
 5. **Win.** A purse of 30 Glint is paid once and `first_night_won` is set. The hurdles and the lantern's
    lights clear away. The bell tower is offered as a restore (`bell_tower`, 50 Glint, act 1's id and price):
-   its mark stands before the library's door from then on, and Hale points to it. Its picture (the
-   cupola) comes with stage 1, so paying it changes no picture yet.
+   its mark stands before the library's door from then on. Its picture (the
+   cupola) comes with stage 1, so paying it changes no picture yet. Hale no longer points to it: she says
+   this was the one night and they will not come again for this light (Matt, 13 Nov: a one-off).
    The build's closing card ("The valley holds", "Here the story rests, for now") waits for the win as
    well as for *Home again* and *The torn roof* (15 Nov; it used to show with the two quests alone,
    before the night had been played): it follows the night's own card when the roof was done first, and
    comes with the roof otherwise. While the night is owed and no quest is active the tracker names it:
    "The lit lantern" before the announcement, "The first night" while it is put off, due or lost
-   (`game/data/leads.json`).
+   (`game/data/leads.json`); once a night has been lost that lead says instead that the shard lantern is
+   dark until a night is held, and that they come the next time you walk into Crossroads.
 6. **Loss.** The night is lost when the lantern falls or the player goes down; a card says so, on
-   getting up for the second. Defeat keeps the usual cache rule. Nothing is taken. Brief repairs show (boards on the smithy's window, a cart on its side)
-   until the next walk in, which clears them and offers the night again with both postponements back.
+   getting up for the second. The next walk in offers the night again with both postponements back.
    Walking out mid-night leaves it due. Quitting mid-night brings the screen back, from wave 1.
+   The stake (Matt, 13 Nov: "Shard dims until held"): a lost night leaves the shard lantern dark and the
+   square looking worse until a night is held (the save flag `shard_lantern_dark`): the lantern's glass
+   under the struck pane's dark, no light on its iron and none pooling at its foot, and the two brief
+   repairs (boards on the smithy's window, a cart on its side; drawn only, they block nothing), through
+   loads, walks out and in and the next night. A night held lights the lantern and mends the square, for
+   good. The first night's lead, the lantern's own line, Hale, the notice board, the loss cards and the
+   prepare screen say so. No progress and no Glint is lost: no quest, no restore, and going down while a
+   night runs leaves no cache of Glint (every other defeat keeps the cache rule).
+   `game/tools/routes/first_night_lost.txt` plays the lantern's fall; going down is held by
+   `test/test_raids.gd` through the game scene.
 
 Drawn on 13 Nov (Matt: "the roof looks wrong and what are those brown things on the track? why does the
 lantern have a health bar?", then "why would i defend a lantern that's so odd"):
@@ -202,7 +214,7 @@ lantern have a health bar?", then "why would i defend a lantern that's so odd"):
   violet. It stands across the gate walk from the well, each on its own ring of setts.
 - **Its health** shows only once it is struck: a row of six lights over its roof (the HUD's meter style,
   one light for two health: a raider's blow breaks half a light, the elite's a whole one), and the same
-  row under the tracker's line from the bell, so the player knows what to protect before the first blow.
+  row under the tracker's line from the anvil, so the player knows what to protect before the first blow.
   Each blow darkens its glass for a moment; each wave's coming swells its light once. Both are finite and
   still under reduced motion.
 - **The words** name it the same everywhere: "the shard lantern" (the tracker, the prepare screen, the
@@ -215,7 +227,7 @@ since 13 Nov, and the night its own ambience (docs/vision/sound.md, "The Godot g
 
 `test/test_raids.gd` holds the rules. `game/tools/routes/first_night.txt` plays the end of the slice with
 real input, from a save made just after *Home again* through the announcement, both postponements, a quit
-on the screen, the three waves and the win, to Hale's offer, and then *The torn roof* to the closing card.
+on the screen, the three waves and the win, to Hale saying it was the one night, and then *The torn roof* to the closing card.
 `routes/main.txt` ends with every quest done, the night announced and put off, and no closing card.
 
 ## Open for Matt
@@ -224,9 +236,11 @@ Matt answered part of this list between 12 and 14 Nov (`decisions-2026-11-13.md`
 line whether it is his, with its date, or Claude A's reading). None is built yet, so the sections above
 still describe the game as it plays.
 
-- **Item 6, from Matt (13 Nov).** A lost night: if the raiders break the shard lantern it goes dark and
-  the square looks worse until a night is held, and no progress or Glint is lost. The bell tower is
-  rebuilt later and rung for the wolf moon.
+- **Item 6, from Matt (13 Nov).** A lost night ("Shard dims until held"): the shard lantern goes dark
+  and the square looks worse until a night is won, and no progress or Glint is lost. The first night is signalled by
+  Hale striking her anvil, not by a bell; it happens once, and Hale says so when it is won. The bell tower
+  is rebuilt later and rung for the wolf moon; it is optional, and its cupola is drawn so that paying
+  visibly changes the square.
 - **Claude A's reading, not yet confirmed by Matt** (items 4 and 6): the first night stays in the slice;
   raids return only as story sieges once more shards are home; the bell tower is the slice's one
   optional Glint purchase (today its mark can be paid and changes no picture).

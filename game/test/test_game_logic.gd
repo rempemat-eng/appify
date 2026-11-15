@@ -531,7 +531,7 @@ func test_the_closing_card_waits_for_the_first_night_and_the_tracker_names_it_me
 		assert_str(hud.shown_text().quest_title).is_equal("The first night")
 		assert_str(hud.shown_text().quest_step).contains("the next time you walk into Crossroads")
 		assert_dict(Quests.due_card()).is_empty()
-	# the bell: the raid's own line takes the tracker
+	# the anvil: the raid's own line takes the tracker
 	assert_bool(Raids.arrive("crossroads", "woodland")).is_true()
 	assert_bool(Raids.ring()).is_true()
 	await _frames(2)

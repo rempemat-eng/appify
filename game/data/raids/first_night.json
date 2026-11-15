@@ -29,14 +29,19 @@
   },
   "prefill": "hurdle_barricade",
   "lantern": { "hp": 12, "hp_placeholder": true, "foot": [352, 320], "box": [344, 314, 16, 6], "reach": 10,
-    "why": "a raider strikes the lantern only standing within `reach` world px of its plinth (`box`, the lit lantern's solid in zones/crossroads/kit.json); `foot` is the plinth's foot, where its health and its struck light are drawn from" },
+    "dark_flag": "shard_lantern_dark", "picture": "Props/If_lantern_lit/LanternLit",
+    "unlit": "res://zones/crossroads/art/lantern_dark.png", "unlit_parts": [[16, 60, 1, 60], [49, 60, 1, 60], [0, 120, 66, 40]],
+    "why": "a raider strikes the lantern only standing within `reach` world px of its plinth (`box`, the lit lantern's solid in zones/crossroads/kit.json); `foot` is the plinth's foot, where its health and its struck light are drawn from",
+    "why_dark": "the stake (Matt, 13 Nov: \"Shard dims until held\"): a lost night sets the save flag `dark_flag` and only a won night clears it (core/raids.gd). While it is set, world/raid_night.gd lays the struck glass's dark pane over `picture`, the zone's lit lantern (a Sprite2D whose position is the plinth's foot), and the lantern pools no light when a wave comes. `unlit` is the zone's unlit lantern picture (the same size and foot as the lit one) and `unlit_parts` the rectangles of it, in picture px, drawn over the lit picture outside the glass: every pixel where the two pictures differ outside the pane (the glass's two posts, x 16 and 49; the sill, y 120; the line of light down the pedestal, y 124 to 155). The glass itself keeps the lit picture under the dark pane, so the shard is still seen in its cradle. The `repairs` below show for as long. No Glint, quest or restore is taken" },
+  "signal": { "anvil": "Props/If_anvil", "at": [498, 290], "card": "Hale strikes her anvil", "text": "Three blows from the forge: the night has begun.",
+    "why": "night one is called by Hale at her anvil, not by a bell (Matt, 13 Nov; the bell tower is rebuilt later and rung for the wolf moon). The cue is `raid_anvil` (core/raids.gd ring). `anvil` is the zone's anvil, shown only while the forge is restored; `at` (world px) is its face, where world/raid_signal.gd throws a spark for each of the cue's three blows. `card` and `text` are the card that says so wherever the player stands" },
   "march_speed": 30,
   "march_speed_placeholder": true,
   "notice": 60,
   "why_notice": "world px: nearer than this, with nothing solid between, a marching creature turns on the player (the camps notice at 100; a raider keeps to its road longer)",
   "batter": { "damage": 1, "elite_damage": 2, "placeholder": true },
   "first_wave": { "near": "square", "within": 60, "at_least": 2.0, "or_after": 25.0,
-    "why": "wave 1 waits for the player to come within `within` world px of the plan's place `near` (the square), or `or_after` seconds, and never comes sooner than `at_least`: the bell is rung on the screen where the player walked in (the garden walk, about 20 s from the square), and two boarlets break a hurdle in about 8 s (audit round 2, R2-2). Not a combat number" },
+    "why": "wave 1 waits for the player to come within `within` world px of the plan's place `near` (the square), or `or_after` seconds, and never comes sooner than `at_least`: the anvil is sounded on the screen where the player walked in (the garden walk, about 20 s from the square), and two boarlets break a hurdle in about 8 s (audit round 2, R2-2). Not a combat number" },
   "wave_gap": 3.0,
   "spawn_spacing": 1.0,
   "waves": [
@@ -47,7 +52,7 @@
   "waves_placeholder": true,
   "repairs": [
     { "id": "boards_on_a_window", "kind": "boards", "at": [525, 256], "size": [14, 14], "foot": 281, "why": "over the smithy's front window (smithy.png, right of the forge mouth); `foot` sorts it in front of the building" },
-    { "id": "cart_on_its_side", "kind": "cart", "at": [236, 338], "size": [24, 10], "foot": 342, "why": "south of the gate pad, off the walkway" }
+    { "id": "cart_on_its_side", "kind": "cart", "at": [236, 338], "size": [24, 10], "foot": 342, "why": "south of the halt road's lane where it comes onto the square (the lane passes 15 px north of it), off the walkway. Only drawn: it has no solid" }
   ],
   "reward": {
     "flags": ["first_night_won"],
@@ -59,7 +64,7 @@
       "stage": 1,
       "mark": [248, 214],
       "why_mark": "a restore mark in front of the library's door (248, 200), set out by world/raid_night.gd once the raid is won and the bell tower not yet restored; the plan holds no site for it yet",
-      "why": "the bell tower (game-design.md 7.2, the library's cupola; act 1's restore id bell_tower at the 50 Glint its mark's lines quote, docs/story/act1.md) is offered for stage 1. core/raids.gd adds it to Village.sites only while no plan defines bell_tower; its restore mark and its picture arrive with stage 1's map and art. Until then the offer is in Hale's lines"
+      "why": "the bell tower (game-design.md 7.2, the library's cupola; act 1's restore id bell_tower at the 50 Glint its mark's lines quote, docs/story/act1.md) is offered for stage 1. core/raids.gd adds it to Village.sites only while no plan defines bell_tower; its picture arrives with stage 1's art; its mark is set out by world/raid_night.gd (`mark`). Hale no longer speaks of it (Matt, 13 Nov: she says the night was a one-off; data/dialogue/raids.json)"
     }
   }
 }

@@ -303,7 +303,7 @@ func _meter(row: HBoxContainer, key: String, full: int, total: int, art: String)
 	for i in total:
 		(row.get_child(i) as TextureRect).texture = load("res://ui/art/%s_%s.png" % [art, "full" if i < now.x else "empty"])
 
-## The shard lantern's lights under the raid's line, from the bell on: what to protect, before the first
+## The shard lantern's lights under the raid's line, from the anvil on: what to protect, before the first
 ## blow (the lantern itself shows them only once it is hurt). Hidden when no raid runs.
 func _show_lantern(lantern: RaidLantern) -> void:
 	var now := Vector2i(lantern.hp, lantern.max_hp) if lantern != null else Vector2i(-1, -1)

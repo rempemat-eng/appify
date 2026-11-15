@@ -3,7 +3,8 @@ extends Control
 ## The raid's prepare screen (game-design.md 7.6, step 1; docs/vision/vertical-slice.md beat 8). It is the
 ## announcement too: it opens when Raids asks (core/raids.gd prepare_requested), shows what is coming and
 ## down which road, and the pads with what stands on them, every pad filled from the start (Hale's hurdle
-## barricade), so "Ring the bell" starts the night with no other tap. A tap on a pad cycles what stands
+## barricade), so "Sound the anvil" starts the night with no other tap (Matt, 13 Nov: Hale's anvil calls
+## night one; the bell is rebuilt later). A tap on a pad cycles what stands
 ## there through the kinds the player has, then empty. "Not tonight" puts the raid off while postponements
 ## are left. There is nothing to buy and no timer: the screen waits, and the player stands still behind it.
 ##
@@ -74,8 +75,8 @@ func _ready() -> void:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 12)
 	box.add_child(row)
-	_ring = _button("Ring the bell", _on_ring)
-	_ring.name = "RingTheBell"
+	_ring = _button("Sound the anvil", _on_ring)
+	_ring.name = "SoundTheAnvil"
 	row.add_child(_ring)
 	_later = _button("Not tonight", _on_later)
 	_later.name = "NotTonight"
@@ -148,7 +149,8 @@ func _refresh() -> void:
 	_title.text = String(def.get("title", ""))
 	var forced := Raids.postpones_left() <= 0
 	_sub.text = "The shardstruck gather on the halt road, drawn by the shard in the lantern"
-	_text.text = "A horn from the halt road. The shard you set in the lantern draws them: its light is the light lodged in them. %s%s Ring the bell when you are ready, then hold the shard lantern through %d waves. If they break it, the night is lost." % [
+	_text.text = "A horn from the halt road. The shard you set in the lantern draws them: its light is the light lodged in them. %s%s%s Give the word when you are ready: Hale strikes her anvil, and you hold the shard lantern through %d waves. If they break it, the night is lost and the lantern stays dark until a night is held." % [
+		"The lantern has been dark since the night was lost; hold it tonight and it is lit again. " if Raids.lantern_dark(def) else "",
 		"They will not wait another night. " if forced and Raids.postponed() > 0 else "", _pads_sentence(def), (def.get("waves", []) as Array).size()]
 	_later.visible = not forced
 	_later.text = "Not tonight (%d left)" % Raids.postpones_left()
@@ -180,6 +182,9 @@ static func _pads_sentence(def: Dictionary) -> String:
 
 func _build_pads() -> void:
 	for b in _pad_buttons.values():
+		# out of the tree at once: a button only queued for freeing keeps its name until the frame ends, and the
+		# new pad's button would be given another (the screen opened a second time in one session)
+		_map.remove_child(b as Node)
 		(b as Node).queue_free()
 	_pad_buttons.clear()
 	_pad_x.clear()
@@ -239,10 +244,10 @@ func _draw_map() -> void:
 	_map.draw_rect(Rect2(Vector2(8, y - 4), Vector2(MAP.x - 40, 8)), ROAD)
 	var font := UiStyle.font()
 	_map.draw_string(font, Vector2(8, y - 14), "Halt road", HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.SIZE, UiStyle.DIM)
-	# the lantern: a post and its lit cap
+	# the lantern: a post and its cap, lit unless the lantern is dark (a night lost, none held since)
 	var lx := MAP.x - 24.0
 	_map.draw_rect(Rect2(Vector2(lx - 2, y - 14), Vector2(4, 22)), POST)
-	_map.draw_rect(Rect2(Vector2(lx - 6, y - 22), Vector2(12, 9)), LAMP)
+	_map.draw_rect(Rect2(Vector2(lx - 6, y - 22), Vector2(12, 9)), ROAD_EDGE if Raids.lantern_dark() else LAMP)
 	var name_w := font.get_string_size("Shard lantern", HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.SIZE).x
 	_map.draw_string(font, Vector2(minf(lx - name_w / 2.0, MAP.x - name_w - 2.0), y + 24), "Shard lantern", HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.SIZE, UiStyle.DIM)
 	var def := Raids.current()
