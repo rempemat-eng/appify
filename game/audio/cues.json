@@ -394,13 +394,21 @@
    "seconds": 1.95,
    "what": "the night announced: a horn from the halt road"
   },
+  "raid_anvil": {
+   "files": [
+    "sfx/raid_anvil.wav"
+   ],
+   "tier": "moment",
+   "seconds": 1.95,
+   "what": "the night begun: Hale striking her anvil"
+  },
   "raid_bell": {
    "files": [
     "sfx/raid_bell.wav"
    ],
    "tier": "moment",
    "seconds": 1.95,
-   "what": "the bell rung"
+   "what": "the village bell rung (kept for the wolf moon; nothing plays it yet)"
   },
   "raid_wave": {
    "files": [

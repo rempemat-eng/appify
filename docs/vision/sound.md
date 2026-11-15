@@ -91,7 +91,7 @@ The source harnesses cover asset shape, the engine's decisions and where Home an
 
 ## The Godot game (13 Nov)
 
-The three-zone slice (woodland, Crossroads, the Undercroft, the first night) has sound: 55 effect cues in 64 files and four ambience loops, 3.60 MB of WAV against a 4 MB budget. The palette rules are the ones above: generated from code, sine and triangle tones, gentle attacks, low-passed noise, C major pentatonic, every effect under 2 s and ending in silence, loudness in the files (effects peak between -18 and -28 dBFS, loops at -24), and sound as decoration only.
+The three-zone slice (woodland, Crossroads, the Undercroft, the first night) has sound: 56 effect cues in 65 files and four ambience loops, 3.69 MB of WAV against a 4 MB budget. The palette rules are the ones above: generated from code, sine and triangle tones, gentle attacks, low-passed noise, C major pentatonic, every effect under 2 s and ending in silence, loudness in the files (effects peak between -18 and -28 dBFS, loops at -24), and sound as decoration only.
 
 ### The generator
 
@@ -133,7 +133,8 @@ Tiers are explained under [Playback rules](#playback-rules-godot). "Hook" is whe
 | `card_start`, `card_end` | moment | a slow rise over an open fifth; the same notes coming home to C | `game.gd` `_show_due_card` (the opening and closing cards) |
 | `rest` | moment | the old lullaby, shorter | `world/rest_spot.gd` |
 | `raid_horn` | moment | a horn from the halt road, far off and low-passed, a short call and a long one | `Raids.prepare_requested` (the night announced) |
-| `raid_bell` | moment | two strikes of the village bell | `Raids.ring()` |
+| `raid_anvil` | moment | Hale striking her anvil: three blows of hammer on iron (E5 and G5 over a low thud), the last left to ring | `Raids.ring()` (the night begins; Matt, 13 Nov: the anvil, not the bell) |
+| `raid_bell` | moment | two strikes of the village bell | **nothing yet.** Kept for act 1's wolf moon, when the bell is rebuilt (Matt, 13 Nov); listed in `Sound.RESERVED` so the "made but never played" test lets it wait |
 | `raid_wave` | moment | two low pulses: brief, not an alarm | `world/raid_night.gd` `_next_wave` |
 | `hurdle_hit`, `hurdle_break` | moment | a blow on wood and the rails rattling; a crack and the rails coming down | `world/raid_barricade.gd` `batter` |
 | `lantern_hit` | moment | glass and iron ringing dully over the blow | `world/raid_lantern.gd` `batter` (not the blow that fells it: that is `night_lost`) |
@@ -144,7 +145,7 @@ Tiers are explained under [Playback rules](#playback-rules-godot). "Hook" is whe
 | `woodland` | wind in the crowns, leaves stirring, birds near and far | the woodland |
 | `crossroads` | low wind between the houses, sparrows kept far, a dove, a sign creaking, one far bell note | Crossroads |
 | `undercroft` | low cave air that breathes, a hollow tone in the vaults, water dripping with two soft echoes | the Undercroft |
-| `night` | crickets in two voices, low wind, two slow gusts | Crossroads while the first night runs (from the bell to the night's end) |
+| `night` | crickets in two voices, low wind, two slow gusts | Crossroads while the first night runs (from the anvil to the night's end) |
 
 A creature's hurt and the arrow's hit are one moment (only an arrow hurts a creature), so they are one cue, `arrow_hit`. Paying at a build mark and the building restored are one moment too (`Village.restore` does both at once); they are two cues that start together, and `built` holds its first 0.38 s silent so the coins are heard first.
 
@@ -171,7 +172,7 @@ A creature's hurt and the arrow's hit are one moment (only an arrow hurts a crea
 | **step** | The footsteps' own spacing, so they never use up the flavour's: at most one every 200 ms; none with Gentle sound |
 
 - The same cue asked for twice within 90 ms is one sound.
-- A new cue needs a tier in the generator's table; the generator refuses one without, and `test/test_sound.gd` fails on a cue named in code that does not exist, and on a cue made that nothing plays.
+- A new cue needs a tier in the generator's table; the generator refuses one without, and `test/test_sound.gd` fails on a cue named in code that does not exist, and on a cue made that nothing plays (unless it is in `Sound.RESERVED`, kept for later: today only `raid_bell`).
 
 ### Settings
 

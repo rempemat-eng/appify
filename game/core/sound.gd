@@ -37,6 +37,9 @@ const CROSSFADE := 1.5        ## seconds from one loop to the next
 const HOLD_FADE := 0.25       ## seconds to silence under the pause menu, or when ambience is switched off
 const DENSITY := 3.0
 
+## Cues that are made and that nothing plays yet, each with what it waits for. The village bell is rebuilt
+## later and rung for act 1's wolf moon (Matt, 13 Nov); the first night is called by `raid_anvil`.
+const RESERVED: Array[StringName] = [&"raid_bell"]
 ## Which loop a zone plays (a zone not listed, a lab zone, is silent) and the loop of a raid's night.
 const ZONE_LOOPS := {"woodland": &"woodland", "crossroads": &"crossroads", "undercroft": &"undercroft"}
 const NIGHT_LOOP := &"night"

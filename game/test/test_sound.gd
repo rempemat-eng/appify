@@ -100,10 +100,15 @@ func test_every_cue_named_in_code_exists_and_has_a_tier() -> void:
 	assert_int(named.size()).is_greater(40)
 	for cue: StringName in named:
 		assert_bool(Sound.effects.has(cue)).override_failure_message("%s plays '%s', which is not a cue" % [named[cue], cue]).is_true()
+	assert_array(Sound.RESERVED).is_equal([&"raid_bell"])           # the wolf moon's bell, and nothing else
+	for cue: StringName in Sound.RESERVED:
+		assert_bool(Sound.effects.has(cue)).override_failure_message("'%s' is kept for later but not made" % cue).is_true()
 	for cue: StringName in Sound.effects:
 		var def: Dictionary = Sound.effects[cue]
 		assert_bool(SoundRules.TIERS.has(def.tier)).override_failure_message("%s has no tier" % cue).is_true()
-		assert_bool(named.has(cue)).override_failure_message("the cue '%s' is made but never played" % cue).is_true()
+		# a cue is played somewhere or it is on the short list of ones kept for later, never both
+		assert_bool(named.has(cue) != Sound.RESERVED.has(cue)).override_failure_message(
+			"the cue '%s' is %s" % [cue, "kept for later (Sound.RESERVED) and played all the same" if named.has(cue) else "made but never played"]).is_true()
 		assert_float(float(def.seconds)).is_less_equal(2.0)
 		assert_array(def.files).is_not_empty()
 		for file: String in def.files:
@@ -650,10 +655,10 @@ func test_quests_lines_and_the_raid() -> void:
 	Raids.finished.emit(false)
 	assert_array(_heard).is_equal([&"quest_start", &"quest_done", &"talk", &"talk", &"talk", &"raid_horn", &"night_won", &"night_lost"])
 
-func test_the_bell_the_hurdles_and_the_lantern() -> void:
+func test_the_anvil_the_hurdles_and_the_lantern() -> void:
 	_listen()
 	SaveGame.data.raid = {"id": "first_night", "state": "announced", "postponed": 0, "wave": 0, "layout": {}, "repairs": false}
-	assert_bool(Raids.ring()).is_true()
+	assert_bool(Raids.ring()).is_true()                          # the night begins on Hale's anvil, not the bell
 	assert_bool(Raids.ring()).is_false()
 	_now += 1000
 	var hurdle: RaidBarricade = auto_free(RaidBarricade.new())
@@ -670,7 +675,7 @@ func test_the_bell_the_hurdles_and_the_lantern() -> void:
 	assert_bool(lantern.batter(1)).is_false()
 	_now += 1000
 	assert_bool(lantern.batter(1)).is_true()                     # the blow that fells it: the night's own cue
-	assert_array(_heard).is_equal([&"raid_bell", &"hurdle_hit", &"hurdle_break", &"lantern_hit"])
+	assert_array(_heard).is_equal([&"raid_anvil", &"hurdle_hit", &"hurdle_break", &"lantern_hit"])
 
 func test_a_walk_between_zones_sounds_its_door() -> void:
 	Zones.table = {"a": "res://test/fixtures/zone_a.tscn", "b": "res://test/fixtures/zone_b.tscn"}

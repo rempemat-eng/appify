@@ -171,7 +171,7 @@ func ring() -> bool:
 	rec().wave = 0
 	wave_begun = false
 	_to_state("running")
-	Sound.play(&"raid_bell")
+	Sound.play(&"raid_anvil")          # Hale at her anvil (Matt, 13 Nov); the bell is the wolf moon's
 	return true
 
 func wave_started(index: int) -> void:

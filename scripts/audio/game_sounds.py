@@ -524,8 +524,26 @@ def raid_horn(rng):
     return finish(dry + wet, -20)
 
 
+def raid_anvil(rng):
+    # The first night is called from the forge (Matt, 13 Nov): Hale strikes her anvil three times, the last
+    # blow left to ring. Each strike is the hammer's face meeting iron (a tick of noise), the block and its
+    # stump taking the blow (a low thud, which is the warmth) and the anvil's own ring: two bar tones a
+    # minor third apart (E5 and G5), shorter and drier than the bell's, low-passed so it is iron in a
+    # forge and never a clang.
+    out = silence(1.95)
+    for i, (at, gain, ring) in enumerate(((0.0, 0.86, 0.17), (0.5, 0.93, 0.19), (1.0, 1.0, 0.3))):
+        s = 0.95
+        strike = bell(N['E5'], s, ring, brightness=0.6) + 0.5 * bell(N['G5'], s, ring * 0.7, brightness=0.4)
+        strike = norm(strike)
+        place(strike, norm(osc(sweep(190, 120, 0.16, curve=0.5), 0.16) * env(0.16, 0.002, 0.04)), 0.0, gain=0.55)
+        place(strike, norm(burst(rng, 0.04, 900, 3800, 0.001, 0.007)), 0.0, gain=0.3)
+        place(out, strike, at, gain=gain)
+    return finish(band(out, None, 4500), -18)
+
+
 def raid_bell(rng):
-    # "Ring the bell": two strikes of the village bell (C5 over its C4 hum).
+    # The village bell: two strikes (C5 over its C4 hum). Not asked for yet (Matt, 13 Nov): the bell is
+    # rebuilt later and rung for act 1's wolf moon; the first night is called by the anvil above.
     out = silence(1.95)
     for i, at in enumerate((0.0, 0.62)):
         strike = bell(N['C5'], 1.3, 0.42, brightness=0.5) + 0.45 * osc(N['C4'], 1.3) * env(1.3, 0.01, 0.6)
@@ -723,7 +741,8 @@ EFFECTS: dict[str, tuple] = {
     'card_end': (card_end, 'moment', 'the closing card'),
     'rest': (rest, 'moment', 'resting at the hut'),
     'raid_horn': (raid_horn, 'moment', 'the night announced: a horn from the halt road'),
-    'raid_bell': (raid_bell, 'moment', 'the bell rung'),
+    'raid_anvil': (raid_anvil, 'moment', 'the night begun: Hale striking her anvil'),
+    'raid_bell': (raid_bell, 'moment', 'the village bell rung (kept for the wolf moon; nothing plays it yet)'),
     'raid_wave': (raid_wave, 'moment', 'a wave arriving'),
     'hurdle_hit': (hurdle_hit, 'moment', 'a hurdle battered'),
     'hurdle_break': (hurdle_break, 'moment', 'a hurdle broken'),
