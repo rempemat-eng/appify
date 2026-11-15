@@ -1,23 +1,25 @@
 # Matt's decisions, 13 November 2026
 
-Matt answered these on 12 and 13 Nov, after playing the first night. They stand until he changes them, and they override older text where the two disagree, `decisions-2026-11-11.md` included. AGENTS.md carries the process rules. Claude A recorded them here on 15 Nov from his answers; the wording is a summary, not a quotation.
+Matt gave these between 12 and 14 Nov, after playing the first night; each carries its date. They stand until he changes them, and they override older text where the two disagree, `decisions-2026-11-11.md` included. AGENTS.md carries the process rules. Claude A recorded them here on 15 Nov; the wording is a summary, not a quotation.
+
+**Three kinds of line are on this page.** A line with a date is Matt's. A line marked "Claude A's reading, not yet confirmed by Matt" is not his: it is how Claude A reads his answers, and it binds nobody until he confirms it. A line marked "from Claude A's brief, with no date of Matt's given for it" was handed on as his answer without a date; treat it as unconfirmed too until its date is added.
 
 **None of this is built yet.** This page records the decisions and what each one needs. The first night on main still plays as `vertical-slice.md` ("The first night as built") describes it.
 
 ## The first night
 
-- **(a) A broken shard lantern.** If the raiders break the shard lantern, the shard dims and the square looks worse until a night is held. No progress and no Glint is lost.
-- **(b) Hale's anvil, not a bell.** The first night is signalled by Hale striking her anvil. The bell tower is rebuilt later, and its bell is rung for the wolf moon.
-- **(c) A one-off.** The first night happens once. Raids return only as story sieges, once more shards are home, and Hale says so when the night is won.
-- **(d) The bell tower is the slice's one optional Glint purchase.** Its cupola is drawn, so that paying visibly changes the square.
+- **(a) A broken shard lantern (Matt, 13 Nov).** If the raiders break the shard lantern, the lantern goes dark and the square looks worse until a night is held. No progress and no Glint is lost.
+- **(b) The bell tower comes later (Matt, 13 Nov).** The bell tower is rebuilt later, and its bell is rung for the wolf moon. From Claude A's brief of 15 Nov, with no date of Matt's given for it: the first night is signalled by Hale striking her anvil, not by a bell.
+- **(c) A one-off.** From Claude A's brief of 15 Nov, with no date of Matt's given for it: the first night happens once. **Claude A's reading, not yet confirmed by Matt:** raids return only as story sieges, once more shards are home, and Hale says so when the night is won.
+- **(d) The bell tower as a purchase.** **Claude A's reading, not yet confirmed by Matt:** the bell tower is the slice's one optional Glint purchase. From Claude A's brief of 15 Nov, with no date of Matt's given for it: its cupola is drawn, so that paying visibly changes the square.
 
 ## The world
 
-- **The Frostline is parked as a lab.** It is not part of the slice. Its entrance stays at the woodland's north edge.
+- **The Frostline is parked as a lab (Matt, 12 Nov).** It is not part of the slice. Its entrance stays at the woodland's north edge.
 
 ## How work runs
 
-- **Matt plays on a Mac.** The build he judges by eye has to run there.
+- **Matt plays on a Mac (Matt, 14 Nov).** The build he judges by eye has to run there.
 
 ## Still open
 
@@ -26,7 +28,7 @@ Matt answered these on 12 and 13 Nov, after playing the first night. They stand 
 
 ## Follow-up
 
-What each decision needs before it is true in the game. Nothing here is started by this page.
+What each line above needs before it is true in the game. Nothing here is started by this page, and the parts that follow from a reading of Claude A's (the story sieges in (c), the purchase in (d)) wait for Matt's word first.
 
 - **(a) The dimmed shard.**
   - Rules: `game/core/raids.gd` (the `lost` state and its `repairs`, which today clear on the next walk into town: the dimmed square has to last until a night is held), `game/world/raid_night.gd`, `game/world/raid_lantern.gd`, `game/data/raids/first_night.json` (`repairs`).
