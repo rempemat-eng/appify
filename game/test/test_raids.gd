@@ -355,6 +355,8 @@ func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_a_night
 	assert_bool(night.is_over()).is_true()
 	assert_int(_creatures(night).size()).is_equal(0)                  # they go back down the road
 	assert_int(get_tree().get_nodes_in_group("raid_repair").size()).is_equal(2)
+	await get_tree().process_frame
+	assert_bool(_handcart_shown()).is_false()                                       # its wreck lies on the square instead
 	assert_int(get_tree().get_nodes_in_group("raid_defence").size()).is_equal(0)   # the hurdles go with the night
 	assert_object(night.lantern).is_null()                                          # and the lantern's lights
 	assert_int(int(SaveGame.data.glint)).is_equal(116)
@@ -367,6 +369,7 @@ func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_a_night
 	assert_bool(Zones.go_to("crossroads", "woodland")).is_true()
 	await get_tree().process_frame
 	assert_int(Zones.current.get_node("RaidNight").repairs.size()).is_equal(2)
+	assert_bool(_handcart_shown()).is_false()
 	assert_bool(bool(Raids.rec().repairs)).is_true()
 	assert_str(Raids.state()).is_equal("announced")
 	# the boards on the wall have no body; the overturned cart's bed is solid where the data says
@@ -384,9 +387,12 @@ func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_a_night
 	assert_bool(bool(Raids.rec().repairs)).is_false()
 	await get_tree().process_frame
 	assert_int(get_tree().get_nodes_in_group("raid_repair").filter(func(n: Node) -> bool: return not n.is_queued_for_deletion()).size()).is_equal(0)
+	await get_tree().process_frame
+	assert_bool(_handcart_shown()).is_true()                                        # the handcart is back with the mending
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()
 	await get_tree().process_frame
 	assert_int(Zones.current.get_node("RaidNight").repairs.size()).is_equal(0)
+	assert_bool(_handcart_shown()).is_true()
 
 func test_walking_out_mid_night_leaves_it_pending() -> void:
 	var night := _into_town()
@@ -835,6 +841,15 @@ func test_a_creatures_body_fits_along_the_whole_lane() -> void:
 	assert_float(end.x).is_greater(307.0)
 	assert_float(end.x * 3.0).is_less(plinth.position.x)
 
+## The square's upright handcart (its picture, its shadow and its body, in the zone's Conditionals): hidden for
+## exactly as long as its wreck, the repair `cart_on_its_side`, shows.
+func _handcart_shown() -> bool:
+	var cart := Zones.current.get_node("Props/If_handcart") as Conditional
+	var shade := Zones.current.get_node("Props/If_handcart_shadow") as Conditional
+	assert_bool(cart.visible).is_equal(shade.visible)
+	assert_object(cart.find_child("*Body*", true, false)).is_not_null()
+	return cart.visible and cart.process_mode != Node.PROCESS_MODE_DISABLED
+
 ## The drawn repairs after a lost night (world/raid_repair.gd, the pictures from scripts/art/native/town.py):
 ## each shows its picture where kit.json puts it; the boards on the smithy's wall have no body; the
 ## wrecked cart's bed is a solid on the walls' layer (it stands above LOW_RISE, so by the zone's own rule it
@@ -850,6 +865,8 @@ func test_with_the_repairs_showing_the_lane_and_every_walk_stay_open() -> void:
 	var night := Zones.current.get_node("RaidNight") as RaidNight
 	night.set_physics_process(false)
 	assert_int(night.repairs.size()).is_equal(2)
+	await get_tree().process_frame
+	assert_bool(_handcart_shown()).is_false()
 	for r: Node2D in night.repairs:
 		var spec: Dictionary = (r as RaidRepair).spec
 		var pic := r.get_node("Picture") as Sprite2D

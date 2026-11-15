@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "68d757219e39d5876440c7910cad3f96b5bb9d047a8563f8cd35d20e461f4918",
+ "inputs": "edd419e4450fcc4c83f71b625ca59072f9a9a9d38280f5384c47ecd8415f15b3",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -1803,7 +1803,11 @@
     -57,
     -80
    ],
-   "cond": null,
+   "cond": {
+    "not_flags": [
+     "shard_lantern_dark"
+    ]
+   },
    "solid": [
     225.0,
     256,
@@ -2070,6 +2074,26 @@
    },
    "solid": null,
    "of": "beds_dug"
+  },
+  {
+   "id": "handcart_shadow",
+   "kind": "shadow",
+   "png": "handcart_shadow.png",
+   "foot": [
+    653,
+    788
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_lantern_dark"
+    ]
+   },
+   "solid": null,
+   "of": "handcart"
   },
   {
    "id": "square_puddles",
