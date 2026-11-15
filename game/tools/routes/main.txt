@@ -63,16 +63,18 @@ restart
 expect glint 46
 expect quest woodland_stones done
 
-step Hale on the east path: she does not vanish as her line closes
+step Hale on the east path: she says she goes ahead, and walks off east as her talk closes
 goto 556 1300 10
 expect prompt Talk
 talk Hale
-expect said Walk back with me
+expect said I'll go on ahead
 expect quest road_to_crossroads active go
-expect focus Hale
-talk Hale
-expect said right behind you
+wait 0.4
+expect focus none
 shot 03_hale_on_the_path
+wait 2.0
+expect focus none
+expect prompt none
 
 step the east path to Crossroads
 door 951 1356 crossroads
@@ -95,7 +97,7 @@ step Moss at the stall
 goto 1152 830 10
 expect prompt Talk
 talk Moss
-expect said And Hale with you
+expect said come in ahead of you
 expect quest road_to_crossroads done
 expect glint 56
 expect hud Talk to Hale by her smithy

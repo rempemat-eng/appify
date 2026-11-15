@@ -1,6 +1,6 @@
 # Went to Crossroads first, paid for the forge there, then talked to Hale: the order the slice allows
-# ("or already visited", "or already restored"). There is one Hale at every moment, she never vanishes
-# as a line closes, and her lines fit what has already happened. Commands: tools/play_driver.gd.
+# ("or already visited", "or already restored"). There is one Hale at every moment, she walks off ahead
+# when she has asked (she never vanishes as a line closes), and her lines fit what has already happened. Commands: tools/play_driver.gd.
 
 step the sign's pouch first, without meeting Hale
 goto 372 1150 10
@@ -31,16 +31,15 @@ talk Moss
 expect said Have you seen Hale
 expect quest road_to_crossroads none
 
-step back for Hale: the road's first step is already done, and she stays on the path as her line closes
+step back for Hale: the road's first step is already done, and she goes ahead as her talk closes
 door 12 210 woodland
 goto 556 1300 10
 talk Hale
-expect said Walk back with me
+expect said I'll go on ahead
 expect quest road_to_crossroads active moss
-expect focus Hale
-talk Hale
-expect said Talk to Moss at the stall first
-expect focus Hale
+wait 2.5
+expect focus none
+expect prompt none
 
 step quit and load: she has walked home
 restart
@@ -54,7 +53,7 @@ goto 1290 940 10
 expect focus none
 goto 1152 830 10
 talk Moss
-expect said And Hale with you
+expect said come in ahead of you
 expect quest road_to_crossroads done
 expect glint 26
 goto 1530 936 10

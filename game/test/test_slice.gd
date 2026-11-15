@@ -85,8 +85,10 @@ func test_entering_crossroads_first_still_counts() -> void:
 	assert_str(_step("road_to_crossroads")).is_equal("moss")
 
 ## Hale's place (10 Nov: she used to vanish as her last line closed, and stood in the woodland and on
-## the square at once for a player who went to Crossroads first). She is on the woodland path until
-## she has asked and the next zone loads; from then on she is in Crossroads.
+## the square at once for a player who went to Crossroads first). Her woodland node is shown until
+## she has asked and the next zone loads; from then on she is in Crossroads. Since 15 Nov she does not
+## wait there: as her talk closes she walks off east and is gone (the tests further down), while this
+## condition and its flag stay as they were.
 func test_hale_stays_for_the_visit_and_is_home_from_the_next_zone_load() -> void:
 	var on_the_path := {"not_flags": ["hale_walked_home"]}
 	assert_bool(Quests.check(on_the_path)).is_true()
@@ -405,3 +407,113 @@ func _slice_free_camp(path: String, expected_enemies: int) -> void:
 		enemy.call("take_hit", int(enemy.get("hp")) * 2, Vector2.RIGHT, 0.0)
 	await get_tree().create_timer(0.3).timeout
 	assert_bool(camp.is_cleared()).is_true()
+
+# --- Hale goes ahead (15 Nov) ------------------------------------------------------------------
+const WalkGrid := preload("res://tools/walk_grid.gd")
+
+func _hale_on_the_path() -> Interactable:
+	return Zones.current.get_node("Actors/HaleOnThePath/Hale") as Interactable
+
+## She said "I'll be right behind you" and then stood by her tree. Now her words say she goes ahead, and
+## she does: when the talk closes she walks off east along the path and is gone, there is nothing left to
+## talk to, and she is at her post in Crossroads when the player arrives.
+func test_hale_walks_off_ahead_when_her_talk_closes_and_is_in_crossroads_on_arrival() -> void:
+	var player := _attach()
+	assert_bool(Zones.go_to("woodland", "start")).is_true()
+	await get_tree().physics_frame
+	var hale := _hale_on_the_path()
+	var from := hale.global_position
+	assert_bool(hale.usable()).is_true()
+	assert_str(" ".join(Dialogue.lines_for("hale"))).contains("I'll go on ahead")
+	await _slice_talk("Actors/HaleOnThePath/Hale")
+	assert_str(_step("road_to_crossroads")).is_equal("go")
+	# at once: nothing to talk to, no "!" and no post in the way
+	assert_bool(hale.leaving).is_true()
+	assert_bool(hale.usable()).is_false()
+	assert_int((hale.get_node("Post") as StaticBody2D).collision_layer).is_equal(0)
+	player.global_position = from + Vector2(-40, 0)
+	Interactable.refocus(player)
+	assert_object(player.focus).is_null()
+	assert_bool(hale.is_visible_in_tree()).is_true()          # she does not vanish as her line closes
+	await get_tree().create_timer(0.5).timeout
+	assert_bool(hale.is_visible_in_tree()).is_true()
+	assert_float(hale.global_position.x).is_greater(from.x + 20.0)       # east, toward the door
+	assert_str((hale.get_node("Body") as Villager).clip).is_equal("walk")
+	assert_str((hale.get_node("Body") as Villager).facing).is_equal("E")
+	await get_tree().create_timer(WalkOff.LEAVE).timeout
+	assert_bool(hale.is_visible_in_tree()).is_false()         # gone, after a finite walk
+	assert_object(hale.get_node_or_null("WalkOff")).is_null()
+	var went := hale.global_position.distance_to(from)
+	var speed := (hale.get_node("Body") as Villager).walk_speed()
+	assert_float(went).is_between(WalkOff.reach(speed) * 0.8, WalkOff.reach(speed) * 1.1)
+	# nothing new is saved, and the flag that places her is still the quest's own, set by the next zone load
+	assert_bool(SaveGame.has_flag("hale_walked_home")).is_false()
+	await _slice_door("Doors/ToCrossroads", player, "crossroads")
+	assert_bool(SaveGame.has_flag("hale_walked_home")).is_true()
+	assert_bool((Zones.current.get_node("Actors/If_hale_square") as Conditional).visible).is_true()
+	assert_str(" ".join(Dialogue.lines_for("hale"))).contains("Talk to Moss at the stall first")
+	assert_str(" ".join(Dialogue.lines_for("moss"))).contains("come in ahead of you")
+	# and back in the woodland she is not on the path
+	await _slice_door("Doors/ToWoodland", player, "woodland")
+	assert_bool(_hale_on_the_path().is_visible_in_tree()).is_false()
+
+## The stretch she walks is free of solids for a whole body (the player's, with her own post gone).
+func test_the_stretch_hale_walks_is_clear_of_solids() -> void:
+	_attach()
+	assert_bool(Zones.go_to("woodland", "start")).is_true()
+	var hale := _hale_on_the_path()
+	var off: Dictionary = Quests.defs["road_to_crossroads"].walks_off
+	assert_str(String(off.speaker)).is_equal(hale.speaker_id)
+	assert_str(String(off.zone)).is_equal("woodland")
+	var toward := Vector2(float(off.toward[0]), float(off.toward[1]))
+	assert_vector(toward).is_equal((Zones.current.get_node("Doors/ToCrossroads") as Node2D).global_position)
+	(hale.get_node("Post") as StaticBody2D).collision_layer = 0
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	var from := hale.global_position
+	var speed := (hale.get_node("Body") as Villager).walk_speed()
+	assert_float(speed).is_greater(30.0)
+	var to := from + (toward - from).normalized() * WalkOff.reach(speed)
+	assert_float(from.distance_to(to)).is_less(from.distance_to(toward))      # she is gone before the door
+	var grid := WalkGrid.new(get_viewport().get_world_2d(), Zones.current.bounds)
+	assert_bool(grid.clear_line(from, to)).override_failure_message("something solid stands between %s and %s" % [from, to]).is_true()
+
+func test_under_reduced_motion_hale_is_gone_as_her_talk_closes() -> void:
+	SaveGame.data.settings["reduced_motion"] = true
+	_attach()
+	assert_bool(Zones.go_to("woodland", "start")).is_true()
+	var hale := _hale_on_the_path()
+	var from := hale.global_position
+	await _slice_talk("Actors/HaleOnThePath/Hale")
+	assert_bool(hale.is_visible_in_tree()).is_false()
+	assert_bool(hale.usable()).is_false()
+	assert_vector(hale.global_position).is_equal(from)
+	assert_float(hale.modulate.a).is_equal(1.0)
+	await get_tree().process_frame
+	assert_object(hale.get_node_or_null("WalkOff")).is_null()
+
+## Crossroads first, then Hale: the road's first step is already done, and she still goes ahead.
+## Another quest starting in the woodland sends nobody anywhere.
+func test_hale_goes_ahead_in_the_other_order_and_only_for_her_own_quest() -> void:
+	SaveGame.set_flag("visited:crossroads")
+	_attach()
+	assert_bool(Zones.go_to("woodland", "start")).is_true()
+	var hale := _hale_on_the_path()
+	Quests.notify("talk:stone_sign")
+	assert_str(Quests.state("woodland_stones")).is_equal("active")
+	assert_bool(hale.leaving).is_false()
+	assert_bool(hale.usable()).is_true()
+	await _slice_talk("Actors/HaleOnThePath/Hale")
+	assert_str(_step("road_to_crossroads")).is_equal("moss")
+	assert_bool(hale.leaving).is_true()
+
+## Her words: nobody says she walks with Bramble or behind, and nothing is left that only a Hale still
+## standing on the path could say.
+func test_hale_s_words_say_she_goes_ahead() -> void:
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/dialogue/crossroads.json"))
+	for speaker: String in ["hale", "moss"]:
+		for entry: Dictionary in doc[speaker].entries:
+			for line: String in entry.lines:
+				for wrong: String in ["right behind you", "Walk back with me", "Hale with you"]:
+					assert_bool(line.contains(wrong)).override_failure_message("%s: %s" % [speaker, line]).is_false()
+	assert_str(String(Quests.defs["road_to_crossroads"].summary)).contains("goes ahead of you")

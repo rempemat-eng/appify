@@ -65,13 +65,10 @@
         "lines": ["Talk to Moss at the stall first. She knows who's still here and who ran."]
       },
       {
-        "if": { "active": ["road_to_crossroads"] },
-        "lines": ["East along the path, then the garden walk down to the square. I'll be right behind you."]
-      },
-      {
         "lines": [
           "Bramble! You're alive. I came out to see where the star fell and couldn't find my way back in the dark.",
-          "Half of Crossroads ran to the halt farm when the storm hit. Walk back with me?"
+          "Half of Crossroads ran to the halt farm when the storm hit. Come back to town with me. It's east along this path, then the garden walk down to the square.",
+          "I'll go on ahead and see what's left of my smithy. You'll catch me up."
         ]
       }
     ]
@@ -108,7 +105,7 @@
       {
         "if": { "step": ["road_to_crossroads", "moss"] },
         "lines": [
-          "Bramble. And Hale with you! I thought the woods had you both.",
+          "Bramble! Hale's only just come in ahead of you. I thought the woods had you both.",
           "It's me and the stall, mostly. The well's choked, the bakery's cold, the Ferns are at the halt farm.",
           "And there's a crater in the park that still smokes. Talk to Hale. If her forge burns, we can mend the rest."
         ]

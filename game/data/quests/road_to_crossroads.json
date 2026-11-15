@@ -2,8 +2,9 @@
   "id": "road_to_crossroads",
   "title": "The road home",
   "kind": "main",
-  "summary": "Hale the smith, sheltering in the woodland since the storm, walks back with you to what is left of Crossroads.",
+  "summary": "Hale the smith, sheltering in the woodland since the storm, goes ahead of you to what is left of Crossroads.",
   "next_visit_flags": ["hale_walked_home"],
+  "walks_off": { "speaker": "hale", "zone": "woodland", "toward": [951, 1356], "why": "as her talk closes she sets off east along the path toward the door to Crossroads and is gone ahead (world/walk_off.gd); `next_visit_flags` has her at her post in the square from the next zone load. Texels in the zone, as its scene has them" },
   "start": { "on": "talk:hale" },
   "steps": [
     { "id": "go", "text": "Follow the east path to Crossroads", "on": "enter:crossroads", "done_if": { "flags": ["visited:crossroads"] } },
