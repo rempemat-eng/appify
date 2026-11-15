@@ -89,7 +89,7 @@ expect uifocus Quit
 pad A
 expect uifocus Stay
 pad Up
-expect uifocus Quit
+expect uifocus QuitConfirm
 pad Down
 pad A
 expect uifocus Quit

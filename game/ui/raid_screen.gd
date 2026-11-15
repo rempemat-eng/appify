@@ -36,8 +36,11 @@ var _pad_x: Dictionary = {}            ## pad id -> x on the map
 var _dim: ColorRect
 var _panel: PanelContainer
 var _row := float(UiStyle.TOUCH)
+var _paused_away := false               ## open, but standing aside while the game is paused
 
 func _ready() -> void:
+	# it watches the pause (`_process`) even where its parent does not run under it
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("raid_screen")
 	add_to_group(&"pause_screen_layout")
 	visible = false
@@ -85,7 +88,7 @@ func _ready() -> void:
 	_panel.grow_vertical = Control.GROW_DIRECTION_BOTH
 	_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
 	Raids.changed.connect(func(st: String) -> void:
-		if visible and st != "announced":
+		if is_open() and st != "announced":
 			close())
 
 func _button(text: String, action: Callable) -> Button:
@@ -121,8 +124,9 @@ func open() -> void:
 	_ring.grab_focus.call_deferred()
 
 func close() -> void:
-	if not visible:
+	if not is_open():
 		return
+	_paused_away = false
 	visible = false
 	var f := get_viewport().gui_get_focus_owner() if is_inside_tree() else null
 	if f != null and is_ancestor_of(f):
@@ -132,7 +136,20 @@ func close() -> void:
 	closed.emit()
 
 func is_open() -> bool:
-	return visible
+	return visible or _paused_away
+
+## While the game is paused the screen stands aside, still open: hidden, so the pause menu is drawn over
+## the world and not under this screen, and none of its buttons can take the focus (Tab), a key or a tap
+## (the audit of #496: it was drawn over the menu, and Tab then Enter sounded the anvil while paused). It
+## comes back as it was on resume; the pause menu hands the focus back to "Sound the anvil".
+func _process(_delta: float) -> void:
+	var paused := get_tree().paused
+	if paused and visible:
+		_paused_away = true
+		visible = false
+	elif not paused and _paused_away:
+		_paused_away = false
+		visible = true
 
 func _on_ring() -> void:
 	if Raids.ring():

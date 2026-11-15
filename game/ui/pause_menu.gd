@@ -78,6 +78,8 @@ func _ready() -> void:
 	_motion = _add(box, "", _toggle_motion)
 	_scale = _add(box, "", _toggle_scale)
 	_add(box, "Quit", _quit)
+	for i in _buttons.size():   # names the play driver's `expect uifocus` tells apart (Quit is not QuitConfirm)
+		_buttons[i].name = ["Resume", "ReducedMotion", "PixelScale", "Quit"][i]
 	_ring(_buttons)
 	for b in _buttons:         # sideways nowhere, until the Sound panel links its rows to these (sound_menu.gd)
 		b.focus_neighbor_left = b.get_path_to(b)
@@ -143,7 +145,8 @@ func _process(_delta: float) -> void:
 		var f := get_viewport().gui_get_focus_owner()
 		if f != null and is_ancestor_of(f):
 			f.release_focus()
-		_hand_back_focus()
+		# at the frame's end, once whatever stood aside for the pause (the raid's prepare screen) is back
+		_hand_back_focus.call_deferred()
 
 ## On closing: the focus goes back to what had it when the pause began, if that is still there and shown;
 ## otherwise to nothing, as before the pause (15 Nov, the audit of #494: Resume left no control focused,

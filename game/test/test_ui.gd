@@ -523,7 +523,7 @@ func test_resume_hands_the_focus_back_to_the_control_that_had_it() -> void:
 	var host := await _hud_host()
 	var stand_in := Button.new()
 	stand_in.name = "StandIn"
-	stand_in.text = "Ring the bell"
+	stand_in.text = "Sound the anvil"
 	host.add_child(stand_in)
 	var presses := [0]
 	stand_in.pressed.connect(func() -> void: presses[0] += 1)
@@ -822,3 +822,79 @@ func test_the_title_card_hides_while_paused_and_comes_back() -> void:
 	get_tree().paused = false
 	await _frames(2)
 	assert_bool(card.is_visible_in_tree()).is_false()
+
+# --- the audit of #496 (15 Nov) -----------------------------------------------------------------------
+## Picture modes (--shot, --demo, --lineup and the rest) set the HUD's guidance off: no pause button there,
+## where it covered art the review pictures look at.
+func test_no_pause_button_where_guidance_is_off() -> void:
+	var host := await _hud_host()
+	var hud := host.get_node("HUD") as Control
+	var button := _pause_button(host)
+	assert_bool(button.is_visible_in_tree()).is_true()
+	hud.set("guidance", false)
+	await _frames(2)
+	assert_bool(button.is_visible_in_tree()).override_failure_message("the pause button shows in a picture mode").is_false()
+	hud.set("guidance", true)
+	await _frames(2)
+	assert_bool(button.is_visible_in_tree()).is_true()
+
+## The HUD and a real prepare screen after it, as game.gd adds them, the night announced.
+func _hud_and_prepare_screen() -> Array:
+	for q: String in ["woodland_stones", "road_to_crossroads", "cold_forge", "under_the_stones", "home_again"]:
+		SaveGame.data.quests[q] = {"state": "done", "step": Quests.defs[q].steps.size()}
+	for f: String in ["shard_home:woodland", "hale_walked_home", "visited:crossroads", "visited:woodland"]:
+		SaveGame.set_flag(f)
+	SaveGame.data.village.restored = {"forge": 1, "fern_cottage": 1}
+	var host := await _hud_host()
+	var screen := RaidScreen.new()
+	host.add_child(screen)
+	Raids.arrive("crossroads", "woodland")
+	assert_str(Raids.state()).is_equal("announced")
+	screen.open()
+	await _frames(3)
+	return [host, screen]
+
+## On main the prepare screen (added after the HUD) was drawn over the pause menu and kept running under
+## the pause: Tab reached "Sound the anvil" and Enter sounded it while paused (the audit's probe). Now the
+## screen stands aside while paused, still open, and comes back on resume with the focus on its button.
+func test_the_prepare_screen_stands_aside_under_the_pause_and_comes_back() -> void:
+	var made := await _hud_and_prepare_screen()
+	var host: Control = made[0]
+	var screen: RaidScreen = made[1]
+	var anvil := screen.get_node("Panel").find_child("SoundTheAnvil", true, false) as Button
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(anvil)
+	assert_bool(_pause_button(host).is_visible_in_tree()).is_false()      # the screen takes the taps there
+	get_tree().paused = true
+	await _frames(3)
+	var menu := _row(host, "Resume").get_parent().get_parent() as Control
+	# drawn: the menu over the world, nothing of the screen over the menu
+	assert_bool(menu.is_visible_in_tree()).is_true()
+	assert_bool(screen.is_visible_in_tree()).override_failure_message("the prepare screen is drawn over the pause menu").is_false()
+	assert_bool(anvil.is_visible_in_tree()).is_false()
+	assert_bool(screen.is_open()).is_true()
+	assert_bool(_pause_button(host).is_visible_in_tree()).is_false()
+	# Tab and Enter, again and again: the focus stays in the menu and its Sound panel, the anvil stays silent
+	var sound := host.find_children("*", "SoundMenu", true, false)[0] as Control
+	for i in 9:
+		_key_press(KEY_TAB)
+		await _frames(1)
+		var f := get_viewport().gui_get_focus_owner()
+		assert_bool(f != null and (menu.is_ancestor_of(f) or sound.is_ancestor_of(f))).override_failure_message(
+			"Tab took the focus to %s" % (f.get_path() if f != null else "nothing")).is_true()
+		if f != null and String(f.name) != "Resume" and String(f.name) != "Quit":
+			_key_press(KEY_ENTER)
+			await _frames(1)
+	assert_str(Raids.state()).override_failure_message("the anvil sounded while paused").is_equal("announced")
+	assert_bool(get_tree().paused).is_true()
+	# back: the screen as it was, the focus on its button, which works
+	(_row(host, "Resume") as Button).pressed.emit()
+	await _frames(3)
+	assert_bool(screen.is_visible_in_tree()).is_true()
+	assert_object(get_viewport().gui_get_focus_owner()).override_failure_message("the focus did not come back to the anvil").is_same(anvil)
+	assert_bool(_pause_button(host).is_visible_in_tree()).is_false()
+	_key_press(KEY_ENTER)
+	await _frames(2)
+	assert_str(Raids.state()).is_equal("running")
+	assert_bool(screen.is_open()).is_false()
+	await _frames(2)
+	assert_bool(_pause_button(host).is_visible_in_tree()).is_true()

@@ -15,7 +15,7 @@ extends Control
 ## as a pause row (at least 44 logical points), the dark panel with two cream bars drawn in code, as the
 ## pause menu draws its focus mark: the HUD's icons are generated pictures (ui/art/gen_hud.py), and a new
 ## one would be new art. It stands clear of the Glint count, the meters, the tracker, the prompt and a title
-## card, presses on the touch itself (so the pause begins before the game can read the same press as a
+## card (and is not shown at all where guidance is off: the picture modes), presses on the touch itself (so the pause begins before the game can read the same press as a
 ## shot), takes no focus (the pad's A never presses it), and is hidden while paused and while the raid's
 ## prepare screen covers it.
 
@@ -243,8 +243,11 @@ func pause_button_clear_of() -> Array[Control]:
 ## Shows the pause button where the menu can be opened from it and places it: a square as tall as a pause
 ## row, MARGIN in from the top right of what the window shows, moved down below any piece it would touch.
 func _place_pause_button() -> void:
+	# not in picture modes (guidance off: --shot, --demo and the rest), where it would cover the art the
+	# review pictures look at; not while paused; not while the raid's prepare screen is open (it takes the taps)
 	var raid := get_tree().get_first_node_in_group("raid_screen") as Control
-	_pause_button.visible = not get_tree().paused and not (raid != null and raid.is_visible_in_tree())
+	var raid_open := raid != null and (bool(raid.call(&"is_open")) if raid.has_method(&"is_open") else raid.is_visible_in_tree())
+	_pause_button.visible = guidance and not get_tree().paused and not raid_open
 	if not _pause_button.visible or _pause_menu == null:
 		return
 	var rows: Array = _pause_menu.call(&"rows")
@@ -261,9 +264,10 @@ func _place_pause_button() -> void:
 				moved = true
 		if not moved:
 			break
-	_pause_button.size = Vector2(side, side)
 	_pause_button.position = at
-	_pause_button.queue_redraw()
+	if _pause_button.size != Vector2(side, side):
+		_pause_button.size = Vector2(side, side)
+		_pause_button.queue_redraw()      # the bars follow the size; a press redraws the button itself
 
 ## The count changed: it shows the new number at once, tinted for GLINT_FLASH seconds (lamp gold for a
 ## gain, a muted red for a loss). One finite tween; under reduced motion only the number changes.
