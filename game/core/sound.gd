@@ -95,13 +95,31 @@ func _ready() -> void:
 ## The game is closing. A stream still sounding when the engine shuts down is let go one mix step later,
 ## and with no step left the engine reported it as leaked ("1 resources still in use at exit": the loop,
 ## about every other run, 13 Nov). So everything stops here, and the audio thread gets a moment for that step.
+##
+## 60 ms was enough in 24 runs of 24 on 13 Nov and not in 1 game session of 18 on 15 Nov (the main route
+## with `--sound`, on a machine shared with other work: "2 resources still in use at exit", with a cache's
+## and the Glint's cues sounding). A fixed wait guesses how soon the audio thread runs. So the wait is now
+## counted in the thread's own steps: at least EXIT_WAIT_MS and EXIT_MIXES mixes, and never longer than
+## EXIT_CAP_MS (a driver that never mixes must not hold the window open).
 const EXIT_WAIT_MS := 60
+const EXIT_MIXES := 3
+const EXIT_CAP_MS := 500
 func _exit_tree() -> void:
 	if not active:
 		return
 	for p: AudioStreamPlayer in _players + _loop_players:
 		p.stop()
-	OS.delay_msec(EXIT_WAIT_MS)
+	var start := Time.get_ticks_msec()
+	var mixes := 0
+	var since := AudioServer.get_time_since_last_mix()
+	while Time.get_ticks_msec() - start < EXIT_CAP_MS and (mixes < EXIT_MIXES or Time.get_ticks_msec() - start < EXIT_WAIT_MS):
+		OS.delay_msec(4)
+		var now := AudioServer.get_time_since_last_mix()
+		if now < since:                  # the clock since the last mix went back: the thread has mixed again
+			mixes += 1
+		since = now
+	if trace:
+		print("SOUND exit waited %d ms for %d mixes" % [Time.get_ticks_msec() - start, mixes])
 
 ## Whether this run should make sound: not without a sound card or a window, and not under the play driver,
 ## unless `--sound` asks for it.
