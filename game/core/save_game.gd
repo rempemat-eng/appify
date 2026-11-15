@@ -174,6 +174,11 @@ func _migrate(doc: Dictionary) -> Dictionary:
 				v = 2
 		out.version = v
 	_fill_missing(out, fresh())
+	# a sound setting that is not a switch (a damaged or hand-edited save) goes back to its default: three
+	# switches are no reason to refuse a save and the progress in it (15 Nov)
+	for key: String in SOUND_SETTINGS:
+		if not out.settings[key] is bool:
+			out.settings[key] = SOUND_SETTINGS[key]
 	out.version = VERSION
 	out.glint = int(out.glint)
 	for cache: Dictionary in out.caches:
@@ -266,9 +271,7 @@ func _document_error(doc: Dictionary) -> Error:
 		return ERR_INVALID_DATA
 	if settings.has("pixel_scale") and not settings.pixel_scale is String:
 		return ERR_INVALID_DATA
-	for key: String in SOUND_SETTINGS:
-		if settings.has(key) and not settings[key] is bool:
-			return ERR_INVALID_DATA
+	# the sound settings are not checked here: `_migrate` puts a damaged one back to its default
 	return OK
 
 func _target_error(target: String) -> Error:
