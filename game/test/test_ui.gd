@@ -49,6 +49,162 @@ func test_pause_menu_follows_the_pause_and_sets_settings() -> void:
 	await await_idle_frame()
 	assert_bool(menu.visible).is_false()
 
+# --- pressing a row: the mouse, a touch, a gamepad (15 Nov) ---------------------------------------
+## The HUD as the game has it (ui/hud.gd adds the pause menu and the Sound panel), paused.
+func _paused_hud() -> Control:
+	var host: Control = auto_free(Control.new())
+	add_child(host)
+	var hud: Control = load("res://ui/hud.gd").new()
+	host.add_child(hud)
+	get_tree().paused = true
+	for i in 4:
+		await get_tree().process_frame
+	return host
+
+func _row(host: Node, text: String) -> Button:
+	for b: Button in host.find_children("*", "Button", true, false):
+		if b.text.begins_with(text) and b.is_visible_in_tree():
+			return b
+	return null
+
+## Brings `row` under the middle of the test runner's window: that window is 64 pixels square, and a
+## press outside it finds nothing.
+func _bring(host: Control, row: Button) -> Vector2:
+	var middle := get_viewport().get_visible_rect().get_center()
+	host.position += middle - row.get_global_rect().get_center()
+	for i in 3:
+		await get_tree().process_frame
+	assert_bool(row.get_global_rect().has_point(middle)).is_true()
+	return middle
+
+func _dim_of(host: Node) -> ColorRect:
+	for c: ColorRect in host.find_children("*", "ColorRect", true, false):
+		if c.mouse_filter == Control.MOUSE_FILTER_STOP:
+			return c
+	return null
+
+func _click(at: Vector2) -> void:
+	for down: bool in [true, false]:
+		var e := InputEventMouseButton.new()
+		e.button_index = MOUSE_BUTTON_LEFT
+		e.pressed = down
+		e.position = at
+		e.global_position = at
+		get_viewport().push_input(e, true)
+
+## A mouse click with the dim there. On main no click reached a row: the dim was a top-level control that
+## stops the mouse, and the engine asks top-level controls first (a click on Resume left the game paused).
+func test_a_mouse_click_presses_a_pause_row_and_a_sound_row_with_the_dim_behind_them() -> void:
+	var host := await _paused_hud()
+	var dim := _dim_of(host)
+	assert_object(dim).is_not_null()                 # the dim is there and stops the mouse: the world takes no click
+	assert_bool(dim.is_visible_in_tree()).is_true()
+	for spec: Array in [["Reduced motion", "reduced_motion", false], ["Gentle sound", "gentle_sound", false],
+			["Ambience", "ambience", true]]:
+		var row := _row(host, spec[0])
+		assert_object(row).is_not_null()
+		var at := await _bring(host, row)
+		assert_bool(dim.get_global_rect().has_point(at)).override_failure_message("the dim is not under %s" % spec[0]).is_true()
+		_click(at)
+		assert_bool(bool(SaveGame.setting(spec[1], spec[2]))).override_failure_message(
+			"a click on '%s' did nothing" % spec[0]).is_equal(not spec[2])
+	# and Resume resumes
+	var resume := _row(host, "Resume")
+	_click(await _bring(host, resume))
+	assert_bool(get_tree().paused).override_failure_message("a click on Resume left the game paused").is_false()
+
+## A finger: a screen touch given to the engine as a phone gives it (Input.parse_input_event), which makes
+## the mouse press of it that a Button answers (the project setting for that is on).
+func test_a_screen_touch_presses_a_pause_row_and_a_sound_row_with_the_dim_behind_them() -> void:
+	assert_bool(bool(ProjectSettings.get_setting("input_devices/pointing/emulate_mouse_from_touch"))).is_true()
+	var host := await _paused_hud()
+	assert_object(_dim_of(host)).is_not_null()
+	for spec: Array in [["Reduced motion", "reduced_motion", false], ["Sound effects", "sound_effects", true]]:
+		var row := _row(host, spec[0])
+		var at := await _bring(host, row)
+		for down: bool in [true, false]:
+			var t := InputEventScreenTouch.new()
+			t.index = 0
+			t.pressed = down
+			t.position = at
+			Input.parse_input_event(t)
+			for i in 3:
+				await get_tree().process_frame
+		assert_bool(bool(SaveGame.setting(spec[1], spec[2]))).override_failure_message(
+			"a tap on '%s' did nothing" % spec[0]).is_equal(not spec[2])
+
+func _pad_press(button: JoyButton, device := 0) -> void:
+	for down: bool in [true, false]:
+		var e := InputEventJoypadButton.new()
+		e.button_index = button
+		e.device = device
+		e.pressed = down
+		e.pressure = 1.0 if down else 0.0
+		get_viewport().push_input(e, true)
+
+func _has_pad_button(action: StringName, button: JoyButton) -> bool:
+	for e: InputEvent in InputMap.action_get_events(action):
+		if e is InputEventJoypadButton and e.button_index == button:
+			return true
+	return false
+
+func _has_stick(action: StringName, axis: JoyAxis, dir: float) -> bool:
+	for e: InputEvent in InputMap.action_get_events(action):
+		if e is InputEventJoypadMotion and e.axis == axis and signf(e.axis_value) == dir:
+			return true
+	return false
+
+## A gamepad. On main the d-pad and the stick moved the focus and no button pressed the row: the engine's
+## ui_accept holds Enter and Space only. core/inputs.gd adds A.
+func test_a_gamepad_moves_the_focus_and_its_a_button_presses_the_focused_row() -> void:
+	# the map: A accepts and the engine's keys are still there; Start pauses; the d-pad and the left stick move
+	assert_bool(_has_pad_button(&"ui_accept", JOY_BUTTON_A)).override_failure_message("ui_accept has no pad button").is_true()
+	var keys := []
+	for e: InputEvent in InputMap.action_get_events(&"ui_accept"):
+		if e is InputEventKey:
+			keys.append(e.physical_keycode if e.physical_keycode != KEY_NONE else e.keycode)
+	assert_array(keys).contains([KEY_ENTER, KEY_KP_ENTER, KEY_SPACE])
+	assert_bool(_has_pad_button(&"menu", JOY_BUTTON_START)).is_true()
+	for spec: Array in [[&"ui_up", JOY_BUTTON_DPAD_UP, JOY_AXIS_LEFT_Y, -1.0], [&"ui_down", JOY_BUTTON_DPAD_DOWN, JOY_AXIS_LEFT_Y, 1.0],
+			[&"ui_left", JOY_BUTTON_DPAD_LEFT, JOY_AXIS_LEFT_X, -1.0], [&"ui_right", JOY_BUTTON_DPAD_RIGHT, JOY_AXIS_LEFT_X, 1.0]]:
+		assert_bool(_has_pad_button(spec[0], spec[1])).override_failure_message("%s has no d-pad button" % spec[0]).is_true()
+		assert_bool(_has_stick(spec[0], spec[2], spec[3])).override_failure_message("%s has no stick" % spec[0]).is_true()
+	# the events: the menu opens on Resume; d-pad down, then A
+	var host := await _paused_hud()
+	var resume := _row(host, "Resume")
+	var motion := _row(host, "Reduced motion")
+	var scale := _row(host, "Pixel scale")
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(resume)
+	_pad_press(JOY_BUTTON_DPAD_DOWN)
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(motion)
+	_pad_press(JOY_BUTTON_A)
+	assert_bool(bool(SaveGame.setting("reduced_motion", false))).override_failure_message("A did not press the focused row").is_true()
+	assert_bool(get_tree().paused).is_true()
+	# the left stick moves the focus too, and a second pad's A counts as the first's
+	# (through Input, as a pad's does: for a stick the engine asks Input whether the action was just pressed)
+	for value: float in [1.0, 0.0]:
+		var stick := InputEventJoypadMotion.new()
+		stick.axis = JOY_AXIS_LEFT_Y
+		stick.axis_value = value
+		Input.parse_input_event(stick)
+		for i in 2:
+			await get_tree().process_frame
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(scale)
+	_pad_press(JOY_BUTTON_A, 1)
+	assert_str(str(SaveGame.setting("pixel_scale", "fill"))).is_equal("whole")
+	# across to the Sound panel and A there
+	_pad_press(JOY_BUTTON_DPAD_RIGHT)
+	var sound_row := get_viewport().gui_get_focus_owner() as Button
+	assert_object(sound_row).is_not_null()
+	assert_bool(sound_row.get_parent().get_parent() is SoundMenu).is_true()
+	var was: bool = SaveGame.setting(sound_row.name)
+	_pad_press(JOY_BUTTON_A)
+	assert_bool(bool(SaveGame.setting(sound_row.name))).is_equal(not was)
+	# A on Resume resumes
+	resume.grab_focus()
+	_pad_press(JOY_BUTTON_A)
+	assert_bool(get_tree().paused).is_false()
+
 # --- the controls beside the pause menu (15 Nov) ------------------------------------------------
 ## Every action the game's own code reads, found in the source: `Input.is_action...("x")`,
 ## `event.is_action...("x")` and the four names of `Input.get_vector`.
@@ -166,12 +322,18 @@ func test_the_controls_stand_beside_the_pause_menu_and_add_no_row_to_it() -> voi
 ## the menu's right (ui/sound_menu.gd): at the menu's left, else past the Sound panel, else below or
 ## above. Where no such place exists (480 x 270 at "whole") it is not shown, rather than laid over
 ## something. With and without the Sound panel.
+## The menu and the Sound panel themselves (15 Nov): on main the Sound panel stood at the menu's right
+## wherever that was, so at 402 x 874, 375 x 667 and 480 x 270 with "whole" it was cut off at the window's
+## edge. The two stay inside what the window shows at every size here, never one over the other, and
+## every row of both lies inside it. 320 x 720 "whole" is narrower than the two side by side: the Sound
+## panel stands below the menu there, and the focus runs through both in one ring.
 func test_the_controls_panel_stays_inside_what_the_window_shows_and_clear_of_the_other_panels() -> void:
 	const Screen := preload("res://main/pixel_screen.gd")
 	var shown_somewhere := 0
 	for with_sound: bool in [true, false]:
 		for spec: Array in [[402, 874, "whole"], [402, 874, "fill"], [480, 270, "whole"], [480, 270, "fill"], [375, 667, "whole"],
-				[1920, 1080, "fill"], [960, 540, "whole"], [874, 402, "fill"], [874, 402, "whole"], [2622, 1206, "fill"]]:
+				[1920, 1080, "fill"], [960, 540, "whole"], [874, 402, "fill"], [874, 402, "whole"], [2622, 1206, "fill"],
+					[320, 720, "whole"]]:
 			var screen: Control = auto_free(Control.new())
 			screen.size = UiStyle.GRID
 			add_child(screen)
@@ -195,6 +357,35 @@ func test_the_controls_panel_stays_inside_what_the_window_shows_and_clear_of_the
 			var beside := controls.get_global_rect()
 			var what := "%s %s, sound %s: controls %s, menu %s, sound %s, the window shows %s" % [window, spec[2], with_sound, beside,
 				own, sound.get_global_rect() if sound != null else Rect2(), seen]
+			# the menu and the Sound panel: inside what the window shows, apart, every row inside too
+			assert_bool(seen.grow(0.5).encloses(own)).override_failure_message("the menu is cut off. " + what).is_true()
+			for b: Button in menu.find_children("*", "Button", true, false):
+				assert_bool(seen.grow(0.5).encloses(b.get_global_rect())).override_failure_message("a menu row is cut off. " + what).is_true()
+			if sound != null:
+				var beside_it := sound.get_global_rect()
+				assert_bool(sound.is_visible_in_tree()).override_failure_message(what).is_true()
+				assert_bool(seen.grow(0.5).encloses(beside_it)).override_failure_message("the Sound panel is cut off. " + what).is_true()
+				assert_bool(own.intersects(beside_it)).override_failure_message("the Sound panel is over the menu. " + what).is_false()
+				var rows := sound.find_children("*", "Button", true, false)
+				var menu_rows := menu.find_children("*", "Button", true, false)
+				assert_int(rows.size()).is_equal(3)
+				for b: Button in rows:
+					assert_bool(seen.grow(0.5).encloses(b.get_global_rect())).override_failure_message("a Sound row is cut off. " + what).is_true()
+				if window == Vector2(320, 720):
+					# one above the other, centred on the menu, and one focus ring through both
+					assert_float(beside_it.position.y).is_equal(own.end.y + SoundMenu.GAP)
+					assert_float(beside_it.get_center().x).is_equal(own.get_center().x)
+					assert_object((menu_rows[-1] as Button).find_valid_focus_neighbor(SIDE_BOTTOM)).is_same(rows[0])
+					assert_object((rows[0] as Button).find_valid_focus_neighbor(SIDE_TOP)).is_same(menu_rows[-1])
+					assert_object((rows[-1] as Button).find_valid_focus_neighbor(SIDE_BOTTOM)).is_same(menu_rows[0])
+					assert_object((menu_rows[0] as Button).find_valid_focus_neighbor(SIDE_TOP)).is_same(rows[-1])
+				else:
+					# side by side, tops level, each panel wrapping on its own, sideways crossing over
+					assert_float(beside_it.position.y).is_equal(own.position.y)
+					assert_float(beside_it.position.x).is_equal(own.end.x + SoundMenu.GAP)
+					assert_object((menu_rows[-1] as Button).find_valid_focus_neighbor(SIDE_BOTTOM)).is_same(menu_rows[0])
+					assert_object((rows[-1] as Button).find_valid_focus_neighbor(SIDE_BOTTOM)).is_same(rows[0])
+					assert_bool(rows.has((menu_rows[1] as Button).find_valid_focus_neighbor(SIDE_RIGHT))).override_failure_message(what).is_true()
 			if controls.is_visible_in_tree():
 				shown_somewhere += 1
 				assert_bool(seen.grow(0.5).encloses(beside)).override_failure_message("cut off. " + what).is_true()
@@ -263,3 +454,39 @@ func test_the_controls_keep_clear_of_a_panel_at_the_menu_s_right() -> void:
 	var small := Rect2(240, 135, 480, 270)
 	assert_bool(Menu.stacked(own, want, small, 6.0, sound)).is_false()
 	assert_vector(Menu.controls_place(own, want, small, 6.0, sound)).is_equal(Vector2.INF)
+
+## Where the menu and the panel beside it stand (ui/pause_menu.gd menu_place, side_place).
+func test_where_the_menu_and_the_panel_beside_it_go() -> void:
+	const Menu := preload("res://ui/pause_menu.gd")
+	var own := Vector2(170, 212)
+	var side := Vector2(170, 168)
+	var grid := Rect2(0, 0, 960, 540)
+	var centred := grid.get_center() - own / 2.0
+	# the whole grid: the menu in the middle, the panel at its right, tops level (as before)
+	assert_vector(Menu.menu_place(centred, own, side, grid, 6.0)).is_equal(centred)
+	assert_vector(Menu.side_place(Rect2(centred, own), side, grid, 6.0)).is_equal(Vector2(571, 164))
+	# no panel: the middle
+	assert_vector(Menu.menu_place(centred, own, Vector2.ZERO, Rect2(279, 0, 402, 540), 6.0)).is_equal(centred)
+	# a phone upright at "whole" (x 279 to 681): the two move over together and sit centred
+	var seen := Rect2(279, 0, 402, 540)
+	var at: Vector2 = Menu.menu_place(centred, own, side, seen, 6.0)
+	assert_vector(at).is_equal(Vector2(307, 164))
+	var beside := Rect2(Menu.side_place(Rect2(at, own), side, seen, 6.0), side)
+	assert_vector(beside.position).is_equal(Vector2(483, 164))
+	assert_bool(seen.encloses(beside)).is_true()
+	# the controls below them: centred under the two (x 307 to 653), not under the menu alone
+	var taken: Array[Rect2] = [Rect2(483, 70, 170, 168)]
+	assert_vector(Menu.controls_place(Rect2(307, 70, 170, 212), Vector2(236, 181), seen, 6.0, taken)).is_equal(Vector2(362, 288))
+	# and pushed inside what is shown where that centre would leave it
+	assert_vector(Menu.controls_place(Rect2(279, 70, 170, 212), Vector2(236, 181), Rect2(279, 0, 240, 540), 6.0)).is_equal(Vector2(279, 288))
+	# narrower than the two: the panel below the menu, the two centred top to bottom
+	var narrow := Rect2(320, 0, 320, 540)
+	assert_bool(Menu.side_below(own, side, narrow, 6.0)).is_true()
+	at = Menu.menu_place(centred, own, side, narrow, 6.0)
+	assert_vector(at).is_equal(Vector2(395, 77))
+	beside = Rect2(Menu.side_place(Rect2(at, own), side, narrow, 6.0), side)
+	assert_vector(beside.position).is_equal(Vector2(395, 295))
+	assert_bool(narrow.encloses(beside)).is_true()
+	# too short for the two as well: from the top edge, never above it
+	var tiny := Rect2(320, 100, 320, 300)
+	assert_float(Menu.menu_place(centred, own, side, tiny, 6.0).y).is_equal(100.0)
