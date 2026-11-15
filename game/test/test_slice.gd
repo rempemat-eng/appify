@@ -539,7 +539,12 @@ func test_hale_s_words_say_she_goes_ahead() -> void:
 ## She takes a lane to the side away from him, free of solids, and never comes within WalkOff.CLEAR
 ## texels of his feet (or nearer than she stood, when he is closer than that).
 func test_hale_never_walks_through_a_player_who_stands_in_her_way() -> void:
-	for east: float in [52.0, 36.0, 20.0, 80.0]:
+	# on her straight line 52, 36, 20, 80 and 10 texels out (y 0); and (audits 1 and 3 of #495) east and
+	# south of her: where the route crossroads_first talks from, about (58, 13), and (45, -10), (30, 20),
+	# (40, 30)
+	for spot: Vector2 in [Vector2(52, 0), Vector2(36, 0), Vector2(20, 0), Vector2(80, 0), Vector2(58, 13), Vector2(45, -10),
+			Vector2(10, 0), Vector2(30, 20), Vector2(40, 30),
+			Vector2(25, 0), Vector2(28, 0), Vector2(20, 10), Vector2(15, 15), Vector2(25, -20), Vector2(32, -15)]:
 		SaveGame.reset()
 		var player := _attach()
 		assert_bool(Zones.go_to("woodland", "start")).is_true()
@@ -547,32 +552,146 @@ func test_hale_never_walks_through_a_player_who_stands_in_her_way() -> void:
 		var hale := _hale_on_the_path()
 		var from := hale.global_position
 		var toward: Vector2 = (Zones.current.get_node("Doors/ToCrossroads") as Node2D).global_position
-		player.global_position = from + (toward - from).normalized() * east       # on her straight line
+		var on_line := spot.y == 0.0
+		player.global_position = from + ((toward - from).normalized() * spot.x if on_line else spot)
 		var stood := player.global_position
+		var straight := (toward - from).normalized()
+		for i in 10:             # as in play: she has turned to him, in her talk pose, before he talks
+			await get_tree().process_frame
 		await _slice_talk("Actors/HaleOnThePath/Hale")
 		var nearest := INF
 		var moved := 0.0
 		var shown := 0
+		var last := from
+		var keep := minf(WalkOff.CLEAR, from.distance_to(stood) - 0.5)
+		var grid := WalkGrid.new(get_viewport().get_world_2d(), Zones.current.bounds)
+		var occ: Occlusion = Zones.current.occlusion
+		# his drawn box as he stands; hers as drawn at each frame, and (where they overlap from the start)
+		# her walking box for the way she walks (all frames of that facing and its turns), so that her
+		# movement is measured and not her gestures
+		var his := WalkOff.drawn_box(player)
+		var walk_off := hale.get_node("WalkOff")
+		while not walk_off.get("_started"):
+			await get_tree().process_frame
+		var started_clear: bool = walk_off.get("_start_clear")       # her drawn frame as she set off
+		var first := 0.0 if started_clear else 1.0
+		var body := hale.get_node("Body") as Villager
+		var walk_boxes := WalkOff.walk_boxes(body)
+		var overlap := INF
 		while is_instance_valid(hale.get_node_or_null("WalkOff")):
 			await get_tree().process_frame
 			player.global_position = stood
 			if hale.is_visible_in_tree():
 				shown += 1
-				nearest = minf(nearest, hale.global_position.distance_to(stood))
+				assert_str(body.clip).override_failure_message("%s: frame %d shows %s while she leaves" % [
+					spot, shown, body.animation]).is_not_equal("talk")
+				var d := hale.global_position.distance_to(stood)
+				assert_float(d).override_failure_message(      # at every frame, not only the nearest
+					"%s: frame %d at %.1f texels" % [spot, shown, d]).is_greater_equal(keep - 0.01)
+				nearest = minf(nearest, d)
 				moved = maxf(moved, hale.global_position.distance_to(from))
-		var keep := minf(WalkOff.CLEAR, east - 0.5)
+				last = hale.global_position
+				assert_bool(grid.is_free(WalkGrid.cell_of(last))).override_failure_message(
+					"%s: Hale on a solid cell at %s" % [spot, last]).is_true()
+				assert_float(occ.hidden_share(hale)).override_failure_message(      # not under the willow
+					"%s: Hale hidden at %s" % [spot, last]).is_less(Occlusion.HIDDEN_SHARE)
+				# her drawn body off his while she can be seen: none, or never more than she started with
+				var now := WalkOff.box_overlap(last, WalkOff.drawn_box(hale), stood, his)
+				if hale.modulate.a > WalkOff.MIN_ALPHA:
+					if first == 0.0:
+						assert_float(now).override_failure_message("%s: frame %d alpha %.2f, boxes overlap %.0f" % [
+							spot, shown, hale.modulate.a, now]).is_equal(0.0)
+					elif body.walking != Vector2.ZERO:
+						var moved_over := WalkOff.box_overlap(last, WalkOff.box_facing(walk_boxes, body.walking, body.facing), stood, his)
+						assert_float(moved_over).override_failure_message("%s: frame %d alpha %.2f, overlap grew to %.0f from %.0f" % [
+							spot, shown, hale.modulate.a, moved_over, overlap]).is_less_equal(overlap + 0.01)
+						overlap = moved_over
 		assert_float(nearest).override_failure_message(
-			"player %d texels east: Hale came within %.1f texels of him" % [east, nearest]).is_greater_equal(keep - 0.01)
+			"%s: Hale came within %.1f texels of him" % [spot, nearest]).is_greater_equal(keep - 0.01)
+		# audits 3 and 4 of #495: whether her body starts clear of his or not, she walks on toward the door
+		# (net progress along her straight line, at least 10 texels where she is last seen) or fades where
+		# she stands, never a short sidestep that ends by a tree (audit of #491: at 20 and 36 east she turned
+		# south, off the road into the meadow)
+		var gained := (last - from).dot(straight)
+		var faded := moved < 0.5
+		if not faded:
+			assert_float(gained).override_failure_message("%s (%s): last seen at %s" % [
+				spot, "clear" if started_clear else "overlapping", last]).is_greater_equal(10.0)
 		assert_int(shown).is_greater(10)                           # she is seen going, not popped
 		assert_bool(hale.is_visible_in_tree()).is_false()
 		assert_bool(hale.usable()).is_false()
-		if east < 60.0:
-			assert_float(moved).override_failure_message("player %d east: she did not walk (%.1f)" % [east, moved]).is_greater(30.0)
 		player.remove_from_group("player")      # the next round's player is the only one she looks for
+
+## Her path is chosen once, as her talk closes; if he then walks up to her (within the keep distance
+## less a texel) she stops where she is and fades out from the alpha she has, at the in-place rate.
+func test_when_the_player_walks_up_to_hale_mid_walk_she_stops_and_fades() -> void:
+	var player := _attach()
+	assert_bool(Zones.go_to("woodland", "start")).is_true()
+	await get_tree().physics_frame
+	var hale := _hale_on_the_path()
+	var from := hale.global_position
+	player.global_position = from + Vector2(-40, 0)
+	await _slice_talk("Actors/HaleOnThePath/Hale")
+	while is_instance_valid(hale.get_node_or_null("WalkOff")) and hale.global_position.distance_to(from) < 12.0:
+		await get_tree().process_frame
+	assert_float(hale.global_position.distance_to(from)).is_greater_equal(12.0)       # she walks off
+	assert_float(hale.modulate.a).is_equal(1.0)
+	player.global_position = hale.global_position + Vector2(10, 0)       # right up to her
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var stopped := hale.global_position
+	var alpha := hale.modulate.a
+	assert_float(alpha).is_greater(0.9)
+	assert_vector((hale.get_node("Body") as Villager).walking).is_equal(Vector2.ZERO)
+	var start := Time.get_ticks_msec()
+	while is_instance_valid(hale.get_node_or_null("WalkOff")):
+		player.global_position = stopped + Vector2(10, 0)
+		await get_tree().process_frame
+		if hale.is_visible_in_tree():
+			assert_vector(hale.global_position).is_equal(stopped)       # she walks no further
+			assert_float(hale.modulate.a).is_less_equal(alpha)         # and only fades
+			alpha = hale.modulate.a
+	var took := (Time.get_ticks_msec() - start) / 1000.0
+	assert_float(took).is_less(WalkOff.STILL_FADE + 0.2)
+	assert_float(took).is_greater(WalkOff.STILL_FADE * 0.7)
+	assert_bool(hale.is_visible_in_tree()).is_false()
+
+## The same when his body comes onto hers though his feet stay out of the keep distance (audit 3 of #495):
+## standing just north of her way, his sprite covers hers before his feet are near.
+func test_when_the_player_s_body_comes_onto_hale_s_mid_walk_she_stops_and_fades() -> void:
+	var player := _attach()
+	assert_bool(Zones.go_to("woodland", "start")).is_true()
+	await get_tree().physics_frame
+	var hale := _hale_on_the_path()
+	var from := hale.global_position
+	player.global_position = from + Vector2(-40, 0)
+	await _slice_talk("Actors/HaleOnThePath/Hale")
+	while is_instance_valid(hale.get_node_or_null("WalkOff")) and hale.global_position.distance_to(from) < 12.0:
+		await get_tree().process_frame
+	assert_float(hale.global_position.distance_to(from)).is_greater_equal(12.0)       # she walks off
+	var near := hale.global_position + Vector2(12, -WalkOff.CLEAR)        # feet 32 texels off, bodies overlapping
+	assert_float(near.distance_to(hale.global_position)).is_greater(WalkOff.CLEAR)
+	player.global_position = near
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var stopped := hale.global_position
+	assert_vector((hale.get_node("Body") as Villager).walking).is_equal(Vector2.ZERO)
+	assert_float(near.distance_to(stopped)).is_greater(WalkOff.CLEAR - 1.0)        # the feet rule did not stop her
+	while is_instance_valid(hale.get_node_or_null("WalkOff")):
+		player.global_position = near
+		await get_tree().process_frame
+		if hale.is_visible_in_tree():
+			assert_vector(hale.global_position).is_equal(stopped)
+			assert_str((hale.get_node("Body") as Villager).clip).is_not_equal("talk")
+	assert_bool(hale.is_visible_in_tree()).is_false()
 
 class NoLane extends RefCounted:
 	func clear_line(_a: Vector2, _b: Vector2) -> bool:
 		return false
+
+class NoStepAside extends RefCounted:
+	func clear_line(a: Vector2, b: Vector2) -> bool:
+		return a.distance_to(b) > 30.0
 
 class EastOnly extends RefCounted:
 	func clear_line(a: Vector2, b: Vector2) -> bool:
@@ -599,6 +718,45 @@ func test_the_lane_hale_takes() -> void:
 	var only := WalkOff.choose_lane(from, toward, Vector2.INF, 61.0, EastOnly.new())
 	assert_bool(only != Vector2.ZERO).is_true()
 	assert_float(absf(only.y)).is_less(0.2)
+
+## The path she takes round a player close east (audit of #491): a short step aside, away from him, and on
+## toward the door past him, both legs never within the keep distance of him; when no two-leg path keeps
+## it, the single lane choose_lane gives, and with neither she fades in place.
+func test_the_path_hale_takes_round_a_player_close_east() -> void:
+	var from := Vector2(600, 1296)
+	var toward := Vector2(951, 1356)
+	var straight := (toward - from).normalized()
+	# nobody in the way: the straight lane, one leg
+	var free := WalkOff.choose_path(from, toward, Vector2.INF, 61.0, null)
+	assert_int(free.size()).is_equal(2)
+	assert_vector(free[1]).is_equal_approx(from + straight * 61.0, Vector2(0.001, 0.001))
+	for east: float in [20.0, 22.0, 36.0, 40.0, 52.0, 80.0]:
+		for side: float in [-1.0, 0.0, 1.0]:
+			var player := from + straight * east + straight.orthogonal() * 4.0 * side
+			var keep := minf(WalkOff.CLEAR, from.distance_to(player) - 0.5)
+			var path := WalkOff.choose_path(from, toward, player, 61.0, null)
+			var what := "player %d east, side %d: %s" % [east, side, path]
+			assert_int(path.size()).override_failure_message(what).is_equal(3)
+			assert_vector(path[0]).is_equal(from)
+			var step := path[1] - from
+			assert_float(step.length()).override_failure_message(what).is_between(11.99, 20.01)
+			assert_float(absf(straight.dot(step.normalized()))).override_failure_message(what).is_less(0.35)     # aside, not along
+			if side != 0.0:      # to the side he is not on
+				assert_float(signf(straight.cross(step))).override_failure_message(what).is_equal(-signf(straight.cross(player - from)))
+			assert_float(step.length() + path[1].distance_to(path[2])).is_equal_approx(61.0, 0.01)      # same length, same time
+			assert_float(WalkOff.distance_to_stretch(player, from, path[1])).override_failure_message(what).is_greater_equal(keep)
+			assert_float(WalkOff.distance_to_stretch(player, path[1], path[2])).override_failure_message(what).is_greater_equal(keep)
+			assert_float(path[2].x).override_failure_message(what).is_greater(from.x + 30.0)       # on toward town
+	# something solid in every step aside but a whole lane free: the single lane, as before
+	var close := from + straight * 22.0
+	var only := WalkOff.choose_path(from, toward, close, 61.0, NoStepAside.new())
+	assert_int(only.size()).is_equal(2)
+	var lane := WalkOff.choose_lane(from, toward, close, 61.0, NoStepAside.new())
+	assert_bool(lane != Vector2.ZERO).is_true()
+	assert_vector(only[1]).is_equal_approx(from + lane * 61.0, Vector2(0.001, 0.001))
+	# nothing free: fade in place
+	assert_int(WalkOff.choose_path(from, toward, from + straight * 22.0, 61.0, NoLane.new()).size()).is_equal(0)
+	assert_int(WalkOff.choose_path(from, from, Vector2.INF, 61.0, null).size()).is_equal(0)
 
 func test_with_no_free_lane_hale_fades_where_she_stands() -> void:
 	var player := _attach()

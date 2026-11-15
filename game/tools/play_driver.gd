@@ -41,6 +41,8 @@ extends Node
 ##       prompt <verb|none> | hp <n> | hurt (hearts missing) | glint <n> | restored <id> | notrestored <id> | enemies <n>
 ##       at x y <tol> | hud <text|none> | said <text> | banner <text|none> | paused <yes|no>
 ##       line <text|none> (the line on the dialogue box now)
+##       uifocus <Node|none> (the node name of the control with the keyboard focus: Quit is the pause menu's
+##       row, QuitConfirm the Quit under "Quit the game?")
 ##       setting <key> <value> (a setting in the save: reduced_motion true, pixel_scale whole, ambience false)
 ##       raid <state> (core/raids.gd: none, announced, postponed, pending, running, won, lost) | raidscreen <yes|no>
 ##       defences <n> (hurdles standing) | repairs <yes|no> (the brief repairs after a lost night)
@@ -530,6 +532,10 @@ func expect(a: PackedStringArray) -> String:
 		"repairs":
 			var shown := not get_tree().get_nodes_in_group("raid_repair").filter(func(n: Node) -> bool: return not n.is_queued_for_deletion()).is_empty()
 			return "" if shown == (a[2] == "yes") else "the repairs are %s" % ("shown" if shown else "not shown")
+		"uifocus":
+			var owner := get_viewport().gui_get_focus_owner()
+			var named := "none" if owner == null else String(owner.name)
+			return "" if named == rest else "the focus is on '%s'" % named
 		"line":
 			var box := get_tree().get_first_node_in_group("dialogue_box")
 			var line: String = box.shown_line() if box != null else ""
