@@ -253,7 +253,7 @@
         },
         "priority": 10,
         "lines": [
-          "The jars are back on the shelves, mostly the right way up. Come by before you go out. I'll fill your flasks."
+          "The jars are back on the shelves, mostly the right way up. Nothing worth bottling yet. A first batch wants time."
         ]
       },
       {
@@ -267,7 +267,7 @@
         "lines": [
           "A roof! I can hear the rain on it and none of the rain on me.",
           "I'll brew for the town. But the fever in those creatures comes from the light, and the light is out there.",
-          "Take me with you. Somebody has to see what it does up close, and I'd rather it was someone who takes notes."
+          "When the Col Path opens I mean to see it up close. Somebody has to, and I'd rather it was someone who takes notes."
         ]
       },
       {
@@ -292,8 +292,8 @@
         },
         "priority": 10,
         "lines": [
-          "You're back. Good. My roof is still in the bakery's yard, and my jars are still on the floor.",
-          "Help me put it on again and the herbalist's is an apothecary. Tonics for the road."
+          "There you are. Good. My roof is still in the bakery's yard, and my jars are still on the floor.",
+          "Help me put it on again and the herbalist's is an apothecary. A town wants one before the winter."
         ]
       }
     ]
@@ -314,7 +314,7 @@
         },
         "priority": 10,
         "lines": [
-          "Three great shards hum together. The light runs down into the well and, faintly, up the stair toward the woods."
+          "Three great shards hum together. Their light reaches across the walk to the well and, faintly, up the stair toward the woods."
         ]
       },
       {

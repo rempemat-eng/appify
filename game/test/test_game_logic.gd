@@ -249,6 +249,7 @@ func test_the_closing_card_waits_for_the_last_quest() -> void:
 		SaveGame.data.quests[q] = {"state": "done", "step": Quests.defs[q].steps.size()}
 	SaveGame.data.quests["a1_the_torn_roof"] = {"state": "active", "step": 1}
 	SaveGame.set_flag("seen:opening")
+	SaveGame.set_flag("first_night_won")      # the night held first (15 Nov: the card waits for it too, below)
 	var g := _game()
 	await _ticks(2)
 	var hud: Control = g.get_node("UI/HUD")
@@ -397,3 +398,190 @@ func test_of_two_plain_neighbours_the_nearer_has_the_prompt() -> void:
 	assert_str(await _stand(player, Vector2(1345, 925))).is_equal("HaleSquare")
 	assert_str(await _stand(player, Vector2(1352, 925))).is_equal("SmithySite")
 	assert_str(await _stand(player, Vector2(1345, 925))).is_equal("HaleSquare")
+
+## The number keys swap the playable character only when the game was started with --debug-controls
+## (15 Nov: they did in every build, and every cast member but Bramble has no bow to shoot yet).
+func test_the_number_keys_swap_the_character_only_with_debug_controls() -> void:
+	SaveGame.set_flag("seen:opening")
+	var g := _game()
+	await _ticks(2)
+	g.args.erase("debug-controls")
+	var was := String(g.player.character)
+	for shift: bool in [false, true]:
+		for code: int in [KEY_1, KEY_2, KEY_5, KEY_0]:
+			var key := InputEventKey.new()
+			key.keycode = code as Key
+			key.shift_pressed = shift
+			key.pressed = true
+			g._unhandled_input(key)
+			assert_str(String(g.player.character)).override_failure_message(
+				"key %s (shift %s) swapped the character without --debug-controls" % [OS.get_keycode_string(code), shift]).is_equal(was)
+	assert_bool(g.debug_controls()).is_false()
+	# with the flag the same key picks the second of the cast, as before
+	g.args["debug-controls"] = true
+	var two := InputEventKey.new()
+	two.keycode = KEY_2
+	two.pressed = true
+	g._unhandled_input(two)
+	assert_str(String(g.player.character)).is_equal(String(Player.CAST[1]))
+	assert_str(String(g.player.character)).is_not_equal(was)
+
+# --- the beat when the meadow camp is cleared (15 Nov) ---------------------------------------
+func _free_the_meadow(g: Node2D) -> Camp:
+	var camp := Zones.current.get_node("Actors/MeadowCamp") as Camp
+	for c in camp.get_children():
+		if c.has_signal("died"):
+			g.player.global_position = (c as Node2D).global_position + Vector2(48, 0)
+			c.call("take_hit", 99, Vector2.LEFT, 0.0)
+	return camp
+
+## When the last mossling of the meadow goes, the HUD says the meadow is quiet for a few seconds and
+## motes lift off the ground where the camp stood, once and then gone.
+func test_the_meadow_cleared_gets_a_short_card_and_a_settle_effect_that_ends() -> void:
+	SaveGame.set_flag("seen:opening")
+	var g := _game()
+	await _ticks(2)
+	var hud: Control = g.get_node("UI/HUD")
+	assert_str(Zones.current.zone_id).is_equal("woodland")
+	assert_str(hud.shown_text().banner).is_equal("")
+	Quests.notify("talk:stone_sign")
+	var camp := _free_the_meadow(g)
+	await _frames(2)
+	assert_bool(camp.is_cleared()).is_true()
+	assert_str(hud.shown_text().banner).is_equal("The meadow is quiet")
+	assert_str(hud.shown_text().banner_text).is_equal("")
+	assert_str(hud.shown_text().quest_step).is_equal("Return to the sign by the stones")
+	var settle := Zones.current.get_node_or_null("Actors/CampSettle") as CampSettle
+	assert_object(settle).is_not_null()
+	# over the meadow: within the three mosslings' places (735 to 765, 1476 to 1525 texels)
+	assert_bool(Rect2(700, 1450, 100, 100).has_point(settle.global_position)).override_failure_message(str(settle.global_position)).is_true()
+	await get_tree().create_timer(CampSettle.LIFE + 0.3).timeout
+	assert_bool(is_instance_valid(settle)).override_failure_message("the settle effect is still there after its life").is_false()
+	# the card goes too, on its own clock
+	assert_float(float(Quests.beat("camp:meadow").seconds)).is_less_equal(5.0)
+	await get_tree().create_timer(float(Quests.beat("camp:meadow").seconds) - CampSettle.LIFE + 0.2).timeout
+	assert_str(hud.shown_text().banner).is_equal("")
+	# nothing of it is saved, and a load into the cleared meadow says nothing
+	assert_bool(SaveGame.data.flags.keys().any(func(f: String) -> bool: return f.contains("beat") or f.contains("settle"))).is_false()
+	Zones.go_to("woodland", "start")
+	await _frames(3)
+	assert_str(hud.shown_text().banner).is_equal("")
+	assert_object(Zones.current.get_node_or_null("Actors/CampSettle")).is_null()
+
+func test_the_settle_effect_is_finite_and_static_under_reduced_motion() -> void:
+	assert_array(CampSettle.parts(CampSettle.LIFE, false)).is_empty()
+	assert_array(CampSettle.parts(CampSettle.LIFE, true)).is_empty()
+	assert_array(CampSettle.parts(CampSettle.LIFE + 5.0, false)).is_empty()
+	# moving: the motes rise and fade
+	var early := CampSettle.parts(0.5, false)
+	var late := CampSettle.parts(1.4, false)
+	assert_int(late.size()).is_equal(CampSettle.MOTES.size())
+	assert_float(float(late[0].at.y)).is_less(float(early[0].at.y))
+	assert_float(float(late[0].alpha)).is_less(float(early[0].alpha))
+	for p: Dictionary in late:           # on the world's grid, never between texels
+		assert_vector(p.at).is_equal((p.at / CampSettle.TEXEL).round() * CampSettle.TEXEL)
+	# reduced motion: the same still picture from the first frame to the last
+	var still := CampSettle.parts(0.0, true)
+	assert_int(still.size()).is_equal(CampSettle.MOTES.size())
+	for t: float in [0.3, 0.8, 1.2, CampSettle.LIFE - 0.01]:
+		assert_array(CampSettle.parts(t, true)).is_equal(still)
+	# only the meadow has a beat: the Undercroft's camps and the Thornback's say nothing
+	for id: String in ["undercroft_rooms", "undercroft_stair_hall", "thornback"]:
+		assert_dict(Quests.beat("camp:" + id)).is_empty()
+	# and with the picture modes' guidance off there is no card and no effect
+	SaveGame.set_flag("seen:opening")
+	var g := _game()
+	await _ticks(2)
+	var hud: Control = g.get_node("UI/HUD")
+	hud.guidance = false
+	_free_the_meadow(g)
+	await _frames(2)
+	assert_str(hud.shown_text().banner).is_equal("")
+	assert_object(Zones.current.get_node_or_null("Actors/CampSettle")).is_null()
+
+# --- the end of the slice waits for the first night (15 Nov) -----------------------------------
+func _slice_quests_done() -> void:
+	for q: String in ["woodland_stones", "road_to_crossroads", "cold_forge", "under_the_stones", "home_again", "a1_the_torn_roof"]:
+		SaveGame.data.quests[q] = {"state": "done", "step": Quests.defs[q].steps.size()}
+	for f: String in ["seen:opening", "shard_home:woodland", "hale_walked_home", "visited:crossroads", "visited:woodland"]:
+		SaveGame.set_flag(f)
+	SaveGame.data.village.restored["forge"] = 1
+
+## "Here the story rests" came with Home again and The torn roof done, before the first night had been
+## played. It waits for the night now, and while the night is owed the tracker names it.
+func test_the_closing_card_waits_for_the_first_night_and_the_tracker_names_it_meanwhile() -> void:
+	_slice_quests_done()
+	SaveGame.data.zone = "crossroads"
+	var g := _game()
+	await _ticks(2)
+	await _frames(3)
+	var hud: Control = g.get_node("UI/HUD")
+	# every quest done, the night not yet announced (a load is not a walk into town): no card, and a lead for it
+	assert_str(Raids.state()).is_equal("none")
+	assert_str(hud.shown_text().banner).is_equal("")
+	assert_bool(SaveGame.has_flag("seen:closing")).is_false()
+	assert_str(hud.shown_text().quest_title).is_equal("The lit lantern")
+	assert_str(hud.shown_text().quest_step).contains("when you next walk into Crossroads")
+	# announced and put off, once and twice: the tracker names the night, still no card
+	for left: int in [1, 0]:
+		assert_bool(Raids.arrive("crossroads", "woodland")).is_true()
+		assert_bool(Raids.postpone()).is_true()
+		assert_int(Raids.postpones_left()).is_equal(left)
+		await _frames(2)
+		assert_str(hud.shown_text().quest_title).is_equal("The first night")
+		assert_str(hud.shown_text().quest_step).contains("the next time you walk into Crossroads")
+		assert_dict(Quests.due_card()).is_empty()
+	# the bell: the raid's own line takes the tracker
+	assert_bool(Raids.arrive("crossroads", "woodland")).is_true()
+	assert_bool(Raids.ring()).is_true()
+	await _frames(2)
+	assert_str(hud.shown_text().quest_step).contains("Hold the")
+	# lost: owed again, named again, no card
+	Raids.lose("lantern")
+	await _frames(2)
+	assert_str(hud.shown_text().quest_title).is_equal("The first night")
+	assert_dict(Quests.due_card()).is_empty()
+	assert_bool(SaveGame.has_flag("seen:closing")).is_false()
+	# won: the closing card, after the night's own card has gone, and the closing lead
+	assert_bool(Raids.arrive("crossroads", "woodland")).is_true()
+	assert_bool(Raids.ring()).is_true()
+	hud.show_card("The first night", "The lantern held", "", 1.0)      # as world/raid_night.gd does on the win
+	assert_int(Raids.win()).is_greater(0)
+	await _frames(2)
+	assert_str(hud.shown_text().banner).is_equal("The first night")
+	assert_bool(SaveGame.has_flag("seen:closing")).is_false()
+	await get_tree().create_timer(2.2).timeout
+	assert_str(hud.shown_text().banner).is_equal("The valley holds")
+	assert_str(hud.shown_text().quest_title).is_equal("The valley holds")
+	assert_bool(SaveGame.has_flag("seen:closing")).is_true()
+
+## The other order: the night won before The torn roof (routes/first_night.txt plays it from a save
+## made just after Home again). The card comes with the roof, as before.
+func test_the_closing_card_comes_with_the_last_quest_when_the_night_was_won_first() -> void:
+	_slice_quests_done()
+	SaveGame.data.quests["a1_the_torn_roof"] = {"state": "active", "step": 1}
+	SaveGame.set_flag("first_night_announced")
+	SaveGame.set_flag("first_night_won")
+	var g := _game()
+	await _ticks(2)
+	var hud: Control = g.get_node("UI/HUD")
+	assert_str(hud.shown_text().banner).is_equal("")
+	Quests.notify("talk:morel")
+	await _frames(3)
+	assert_str(hud.shown_text().banner).is_equal("The valley holds")
+
+## A save from main that already saw the closing card (seen:closing) with the night unplayed: the card
+## is not shown twice, and the tracker names the night it still owes.
+func test_a_save_that_saw_the_closing_card_before_the_night_is_not_shown_it_again() -> void:
+	_slice_quests_done()
+	SaveGame.set_flag("seen:closing")
+	var g := _game()
+	await _ticks(2)
+	await _frames(3)
+	var hud: Control = g.get_node("UI/HUD")
+	assert_str(hud.shown_text().quest_title).is_equal("The lit lantern")
+	SaveGame.set_flag("first_night_announced")
+	SaveGame.set_flag("first_night_won")
+	await _frames(2)
+	assert_dict(Quests.due_card()).is_empty()
+	assert_str(hud.shown_text().quest_title).is_equal("The valley holds")

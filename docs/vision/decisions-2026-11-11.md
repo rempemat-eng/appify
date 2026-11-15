@@ -1,6 +1,6 @@
 # Matt's decisions, 11 November 2026
 
-Matt answered these on 11 Nov (09:45 to 10:00, London). They stand until he changes them, and they override older text where the two disagree. AGENTS.md carries the process rules.
+Matt answered these on 11 Nov (09:45 to 10:00, London). They stand until he changes them, and they override older text where the two disagree. AGENTS.md carries the process rules. His answers of 12 and 13 Nov are in `decisions-2026-11-13.md`.
 
 ## How work runs
 

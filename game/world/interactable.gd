@@ -19,6 +19,9 @@ const STALE_MARGIN := 20.0    ## beyond the reach by more than the player's body
 @export var verb := "Talk"
 @export var marker_height := 40.0  ## texels above the origin for the "!"
 
+## True from the moment its speaker sets off (world/walk_off.gd): no prompt, no talk and no "!" here.
+var leaving := false
+
 ## The talk areas the player's body is inside right now.
 static var _in_reach: Array[Interactable] = []
 
@@ -70,7 +73,7 @@ func _physics_process(_delta: float) -> void:
 
 ## True while this area can be used: in the tree, shown, and not switched off by a Conditional.
 func usable() -> bool:
-	return is_inside_tree() and can_process() and is_visible_in_tree()
+	return not leaving and is_inside_tree() and can_process() and is_visible_in_tree()
 
 ## Points the player's focus at the best usable area in reach (or at nothing).
 static func refocus(player: Node) -> void:
@@ -122,7 +125,7 @@ func waits_on(event: String) -> bool:
 	return false
 
 func _draw() -> void:
-	if wants_talk():
+	if not leaving and wants_talk():
 		var c := Color(1.0, 0.86, 0.3)
 		draw_rect(Rect2(-1.5, -marker_height - 12, 3, 8), c)
 		draw_rect(Rect2(-1.5, -marker_height - 2, 3, 3), c)

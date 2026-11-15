@@ -24,6 +24,24 @@ func _ready() -> void:
 		var ground := get_node_or_null("Base/Ground") as Sprite2D
 		if ground != null and ground.texture != null:
 			bounds = Rect2(Vector2.ZERO, ground.texture.get_size())
+	Quests.started.connect(_on_quest_started)
+
+## A quest with `walks_off` {speaker, zone, toward: [x, y] texels} that starts in this zone sends that
+## speaker ahead: she walks off toward the point and is gone (world/walk_off.gd). The quest's own flags
+## place her from the next zone load (road_to_crossroads: `next_visit_flags`).
+func _on_quest_started(id: String) -> void:
+	var off: Variant = Quests.defs.get(id, {}).get("walks_off")
+	if typeof(off) != TYPE_DICTIONARY or String(off.get("zone", "")) != zone_id:
+		return
+	var toward: Array = off.get("toward", [])
+	for it in find_children("*", "Area2D", true, false):
+		if it is Interactable and (it as Interactable).speaker_id == String(off.get("speaker", "")) and not (it as Interactable).leaving \
+				and (it as Interactable).is_visible_in_tree() and toward.size() == 2:
+			var walk := WalkOff.new()
+			walk.name = "WalkOff"
+			walk.who = it
+			walk.toward = Vector2(float(toward[0]), float(toward[1]))
+			it.add_child(walk)
 
 func spawn_position(spawn: String) -> Vector2:
 	for path in ["Spawns/" + spawn, "Base/Stands/" + spawn]:

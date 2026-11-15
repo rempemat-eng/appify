@@ -1,5 +1,6 @@
 # The whole build, in order, from a fresh save: the woodland, Crossroads, the Undercroft and back, to the
-# closing card. The game is closed and started again after every step that moves the story (`restart`),
+# last quest and the first night announced and put off (routes/first_night.txt plays the night and the
+# closing card). The game is closed and started again after every step that moves the story (`restart`),
 # and the player is downed once at each of the three fights. Commands: tools/play_driver.gd.
 
 step a new game shows the title card and the first lead
@@ -43,12 +44,16 @@ expect hp 5
 expect quest woodland_stones active clear_camp
 expect enemies 3
 
-step free the mosslings
+step free the mosslings: the meadow settles, and the HUD says it is quiet
 goto 640 1392 20
 fight 180
 expect flag camp_cleared:meadow
 expect quest woodland_stones active return
+expect banner The meadow is quiet
+shot 02b_meadow_quiet
+waitfor 8 banner none
 restart
+expect banner none
 expect flag camp_cleared:meadow
 expect enemies 0
 
@@ -63,16 +68,18 @@ restart
 expect glint 46
 expect quest woodland_stones done
 
-step Hale on the east path: she does not vanish as her line closes
+step Hale on the east path: she says she goes ahead, and walks off east as her talk closes
 goto 556 1300 10
 expect prompt Talk
 talk Hale
-expect said Walk back with me
+expect said I'll go on ahead
 expect quest road_to_crossroads active go
-expect focus Hale
-talk Hale
-expect said right behind you
+# the picture at once: she is gone 0.8 s after the talk closes, and `talk` itself returns a moment after that
 shot 03_hale_on_the_path
+expect focus none
+wait 2.0
+expect focus none
+expect prompt none
 
 step the east path to Crossroads
 door 951 1356 crossroads
@@ -95,7 +102,7 @@ step Moss at the stall
 goto 1152 830 10
 expect prompt Talk
 talk Moss
-expect said And Hale with you
+expect said come in ahead of you
 expect quest road_to_crossroads done
 expect glint 56
 expect hud Talk to Hale by her smithy
@@ -165,6 +172,9 @@ expect quest under_the_stones active rooms
 
 step free the rooms: 3 Glint a creature, and the cache is picked up again (every cache, if the fight cost another)
 fight 300
+expect flag camp_cleared:undercroft_stair_hall
+expect flag camp_cleared:undercroft_root_corridor
+expect flag camp_cleared:undercroft_seal_room
 expect flag camp_cleared:undercroft_rooms
 expect quest under_the_stones active thornback
 caches
@@ -308,11 +318,13 @@ talk Morel
 expect said A roof!
 expect quest a1_the_torn_roof done
 
-step the closing beat: the card, Moss, the notice board, the hut
+step the story does not rest yet: the first night is owed, so no closing card, and the tracker says so
 wait 1.0
-expect banner The valley holds
-expect hud The Col Path is still buried
-shot 09_closing
+expect banner none
+expect noflag seen:closing
+expect hud The lit lantern
+expect hud when you next walk into Crossroads
+shot 09_night_owed
 goto 1152 830 10
 talk Moss
 expect said The Col Path is still buried
@@ -330,5 +342,25 @@ expect quest a1_the_torn_roof done
 expect restored apothecary
 expect glint 76
 expect banner none
-expect hud The Col Path is still buried
+expect hud The lit lantern
+
+step out and back: the night is announced; put off, the tracker names it, and the story still does not rest
+door 12 210 woodland
+door 951 1356 crossroads
+wait 1.0
+expect raid announced
+expect raidscreen yes
+button Not tonight
+expect raid postponed
+expect raidscreen no
+expect hud The first night
+expect hud the next time you walk into Crossroads
+expect banner none
+expect noflag seen:closing
+shot 10_night_put_off
+restart
+expect raid postponed
+expect raidscreen no
+expect hud The first night
+expect banner none
 end

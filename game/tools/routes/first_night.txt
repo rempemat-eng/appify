@@ -5,7 +5,8 @@
 # sprung on load. The lantern's light has drawn the shardstruck: the night is announced on the next walk into
 # town, put off twice, then due; the prepare screen (untimed, both pads filled with Hale's hurdles) comes back
 # after a quit; Hale strikes her anvil and three waves come down the halt road and are freed; the purse is
-# paid and Hale says it was the one night. A raid lost is played by first_night_lost.txt.
+# paid and Hale says it was the one night. Then the last quest, The torn roof: with the night won and the
+# roof on, the closing card shows (it waits for both). A raid lost is played by first_night_lost.txt.
 # Commands: tools/play_driver.gd.
 
 step in the square just after Home again: a load springs nothing
@@ -110,4 +111,36 @@ wait 1.0
 expect raid won
 expect raidscreen no
 expect repairs no
+
+step the story still waits for the torn roof: no closing card yet
+expect banner none
+expect noflag seen:closing
+expect hud Morel is waiting outside his herbalist's
+goto 600 1096 10
+talk Morel
+expect said My roof is still in the bakery's yard
+expect quest a1_the_torn_roof active roof
+goto 516 1236 10
+expect prompt Restore
+talk ApothecarySite
+expect said You pay 40 Glint
+expect restored apothecary
+expect glint 106
+
+step the roof on and the night held: here the story rests
+goto 600 1096 10
+talk Morel
+expect said A roof!
+expect quest a1_the_torn_roof done
+wait 1.0
+expect banner The valley holds
+expect flag seen:closing
+expect hud The Col Path is still buried
+shot 06_closing
+restart
+expect quest a1_the_torn_roof done
+expect raid won
+expect glint 106
+expect banner none
+expect hud The Col Path is still buried
 end
