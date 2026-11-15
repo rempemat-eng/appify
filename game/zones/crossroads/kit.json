@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "a4a011cd48d3377ae34c970430ab8ddaf7e9881cc31586734b2f8a246bd7a991",
+ "inputs": "68d757219e39d5876440c7910cad3f96b5bb9d047a8563f8cd35d20e461f4918",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -2101,10 +2101,10 @@
     843
    ],
    "offset": [
-    -24,
-    -93
+    -23,
+    -92
    ],
-   "stands": 93,
+   "stands": 92,
    "solid": null
   },
   {
@@ -2116,10 +2116,10 @@
     1032
    ],
    "offset": [
-    -68,
-    -54
+    -62,
+    -65
    ],
-   "stands": 54,
+   "stands": 65,
    "solid": [
     224,
     336,
@@ -2129,7 +2129,7 @@
    "shadow": {
     "png": "repair_cart_shadow.png",
     "offset": [
-     -56,
+     -52,
      -24
     ]
    }

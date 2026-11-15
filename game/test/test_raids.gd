@@ -837,8 +837,8 @@ func test_a_creatures_body_fits_along_the_whole_lane() -> void:
 
 ## The drawn repairs after a lost night (world/raid_repair.gd, the pictures from scripts/art/native/town.py):
 ## each shows its picture where kit.json puts it; the boards on the smithy's wall have no body; the
-## overturned cart's bed is a low solid (layers 1 and 5, as the zone's own low props), its rectangle the
-## data's `solid`. With them showing a creature's whole body still fits along the lane, and every talk
+## wrecked cart's bed is a solid on the walls' layer (it stands above LOW_RISE, so by the zone's own rule it
+## stops shots as well as feet), its rectangle the data's `solid`. With them showing a creature's whole body still fits along the lane, and every talk
 ## area, open door and spawn of the square can still be walked to from `start` (test_reach.gd's bar).
 func test_with_the_repairs_showing_the_lane_and_every_walk_stay_open() -> void:
 	_after_home_again()
@@ -862,7 +862,10 @@ func test_with_the_repairs_showing_the_lane_and_every_walk_stay_open() -> void:
 		assert_object(r.get_node_or_null("Shadow")).is_not_null()
 		assert_int(bodies.size()).is_equal(1)
 		var body := bodies[0] as StaticBody2D
-		assert_int(body.collision_layer).is_equal(1 | 16)
+		# the wreck's raised bed and shafts stand above LOW_RISE (tools/gen_physics.py): its bed stops shots too
+		var stands := int(RaidRepair.kit_entry(String(spec.picture), String(spec.id)).stands)
+		assert_int(stands).is_greater_equal(RaidRepair.LOW_RISE)
+		assert_int(body.collision_layer).is_equal(1)
 		var cs := body.get_child(0) as CollisionShape2D
 		var half := (cs.shape as RectangleShape2D).size / 2.0
 		var solid: Array = spec.solid

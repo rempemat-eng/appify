@@ -105,10 +105,13 @@ def input_hash(plan_path: str, density: float) -> str:
     plan = json.load(open(plan_path))
     files.append(os.path.join(ROOT, 'scripts', 'art', 'biomes', plan.get('art', {}).get('biome', 'meadow') + '.json'))
     files += [approved_path(r) for r in sorted({d['sprite'] for d in plan.get('art', {}).get('dressing', []) if d.get('sprite')})]
-    files += [f for f, _r in raids_on(plan['id'])]
     for f in files:
         h.update(os.path.relpath(f, ROOT).encode() + b'\0')
         h.update(open(f, 'rb').read())
+    for f, r in raids_on(plan['id']):
+        # only what the drawing reads from a raid: its repairs (its waves and words are not the zone's art)
+        h.update(os.path.relpath(f, ROOT).encode() + b'#repairs\0')
+        h.update(json.dumps(r.get('repairs', []), sort_keys=True).encode())
     return h.hexdigest()
 
 
@@ -289,10 +292,11 @@ LAWN_AS_BEFORE = ('cart',)
 # ellipse 5 deep, its posts to 44 and its roof slab 44 to 50; the anvil's stump 14 wide and 9 tall, its
 # waist, and its face 20 long with the horn to the west at 16 to 21.
 PROP_SOLIDS = {
-    # the overturned handcart (village.p_cart_wreck_hd): its bed on its side, 21.6 long, 8 deep and 12 high,
-    # the lower shaft out to the west on the setts, the upper one snapped short, the bare axle arm up
-    'cart_wreck': [('box', -11.3, 10.3, -8.0, 0.0, 0.0, 12.0), ('box', -19.3, -11.3, -0.7, 0.0, 1.2, 3.2),
-                   ('box', -15.7, -11.3, -0.7, 0.0, 8.8, 10.8), ('box', 3.0, 3.6, -4.5, -3.5, 12.0, 16.3)],
+    # the wrecked handcart (village.p_cart_wreck_hd): its bed tipped back on its tail at 34 degrees (the
+    # tail on the setts at x +9.5, rising to the west), the shafts raised beyond it, the wheel flat in front
+    'cart_wreck': [('box', 3.0, 12.0, -8.0, 0.0, 0.0, 9.0), ('box', -5.0, 3.0, -8.0, 0.0, 5.0, 15.0),
+                   ('box', -12.0, -5.0, -8.0, 0.0, 10.0, 20.0), ('box', -19.0, -12.0, -3.0, 0.0, 15.0, 22.0),
+                   ('cyl', -5.4, -1.1, 6.2, 2.8, 0.0, 1.4)],
     'well': [('cyl', 0.0, -4.6, 10.0, 4.6, 0.0, 9.0), ('box', -9.0, -7.0, -5.5, -3.5, 9.0, 44.0),
              ('box', 7.0, 9.0, -5.5, -3.5, 9.0, 44.0), ('box', -12.5, 12.5, -8.0, -1.0, 44.0, 50.0)],
     'well_choked': [('cyl', 0.0, -4.6, 10.0, 4.6, 0.0, 8.0), ('cyl', 0.5, -4.6, 7.5, 3.4, 8.0, 12.0)],
@@ -1128,13 +1132,17 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             else:
                 raise ValueError(f"{sp['id']}: no drawing for a repair of kind {sp['kind']!r}")
             # trimmed to what is drawn, its foot kept
+            pic_full = pic
             ys_, xs_ = np.nonzero(pic.a >= 0)
             cx0, cy0, cx1, cy1 = xs_.min(), ys_.min(), xs_.max() + 1, ys_.max() + 1
             trim = V.Pic(cx1 - cx0, cy1 - cy0, pic.ax - cx0, pic.ay - cy0)
             trim.a = pic.a[cy0:cy1, cx0:cx1].copy()
             pic = trim
+            # the contact shades the painter asks for under its loose things (rows in its own texels)
+            contacts = [(x0_ - cx0, x1_ - cx0, y_ - cy0) for (x0_, x1_, y_) in getattr(pic_full, 'contacts', [])]
             objects.append(dict(id=name, kind=kind, png=add_pic(name, pic.rgba()), foot=foot, anchor=(pic.ax, pic.ay),
-                                alpha=pic.alpha(), cond=None, solid=sp.get('solid'), static=False, repair=sp['id']))
+                                alpha=pic.alpha(), cond=None, solid=sp.get('solid'), static=False, repair=sp['id'],
+                                contacts=contacts))
             repair_ids.add(name)
 
     # an object that comes and goes carries its cast and contact shadow in a picture of its own: the
@@ -1143,6 +1151,10 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         if o.get('static') or o.get('png') is None or o['kind'] in NOSHADE:
             continue
         m, core, contact = shade_masks(o)
+        for (x0_, x1_, y_) in o.get('contacts', []):
+            # a loose thing's own contact shade: two rows under it, on the ground
+            X0_, Y0_ = int(o['foot'][0] - o['anchor'][0]), int(o['foot'][1] - o['anchor'][1])
+            contact[max(0, Y0_ + y_):max(0, Y0_ + y_ + 2), max(0, X0_ + x0_):max(0, X0_ + x1_)] = True
         sm = m | contact
         if not sm.any():
             continue

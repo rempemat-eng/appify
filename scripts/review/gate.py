@@ -2,7 +2,8 @@
 
 Matt, 25 Oct 19:19: review art "after the props or background is first drawn ... before it
 gets placed and left in the world"; and 8 Nov 00:05, asked "should only reviewed art be
-placeable?": "6. yes". Every picture a zone scene places from game/zones/<zone>/art/ needs a
+placeable?": "6. yes". Every picture a zone scene places from game/zones/<zone>/art/, and every one
+the game loads for the zone at run time (kit.json `repairs`, runtime_names()), needs a
 catalogue entry, art/catalogue/<zone>/<name>.json, written by
 `npm run review:asset -- <zone>/<name> --record`, whose sha256 matches the file, and then:
 
@@ -116,6 +117,21 @@ def why_not(rid: str, verdict, rec: dict, reviewer: dict) -> str:
     return f'reviewer verdict {verdict!r} is not "pass"{leads}: {HOW}'
 
 
+def runtime_names(zone: str) -> list[str]:
+    """Art the game loads for a zone at run time rather than from its scene: the brief repairs after a lost
+    raid night (kit.json `repairs`, each `png` and its `shadow.png`, shown by world/raid_repair.gd). They
+    face the same gate as what the scene places."""
+    kp = os.path.join(GAME, 'zones', zone, 'kit.json')
+    if not os.path.exists(kp):
+        return []
+    out = []
+    for r in json.load(open(kp)).get('repairs', []):
+        for png in (r.get('png'), (r.get('shadow') or {}).get('png')):
+            if png:
+                out.append(png[:-4] if png.endswith('.png') else png)
+    return out
+
+
 def refusals(zone: str, names: list[str] | None = None, text: str | None = None) -> list[str]:
     """Why each placed asset may not be placed (empty when all may). `names` are art names
     (without .png) under game/zones/<zone>/art; `text` a scene's text to read them from."""
@@ -127,7 +143,7 @@ def refusals(zone: str, names: list[str] | None = None, text: str | None = None)
             base = path.replace('.tscn', '_base.tscn').replace(f'{zone}_base_base', f'{zone}_base')
             if os.path.exists(os.path.join(os.path.dirname(path), f'{zone}_base.tscn')):
                 text += open(os.path.join(os.path.dirname(path), f'{zone}_base.tscn')).read()
-        names = sorted({n for z, n in TEX.findall(text) if z == zone})
+        names = sorted({n for z, n in TEX.findall(text) if z == zone} | set(runtime_names(zone)))
     q = queue_entries()
     bad = []
     for n in names:

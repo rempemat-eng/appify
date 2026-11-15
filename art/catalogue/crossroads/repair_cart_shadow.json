@@ -1,14 +1,14 @@
 {
  "id": "crossroads/repair_cart_shadow",
  "file": "game/zones/crossroads/art/repair_cart_shadow.png",
- "sha256": "eef7d954af8aa29a107a568ee097729f5ce25418bbe0522c11fead9857a7caa0",
+ "sha256": "ff261d0c8cc590fde582e0463e00e382bc7dccad76678bab408ead0256f7b0b0",
  "kind": "repair_cart_shadow",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  103,
-  32
+  117,
+  39
  ],
  "status": "pass",
  "counts": {

@@ -28,10 +28,33 @@ var spec: Dictionary = {}
 
 func _ready() -> void:
 	add_to_group("raid_repair")
+	_dress()
+	_refresh_conditions.call_deferred()
+
+func _exit_tree() -> void:
+	_refresh_conditions()
+
+## The zone's own things that hide while the repairs show (the upright handcart, whose wreck this is: its
+## plan item has `"if": {"not_flags": ["shard_lantern_dark"]}`) are Conditionals, which re-check only on
+## quest and village signals; the flag changes with the raid, so they re-check when a repair comes or goes.
+func _refresh_conditions() -> void:
+	if not is_inside_tree():
+		return
+	var zone: Node = Zones.current if is_instance_valid(Zones.current) else get_tree().current_scene
+	if zone == null:
+		return
+	for c: Node in zone.find_children("If_*", "Node2D", true, false):
+		if c is Conditional:
+			(c as Conditional).refresh()
+
+func _dress() -> void:
 	var pic := String(spec.get("picture", ""))
 	var entry := RaidRepair.kit_entry(pic, String(spec.get("id", "")))
 	if entry.is_empty():
 		return
+	var tex := load(pic) as Texture2D
+	if tex == null:
+		return                       # no picture: no body either (the blockout's rectangles are drawn)
 	if entry.has("shadow"):
 		var sh := Sprite2D.new()
 		sh.name = "Shadow"
@@ -42,7 +65,7 @@ func _ready() -> void:
 		add_child(sh)
 	var s := Sprite2D.new()
 	s.name = "Picture"
-	s.texture = load(pic) as Texture2D
+	s.texture = tex
 	s.centered = false
 	s.offset = Vector2(entry.offset[0], entry.offset[1])
 	add_child(s)

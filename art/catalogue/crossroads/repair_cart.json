@@ -1,14 +1,14 @@
 {
  "id": "crossroads/repair_cart",
  "file": "game/zones/crossroads/art/repair_cart.png",
- "sha256": "93307ecedf38eae1c4e0a1381fb93eb41b414505e2d5d209b9ad219a467c4fe4",
+ "sha256": "b835b7abff1ab38b5cd3727f98915494cabe84c9d5673968a699ebfdd375310f",
  "kind": "handcart",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  109,
-  60
+  126,
+  75
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 9,
-   "tones": 35.77777777777778,
-   "shapes": 48.111111111111114
+   "patches": 11,
+   "tones": 31.0,
+   "shapes": 42.18181818181818
   },
   "band": {
    "tones": 27.0,
@@ -28,24 +28,24 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.955,
-  "tones_ratio": 1.325,
-  "shapes_ratio": 0.955,
-  "passed": true,
+  "ratio": 0.838,
+  "tones_ratio": 1.148,
+  "shapes_ratio": 0.838,
+  "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.light",
+   "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    1,
-    8,
-    76,
-    57
+    0,
+    0,
+    126,
+    75
    ],
-   "message": "crossroads/repair_cart: the wood is lit from the right (luminance rises 44 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+   "message": "crossroads/repair_cart: detail bar 0.84 of Eastward's prop band (31.0 tones, 42.2 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
    "detector": "detail.cluster_noise",
@@ -53,10 +53,10 @@
    "box": [
     0,
     0,
-    109,
-    60
+    126,
+    75
    ],
-   "message": "crossroads/repair_cart: 41% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 40% to 43%, for information: the verdict is on this grid)",
+   "message": "crossroads/repair_cart: 42% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 42% to 49%, for information: the verdict is on this grid)",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],

@@ -1,13 +1,13 @@
 {
  "id": "crossroads/repair_boards",
  "file": "game/zones/crossroads/art/repair_boards.png",
- "sha256": "06f96832ada3c6c18e14e9afdb2416c2057765d903c9a822ebd19aede9af1719",
+ "sha256": "05e2f147c38e080da7328418ed5565c585d15652ffcf1c4c8db7b671aece5e8a",
  "kind": "repair_boards",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  55,
+  54,
   38
  ],
  "status": "pass",
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 6,
-   "tones": 30.166666666666668,
-   "shapes": 49.5
+   "tones": 29.166666666666668,
+   "shapes": 47.0
   },
   "band": {
    "tones": 27.0,
@@ -28,24 +28,24 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.983,
-  "tones_ratio": 1.117,
-  "shapes_ratio": 0.983,
+  "ratio": 0.933,
+  "tones_ratio": 1.08,
+  "shapes_ratio": 0.933,
   "passed": true,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.light",
+   "detector": "detail.cluster_noise",
    "severity": "polish",
    "box": [
-    2,
-    10,
-    52,
-    33
+    0,
+    0,
+    54,
+    38
    ],
-   "message": "crossroads/repair_boards: the red is lit from the right (luminance rises 24 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+   "message": "crossroads/repair_boards: 43% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 34% to 43%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
  "reviewed": "2026-11-15",
