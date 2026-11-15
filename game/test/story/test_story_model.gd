@@ -40,7 +40,7 @@ const SILENT := {
 	"restore_fern_cottage|The door is clear.": "the mark goes when the door is cleared",
 	"restore_fern_cottage|Rubble blocks the Ferns' door. Clearing it needs 20 Glint of timber.":
 		"the player always has the 20 Glint by then (Under the stones pays 60)",
-	"moss|The Ferns are home and their beds are dug. Two packets of valley seed, on the house. Plant them on your terrace.":
+	"moss|The Ferns are home and their chimney's smoking. That's a second fire on the square, and a week ago there was none.":
 		"Moss's fallback once act 1's own lines run out; act 1 always has a line for her in this build",
 }
 const ARROW_REACH := 330.0

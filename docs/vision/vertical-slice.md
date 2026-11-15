@@ -131,7 +131,11 @@ does not place the later `circle_stones`/`cairn` interactions or
 The scenario explicitly leaves those shards absent and `circle_awake` false.
 Do not substitute its earlier state-seeding tests for a manual route.
 Planting two beds and a first weapon upgrade in the older beat table are
-outside the accepted scenario's completion evidence. The first-night raid has
+outside the accepted scenario's completion evidence, and since 15 Nov nobody in
+the slice speaks of them: Hale no longer asks for a blade, Morel offers no
+flasks or tonics and does not ask to come along, and Moss and Ada say nothing of
+seeds or beds (`game/test/test_words.gd` holds the list). The lines come back
+with the systems. The first-night raid has
 its own route and suite (below).
 
 Source references: [input bindings](../../game/core/inputs.gd),

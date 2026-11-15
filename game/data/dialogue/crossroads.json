@@ -10,7 +10,7 @@
         "if": { "done": ["under_the_stones"] },
         "lines": [
           "You hear it? The lantern hums. Moss says the Ferns are on their way back from the halt farm.",
-          "Bring me your blade whenever you like. The anvil's ready."
+          "The anvil's ready, and half the town's hinges are waiting on it."
         ]
       },
       {
@@ -81,7 +81,7 @@
     "entries": [
       {
         "if": { "done": ["home_again"] },
-        "lines": ["The Ferns are home and their beds are dug. Two packets of valley seed, on the house. Plant them on your terrace."]
+        "lines": ["The Ferns are home and their chimney's smoking. That's a second fire on the square, and a week ago there was none."]
       },
       {
         "if": { "step": ["home_again", "welcome"] },
@@ -131,8 +131,8 @@
       {
         "if": { "done": ["under_the_stones"] },
         "lines": [
-          "The roof of my herbalist's is in the bakery's yard. When you're back from the hills, help me put it on again.",
-          "Until then, nothing to brew with. Your terrace beds will change that."
+          "The roof of my herbalist's is in the bakery's yard. Once the Ferns are settled, help me put it on again.",
+          "Until then there's nothing to brew with, and nowhere dry to brew it."
         ]
       },
       {
@@ -148,13 +148,13 @@
     "entries": [
       {
         "if": { "done": ["home_again"] },
-        "lines": ["We'll dig your beds over in the morning. The least we can do."]
+        "lines": ["The kettle's on our own fire again. We won't forget it, Bramble."]
       },
       {
         "if": { "restored": ["fern_cottage"] },
         "lines": [
           "Our door! We slept in a hay loft for a week.",
-          "Thank you, Bramble. When the beds are dug, come and see what grows."
+          "Thank you, Bramble. I never thought I'd be so glad of my own front step."
         ]
       },
       {
@@ -168,13 +168,13 @@
       {
         "if": { "done": ["home_again", "a1_the_torn_roof"] },
         "lines": [
-          "A fresh note in Moss's hand: APOTHECARY OPEN. THE FERNS ARE HOME.",
+          "A fresh note in Moss's hand: MOREL HAS A ROOF AGAIN. THE FERNS ARE HOME.",
           "Under it: COL PATH TO THE FROSTLINE STILL BURIED. WORD HERE WHEN IT OPENS."
         ]
       },
       {
         "if": { "done": ["under_the_stones"] },
-        "lines": ["A new note: THE BELL TOWER WILL WARN OF RAIDERS. DO NOT FACE THEM ALONE. (No bounties pinned yet.)"]
+        "lines": ["A new note in Moss's hand: THE LANTERN IS LIT. IF ANYTHING COMES FOR ITS LIGHT, DO NOT FACE IT ALONE."]
       },
       {
         "lines": ["Torn notices. One survives: MARKET DAY, SATURDAY. The rest the storm took."]
