@@ -63,7 +63,8 @@
  "reviewed": "2026-11-15",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-15",
+  "note": "Round 3 at f4f630f8, sha 1e9bfc01. RC2-1 to RC2-3 closed: the break is a tapering split in dark cool timber with a lit lip; the wheel lying flat has open sectors, lit spokes and a shaded tyre ellipse; the sack has weave, creases, a core shadow and a torn mouth. detail.bar 0.821 rejected as a coverage effect: 7 of 11 patches are 61-80 % covered; the 4 patches covered 90 % or more score 1.08 of the band, and with shapes scaled to coverage the cart scores 1.05, equal to the intact handcart (1.05). cluster_noise 45 % kept as polish (the bed's mottled side face, x44-60 y18-40). Polish: break up the sack mouth's flat cream lip (3x10 texels, x106-108 y56-65); tidy the bright 4x5 block above the wheel hub (x41-45 y53-58) and centre the spokes on the hub; calm the side-face mottle to sibling swaps."
  }
 }
