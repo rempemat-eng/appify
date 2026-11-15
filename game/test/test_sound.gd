@@ -311,6 +311,40 @@ func test_one_loop_at_a_time_crossfaded_and_held_under_the_pause() -> void:
 	for state: Dictionary in Sound.loop_state():
 		assert_bool(state.playing).is_false()
 
+## Two doors in quick succession: a third loop asked for while two are crossing. On main it took the
+## quieter player at once, so that loop went from its gain to silence in one step. Nothing jumps now:
+## both fall, and the third starts from silence on whichever player is free first.
+func test_a_third_loop_asked_for_mid_crossfade_cuts_nothing_off() -> void:
+	_listen()
+	Sound.ambience(&"woodland")
+	Sound.steer(0.0)
+	Sound.steer(Sound.CROSSFADE)
+	Sound.ambience(&"crossroads")
+	Sound.steer(Sound.CROSSFADE * 0.4)
+	assert_float(_loop(&"woodland").gain).is_equal_approx(0.6, 0.001)
+	assert_float(_loop(&"crossroads").gain).is_equal_approx(0.4, 0.001)
+	Sound.ambience(&"undercroft")
+	var step := Sound.CROSSFADE / 30.0
+	var before := {&"woodland": 0.6, &"crossroads": 0.4, &"undercroft": 0.0}
+	var started := -1
+	for i in 60:
+		Sound.steer(step)
+		var playing := 0
+		for id: StringName in before:
+			var now: float = _loop(id).get("gain", 0.0)
+			# no loop's gain moves by more than one step's worth of fade
+			assert_float(absf(now - float(before[id]))).override_failure_message(
+				"%s went from %.3f to %.3f in one step (step %d)" % [id, before[id], now, i]).is_less_equal(step / Sound.CROSSFADE + 0.0001)
+			before[id] = now
+			playing += 1 if not _loop(id).is_empty() else 0
+		assert_int(playing).is_less_equal(2)                         # two players, never a third loop
+		if started < 0 and not _loop(&"undercroft").is_empty():
+			started = i
+	assert_int(started).is_greater(0)                              # it waited for a player to fall silent
+	assert_float(_loop(&"undercroft").gain).is_equal(1.0)
+	assert_dict(_loop(&"woodland")).is_empty()
+	assert_dict(_loop(&"crossroads")).is_empty()
+
 func test_the_ambience_switch_is_its_own() -> void:
 	_listen()
 	Sound.ambience(&"crossroads")
@@ -406,9 +440,55 @@ func test_sound_settings_save_and_load() -> void:
 		SaveGame.reset()
 		assert_int(SaveGame.load_save(PATH)).is_equal(OK)
 		assert_dict(SaveGame.data).is_equal(before)
-	# a switch that is not a switch is a damaged save, refused like the other settings
+	# a switch that is not a switch is a damaged setting: it goes back to its default and the save loads
+	# (until 15 Nov this asserted that such a save is refused whole, which lost the player's progress)
 	for key: String in SaveGame.SOUND_SETTINGS:
-		assert_dict(SaveGame._migrate({"settings": {key: "yes"}})).is_empty()
+		var mended: Dictionary = SaveGame._migrate({"settings": {key: "yes"}})
+		assert_bool(mended.is_empty()).is_false()
+		assert_bool(mended.settings[key] == SaveGame.SOUND_SETTINGS[key]).is_true()
+
+## A sound setting that is not true or false (a damaged or hand-edited save) loads at its default, with
+## everything else in the save as it was. On main the whole save was refused for it.
+func test_a_damaged_sound_setting_loads_at_its_default_and_keeps_the_progress() -> void:
+	var good: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(FIXTURES + "v2-sound.json"))
+	assert_int(int(good.version)).is_equal(2)
+	var whole: Dictionary = SaveGame._migrate(good)
+	for damage: Dictionary in [{"sound_effects": "yes"}, {"ambience": 3}, {"gentle_sound": null},
+			{"sound_effects": [], "ambience": {}, "gentle_sound": 0.5}, {"gentle_sound": "true"}]:
+		var doc: Dictionary = good.duplicate(true)
+		doc.glint = 37
+		doc.flags["met_hale"] = true
+		doc.settings.reduced_motion = true
+		doc.settings.pixel_scale = "whole"
+		for key: String in damage:
+			doc.settings[key] = damage[key]
+		var file := FileAccess.open(PATH, FileAccess.WRITE)
+		file.store_string(JSON.stringify(doc))
+		file.close()
+		SaveGame.reset()
+		assert_int(SaveGame.load_save(PATH)).override_failure_message("refused for %s" % [damage]).is_equal(OK)
+		for key: String in SaveGame.SOUND_SETTINGS:
+			var want: bool = SaveGame.SOUND_SETTINGS[key] if damage.has(key) else good.settings[key]
+			assert_bool(SaveGame.data.settings[key] == want).override_failure_message("%s after %s" % [key, damage]).is_true()
+		# the progress and the other settings are the save's own
+		assert_int(SaveGame.data.glint).is_equal(37)
+		assert_bool(SaveGame.data.flags.met_hale).is_true()
+		assert_str(SaveGame.data.zone).is_equal(good.zone)
+		assert_dict(SaveGame.data.quests).is_equal(whole.quests)
+		assert_dict(SaveGame.data.village).is_equal(whole.village)
+		assert_dict(SaveGame.data.player).is_equal(whole.player)
+		assert_bool(SaveGame.data.settings.reduced_motion).is_true()
+		assert_str(SaveGame.data.settings.pixel_scale).is_equal("whole")
+		assert_int(SaveGame.data.version).is_equal(2)
+		# and the mended save is written back as a good one
+		assert_int(SaveGame.save(PATH)).is_equal(OK)
+		var again: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(PATH))
+		for key: String in SaveGame.SOUND_SETTINGS:
+			assert_bool(again.settings[key] is bool).is_true()
+	# a setting left out of a version 2 save is filled the same way
+	var bare: Dictionary = good.duplicate(true)
+	bare.settings.erase("ambience")
+	assert_bool(SaveGame._migrate(bare).settings.ambience).is_true()
 
 func test_gentle_sound_and_reduced_motion_do_not_read_each_other() -> void:
 	_listen()
@@ -586,9 +666,8 @@ func _pad(button: JoyButton) -> InputEventJoypadButton:
 	return e
 
 ## Real events through the viewport, not the focus tables: the arrow keys and Enter, and the d-pad.
-## A gamepad moves the focus here and cannot press: Godot 4's `ui_accept` holds Enter and Space and no pad
-## button, and core/inputs.gd adds none, so no menu row in the game answers to A yet (the pause menu's
-## neither). That is the input map's to settle, not sound's; this test holds what a pad does reach.
+## The pad's A presses the focused row since 15 Nov (core/inputs.gd adds it to `ui_accept`;
+## test/test_ui.gd presses it on both panels).
 func test_the_sound_panel_is_reached_by_the_keys_and_by_the_dpad() -> void:
 	var path: String = SaveGame.path
 	SaveGame.path = PATH
@@ -628,11 +707,10 @@ func test_the_sound_panel_is_reached_by_the_keys_and_by_the_dpad() -> void:
 	SaveGame.path = path
 
 ## A tap or a click (a touch reaches a Button as the mouse press the engine makes of it; the setting for
-## that is on). In play no press reaches these rows yet, nor the pause menu's own: the pause menu's dim is
-## a top-level control that stops the mouse, and the engine asks top-level controls first, so it takes
-## every press while the game is paused (played on main, 15 Nov: a click on Resume leaves the game
-## paused). That is the pause menu's to mend. This test holds the panel's half: with the dim letting
-## presses through, each row answers one.
+## that is on). Until 15 Nov the pause menu's dim, a top-level control that stops the mouse, took every
+## press while the game was paused, and this test switched the dim off to hold the panel's half alone.
+## The dim is asked after the rows now and is left as it is here: it stops the mouse, and each row still
+## answers a press.
 func test_a_press_reaches_each_sound_row_once_the_pause_menus_dim_lets_it_through() -> void:
 	var path: String = SaveGame.path
 	SaveGame.path = PATH
@@ -646,7 +724,7 @@ func test_a_press_reaches_each_sound_row_once_the_pause_menus_dim_lets_it_throug
 	sound._stand_beside()
 	var rows: Array = sound.get("_buttons")
 	var dim: ColorRect = pause.get("_dim")
-	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	assert_int(dim.mouse_filter).is_equal(Control.MOUSE_FILTER_STOP)
 	assert_bool(bool(ProjectSettings.get_setting("input_devices/pointing/emulate_mouse_from_touch"))).is_true()
 	var host: Control = pause.get_parent()
 	for b: Button in rows:

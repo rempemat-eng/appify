@@ -1,0 +1,71 @@
+# The pause menu and its Sound panel by mouse, by finger and by gamepad (15 Nov). Until then no click or
+# tap reached a row (the dim behind the menu took each one) and no pad button pressed one. Every press
+# here is a real event through the window and the pixel screen's scale. Commands: tools/play_driver.gd.
+
+step Esc pauses; the mouse presses rows of both panels
+key Escape
+expect paused yes
+wait 0.5
+shot 01_paused
+button Reduced motion
+expect setting reduced_motion true
+button Gentle sound
+expect setting gentle_sound true
+button Ambience
+expect setting ambience false
+expect paused yes
+
+step a click on the dimmed world beside the panels does nothing
+aim 150 600
+click
+expect paused yes
+expect setting reduced_motion true
+
+step a finger presses them too
+tap Reduced motion
+expect setting reduced_motion false
+tap Sound effects
+expect setting sound_effects false
+tap Sound effects
+expect setting sound_effects true
+shot 02_after_taps
+
+step a click on Resume goes on with the game
+button Resume
+expect paused no
+wait 0.5
+
+step the gamepad: Start pauses, the d-pad moves, A presses the focused row (Right from Pixel scale is Gentle sound)
+pad Start
+expect paused yes
+pad Down
+pad A
+expect setting reduced_motion true
+pad Down
+pad A
+expect setting pixel_scale whole
+pad A
+expect setting pixel_scale fill
+pad Right
+pad A
+expect setting gentle_sound false
+shot 03_pad
+pad Left
+pad Up
+pad Up
+pad A
+expect paused no
+
+step a finger on Resume
+key Escape
+expect paused yes
+tap Resume
+expect paused no
+
+step what was chosen is in the save
+restart
+expect setting reduced_motion true
+expect setting gentle_sound false
+expect setting ambience false
+expect setting sound_effects true
+expect setting pixel_scale fill

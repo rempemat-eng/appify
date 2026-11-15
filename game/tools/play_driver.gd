@@ -23,6 +23,9 @@ extends Node
 ##   hurt [secs]             the same, but only until the first hit lands (hearts missing, not downed)
 ##   button <name or text>   move the mouse onto a visible on-screen button (its node name, or the start of
 ##                           its text) and click it, as a player would (the raid's prepare screen)
+##   tap <name or text>      the same with a finger: a screen touch on the button, pressed and lifted
+##   pad <button>            press and let go a gamepad button: A, B, X, Y, Start, Back, Up, Down, Left, Right
+##                           (the last four are the d-pad)
 ##   defend [secs] [x y [x2 y2]]  defend a raid's night from a station (default: here; the second once both
 ##                           hurdles are down) until it is over: shoots the raider nearest the lantern over the
 ##                           hurdles, walks out only for one it cannot hit
@@ -38,6 +41,7 @@ extends Node
 ##       prompt <verb|none> | hp <n> | hurt (hearts missing) | glint <n> | restored <id> | notrestored <id> | enemies <n>
 ##       at x y <tol> | hud <text|none> | said <text> | banner <text|none> | paused <yes|no>
 ##       line <text|none> (the line on the dialogue box now)
+##       setting <key> <value> (a setting in the save: reduced_motion true, pixel_scale whole, ambience false)
 ##       raid <state> (core/raids.gd: none, announced, postponed, pending, running, won, lost) | raidscreen <yes|no>
 ##       defences <n> (hurdles standing) | repairs <yes|no> (the brief repairs after a lost night)
 ##       battering (a raider is battering a hurdle) | wave <n> (the night's wave under way, from 1)
@@ -53,6 +57,10 @@ const STUCK_AFTER := 9
 const MAX_DOWNS := 4
 const DOOR_MARGIN := 36.0   # texels the fight pilot keeps between the player and an open door's trigger
 const DODGE_REACH := 140.0  # how far a dodge may carry the player: a roll (about 100 texels) and the steps after it
+## The gamepad buttons `pad` knows, by name.
+const PAD := {"a": JOY_BUTTON_A, "b": JOY_BUTTON_B, "x": JOY_BUTTON_X, "y": JOY_BUTTON_Y, "start": JOY_BUTTON_START,
+	"back": JOY_BUTTON_BACK, "up": JOY_BUTTON_DPAD_UP, "down": JOY_BUTTON_DPAD_DOWN, "left": JOY_BUTTON_DPAD_LEFT,
+	"right": JOY_BUTTON_DPAD_RIGHT}
 
 var route_path := ""
 var out_dir := "user://playtest"
@@ -383,6 +391,20 @@ func run(c: String) -> String:
 			return await down(float(a[1]) if a.size() > 1 else 40.0, true)
 		"button":
 			return await press_button(c.substr(7).strip_edges())
+		"tap":
+			return await press_button(c.substr(4).strip_edges(), true)
+		"pad":
+			if a.size() < 2 or not PAD.has(a[1].to_lower()):
+				return "no pad button '%s'" % (a[1] if a.size() > 1 else "")
+			for down: bool in [true, false]:
+				var e := InputEventJoypadButton.new()
+				e.button_index = PAD[a[1].to_lower()]
+				e.pressed = down
+				e.pressure = 1.0 if down else 0.0
+				Input.parse_input_event(e)
+				await _sleep(0.08)
+			await _sleep(0.15)
+			out("PAD %s  paused=%s" % [a[1], get_tree().paused])
 		"waitfor":
 			var t0 := now()
 			var want := PackedStringArray(["expect"]) + a.slice(2)
@@ -469,6 +491,9 @@ func expect(a: PackedStringArray) -> String:
 			return "" if all.contains(rest.to_lower()) else "the last lines were: %s" % (" | ".join(_said) if _said.size() > 0 else "(nothing)")
 		"paused":
 			return "" if get_tree().paused == (a[2] == "yes") else "paused is %s" % get_tree().paused
+		"setting":
+			var value := str(SaveGame.setting(a[2], "(not set)"))
+			return "" if a.size() > 3 and value.to_lower() == a[3].to_lower() else "the setting %s is %s" % [a[2], value]
 		"raid":
 			return "" if Raids.state() == a[2] else "the raid is %s" % Raids.state()
 		"raidscreen":
@@ -603,7 +628,9 @@ func _find_button(node: Node, what: String) -> BaseButton:
 	return null
 
 ## Moves the mouse onto a button and clicks it with real mouse events, through the pixel screen's scale.
-func press_button(what: String) -> String:
+## With `touch`, a finger instead: a screen touch pressed and lifted there, and no mouse at all (the
+## engine makes the mouse press of it, as on a phone).
+func press_button(what: String, touch := false) -> String:
 	var b := _find_button(get_tree().root, what)
 	if b == null:
 		return "no visible button '%s'" % what
@@ -612,6 +639,17 @@ func press_button(what: String) -> String:
 	var screen := centre
 	if main != null and main.get("screen") != null:
 		screen = main.screen.position + centre * main.scale_k
+	if touch:
+		for down: bool in [true, false]:
+			var t := InputEventScreenTouch.new()
+			t.index = 0
+			t.pressed = down
+			t.position = screen
+			Input.parse_input_event(t)
+			await _sleep(0.08)
+		await _sleep(0.2)
+		out("TAP %s  paused=%s" % [what, get_tree().paused])
+		return ""
 	var move := InputEventMouseMotion.new()
 	move.position = screen
 	move.global_position = screen
