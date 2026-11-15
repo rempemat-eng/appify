@@ -1,8 +1,9 @@
 class_name RaidRepair
 extends Node2D
 ## A brief repair after a lost raid (docs/vision/vertical-slice.md beat 8: boards on a window, a cart on
-## its side), shown until the next walk into town (core/raids.gd clears `repairs`). Nothing is destroyed
-## and nothing costs anything: it is only a sight. The node stands at the thing's foot, so it sorts with
+## its side), shown while the shard lantern is dark: from the lost night until a night is held (Matt,
+## 13 Nov: the square looks worse until then; core/raids.gd keeps `repairs`). Nothing is destroyed and
+## nothing costs anything: it is only a sight, with no solid, so it blocks no path, door or lane. The node stands at the thing's foot, so it sorts with
 ## the building or the actors in front of it; `spec.at` is where it is drawn.
 ##
 ## No picture yet: drawn in the blockout's placeholder style (flat rectangles in its wood colours), an art

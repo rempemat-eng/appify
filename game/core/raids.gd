@@ -9,19 +9,27 @@ extends Node
 ## and the states run:
 ##   none ........ no raid yet. The raid's `attention_if` (the lantern lit: shard_home:woodland) earns it;
 ##                 it is announced on the next walk into its zone from another zone, once `announce_if` holds.
-##   announced ... the prepare screen is up: "Ring the bell", or "Not tonight" while postponements are left.
+##   announced ... the prepare screen is up: "Sound the anvil", or "Not tonight" while postponements are left.
 ##   postponed ... put off; asked again on the next walk into town.
 ##   pending ..... put off twice: it begins the next time the player walks into town (the screen still comes
 ##                 first, untimed, with no "Not tonight").
-##   running ..... the bell has rung; `wave` is the wave under way.
+##   running ..... Hale has struck her anvil; `wave` is the wave under way.
 ##   won ......... the purse is paid (data/balance/glint.json raids.<id>), the reward's flags set, its
-##                 offered restore added. It does not come again.
-##   lost ........ the lantern fell, or the player went down: brief repairs show in the zone until the next
-##                 walk into town clears them, and the same walk offers the raid again (postponements anew).
+##                 offered restore added. It does not come again (Matt, 13 Nov: a one-off, and Hale says so).
+##   lost ........ the lantern fell, or the player went down: the next walk into town offers the raid again
+##                 (postponements anew).
+## The stake (Matt, 13 Nov: "Shard dims until held"; the lantern dark and the square worse until a night is
+## won, no progress or Glint lost): a lost night sets the raid's `lantern.dark_flag` (the first night: the
+## save flag shard_lantern_dark) and its `repairs`, and only a won night clears them. While the flag holds
+## the shard lantern stands dark and the repairs show in the zone (world/raid_night.gd), on every load and
+## through every later state of the raid. A raid with no dark flag keeps the older rule: its repairs go on
+## the next walk into town. Nothing else is taken: no quest, no restore, and no Glint, so going down while a
+## night runs leaves no cache (game.gd asks `downed_in_a_night`; every other defeat keeps the cache rule).
+## A save that is `lost` without the flag (made before 15 Nov) gets it on load, and one whose raid is won
+## loses it.
 ## Nothing here reads a clock. Getting up after a defeat, or starting the game, is not a walk into town: a
 ## raid waiting on the screen (announced) or under way (running) shows the screen again at once, from wave 1.
-## Leaving the zone while the raid runs puts it back to pending. Defeat keeps the existing rule (game.gd,
-## core/glint_cache.gd): a share of the carried Glint stays where the player fell.
+## Leaving the zone while the raid runs puts it back to pending.
 
 signal changed(state: String)
 ## The prepare screen should open (game.gd shows ui/raid_screen.gd). Emitted deferred, once the zone is in.
@@ -39,17 +47,31 @@ var _from := ""          ## the zone the player was in before the one now loadin
 ## How the last night was lost, until the zone has said so on screen: "down" when the player went down (the
 ## zone reloads, so the card shows on getting up), "" once told. Not saved: a quit after a loss tells nothing.
 var loss_untold := ""
-## False from the bell until wave 1 comes (world/raid_night.gd holds it back until the player nears the
+## True when the lantern was already dark as the last night was lost (a second loss): the cards then say it
+## stays dark, not that it goes out. Not saved, as `loss_untold`.
+var lost_while_dark := false
+## False from the anvil until wave 1 comes (world/raid_night.gd holds it back until the player nears the
 ## square), so the tracker says the shardstruck are coming instead of counting a wave not there yet. Not
-## saved: a night cut short comes back to the screen, and the bell resets it.
+## saved: a night cut short comes back to the screen, and the anvil resets it.
 var wave_begun := false
 
 func _ready() -> void:
 	load_dir(DIR)
 	Zones.zone_changing.connect(_on_zone_changing)
 	Zones.zone_changed.connect(_on_zone_changed)
-	SaveGame.loaded.connect(offer_restores)
+	SaveGame.loaded.connect(_on_loaded)
+	_on_loaded()
+
+func _on_loaded() -> void:
 	offer_restores()
+	# a night lost before the stake existed: the record says lost, so the lantern is dark. A raid already won
+	# is never dark, whatever a hand-edited or older save's flags say
+	for id: String in defs:
+		if won(id):
+			_set_dark(defs[id], false)
+	var def := current()
+	if not def.is_empty() and state() == "lost" and not won(String(def.id)):
+		_set_dark(def, true)
 
 func load_dir(dir: String) -> void:
 	var files := Array(DirAccess.get_files_at(dir))
@@ -99,12 +121,32 @@ func postponed() -> int:
 func postpones_left() -> int:
 	return maxi(int(current().get("postpones", 2)) - postponed(), 0)
 
-## True while the raid's attention has been earned and its announcement may come.
+## True while the raid's attention has been earned and its announcement may come. A raid already won is
+## never earned again (a one-off), whatever state its record holds.
 func earned(def: Dictionary) -> bool:
-	return not def.is_empty() and Quests.check(def.get("attention_if")) and Quests.check(def.get("announce_if"))
+	return not def.is_empty() and not won(String(def.get("id", ""))) \
+		and Quests.check(def.get("attention_if")) and Quests.check(def.get("announce_if"))
 
 func running() -> bool:
 	return state() == "running"
+
+# --- the stake: a lost night leaves the lantern dark until a night is held -------------------------
+## The save flag that holds while raid `def`'s lantern is dark ("" when the raid has no such stake).
+func dark_flag(def: Dictionary = {}) -> String:
+	if def.is_empty():
+		def = current()
+	return String(def.get("lantern", {}).get("dark_flag", ""))
+
+## True while the shard lantern of raid `def` (default: the current one) is dark: a night was lost and none
+## has been held since.
+func lantern_dark(def: Dictionary = {}) -> bool:
+	var flag := dark_flag(def)
+	return flag != "" and SaveGame.has_flag(flag)
+
+func _set_dark(def: Dictionary, on: bool) -> void:
+	var flag := dark_flag(def)
+	if flag != "" and SaveGame.has_flag(flag) != on:
+		SaveGame.set_flag(flag, on)
 
 # --- moving on --------------------------------------------------------------------------------
 func _to_state(st: String) -> void:
@@ -117,10 +159,12 @@ func arrive(zone_id: String, from_zone: String) -> bool:
 	var def := current()
 	if def.is_empty() or zone_id != String(def.get("zone", "")):
 		return false
+	if won(String(def.id)):
+		return false                  # a one-off: a won raid is not offered, begun or paid again
 	var r := rec()
 	var walked_in := from_zone != "" and from_zone != zone_id
-	if walked_in and bool(r.get("repairs", false)):
-		r.repairs = false             # the villagers mended it while the player was away
+	if walked_in and bool(r.get("repairs", false)) and not lantern_dark(def):
+		r.repairs = false             # no stake: the villagers mended it while the player was away
 		changed.emit(state())
 	match state():
 		"none":
@@ -163,7 +207,8 @@ func postpone() -> bool:
 	_to_state("postponed" if postpones_left() > 0 else "pending")
 	return true
 
-## "Ring the bell": the night begins (world/raid_night.gd starts the waves on `changed`).
+## "Sound the anvil": the night begins (world/raid_night.gd starts the waves on `changed`). Night one is
+## called by Hale striking her anvil (Matt, 13 Nov); the village bell is rebuilt later, for the wolf moon.
 func ring() -> bool:
 	if state() != "announced":
 		return false
@@ -189,23 +234,33 @@ func win() -> int:
 	for f: String in def.get("reward", {}).get("flags", []):
 		SaveGame.set_flag(f)
 	offer_restores()
+	_set_dark(def, false)              # a night held: the lantern is lit again, and stays lit
+	rec().repairs = false              # and the square is mended
 	_to_state("won")
 	finished.emit(true)
 	return purse
 
-## The lantern fell (`how` "lantern"), or the player went down ("down"): brief repairs until the next walk
-## into town.
+## The lantern fell (`how` "lantern"), or the player went down ("down"): the lantern dark and the repairs
+## showing until a night is held. Nothing else is taken.
 func lose(how := "lantern") -> void:
 	if not running():
 		return
 	loss_untold = how
+	lost_while_dark = lantern_dark(current())
 	rec().repairs = true
+	_set_dark(current(), true)
 	_to_state("lost")
 	finished.emit(false)
 
 func player_downed() -> void:
 	if running():
 		lose("down")
+
+## True from the moment the player goes down while a night runs until the zone has told of it: game.gd asks
+## it as the player falls (after `player_downed`), and leaves no cache of Glint for such a defeat (Matt,
+## 13 Nov: no Glint is lost on a lost night).
+func downed_in_a_night() -> bool:
+	return state() == "lost" and loss_untold == "down"
 
 # --- zones ----------------------------------------------------------------------------------
 func _on_zone_changing(to_zone: String) -> void:

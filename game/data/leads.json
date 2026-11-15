@@ -137,6 +137,25 @@
           "a1_the_torn_roof"
         ],
         "flags": [
+          "first_night_announced",
+          "shard_lantern_dark"
+        ],
+        "not_flags": [
+          "first_night_won",
+          "zone_built:frostline"
+        ]
+      },
+      "title": "The first night",
+      "text": "The shard lantern is dark until a night is held. They come the next time you walk into Crossroads",
+      "why": "Matt, 13 Nov (\"Shard dims until held\"): after a lost night the first night's lead says what is at stake and, in the same words as the lead below, how the night comes again. It stands exactly where that lead would (the same conditions and the dark flag), so it hides no other lead"
+    },
+    {
+      "if": {
+        "done": [
+          "home_again",
+          "a1_the_torn_roof"
+        ],
+        "flags": [
           "first_night_announced"
         ],
         "not_flags": [

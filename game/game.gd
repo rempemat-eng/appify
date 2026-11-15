@@ -274,8 +274,11 @@ func snap_camera() -> void:
 
 func _on_downed() -> void:
 	# no naps at 0 HP (4): the player gets up at the zone's start with full health; a share of the carried
-	# Glint stays where they fell (core/glint_cache.gd), set out again by _on_zone
-	GlintCache.drop(SaveGame.data.zone, player.global_position)
+	# Glint stays where they fell (core/glint_cache.gd), set out again by _on_zone. Not while a raid's night
+	# runs (Matt, 13 Nov: a lost night costs no Glint): Raids.player_downed, connected before this, has lost
+	# the night, and that is the whole cost
+	if not Raids.downed_in_a_night():
+		GlintCache.drop(SaveGame.data.zone, player.global_position)
 	player.heal_full()
 	Zones.go_to.call_deferred(SaveGame.data.zone, "start")
 
