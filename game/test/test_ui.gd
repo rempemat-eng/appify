@@ -162,39 +162,69 @@ func test_the_controls_stand_beside_the_pause_menu_and_add_no_row_to_it() -> voi
 
 ## The audit of #491: on a phone held upright (402 x 874) with pixel scale "whole" the window shows only
 ## the grid's middle (x 279 to 681), and the panel, kept inside the whole grid, stood at x 571 to 807,
-## cut off. It is placed inside what the window shows: beside the menu where that fits, else below it.
-func test_the_controls_panel_stays_inside_what_the_window_shows() -> void:
+## cut off. It is placed inside what the window shows and clear of the menu and of the Sound panel at
+## the menu's right (ui/sound_menu.gd): at the menu's left, else past the Sound panel, else below or
+## above. Where no such place exists (480 x 270 at "whole") it is not shown, rather than laid over
+## something. With and without the Sound panel.
+func test_the_controls_panel_stays_inside_what_the_window_shows_and_clear_of_the_other_panels() -> void:
 	const Screen := preload("res://main/pixel_screen.gd")
-	for spec: Array in [[402, 874, "whole"], [402, 874, "fill"], [375, 667, "whole"], [1920, 1080, "fill"], [960, 540, "whole"], [874, 402, "fill"]]:
-		var screen: Control = auto_free(Control.new())
-		screen.size = UiStyle.GRID
-		add_child(screen)
-		var menu: PanelContainer = preload("res://ui/pause_menu.gd").new()
-		screen.add_child(menu)
-		var window := Vector2(spec[0], spec[1])
-		var k: float = Screen.choose_scale(window, spec[2])
-		var offset := ((window - Screen.ART * k) / 2.0).floor()
-		assert_bool(menu.fit_screen(window, k, offset, 1.0, Rect2(Vector2.ZERO, window))).is_true()
-		get_tree().paused = true
-		for i in 5:
+	var shown_somewhere := 0
+	for with_sound: bool in [true, false]:
+		for spec: Array in [[402, 874, "whole"], [402, 874, "fill"], [480, 270, "whole"], [480, 270, "fill"], [375, 667, "whole"],
+				[1920, 1080, "fill"], [960, 540, "whole"], [874, 402, "fill"], [874, 402, "whole"], [2622, 1206, "fill"]]:
+			var screen: Control = auto_free(Control.new())
+			screen.size = UiStyle.GRID
+			add_child(screen)
+			var menu: PanelContainer = preload("res://ui/pause_menu.gd").new()
+			screen.add_child(menu)
+			var sound: SoundMenu = null
+			if with_sound:
+				sound = SoundMenu.new()
+				sound.beside = menu
+				screen.add_child(sound)
+			var window := Vector2(spec[0], spec[1])
+			var k: float = Screen.choose_scale(window, spec[2])
+			var offset := ((window - Screen.ART * k) / 2.0).floor()
+			get_tree().call_group(&"pause_screen_layout", &"fit_screen", window, k, offset, 1.0, Rect2(Vector2.ZERO, window))
+			get_tree().paused = true
+			for i in 6:
+				await get_tree().process_frame
+			var controls := menu.get_node("Controls") as ControlsPanel
+			var seen: Rect2 = menu.visible_grid()
+			var own := menu.get_global_rect()
+			var beside := controls.get_global_rect()
+			var what := "%s %s, sound %s: controls %s, menu %s, sound %s, the window shows %s" % [window, spec[2], with_sound, beside,
+				own, sound.get_global_rect() if sound != null else Rect2(), seen]
+			if controls.is_visible_in_tree():
+				shown_somewhere += 1
+				assert_bool(seen.grow(0.5).encloses(beside)).override_failure_message("cut off. " + what).is_true()
+				assert_bool(own.intersects(beside)).override_failure_message("over the menu. " + what).is_false()
+				if sound != null:
+					assert_bool(sound.get_global_rect().intersects(beside)).override_failure_message("over the Sound panel. " + what).is_false()
+					assert_float(sound.position.x).is_equal(menu.position.x + menu.size.x + SoundMenu.GAP)     # the Sound panel is where it was
+			else:
+				# hidden only where nothing is free: no place inside what is shown clear of the menu and the Sound panel
+				var taken: Array[Rect2] = []
+				if sound != null:
+					taken.append(sound.get_global_rect())
+				assert_vector(menu.controls_place(own, beside.size if beside.size.x > 0 else controls.get_combined_minimum_size(), seen, 6.0, taken)).override_failure_message(
+					"hidden though a place is free. " + what).is_equal(Vector2.INF)
+			if window == Vector2(402, 874) and spec[2] == "whole":
+				assert_bool(controls.is_visible_in_tree()).override_failure_message(what).is_true()     # the audit's size: shown, below the menu
+				assert_float(beside.position.y).is_greater_equal(own.end.y)
+			if window == Vector2(1920, 1080):
+				assert_bool(controls.is_visible_in_tree()).override_failure_message(what).is_true()
+				# the whole grid: beside the menu, tops level; at its left when the Sound panel has the right
+				assert_float(beside.position.y).is_equal(own.position.y)
+				assert_bool(beside.end.x <= own.position.x if with_sound else beside.position.x >= own.end.x).override_failure_message(what).is_true()
+			get_tree().paused = false
 			await get_tree().process_frame
-		var controls := menu.get_node("Controls") as ControlsPanel
-		var seen: Rect2 = menu.visible_grid()
-		var own := menu.get_global_rect()
-		var beside := controls.get_global_rect()
-		var what := "%s %s: panel %s, menu %s, the window shows %s" % [window, spec[2], beside, own, seen]
-		assert_bool(controls.is_visible_in_tree()).is_true()
-		if beside.size.x <= seen.size.x and beside.size.y <= seen.size.y:
-			assert_bool(seen.grow(0.5).encloses(beside)).override_failure_message("cut off. " + what).is_true()
-		else:
-			# a window too small for the panel at this scale: as much of it as fits, from its top left
-			assert_vector(beside.position).override_failure_message(what).is_equal(seen.position.round())
-		if own.size.y + beside.size.y + 6.0 <= seen.size.y or own.size.x + beside.size.x + 6.0 <= seen.size.x:
-			assert_bool(own.intersects(beside)).override_failure_message("over the menu. " + what).is_false()
-		get_tree().paused = false
-		await get_tree().process_frame
-		screen.remove_child(menu)
-		menu.free()
+			screen.remove_child(menu)
+			menu.free()
+			if sound != null:
+				screen.remove_child(sound)
+				sound.free()
+	assert_int(shown_somewhere).is_greater(10)
 
 func test_where_the_controls_panel_goes() -> void:
 	const Menu := preload("res://ui/pause_menu.gd")
@@ -211,3 +241,25 @@ func test_where_the_controls_panel_goes() -> void:
 	assert_bool(seen.encloses(Rect2(at, want))).is_true()
 	# no room below either: above
 	assert_vector(Menu.controls_place(Rect2(395, 330, 170, 200), want, seen, 6.0)).is_equal(Vector2(362, 174))
+
+func test_the_controls_keep_clear_of_a_panel_at_the_menu_s_right() -> void:
+	const Menu := preload("res://ui/pause_menu.gd")
+	var want := Vector2(236, 181)
+	var grid := Rect2(0, 0, 960, 540)
+	var own := Rect2(395, 164, 170, 212)
+	var sound: Array[Rect2] = [Rect2(571, 164, 170, 168)]
+	# the Sound panel has the right: the controls go to the menu's left, tops level
+	assert_vector(Menu.controls_place(own, want, grid, 6.0, sound)).is_equal(Vector2(153, 164))
+	assert_bool(Menu.stacked(own, want, grid, 6.0, sound)).is_false()
+	# the audit's window (x 279 to 681): no side is free, the two stack and the menu makes room
+	var seen := Rect2(279, 0, 402, 540)
+	assert_bool(Menu.stacked(own, want, seen, 6.0, sound)).is_true()
+	var up := Rect2(395, 70, 170, 212)
+	var moved: Array[Rect2] = [Rect2(571, 70, 170, 168)]
+	var at := Menu.controls_place(up, want, seen, 6.0, moved)
+	assert_vector(at).is_equal(Vector2(362, 288))
+	assert_bool(Rect2(at, want).intersects(moved[0])).is_false()
+	# 480 x 270 at "whole" shows 480 x 270 texels: nothing is free, so no place (the panel is not shown)
+	var small := Rect2(240, 135, 480, 270)
+	assert_bool(Menu.stacked(own, want, small, 6.0, sound)).is_false()
+	assert_vector(Menu.controls_place(own, want, small, 6.0, sound)).is_equal(Vector2.INF)

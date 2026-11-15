@@ -2,8 +2,9 @@ extends PanelContainer
 ## The pause menu (lane R, 25 Oct: reduced motion could only be set by editing the save). It shows while
 ## the tree is paused (Esc or Start toggles that in game.gd) and offers Resume, Reduced motion, Pixel
 ## scale (fill or whole) and Quit. Beside it, on a panel of its own, the controls as they are bound now
-## (ui/controls_panel.gd: text only, so the menu keeps its four rows); below it where the window shows
-## too little of the grid for the two side by side. Keyboard and gamepad move the
+## (ui/controls_panel.gd: text only, so the menu keeps its four rows): at its right, or at its left when
+## the Sound panel stands at the right, or below it where the window shows too little of the grid; where
+## no place is free of the menu and the Sound panel, the controls are not shown. Keyboard and gamepad move the
 ## focus (ui_up / ui_down, ui_accept);
 ## the mouse and touch tap. PixelScreen supplies the actual screen projection so
 ## rows retain at least 44 logical display points without changing world scale.
@@ -137,7 +138,7 @@ func _position_in_safe_area() -> void:
 	# above the other, and the menu moves up by just enough for the pair to sit centred in what is shown.
 	var seen := visible_grid()
 	var want := _controls.get_combined_minimum_size() if _controls != null else Vector2.ZERO
-	if stacked(Rect2(position, size), want, seen, CONTROLS_GAP):
+	if stacked(Rect2(position, size), want, seen, CONTROLS_GAP, _beside(Rect2(position, size))):
 		position.y = seen.position.y + floorf((seen.size.y - (size.y + CONTROLS_GAP + want.y)) / 2.0)
 	queue_redraw()
 
@@ -152,35 +153,70 @@ func visible_grid() -> Rect2:
 	seen = seen.intersection(grid)
 	return seen if seen.has_area() else grid
 
-## Where the controls panel of size `want` goes beside a menu at `own`, inside `seen`: to the menu's
-## right with the top edges level; else to its left; else below it; else above it. Whichever it is, the
-## panel is then kept inside `seen` (the rectangle the window shows, not the whole art grid).
-## True when the controls fit on neither side of the menu but the two fit one above the other in `seen`.
-static func stacked(own: Rect2, want: Vector2, seen: Rect2, gap: float) -> bool:
+## The panels that stand beside this menu (the Sound panel, ui/sound_menu.gd: at the menu's right, top to
+## top, its own GAP away), as they stand with the menu at `own`. The controls keep clear of them.
+func _beside(own: Rect2) -> Array[Rect2]:
+	var out: Array[Rect2] = []
+	if get_parent() == null:
+		return out
+	for other in get_parent().get_children():
+		if other is Control and other != self and other.get("beside") == self:
+			var gap := float(other.get("GAP")) if other.get("GAP") != null else CONTROLS_GAP
+			out.append(Rect2(Vector2(own.end.x + gap, own.position.y), (other as Control).get_combined_minimum_size()))
+	return out
+
+## The places the controls panel of size `want` may take beside a menu at `own`, best first: at the
+## menu's right, top edges level; at its left; right of whatever already stands at its right; below
+## the menu; above it.
+static func _places(own: Rect2, want: Vector2, gap: float, taken: Array[Rect2]) -> Array[Vector2]:
+	var far := own.end.x
+	for t: Rect2 in taken:
+		far = maxf(far, t.end.x)
+	return [
+		Vector2(own.end.x + gap, own.position.y),
+		Vector2(own.position.x - gap - want.x, own.position.y),
+		Vector2(far + gap, own.position.y),
+		Vector2(own.get_center().x - want.x / 2.0, own.end.y + gap),
+		Vector2(own.get_center().x - want.x / 2.0, own.position.y - gap - want.y),
+	]
+
+static func _free(at: Vector2, want: Vector2, seen: Rect2, own: Rect2, taken: Array[Rect2]) -> bool:
+	var r := Rect2(at, want)
+	if not seen.grow(0.01).encloses(r) or r.intersects(own):
+		return false
+	for t: Rect2 in taken:
+		if r.intersects(t):
+			return false
+	return true
+
+## True when the controls fit at neither side of the menu (nor past the panel at its right) but the two
+## fit one above the other in `seen`: then the menu moves up to make the room.
+static func stacked(own: Rect2, want: Vector2, seen: Rect2, gap: float, taken: Array[Rect2] = []) -> bool:
 	if want == Vector2.ZERO:
 		return false
-	var right := own.end.x + gap + want.x <= seen.end.x
-	var left := own.position.x - gap - want.x >= seen.position.x
-	return not right and not left and own.size.y + gap + want.y <= seen.size.y
+	var places := _places(own, want, gap, taken)
+	for i in 3:
+		if _free(places[i], want, seen, own, taken):
+			return false
+	return own.size.y + gap + want.y <= seen.size.y
 
-static func controls_place(own: Rect2, want: Vector2, seen: Rect2, gap: float) -> Vector2:
-	var at := Vector2(own.end.x + gap, own.position.y)
-	if at.x + want.x > seen.end.x:
-		if own.position.x - gap - want.x >= seen.position.x:
-			at.x = own.position.x - gap - want.x
-		else:
-			at.x = own.get_center().x - want.x / 2.0
-			at.y = own.end.y + gap
-			if at.y + want.y > seen.end.y and own.position.y - gap - want.y >= seen.position.y:
-				at.y = own.position.y - gap - want.y
-	at.x = clampf(at.x, seen.position.x, maxf(seen.end.x - want.x, seen.position.x))
-	at.y = clampf(at.y, seen.position.y, maxf(seen.end.y - want.y, seen.position.y))
-	return at.round()
+## Where the controls panel goes: the first of `_places` that lies inside `seen` (the rectangle the window
+## shows, not the whole art grid) and touches neither the menu nor a panel beside it. Vector2.INF when
+## there is no such place: the panel is then not shown, rather than laid over something.
+static func controls_place(own: Rect2, want: Vector2, seen: Rect2, gap: float, taken: Array[Rect2] = []) -> Vector2:
+	for at: Vector2 in _places(own, want, gap, taken):
+		if _free(at, want, seen, own, taken):
+			return at.round()
+	return Vector2.INF
 
 func _place_controls() -> void:
 	var want := _controls.get_combined_minimum_size()
-	_controls.size = want
-	_controls.global_position = controls_place(Rect2(global_position, size), want, visible_grid(), CONTROLS_GAP)
+	var own := Rect2(global_position, size)
+	var at := controls_place(own, want, visible_grid(), CONTROLS_GAP, _beside(own))
+	_controls.visible = at.is_finite()
+	if at.is_finite():
+		_controls.size = want
+		_controls.global_position = at
 
 ## The focus mark: a small gold chevron left of the focused row.
 func _draw() -> void:
