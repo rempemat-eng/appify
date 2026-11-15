@@ -12,6 +12,11 @@ extends PanelContainer
 ## the mouse and touch tap. PixelScreen supplies the actual screen projection so
 ## rows retain at least 44 logical display points without changing world scale.
 ## Settings are written to the save at once; nothing here touches game rules.
+## Quit asks first, inside the menu ("Quit the game?", Quit or Stay, the focus on Stay): Quit is one row
+## from Resume and a tap away. Stay goes back to the rows with the focus on Quit (Esc and Start still end
+## the pause, as everywhere in the menu, and the menu opens on its rows again).
+## Closing hands the focus back to the control that had it before the pause (the raid's prepare screen),
+## or to none when none had it (play: the pad's A rolls and presses nothing).
 
 var _buttons: Array[Button] = []
 var _motion: Button
@@ -22,6 +27,10 @@ var _controls: ControlsPanel
 var _screen_scale := 0.0
 var _screen_offset := Vector2.ZERO
 var _safe_pixels := Rect2()
+var _box: VBoxContainer
+var _confirm: Array[Control] = []       ## the question and its two rows while Quit asks; empty otherwise
+var _confirm_buttons: Array[Button] = []
+var _return_to: Object                  ## what had the focus when the pause began (a Control)
 
 const MIN_TOUCH_POINTS := 44.0
 const CONTROLS_GAP := 6.0            ## texels between the menu and the controls panel beside it
@@ -58,6 +67,7 @@ func _ready() -> void:
 	_controls.top_level = true
 	add_child(_controls)
 	var box := VBoxContainer.new()
+	_box = box
 	box.add_theme_constant_override("separation", 0)
 	add_child(box)
 	var title := UiStyle.label("Paused", UiStyle.TITLE)
@@ -68,16 +78,31 @@ func _ready() -> void:
 	_motion = _add(box, "", _toggle_motion)
 	_scale = _add(box, "", _toggle_scale)
 	_add(box, "Quit", _quit)
-	for i in _buttons.size():  # wrap the focus top to bottom
-		var b := _buttons[i]
-		b.focus_neighbor_top = b.get_path_to(_buttons[i - 1])
-		b.focus_neighbor_bottom = b.get_path_to(_buttons[(i + 1) % _buttons.size()])
+	for i in _buttons.size():   # names the play driver's `expect uifocus` tells apart (Quit is not QuitConfirm)
+		_buttons[i].name = ["Resume", "ReducedMotion", "PixelScale", "Quit"][i]
+	_ring(_buttons)
+	for b in _buttons:         # sideways nowhere, until the Sound panel links its rows to these (sound_menu.gd)
+		b.focus_neighbor_left = b.get_path_to(b)
+		b.focus_neighbor_right = b.get_path_to(b)
 	_refresh()
 	grow_horizontal = Control.GROW_DIRECTION_BOTH
 	grow_vertical = Control.GROW_DIRECTION_BOTH
 	set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
 
+## Wraps the focus top to bottom through `rows`.
+static func _ring(rows: Array[Button]) -> void:
+	for i in rows.size():
+		var b := rows[i]
+		b.focus_neighbor_top = b.get_path_to(rows[i - 1])
+		b.focus_neighbor_bottom = b.get_path_to(rows[(i + 1) % rows.size()])
+
 func _add(box: VBoxContainer, text: String, action: Callable) -> Button:
+	var b := _row(text, action)
+	box.add_child(b)
+	_buttons.append(b)
+	return b
+
+func _row(text: String, action: Callable) -> Button:
 	var b := Button.new()
 	b.text = text
 	b.flat = true
@@ -95,8 +120,6 @@ func _add(box: VBoxContainer, text: String, action: Callable) -> Button:
 	b.pressed.connect(action)
 	b.mouse_entered.connect(b.grab_focus)                       # one highlight, wherever it came from
 	b.focus_entered.connect(queue_redraw)
-	box.add_child(b)
-	_buttons.append(b)
 	return b
 
 func _process(_delta: float) -> void:
@@ -110,14 +133,42 @@ func _process(_delta: float) -> void:
 		return
 	visible = paused
 	if paused:
+		# what had the focus (the raid's prepare screen has it on a button): it gets it back on closing
+		var had := get_viewport().gui_get_focus_owner()
+		_return_to = had if had != null and not is_ancestor_of(had) and not _beside_has(had) else null
 		_refresh()
 		_controls.refresh()
 		_place_controls.call_deferred()
 		_buttons[0].grab_focus.call_deferred()
 	else:
+		_end_asking()
 		var f := get_viewport().gui_get_focus_owner()
 		if f != null and is_ancestor_of(f):
 			f.release_focus()
+		# at the frame's end, once whatever stood aside for the pause (the raid's prepare screen) is back
+		_hand_back_focus.call_deferred()
+
+## On closing: the focus goes back to what had it when the pause began, if that is still there and shown;
+## otherwise to nothing, as before the pause (15 Nov, the audit of #494: Resume left no control focused,
+## so on the raid's prepare screen the d-pad and A did nothing more).
+func _hand_back_focus() -> void:
+	var kept := _return_to
+	_return_to = null
+	if not is_instance_valid(kept):
+		return
+	var back := kept as Control
+	if back == null or not back.is_inside_tree() or not back.is_visible_in_tree():
+		return
+	if back.focus_mode == Control.FOCUS_NONE or is_ancestor_of(back) or _beside_has(back):
+		return
+	back.grab_focus()
+
+## True when `node` is in a panel beside this menu (the Sound panel).
+func _beside_has(node: Node) -> bool:
+	for panel: Control in _side_panels():
+		if panel.is_ancestor_of(node):
+			return true
+	return false
 
 ## Inputs are physical window pixels, physical pixels per ART texel, and physical
 ## pixels per logical point. The safe rectangle is window-relative physical pixels.
@@ -137,8 +188,10 @@ func fit_screen(window_pixels: Vector2, art_scale: float, offset: Vector2, ratio
 	_screen_scale = art_scale
 	_screen_offset = offset
 	_safe_pixels = safe_pixels
-	for button in _buttons:
+	for button in _buttons + _confirm_buttons:
 		button.custom_minimum_size.y = maxf(UiStyle.TOUCH, row_height)
+	if not _confirm.is_empty():
+		_confirm[0].custom_minimum_size.y = 2.0 * _buttons[0].custom_minimum_size.y
 	# The dimmer also covers letterbox/cropped-window regions while paused.
 	_dim_rect = Rect2(-offset / art_scale, window_pixels / art_scale)
 	_place_dim()
@@ -317,8 +370,8 @@ func _place_controls() -> void:
 	var own := Rect2(global_position, size)
 	var seen := visible_grid()
 	var at := controls_place(own, want, seen, CONTROLS_GAP, _beside(own, seen))
-	_controls.visible = at.is_finite()
-	if at.is_finite():
+	_controls.visible = at.is_finite() and not asking()
+	if _controls.visible:
 		_controls.size = want
 		_controls.global_position = at
 
@@ -328,7 +381,7 @@ func rows() -> Array[Button]:
 
 ## The focus mark: a small gold chevron left of the focused row.
 func _draw() -> void:
-	for b in _buttons:
+	for b in _buttons + _confirm_buttons:
 		if b.has_focus():
 			var r := b.get_global_rect()
 			var at := r.position - get_global_position() + Vector2(3, floorf(r.size.y / 2.0) - 2)
@@ -356,7 +409,70 @@ func _write(key: String, value: Variant) -> void:
 	Sound.play(&"ui_confirm")
 	_refresh()
 
+## True while Quit asks (the Sound panel and the controls stand aside meanwhile).
+func asking() -> bool:
+	return not _confirm.is_empty()
+
+## Quit, pressed: the four rows give way to the question and its two rows, in the same place and the same
+## size, so the Sound panel's room and every other row stay where they were, and Stay stands where Quit did
+## (a second tap on Quit lands on Stay). The focus starts on Stay.
+func ask_quit() -> void:
+	if asking():
+		return
+	var row_height := _buttons[0].custom_minimum_size.y
+	var question := UiStyle.label("Quit the game?", UiStyle.TEXT)
+	question.name = "QuitQuestion"
+	question.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	question.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	question.custom_minimum_size = Vector2(150, 2.0 * row_height)
+	var leave := _row("Quit", _quit_now)
+	leave.name = "QuitConfirm"
+	var stay := _row("Stay", stay_here)
+	stay.name = "Stay"
+	for b: Button in [leave, stay]:
+		b.custom_minimum_size.y = row_height
+		b.focus_exited.connect(queue_redraw)
+	_confirm_buttons = [leave, stay]
+	for b in _buttons:
+		b.visible = false
+	_confirm = [question, leave, stay]
+	for c: Control in _confirm:
+		_box.add_child(c)
+	_ring(_confirm_buttons)
+	for b: Button in _confirm_buttons:
+		b.focus_neighbor_left = b.get_path_to(b)
+		b.focus_neighbor_right = b.get_path_to(b)
+	stay.grab_focus()
+	Sound.play(&"ui_confirm")
+	queue_redraw()
+
+## Stay: back to the rows, the focus on Quit.
+func stay_here() -> void:
+	if not asking():
+		return
+	_end_asking()
+	_buttons[-1].grab_focus()
+	Sound.play(&"ui_cancel")
+
+## Puts the four rows back (on Stay, and when the pause ends while Quit asks).
+func _end_asking() -> void:
+	if not asking():
+		return
+	for c: Control in _confirm:
+		c.visible = false
+		c.queue_free()
+	_confirm.clear()
+	_confirm_buttons.clear()
+	for b in _buttons:
+		b.visible = true
+	queue_redraw()
+
+## The Quit row: asks first (`ask_quit`).
 func _quit() -> void:
+	ask_quit()
+
+## Quit, confirmed.
+func _quit_now() -> void:
 	# through the game, so the save holds the hearts as they are now (game.gd autosave)
 	if get_tree().get_nodes_in_group("game").is_empty():
 		SaveGame.save()

@@ -62,6 +62,42 @@ expect paused yes
 tap Resume
 expect paused no
 
+step the pause button, top right, opens the menu with a finger (15 Nov)
+wait 0.5
+shot 04_pause_button
+tap PauseButton
+expect paused yes
+expect uifocus Resume
+shot 05_menu_from_button
+tap Resume
+expect paused no
+expect uifocus none
+
+step Quit asks first: Stay goes back to Quit, by finger, by mouse and by pad
+key Escape
+expect paused yes
+tap Quit
+expect uifocus Stay
+shot 06_quit_asks
+tap Stay
+expect paused yes
+expect uifocus Quit
+button Quit
+expect uifocus Stay
+button Stay
+expect uifocus Quit
+pad A
+expect uifocus Stay
+pad Up
+expect uifocus QuitConfirm
+pad Down
+pad A
+expect uifocus Quit
+expect paused yes
+pad Start
+expect paused no
+expect uifocus none
+
 step what was chosen is in the save
 restart
 expect setting reduced_motion true

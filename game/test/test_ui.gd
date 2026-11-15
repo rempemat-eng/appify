@@ -490,3 +490,411 @@ func test_where_the_menu_and_the_panel_beside_it_go() -> void:
 	# too short for the two as well: from the top edge, never above it
 	var tiny := Rect2(320, 100, 320, 300)
 	assert_float(Menu.menu_place(centred, own, side, tiny, 6.0).y).is_equal(100.0)
+
+# --- the audit of #494: focus after a pause, the pause button, Quit asks, the title card (15 Nov) ------
+## The HUD as the game has it, running under the pause as game.tscn's Game does, not paused.
+func _hud_host() -> Control:
+	var host: Control = auto_free(Control.new())
+	host.process_mode = Node.PROCESS_MODE_ALWAYS
+	host.size = UiStyle.GRID
+	add_child(host)
+	var hud: Control = load("res://ui/hud.gd").new()
+	hud.name = "HUD"
+	host.add_child(hud)
+	for i in 3:
+		await get_tree().process_frame
+	return host
+
+func _frames(n: int) -> void:
+	for i in n:
+		await get_tree().process_frame
+
+func _key_press(code: Key) -> void:
+	for down: bool in [true, false]:
+		var e := InputEventKey.new()
+		e.keycode = code
+		e.physical_keycode = code
+		e.pressed = down
+		get_viewport().push_input(e, true)
+
+## A stand-in for the raid's prepare screen (the raid files belong to another stream): a focused button.
+## On main, Resume left no control focused, so the d-pad and A did nothing on that screen any more.
+func test_resume_hands_the_focus_back_to_the_control_that_had_it() -> void:
+	var host := await _hud_host()
+	var stand_in := Button.new()
+	stand_in.name = "StandIn"
+	stand_in.text = "Sound the anvil"
+	host.add_child(stand_in)
+	var presses := [0]
+	stand_in.pressed.connect(func() -> void: presses[0] += 1)
+	stand_in.grab_focus()
+	await _frames(2)
+	get_tree().paused = true
+	await _frames(3)
+	var resume := _row(host, "Resume")
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(resume)
+	_pad_press(JOY_BUTTON_A)                         # A on Resume
+	assert_bool(get_tree().paused).is_false()
+	await _frames(3)
+	assert_object(get_viewport().gui_get_focus_owner()).override_failure_message("no focus after Resume").is_same(stand_in)
+	_pad_press(JOY_BUTTON_A)
+	assert_int(presses[0]).override_failure_message("A did nothing after the pause").is_equal(1)
+	# by Esc's way too (the tree unpaused from outside the menu), and with the focus moved to the Sound panel
+	get_tree().paused = true
+	await _frames(3)
+	_row(host, "Pixel scale").grab_focus()
+	_pad_press(JOY_BUTTON_DPAD_RIGHT)
+	var crossed := get_viewport().gui_get_focus_owner()
+	assert_bool(crossed != null and crossed.get_parent().get_parent() is SoundMenu).override_failure_message(
+		"right from Pixel scale went to %s" % (crossed.get_path() if crossed != null else "nothing")).is_true()
+	get_tree().paused = false
+	await _frames(3)
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(stand_in)
+	# a control that went away or was hidden meanwhile gets nothing; nothing else is focused either
+	get_tree().paused = true
+	await _frames(3)
+	stand_in.visible = false
+	get_tree().paused = false
+	await _frames(3)
+	assert_object(get_viewport().gui_get_focus_owner()).is_null()
+	stand_in.visible = true
+	stand_in.grab_focus()
+	get_tree().paused = true
+	await _frames(3)
+	stand_in.free()
+	get_tree().paused = false
+	await _frames(3)
+	assert_object(get_viewport().gui_get_focus_owner()).is_null()
+
+## In play nothing has the focus before the pause, and nothing has it after: the pad's A rolls and presses
+## no row, no setting changes.
+func test_with_no_focus_before_the_pause_there_is_none_after_it() -> void:
+	var host := await _hud_host()
+	var vp := get_viewport()
+	if vp.gui_get_focus_owner() != null:
+		vp.gui_get_focus_owner().release_focus()
+	var presses := [0]
+	for b: Button in host.find_children("*", "Button", true, false):
+		b.pressed.connect(func() -> void: presses[0] += 1)
+	for way: String in ["resume", "outside"]:
+		get_tree().paused = true
+		await _frames(3)
+		if way == "resume":
+			_pad_press(JOY_BUTTON_A)
+			presses[0] -= 1                             # that press was Resume's
+		else:
+			get_tree().paused = false
+		await _frames(3)
+		assert_bool(get_tree().paused).is_false()
+		assert_object(vp.gui_get_focus_owner()).override_failure_message("focus after %s" % way).is_null()
+		var before := SaveGame.data.duplicate(true)
+		_pad_press(JOY_BUTTON_A)
+		_key_press(KEY_ENTER)
+		await _frames(2)
+		assert_int(presses[0]).override_failure_message("a row was pressed after %s" % way).is_equal(0)
+		assert_dict(SaveGame.data).is_equal(before)
+		assert_bool(get_tree().paused).is_false()
+
+func _pause_button(host: Node) -> Button:
+	return host.find_child("PauseButton", true, false) as Button
+
+## The pause button opens the menu, as Esc and Start do; it is hidden while the menu shows, never takes the
+## focus, and stands aside while the raid's prepare screen (here a stand-in in its group) covers the HUD.
+func test_the_pause_button_opens_the_menu_and_hides_while_it_cannot() -> void:
+	var host := await _hud_host()
+	var button := _pause_button(host)
+	assert_object(button).override_failure_message("the HUD has no pause button").is_not_null()
+	assert_bool(button.is_visible_in_tree()).is_true()
+	assert_int(button.focus_mode).is_equal(Control.FOCUS_NONE)
+	assert_int(button.action_mode).is_equal(BaseButton.ACTION_MODE_BUTTON_PRESS)
+	var at := await _bring(host, button)
+	_click(at)
+	assert_bool(get_tree().paused).override_failure_message("a click on the pause button did not pause").is_true()
+	await _frames(3)
+	assert_bool(button.is_visible_in_tree()).is_false()
+	assert_bool(_row(host, "Resume").is_visible_in_tree()).is_true()
+	_click(at)                                       # the dim takes a press where the button was
+	assert_bool(get_tree().paused).is_true()
+	(_row(host, "Resume") as Button).pressed.emit()
+	await _frames(3)
+	assert_bool(button.is_visible_in_tree()).is_true()
+	# a finger
+	for down: bool in [true, false]:
+		var t := InputEventScreenTouch.new()
+		t.index = 0
+		t.pressed = down
+		t.position = at
+		Input.parse_input_event(t)
+		await _frames(2)
+	assert_bool(get_tree().paused).override_failure_message("a tap on the pause button did not pause").is_true()
+	get_tree().paused = false
+	await _frames(3)
+	# the prepare screen up: no pause button (the screen would take its taps)
+	var screen := Control.new()
+	screen.add_to_group("raid_screen")
+	host.add_child(screen)
+	await _frames(2)
+	assert_bool(button.is_visible_in_tree()).is_false()
+	screen.visible = false
+	await _frames(2)
+	assert_bool(button.is_visible_in_tree()).is_true()
+
+## A press on the pause button reaches no one else: the game reads the left mouse button as a shot
+## (Input.is_action_just_pressed in actors/player.gd), and the button pauses on the press itself, before
+## the player's next physics step. The same press elsewhere shoots: the probe works.
+func test_a_press_on_the_pause_button_does_not_shoot() -> void:
+	var host := await _hud_host()
+	var p: Player = auto_free(load("res://actors/player.tscn").instantiate())
+	p.process_mode = Node.PROCESS_MODE_PAUSABLE      # as under the game's ZoneRoot
+	add_child(p)
+	p.use_mouse_aim = false
+	for i in 3:
+		await get_tree().physics_frame
+	var button := _pause_button(host)
+	var at := await _bring(host, button)
+	for down: bool in [true, false]:
+		var e := InputEventMouseButton.new()
+		e.button_index = MOUSE_BUTTON_LEFT
+		e.pressed = down
+		e.button_mask = MOUSE_BUTTON_MASK_LEFT if down else 0
+		e.position = at
+		e.global_position = at
+		Input.parse_input_event(e)
+		for i in 2:
+			await get_tree().physics_frame
+	assert_bool(get_tree().paused).is_true()
+	get_tree().paused = false
+	for i in 4:
+		await get_tree().physics_frame
+	assert_bool(p.is_shooting()).override_failure_message("the press on the pause button shot an arrow").is_false()
+	# the probe: the same press where there is no button shoots
+	host.position += Vector2(0, 400)
+	await _frames(2)
+	for down: bool in [true, false]:
+		var e := InputEventMouseButton.new()
+		e.button_index = MOUSE_BUTTON_LEFT
+		e.pressed = down
+		e.button_mask = MOUSE_BUTTON_MASK_LEFT if down else 0
+		e.position = at
+		e.global_position = at
+		Input.parse_input_event(e)
+		for i in 2:
+			await get_tree().physics_frame
+	assert_bool(p.is_shooting()).override_failure_message("the probe: a press on the world did not shoot").is_true()
+
+## Where the pause button stands: inside what the window shows, at least 44 screen pixels (logical points
+## at ratio 1), clear of every HUD piece (the hearts, the rolls, the tracker with the lantern's lights, the
+## Glint count, the prompt, and a title card), at every window of the layout test above (its eleven
+## sizes are eight windows), each in both scale modes.
+func test_the_pause_button_stays_inside_the_window_and_clear_of_the_hud() -> void:
+	const Screen := preload("res://main/pixel_screen.gd")
+	var host := await _hud_host()
+	var hud := host.get_node("HUD") as Control
+	var button := _pause_button(host)
+	# every piece filled as wide as it gets: five hearts, three rolls, a long tracker with the lights row,
+	# a five-digit Glint count, the "Look" prompt, a title card
+	hud.call("_meter", hud.get("_hearts"), "hearts", 5, 5, "heart")
+	hud.call("_meter", hud.get("_rolls"), "rolls", 2, 3, "roll")
+	hud.call("_show_quest", "The first night: Hold the shard lantern (wave 1 of 3), and keep the hurdles standing")
+	var lights := hud.get("_lantern") as HBoxContainer
+	for i in 5:
+		lights.add_child(UiStyle.icon("shard_full"))
+	lights.visible = true
+	(hud.get("_glint") as Label).text = "99999"
+	(hud.get("_prompt") as Control).visible = true
+	(hud.get("_prompt_verb") as Label).text = "Look"
+	SaveGame.data.settings.reduced_motion = true
+	hud.call("show_card", "The Starfall", "Act one", "A long line of text under the title, as the opening card has.", 600.0)
+	var menu := hud.get("_pause_menu") as Control
+	var pieces := ["_hearts", "_rolls", "_quest", "_glint_box", "_prompt", "_card"]
+	for spec: Array in [[402, 874], [480, 270], [375, 667], [1920, 1080], [960, 540], [874, 402], [2622, 1206], [320, 720]]:
+		for mode: String in ["fill", "whole"]:
+			var window := Vector2(spec[0], spec[1])
+			var k: float = Screen.choose_scale(window, mode)
+			var offset := ((window - Screen.ART * k) / 2.0).floor()
+			get_tree().call_group(&"pause_screen_layout", &"fit_screen", window, k, offset, 1.0, Rect2(Vector2.ZERO, window))
+			await _frames(3)
+			var seen: Rect2 = menu.call(&"visible_grid")
+			var own := button.get_global_rect()
+			var what := "%s %s: the button %s, the window shows %s" % [window, mode, own, seen]
+			assert_bool(button.is_visible_in_tree()).override_failure_message(what).is_true()
+			assert_bool(seen.encloses(own)).override_failure_message("cut off. " + what).is_true()
+			assert_float(own.size.y * k).override_failure_message("under 44 screen px. " + what).is_greater_equal(44.0)
+			assert_float(own.size.x).is_equal(own.size.y)
+			for name: String in pieces:
+				var piece := hud.get(name) as Control
+				assert_bool(piece.is_visible_in_tree()).override_failure_message("%s hidden. %s" % [name, what]).is_true()
+				assert_bool(own.intersects(piece.get_global_rect())).override_failure_message(
+					"over %s %s. %s" % [name, piece.get_global_rect(), what]).is_false()
+	# the same with a phone's safe area (a notch at the top and a rounded right edge)
+	var phone := Vector2(1206, 2622)
+	var kp: float = Screen.choose_scale(phone, "fill")
+	var off := ((phone - Screen.ART * kp) / 2.0).floor()
+	get_tree().call_group(&"pause_screen_layout", &"fit_screen", phone, kp, off, 3.0, Rect2(40, 140, 1126, 2400))
+	await _frames(3)
+	var safe: Rect2 = menu.call(&"visible_grid")
+	assert_bool(safe.encloses(button.get_global_rect())).is_true()
+	assert_float(button.size.y * kp).is_greater_equal(44.0 * 3.0)
+
+## Quit asks first, in the menu: Quit or Stay, the focus on Stay, and Stay stands where Quit did. Stay goes
+## back with the focus on Quit. By the keyboard, the mouse and the pad. On main the press quit at once.
+func test_quit_asks_first_and_stay_goes_back_to_the_quit_row() -> void:
+	var host := await _paused_hud()
+	var menu := _row(host, "Resume").get_parent().get_parent() as Control
+	var sound := host.find_children("*", "SoundMenu", true, false)[0] as Control
+	var quit := _row(host, "Quit")
+	var quit_rect := quit.get_global_rect()
+	var size := menu.size
+	for way: String in ["keyboard", "mouse", "pad"]:
+		quit.grab_focus()
+		await _frames(1)
+		var quit_rel := quit.get_global_rect().position - menu.global_position
+		match way:
+			"keyboard": _key_press(KEY_ENTER)
+			"mouse": _click(await _bring(host, quit))
+			"pad": _pad_press(JOY_BUTTON_A)
+		await _frames(3)
+		assert_bool(get_tree().paused).is_true()
+		var stay := _row(host, "Stay")
+		var leave := host.find_child("QuitConfirm", true, false) as Button
+		assert_object(stay).override_failure_message("%s: Quit did not ask" % way).is_not_null()
+		assert_object(leave).is_not_null()
+		assert_str((host.find_child("QuitQuestion", true, false) as Label).text).is_equal("Quit the game?")
+		assert_object(get_viewport().gui_get_focus_owner()).override_failure_message("%s: the focus is not on Stay" % way).is_same(stay)
+		assert_bool(quit.is_visible_in_tree()).is_false()
+		assert_bool(_row(host, "Resume") == null).is_true()
+		assert_bool(sound.is_visible_in_tree()).override_failure_message("the Sound panel stays beside the question").is_false()
+		assert_vector(menu.size).is_equal(size)
+		var stay_rect := stay.get_global_rect()
+		assert_vector(stay_rect.position - menu.global_position).override_failure_message("Stay is not where Quit was").is_equal(quit_rel)
+		assert_vector(stay_rect.size).is_equal(quit_rect.size)
+		assert_float(stay_rect.size.y).is_greater_equal(float(UiStyle.TOUCH))
+		# up and down run between the two
+		_pad_press(JOY_BUTTON_DPAD_UP)
+		assert_object(get_viewport().gui_get_focus_owner()).is_same(leave)
+		_pad_press(JOY_BUTTON_DPAD_DOWN)
+		assert_object(get_viewport().gui_get_focus_owner()).is_same(stay)
+		match way:
+			"keyboard": _key_press(KEY_ENTER)
+			"mouse": _click(await _bring(host, stay))
+			"pad": _pad_press(JOY_BUTTON_A)
+		await _frames(3)
+		assert_bool(get_tree().paused).is_true()
+		assert_object(_row(host, "Stay")).override_failure_message("%s: Stay did not go back" % way).is_null()
+		assert_object(get_viewport().gui_get_focus_owner()).override_failure_message("%s: the focus is not on Quit" % way).is_same(quit)
+		assert_bool(sound.is_visible_in_tree()).is_true()
+		assert_int(menu.find_children("*", "Button", true, false).size()).is_equal(4)
+	# the pause ending while it asks (Esc, Start) puts the rows back for the next time
+	quit.grab_focus()
+	_key_press(KEY_ENTER)
+	await _frames(2)
+	assert_object(_row(host, "Stay")).is_not_null()
+	get_tree().paused = false
+	await _frames(3)
+	assert_object(_row(host, "Stay")).is_null()
+	get_tree().paused = true
+	await _frames(3)
+	assert_object(_row(host, "Stay")).is_null()
+	assert_bool(_row(host, "Resume").is_visible_in_tree()).is_true()
+	assert_bool(sound.is_visible_in_tree()).is_true()
+
+## The title card stands aside while paused (on a fresh game it showed through the pause panels at
+## 402 x 874 and 320 x 720) and comes back on resume while it is still due; a card that ran out meanwhile
+## does not.
+func test_the_title_card_hides_while_paused_and_comes_back() -> void:
+	var host := await _hud_host()
+	var hud := host.get_node("HUD") as Control
+	var card := hud.get("_card") as Control
+	SaveGame.data.settings.reduced_motion = true
+	hud.call("show_card", "The Starfall", "", "Morning.", 30.0)
+	await _frames(2)
+	assert_bool(card.is_visible_in_tree()).is_true()
+	get_tree().paused = true
+	await _frames(2)
+	assert_bool(card.is_visible_in_tree()).override_failure_message("the card shows behind the pause menu").is_false()
+	assert_str(hud.shown_text().banner).is_equal("The Starfall")      # still due: game.gd waits on it
+	get_tree().paused = false
+	await _frames(2)
+	assert_bool(card.is_visible_in_tree()).is_true()
+	get_tree().paused = true
+	await _frames(2)
+	hud.set("_card_left", 0.0)
+	get_tree().paused = false
+	await _frames(2)
+	assert_bool(card.is_visible_in_tree()).is_false()
+
+# --- the audit of #496 (15 Nov) -----------------------------------------------------------------------
+## Picture modes (--shot, --demo, --lineup and the rest) set the HUD's guidance off: no pause button there,
+## where it covered art the review pictures look at.
+func test_no_pause_button_where_guidance_is_off() -> void:
+	var host := await _hud_host()
+	var hud := host.get_node("HUD") as Control
+	var button := _pause_button(host)
+	assert_bool(button.is_visible_in_tree()).is_true()
+	hud.set("guidance", false)
+	await _frames(2)
+	assert_bool(button.is_visible_in_tree()).override_failure_message("the pause button shows in a picture mode").is_false()
+	hud.set("guidance", true)
+	await _frames(2)
+	assert_bool(button.is_visible_in_tree()).is_true()
+
+## The HUD and a real prepare screen after it, as game.gd adds them, the night announced.
+func _hud_and_prepare_screen() -> Array:
+	for q: String in ["woodland_stones", "road_to_crossroads", "cold_forge", "under_the_stones", "home_again"]:
+		SaveGame.data.quests[q] = {"state": "done", "step": Quests.defs[q].steps.size()}
+	for f: String in ["shard_home:woodland", "hale_walked_home", "visited:crossroads", "visited:woodland"]:
+		SaveGame.set_flag(f)
+	SaveGame.data.village.restored = {"forge": 1, "fern_cottage": 1}
+	var host := await _hud_host()
+	var screen := RaidScreen.new()
+	host.add_child(screen)
+	Raids.arrive("crossroads", "woodland")
+	assert_str(Raids.state()).is_equal("announced")
+	screen.open()
+	await _frames(3)
+	return [host, screen]
+
+## On main the prepare screen (added after the HUD) was drawn over the pause menu and kept running under
+## the pause: Tab reached "Sound the anvil" and Enter sounded it while paused (the audit's probe). Now the
+## screen stands aside while paused, still open, and comes back on resume with the focus on its button.
+func test_the_prepare_screen_stands_aside_under_the_pause_and_comes_back() -> void:
+	var made := await _hud_and_prepare_screen()
+	var host: Control = made[0]
+	var screen: RaidScreen = made[1]
+	var anvil := screen.get_node("Panel").find_child("SoundTheAnvil", true, false) as Button
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(anvil)
+	assert_bool(_pause_button(host).is_visible_in_tree()).is_false()      # the screen takes the taps there
+	get_tree().paused = true
+	await _frames(3)
+	var menu := _row(host, "Resume").get_parent().get_parent() as Control
+	# drawn: the menu over the world, nothing of the screen over the menu
+	assert_bool(menu.is_visible_in_tree()).is_true()
+	assert_bool(screen.is_visible_in_tree()).override_failure_message("the prepare screen is drawn over the pause menu").is_false()
+	assert_bool(anvil.is_visible_in_tree()).is_false()
+	assert_bool(screen.is_open()).is_true()
+	assert_bool(_pause_button(host).is_visible_in_tree()).is_false()
+	# Tab and Enter, again and again: the focus stays in the menu and its Sound panel, the anvil stays silent
+	var sound := host.find_children("*", "SoundMenu", true, false)[0] as Control
+	for i in 9:
+		_key_press(KEY_TAB)
+		await _frames(1)
+		var f := get_viewport().gui_get_focus_owner()
+		assert_bool(f != null and (menu.is_ancestor_of(f) or sound.is_ancestor_of(f))).override_failure_message(
+			"Tab took the focus to %s" % (f.get_path() if f != null else "nothing")).is_true()
+		if f != null and String(f.name) != "Resume" and String(f.name) != "Quit":
+			_key_press(KEY_ENTER)
+			await _frames(1)
+	assert_str(Raids.state()).override_failure_message("the anvil sounded while paused").is_equal("announced")
+	assert_bool(get_tree().paused).is_true()
+	# back: the screen as it was, the focus on its button, which works
+	(_row(host, "Resume") as Button).pressed.emit()
+	await _frames(3)
+	assert_bool(screen.is_visible_in_tree()).is_true()
+	assert_object(get_viewport().gui_get_focus_owner()).override_failure_message("the focus did not come back to the anvil").is_same(anvil)
+	assert_bool(_pause_button(host).is_visible_in_tree()).is_false()
+	_key_press(KEY_ENTER)
+	await _frames(2)
+	assert_str(Raids.state()).is_equal("running")
+	assert_bool(screen.is_open()).is_false()
+	await _frames(2)
+	assert_bool(_pause_button(host).is_visible_in_tree()).is_true()
