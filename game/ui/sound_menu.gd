@@ -8,8 +8,11 @@ extends PanelContainer
 ##
 ## It is a panel of its own, to the right of the pause menu (`beside`, set by the HUD), with rows the same
 ## height as the pause menu's: at least 44 logical display points, from the same `fit_screen` call
-## (main/pixel_screen.gd). Up and down wrap inside the panel; left and right cross between the two panels
-## (the engine's nearest-neighbour focus). The mouse and touch tap.
+## (main/pixel_screen.gd). The pause menu says where it stands (`place_beside`), so the two stay inside
+## what the window shows: in a window narrower than the two side by side, this panel stands below the
+## menu. Side by side, up and down wrap inside each panel and left and right cross between the two (the
+## engine's nearest-neighbour focus); one above the other, up and down run through both panels in one
+## ring (`_link`). The mouse and touch tap; Enter, Space and the pad's A press the focused row.
 
 const ROWS := [
 	["sound_effects", "Sound effects", true],
@@ -22,6 +25,7 @@ const MIN_TOUCH_POINTS := 44.0
 var beside: Control                  ## the pause menu: this panel stands at its right, top to top
 
 var _buttons: Array[Button] = []
+var _below := false                  ## standing below the pause menu, not at its right (a narrow window)
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -96,8 +100,31 @@ func fit_screen(window_pixels: Vector2, art_scale: float, _offset: Vector2, rati
 func _stand_beside() -> void:
 	size = get_combined_minimum_size()
 	if beside != null and is_instance_valid(beside):
-		position = beside.position + Vector2(beside.size.x + GAP, 0.0)
+		if beside.has_method(&"place_beside"):
+			position = beside.call(&"place_beside", size, GAP)
+		else:
+			position = beside.position + Vector2(beside.size.x + GAP, 0.0)
+		var below := position.y >= beside.position.y + beside.size.y
+		if below != _below:
+			_below = below
+			_link()
 	queue_redraw()
+
+## Up and down at the ends of the two panels. Side by side each panel wraps on its own. One above the
+## other, sideways finds nothing, so the two make one ring: down from the menu's last row comes to this
+## panel's first, and down from this panel's last to the menu's first.
+func _link() -> void:
+	var theirs: Array = beside.call(&"rows") if beside.has_method(&"rows") else []
+	if theirs.is_empty() or _buttons.is_empty():
+		return
+	var mine_first := _buttons[0]
+	var mine_last := _buttons[-1]
+	var their_first: Button = theirs[0]
+	var their_last: Button = theirs[-1]
+	their_last.focus_neighbor_bottom = their_last.get_path_to(mine_first if _below else their_first)
+	their_first.focus_neighbor_top = their_first.get_path_to(mine_last if _below else their_last)
+	mine_first.focus_neighbor_top = mine_first.get_path_to(their_last if _below else mine_last)
+	mine_last.focus_neighbor_bottom = mine_last.get_path_to(their_first if _below else mine_first)
 
 ## The focus mark: the pause menu's small gold chevron, left of the focused row.
 func _draw() -> void:

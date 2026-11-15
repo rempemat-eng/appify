@@ -24,6 +24,11 @@ func _enter_tree() -> void:
 	_action(&"gear", [KEY_TAB], [])
 	# dialogue: advance with E, Enter or the gamepad's A/Y; never Space or click (dodge and attack)
 	_action(&"ui_advance", [KEY_E, KEY_ENTER], [JOY_BUTTON_A, JOY_BUTTON_Y])
+	# menus (the pause menu, the Sound panel, the raid's prepare screen): the engine's own ui_accept holds
+	# Enter and Space and no pad button, so a pad could move the focus (ui_up and the rest have the d-pad
+	# and the left stick) and press nothing. A, the pad's south button, presses the focused row. The
+	# engine's keys stay as they are.
+	_also(&"ui_accept", [JOY_BUTTON_A])
 
 func _input(event: InputEvent) -> void:
 	var dev := last_device
@@ -70,6 +75,18 @@ func _action(action: StringName, keys: Array, buttons: Array, mouse: Array = [],
 		t.axis = trigger as JoyAxis
 		t.axis_value = 1.0
 		InputMap.action_add_event(action, t)
+
+## Adds pad buttons to an action the engine already has (ui_accept and its kin), keeping what it holds.
+## Any pad, like the engine's own ui_ events.
+func _also(action: StringName, buttons: Array) -> void:
+	if not InputMap.has_action(action):
+		InputMap.add_action(action, 0.5)
+	for b: JoyButton in buttons:
+		var j := InputEventJoypadButton.new()
+		j.button_index = b
+		j.device = -1
+		if not InputMap.action_has_event(action, j):
+			InputMap.action_add_event(action, j)
 
 func _keys(action: StringName, keys: Array) -> void:
 	for k in keys:
