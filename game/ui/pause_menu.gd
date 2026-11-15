@@ -1,7 +1,9 @@
 extends PanelContainer
 ## The pause menu (lane R, 25 Oct: reduced motion could only be set by editing the save). It shows while
 ## the tree is paused (Esc or Start toggles that in game.gd) and offers Resume, Reduced motion, Pixel
-## scale (fill or whole) and Quit. Keyboard and gamepad move the focus (ui_up / ui_down, ui_accept);
+## scale (fill or whole) and Quit. Beside it, on a panel of its own, the controls as they are bound now
+## (ui/controls_panel.gd: text only, so the menu keeps its four rows). Keyboard and gamepad move the
+## focus (ui_up / ui_down, ui_accept);
 ## the mouse and touch tap. PixelScreen supplies the actual screen projection so
 ## rows retain at least 44 logical display points without changing world scale.
 ## Settings are written to the save at once; nothing here touches game rules.
@@ -10,11 +12,13 @@ var _buttons: Array[Button] = []
 var _motion: Button
 var _scale: Button
 var _dim: ColorRect
+var _controls: ControlsPanel
 var _screen_scale := 0.0
 var _screen_offset := Vector2.ZERO
 var _safe_pixels := Rect2()
 
 const MIN_TOUCH_POINTS := 44.0
+const CONTROLS_GAP := 6.0            ## texels between the menu and the controls panel beside it
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -30,6 +34,12 @@ func _ready() -> void:
 	dim.size = UiStyle.GRID
 	dim.mouse_filter = Control.MOUSE_FILTER_STOP     # clicks on the world do nothing while paused
 	add_child(dim)
+	# the controls: a sibling panel to the menu's right (top-level, so this container does not lay it
+	# out and the menu's own size and rows stay as they are)
+	_controls = ControlsPanel.new()
+	_controls.name = "Controls"
+	_controls.top_level = true
+	add_child(_controls)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 0)
 	add_child(box)
@@ -77,10 +87,14 @@ func _process(_delta: float) -> void:
 		_position_in_safe_area()
 	var paused := get_tree().paused
 	if paused == visible:
+		if visible:
+			_place_controls()
 		return
 	visible = paused
 	if paused:
 		_refresh()
+		_controls.refresh()
+		_place_controls.call_deferred()
 		_buttons[0].grab_focus.call_deferred()
 	else:
 		var f := get_viewport().gui_get_focus_owner()
@@ -119,6 +133,18 @@ func _position_in_safe_area() -> void:
 	size = get_combined_minimum_size()
 	position = (_safe_pixels.get_center() - _screen_offset) / _screen_scale - size / 2.0
 	queue_redraw()
+
+## The controls panel stands to the menu's right, top edges level. On a grid too narrow for that it
+## goes to the menu's left, and it never leaves the art grid.
+func _place_controls() -> void:
+	var own := Rect2(global_position, size)
+	var want := _controls.get_combined_minimum_size()
+	_controls.size = want
+	var at := Vector2(own.end.x + CONTROLS_GAP, own.position.y)
+	if at.x + want.x > UiStyle.GRID.x and own.position.x - CONTROLS_GAP - want.x >= 0.0:
+		at.x = own.position.x - CONTROLS_GAP - want.x
+	at.y = clampf(at.y, 0.0, maxf(UiStyle.GRID.y - want.y, 0.0))
+	_controls.global_position = at.round()
 
 ## The focus mark: a small gold chevron left of the focused row.
 func _draw() -> void:

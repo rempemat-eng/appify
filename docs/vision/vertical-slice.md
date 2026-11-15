@@ -80,7 +80,10 @@ quest changes; portable mode can also override XDG isolation. Do not use
 
 Current controls: WASD/arrows move, mouse aims, left click fires Bramble's bow,
 Space rolls, E interacts; E/Enter advances dialogue (first finishes the text,
-then advances/closes it). Finish each conversation before moving on. The old
+then advances/closes it). The pause menu (Esc) shows these beside its four rows,
+read from the input map (`game/ui/controls_panel.gd`, 15 Nov): only what the game
+reads today, so the bound but unbuilt actions (right click, Q, F, R, M, Tab) are
+not listed. Finish each conversation before moving on. The old
 melee-combo helper is not bound to the attack action.
 
 - [ ] Start in the woodland. Approach the weathered sign and read it.
