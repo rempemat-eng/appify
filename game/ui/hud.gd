@@ -161,13 +161,9 @@ func _process(delta: float) -> void:
 	# a lab zone is not part of the story: no quest and no lead pointing somewhere it cannot lead
 	# a raid under way takes the tracker (core/raids.gd: "The first night: Hold the shard lantern (wave 1 of 3)", and
 	# "(the shardstruck are coming)" until wave 1 comes)
-	# while the shard lantern is dark (a night lost, none held since) and no quest is active, the lead's place
-	# says so (core/raids.gd lead_text)
 	var raid := Raids.tracker_text()
-	if raid == "" and guidance and Quests.tracked_id() == "":
-		raid = Raids.lead_text()
 	_show_quest("" if Zones.in_lab() else (raid if raid != "" else Quests.tracked_text(guidance)))
-	_show_lantern(get_tree().get_first_node_in_group("raid_lantern") as RaidLantern if Raids.running() else null)
+	_show_lantern(get_tree().get_first_node_in_group("raid_lantern") as RaidLantern if raid != "" else null)
 	var f: Node = player.focus
 	var prompt := f != null and is_instance_valid(f) and not Dialogue.busy
 	_prompt.visible = prompt

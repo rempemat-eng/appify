@@ -83,9 +83,14 @@ expect defences 2
 shot 04_at_the_hurdle
 
 step defend the night from the square: three waves down the halt road
-# by the street's mouth while a hurdle stands, then beside the lantern: 20 world px south of its plinth's foot
-# (352, 320 world px), in sight of the lane's last leg and 59 texels from the strike spot (338, 326 world px)
-defend 420 640 930 1056 1020
+# by the street's mouth while a hurdle stands, then south of the lantern: (1056, 1190) texels, 70 world px
+# south of its plinth's foot (352, 320 world px), in sight of the lane's last leg and 72 world px from the
+# strike spot (338, 326), so just outside a raider's notice (60 world px). The station was (1200, 1020), east
+# of the lantern, which an earlier audit saw lose. One beside the lantern (1056, 1020) won 12 of 12 counted
+# runs but stood 20 world px from the strike spot, inside a raider's notice: the raiders turned on the pilot
+# instead of battering the lantern, which hides how fast the lantern falls, and the pilot ended on 1 heart in
+# 2 of the 12. From here the raiders keep to the lantern unless the pilot walks out to them
+defend 420 640 930 1056 1190
 expect raid won
 expect flag first_night_won
 expect glint 146

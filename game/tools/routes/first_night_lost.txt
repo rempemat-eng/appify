@@ -2,12 +2,17 @@
 # The first night lost, then held (Matt, 13 Nov: "Shard dims until held"; core/raids.gd, world/raid_night.gd),
 # played with real input from the save first_night.txt starts from. The player takes both hurdles off the
 # pads and stands on the garden walk while the shardstruck walk down an open road and break the shard
-# lantern. The lantern is dark from that moment: on the square, after a quit and a load, after walking out
-# and back in, on the prepare screen and through the next night, and nothing else is taken (the Glint, the
-# restores and the quests are as they were). The second night is put back as Hale set it and held from the
-# square, and the lantern is lit again and stays lit; Hale says it was the one night.
+# lantern. From that moment the lantern is dark and the square looks worse (the two repairs): on the square,
+# after a quit and a load, after walking out and back in, on the prepare screen and through the next night,
+# and nothing else is taken (the Glint, the restores and the quests are as they were). The second night is
+# put back as Hale set it and held from the square; the lantern is lit again and stays lit, the repairs are
+# gone, and Hale says it was the one night. The torn roof is done first (as first_night.txt does it last),
+# so the tracker is the first night's own lead and its dark wording can be read off the screen.
 # No pilot plays the loss: it is `button`, `wait` and `waitfor` only. The second night uses `defend` as
-# first_night.txt does, with the state checked before it at the moments the beats depend on.
+# first_night.txt does, with the state checked before it at the moments the beats depend on. Losing by
+# going down is not played here (test/test_raids.gd, test_going_down_in_a_night_costs_no_glint, plays it
+# through the game scene): the `down` pilot stands by the nearest raider, and a raider behind a hurdle does
+# not turn on the player, so which way the night is lost would depend on the run.
 # Commands: tools/play_driver.gd.
 
 step in the square after Home again: the lantern lit, nothing owed
@@ -17,6 +22,20 @@ expect raid none
 expect dimmed no
 expect noflag shard_lantern_dark
 expect glint 116
+
+step the torn roof first: Morel asks, the mark is paid, the roof is on
+goto 600 1096 10
+talk Morel
+expect quest a1_the_torn_roof active roof
+goto 516 1236 10
+talk ApothecarySite
+expect restored apothecary
+expect glint 76
+goto 600 1096 10
+talk Morel
+expect quest a1_the_torn_roof done
+expect hud The lit lantern
+expect banner none
 
 step the night is announced; both hurdles are taken off the pads
 door 12 210 woodland
@@ -51,8 +70,9 @@ shot 02_lost_card
 expect flag shard_lantern_dark
 expect repairs yes
 expect lantern gone
-expect glint 116
+expect glint 76
 expect restored forge
+expect restored apothecary
 expect restored fern_cottage
 expect quest home_again done
 expect noflag first_night_won
@@ -63,7 +83,9 @@ waitfor 60 enemies 0
 wait 8.0
 goto 1056 1010 10
 expect dimmed yes
-expect hud The shard lantern is dark
+expect repairs yes
+expect hud The shard lantern is dark until a night is held
+expect hud They come the next time you walk into Crossroads
 expect banner none
 shot 03_dark_lantern
 talk ShardLantern
@@ -73,6 +95,9 @@ step Hale says what was lost and how it comes back
 goto 1530 936 10
 talk HaleForge
 expect said It stays dark until we hold a night
+expect said They come the next time you walk into Crossroads
+expect raid lost
+expect raidscreen no
 
 step a quit and a load: still dark, still lost, nothing taken
 restart
@@ -81,16 +106,17 @@ expect raid lost
 expect raidscreen no
 expect dimmed yes
 expect flag shard_lantern_dark
-expect hud The shard lantern is dark
-expect glint 116
+expect repairs yes
+expect hud The shard lantern is dark until a night is held
+expect glint 76
 
-step out to the woodland and back: the repairs are mended, the night is offered again, the lantern is still dark
+step out to the woodland and back: the night is offered again; the lantern is still dark and the square still worse
 door 12 210 woodland
 door 951 1356 crossroads
 wait 1.0
 expect raid announced
 expect raidscreen yes
-expect repairs no
+expect repairs yes
 expect dimmed yes
 expect flag shard_lantern_dark
 shot 04_offered_again
@@ -111,6 +137,7 @@ button Sound the anvil
 expect raid running
 expect defences 2
 expect dimmed yes
+expect repairs yes
 expect lantern unhurt
 expect enemies 0
 goto 640 930 20
@@ -123,11 +150,13 @@ step the second night is held from the square
 waitfor 40 battering
 expect defences 2
 expect dimmed yes
-defend 420 640 930 1056 1020
+# the stations of first_night.txt: the second just outside a raider's notice of the strike spot
+defend 420 640 930 1056 1190
 expect raid won
 expect flag first_night_won
-expect glint 146
+expect glint 106
 expect dimmed no
+expect repairs no
 expect noflag shard_lantern_dark
 expect banner The first night
 wait 0.6
@@ -158,7 +187,8 @@ wait 1.0
 expect raid won
 expect dimmed no
 expect noflag shard_lantern_dark
-expect glint 146
+expect repairs no
+expect glint 106
 door 12 210 woodland
 door 951 1356 crossroads
 wait 1.0

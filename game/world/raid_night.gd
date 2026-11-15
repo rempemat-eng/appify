@@ -9,9 +9,12 @@ extends Node2D
 ## the raid is won it sets out the restore mark of the restore it offers (the bell tower) until it is paid.
 ##
 ## The stake (Matt, 13 Nov: "Shard dims until held"): while Raids.lantern_dark holds (a night was lost and
-## none held since) the lit lantern's glass stands dark: the pane RaidLantern darkens for a blow, laid over
-## the zone's own picture (data lantern.picture) and left there. It is one still polygon, set on every load
-## and taken away the moment a night is won.
+## none held since) the lit lantern stands dark: the pane RaidLantern darkens for a blow, laid over the
+## glass of the zone's own picture (data lantern.picture) in a deeper dark (RaidLantern.DIM), and round it
+## the pixels of the zone's unlit lantern picture where the lit one shows the shard's light on the iron
+## (data lantern.unlit, lantern.unlit_parts: the two posts beside the glass, the sill and the line of light
+## down the pedestal). Both are still, set on every load and taken away the moment a night is won. The
+## brief repairs show for as long (core/raids.gd keeps `repairs` while the lantern is dark).
 ## The call (Matt, 13 Nov: "Hale's anvil signals"): the night begins with Hale striking her anvil. Raids
 ## plays the cue (`raid_anvil`, three blows); here a card says so and each blow throws a spark off the anvil
 ## (world/raid_signal.gd, the glance's own spark), while the anvil stands in the zone.
@@ -28,9 +31,14 @@ const SPAWN_IN := 20.0        ## world px along the lane where a creature appear
 const SPREAD := 16.0          ## texels: creatures of one wave appear this far either side of the lane
 const CARD := 2.5             ## seconds the wave's card shows
 
-## What the loss cards say. Either way the lantern goes dark until a night is held, and nothing else is lost.
-const LOST_DOWN := "You went down, and the shardstruck reached the shard lantern before they scattered. Its light is out until a night is held. Nothing else is lost; they will come again on your next walk into town."
+## What the loss cards say. Either way the lantern is dark until a night is held, and nothing else is lost.
+## They claim only what happened: going down ends the night where the raiders are, so that card does not
+## say they reached the lantern; and a lantern already dark (a second lost night) stays dark, it does not
+## go out again (the `_AGAIN` texts; `loss_card`).
+const LOST_DOWN := "You went down, and the shard lantern's light went out with you. It stays out until a night is held. Nothing else is lost; they will come again on your next walk into town."
+const LOST_DOWN_AGAIN := "You went down. The shard lantern stays dark until a night is held. Nothing else is lost; they will come again on your next walk into town."
 const LOST_LANTERN := "Its light goes out, and stays out until a night is held. They scatter back down the halt road. Nothing else is lost; they will come again on your next walk into town."
+const LOST_LANTERN_AGAIN := "It stays dark until a night is held. They scatter back down the halt road. Nothing else is lost; they will come again on your next walk into town."
 
 signal ended(won: bool)
 
@@ -72,7 +80,8 @@ func _ready() -> void:
 	elif Raids.state() == "lost" and Raids.loss_untold == "down":
 		# the night was lost by going down: the zone has just reloaded, so this is where it is told
 		Raids.loss_untold = ""
-		_card.call_deferred(String(def.get("title", "")), "The night is lost", LOST_DOWN, 8.0)
+		var card := loss_card("down", Raids.lost_while_dark)
+		_card.call_deferred(String(def.get("title", "")), card[0], card[1], 8.0)
 
 func _on_raids_changed(st: String) -> void:
 	_show_repairs()
@@ -322,9 +331,19 @@ func _end(won: bool) -> void:
 			c.leave()
 		Raids.lose("lantern")
 		Raids.loss_untold = ""
-		_card(String(def.get("title", "")), "The shardstruck broke the shard lantern", LOST_LANTERN, 8.0)
+		var card := loss_card("lantern", Raids.lost_while_dark)
+		_card(String(def.get("title", "")), card[0], card[1], 8.0)
 	_clear_defences()
 	ended.emit(won)
+
+## The loss card's subtitle and text: `how` is "lantern" (it fell) or "down" (the player went down), and
+## `was_dark` says the lantern was dark before this night (it cannot go out a second time).
+static func loss_card(how: String, was_dark: bool) -> Array[String]:
+	if how == "down":
+		return ["The night is lost", LOST_DOWN_AGAIN if was_dark else LOST_DOWN]
+	if was_dark:
+		return ["The shardstruck reached the shard lantern", LOST_LANTERN_AGAIN]
+	return ["The shardstruck broke the shard lantern", LOST_LANTERN]
 
 ## The night is over: the hurdles (standing or broken) and the lantern's bar go. They fade unless reduced
 ## motion is on, when they go at once. Finite.
@@ -368,7 +387,9 @@ func lantern_picture() -> Node2D:
 
 ## Lays the dark pane over the lit lantern's glass while the lantern is dark, and takes it away when a night
 ## is held. A child of the picture: it sorts, shows and hides with it, so whoever stands in front of the
-## lantern is still drawn in front of its glass.
+## lantern is still drawn in front of its glass. The unlit picture's parts are a child of the pane: a
+## canvas item of their own (a texture drawn by an item that also draws a polygon comes out blank in the
+## compatibility renderer, as world/raid_lantern.gd notes).
 func _show_dimmed() -> void:
 	var want := Raids.lantern_dark(def) and lantern_picture() != null
 	if want == is_instance_valid(dimmed):
@@ -381,6 +402,17 @@ func _show_dimmed() -> void:
 	dimmed.name = "Dimmed"
 	dimmed.draw.connect(func() -> void: dimmed.draw_colored_polygon(RaidLantern.pane(), RaidLantern.DIM))
 	lantern_picture().add_child(dimmed)
+	var unlit := load(String(def.get("lantern", {}).get("unlit", ""))) as Texture2D
+	var pic := lantern_picture() as Sprite2D
+	if unlit == null or pic == null:
+		return
+	var parts := Node2D.new()
+	parts.name = "Unlit"
+	parts.draw.connect(func() -> void:
+		for part: Array in def.get("lantern", {}).get("unlit_parts", []):
+			var region := Rect2(float(part[0]), float(part[1]), float(part[2]), float(part[3]))
+			parts.draw_texture_rect_region(unlit, Rect2(region.position + pic.offset, region.size), region))
+	dimmed.add_child(parts)
 
 # --- the call: Hale strikes her anvil -----------------------------------------------------------
 ## The anvil is struck (Raids.ring has played the cue): a card says who calls the night, and each of the

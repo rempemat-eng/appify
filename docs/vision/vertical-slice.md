@@ -17,7 +17,7 @@ What is built now (this PR) is the village and quest half: the chain below as qu
 | 5 | The first restored service: **the forge** | the old smithy, east of the square | Hale | *The cold forge*: pays 30 Glint at the "restore here" mark by the smithy door; Hale lights the forge and gives the first upgrade | the forge (tier 1: upgrade and salvage); one free upgrade (placeholder) | rubble and boards gone from the smithy; the forge glows; Hale moves from the square to her anvil; the hatch under the stone circle is unbarred | 4 to 6 |
 | 6 | The Undercroft and the Thornback | the hatch by the stone circle, then three rooms and the chamber under it | the Thornback; Cairn asleep in the wall (a look, no more) | *Under the stones*: frees the shardstruck in three rooms (Codex's grunt, lunger, shooter and swarmer), then the Thornback; takes the great shard | **60 Glint** on return; loot from the rooms (the valley family, Common to Rare; Codex) | none until the shard comes home | 20 to 30 |
 | 7 | The first homecoming change | the square, then the Ferns' cottage | Moss, Hale, **Ada Fern** (placeholder villager) | Sets the shard in the lantern; *Home again*: clears the Ferns' door (20 Glint), welcomes Ada home, plants two beds | **25 Glint**, two packets of valley seed | the lantern lit; the well clear; the crater stops smoking; the Ferns' cottage open; your beds dug over; a new note on the board | 8 to 12 |
-| 8 | The first prepared raid: **the first night** | the square: one lane (the halt road), two pads | Hale, Moss; the shardstruck drawn by the lit lantern | Announced on the next return home; "sound the anvil" on the prepare screen (Hale strikes it) (untimed, both pads prefilled with Hale's hurdle barricade); three waves | a modest Glint purse; the bell tower offered for stage 1 | brief repairs only (boards on a window, a cart on its side), cleared on the next visit; the shard lantern dark until a night is held | 10 to 15 |
+| 8 | The first prepared raid: **the first night** | the square: one lane (the halt road), two pads | Hale, Moss; the shardstruck drawn by the lit lantern | Announced on the next return home; "sound the anvil" on the prepare screen (Hale strikes it) (untimed, both pads prefilled with Hale's hurdle barricade); three waves | a modest Glint purse; the bell tower offered for stage 1 | the shard lantern dark and brief repairs (boards on a window, a cart on its side) until a night is held | 10 to 15 |
 
 Total: about 60 to 90 minutes, matching 12.2's test (45 to 70 for a strong player).
 
@@ -186,17 +186,21 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
    before the night had been played): it follows the night's own card when the roof was done first, and
    comes with the roof otherwise. While the night is owed and no quest is active the tracker names it:
    "The lit lantern" before the announcement, "The first night" while it is put off, due or lost
-   (`game/data/leads.json`); once a night has been lost the tracker says instead that the shard lantern is
-   dark until a night is held (`Raids.lead_text`), until it is.
+   (`game/data/leads.json`); once a night has been lost that lead says instead that the shard lantern is
+   dark until a night is held, and that they come the next time you walk into Crossroads.
 6. **Loss.** The night is lost when the lantern falls or the player goes down; a card says so, on
-   getting up for the second. Defeat keeps the usual cache rule. Nothing is taken. Brief repairs show (boards on the smithy's window, a cart on its side)
-   until the next walk in, which clears them and offers the night again with both postponements back.
+   getting up for the second. The next walk in offers the night again with both postponements back.
    Walking out mid-night leaves it due. Quitting mid-night brings the screen back, from wave 1.
-   The stake (Matt, 13 Nov: "Shard dims until held"): a lost night leaves the shard lantern dark (the save
-   flag `shard_lantern_dark`), its glass under the struck pane's dark and no light pooling at its foot,
-   through loads, walks out and in and the next night, until a night is held; then it is lit and stays lit.
-   The HUD's lead, the lantern's own line, Hale, the loss cards and the prepare screen say so. No Glint,
-   quest or restore is lost. `game/tools/routes/first_night_lost.txt` plays it.
+   The stake (Matt, 13 Nov: "Shard dims until held"): a lost night leaves the shard lantern dark and the
+   square looking worse until a night is held (the save flag `shard_lantern_dark`): the lantern's glass
+   under the struck pane's dark, no light on its iron and none pooling at its foot, and the two brief
+   repairs (boards on the smithy's window, a cart on its side; drawn only, they block nothing), through
+   loads, walks out and in and the next night. A night held lights the lantern and mends the square, for
+   good. The first night's lead, the lantern's own line, Hale, the notice board, the loss cards and the
+   prepare screen say so. No progress and no Glint is lost: no quest, no restore, and going down while a
+   night runs leaves no cache of Glint (every other defeat keeps the cache rule).
+   `game/tools/routes/first_night_lost.txt` plays the lantern's fall; going down is held by
+   `test/test_raids.gd` through the game scene.
 
 Drawn on 13 Nov (Matt: "the roof looks wrong and what are those brown things on the track? why does the
 lantern have a health bar?", then "why would i defend a lantern that's so odd"):
@@ -233,7 +237,7 @@ line whether it is his, with its date, or Claude A's reading). None is built yet
 still describe the game as it plays.
 
 - **Item 6, from Matt (13 Nov).** A lost night ("Shard dims until held"): the shard lantern goes dark
-  and stays dark until a night is won, and no progress or Glint is lost. The first night is signalled by
+  and the square looks worse until a night is won, and no progress or Glint is lost. The first night is signalled by
   Hale striking her anvil, not by a bell; it happens once, and Hale says so when it is won. The bell tower
   is rebuilt later and rung for the wolf moon; it is optional, and its cupola is drawn so that paying
   visibly changes the square.

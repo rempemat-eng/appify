@@ -93,7 +93,7 @@ func test_a_screen_left_open_or_a_night_cut_short_comes_back_from_wave_one() -> 
 func test_a_win_pays_the_purse_once_and_offers_the_bell_tower() -> void:
 	_after_home_again()
 	Raids.arrive("crossroads", "woodland")
-	assert_int(Raids.win()).is_equal(0)                                # not before the bell
+	assert_int(Raids.win()).is_equal(0)                                # not before the anvil
 	Raids.ring()
 	var purse := int(GlintCache.balance().raids.first_night)
 	assert_int(purse).is_greater(0)
@@ -117,7 +117,7 @@ func test_a_win_pays_the_purse_once_and_offers_the_bell_tower() -> void:
 	assert_bool(Raids.arrive("crossroads", "woodland")).is_false()     # it does not come again
 	assert_str(Raids.state()).is_equal("won")
 
-func test_a_loss_costs_brief_repairs_cleared_on_the_next_visit_and_the_raid_comes_again() -> void:
+func test_a_loss_costs_brief_repairs_that_stay_while_the_lantern_is_dark_and_the_raid_comes_again() -> void:
 	_after_home_again()
 	Raids.arrive("crossroads", "woodland")
 	Raids.postpone()
@@ -131,9 +131,14 @@ func test_a_loss_costs_brief_repairs_cleared_on_the_next_visit_and_the_raid_come
 	assert_bool(Raids.arrive("crossroads", "crossroads")).is_false()  # up again: the repairs still show
 	assert_bool(bool(Raids.rec().repairs)).is_true()
 	assert_bool(Raids.arrive("crossroads", "woodland")).is_true()
-	assert_bool(bool(Raids.rec().repairs)).is_false()
+	assert_bool(bool(Raids.rec().repairs)).is_true()                   # the square looks worse until a night is held
 	assert_str(Raids.state()).is_equal("announced")
 	assert_int(Raids.postpones_left()).is_equal(2)                     # a lost night is offered again afresh
+	# a raid with no stake of its own keeps the older rule: mended on the next walk in
+	SaveGame.set_flag("shard_lantern_dark", false)
+	Raids.postpone()
+	assert_bool(Raids.arrive("crossroads", "woodland")).is_true()
+	assert_bool(bool(Raids.rec().repairs)).is_false()
 
 func test_going_down_loses_the_night_only_while_it_runs() -> void:
 	_after_home_again()
@@ -261,7 +266,7 @@ func _free_all(night: RaidNight) -> int:
 
 func test_the_night_stands_the_hurdles_and_three_waves_come_and_are_freed() -> void:
 	var night := _into_town()
-	assert_int(get_tree().get_nodes_in_group("raid_defence").size()).is_equal(0)   # nothing before the bell
+	assert_int(get_tree().get_nodes_in_group("raid_defence").size()).is_equal(0)   # nothing before the anvil
 	assert_bool(Raids.ring()).is_true()
 	assert_int(night.barricades.size()).is_equal(2)
 	for b: RaidBarricade in night.barricades:
@@ -339,7 +344,7 @@ func test_a_raider_marches_to_the_hurdle_and_batters_it_with_its_own_tell() -> v
 	c.global_position = night.point_at(night.length() - 60.0)
 	assert_object(night.blocker_ahead(c, night.length() - 60.0)).is_null()
 
-func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_the_next_visit() -> void:
+func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_a_night_is_held() -> void:
 	var night := _into_town()
 	Raids.ring()
 	for i in 28:
@@ -353,15 +358,33 @@ func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_the_nex
 	assert_int(get_tree().get_nodes_in_group("raid_defence").size()).is_equal(0)   # the hurdles go with the night
 	assert_object(night.lantern).is_null()                                          # and the lantern's lights
 	assert_int(int(SaveGame.data.glint)).is_equal(116)
-	# getting up in town keeps them; the next walk in clears them and offers the night again
+	# getting up in town keeps them; the next walk in offers the night again, and they stay: the square looks
+	# worse for as long as the lantern is dark (Matt, 13 Nov)
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()
 	await get_tree().process_frame
 	assert_int(Zones.current.get_node("RaidNight").repairs.size()).is_equal(2)
 	assert_bool(Zones.go_to("woodland", "crossroads")).is_true()
 	assert_bool(Zones.go_to("crossroads", "woodland")).is_true()
 	await get_tree().process_frame
-	assert_int(Zones.current.get_node("RaidNight").repairs.size()).is_equal(0)
+	assert_int(Zones.current.get_node("RaidNight").repairs.size()).is_equal(2)
+	assert_bool(bool(Raids.rec().repairs)).is_true()
 	assert_str(Raids.state()).is_equal("announced")
+	# only drawn: a repair has no body, so it blocks no path, door or lane on the second night
+	for r: Node2D in Zones.current.get_node("RaidNight").repairs:
+		assert_array(r.find_children("*", "CollisionObject2D", true, false)).is_empty()
+		assert_bool(r is CollisionObject2D).is_false()
+	# a night held mends them, at once and for good
+	night = Zones.current.get_node("RaidNight") as RaidNight
+	assert_bool(Raids.ring()).is_true()
+	assert_int(night.repairs.size()).is_equal(2)                                    # through the second night
+	await _hold_the_night(night)
+	assert_str(Raids.state()).is_equal("won")
+	assert_bool(bool(Raids.rec().repairs)).is_false()
+	await get_tree().process_frame
+	assert_int(get_tree().get_nodes_in_group("raid_repair").filter(func(n: Node) -> bool: return not n.is_queued_for_deletion()).size()).is_equal(0)
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	await get_tree().process_frame
+	assert_int(Zones.current.get_node("RaidNight").repairs.size()).is_equal(0)
 
 func test_walking_out_mid_night_leaves_it_pending() -> void:
 	var night := _into_town()
@@ -429,7 +452,7 @@ func test_the_prepare_screen_is_untimed_touch_sized_and_sounds_the_anvil() -> vo
 	assert_bool(screen.is_open()).is_false()
 
 # --- the audit of #483 ------------------------------------------------------------------------
-## Crossroads loaded and in the tree after Home again, with the bell rung, and its solids in the physics space.
+## Crossroads loaded and in the tree after Home again, with the anvil sounded, and its solids in the physics space.
 func _rung_town() -> RaidNight:
 	var night := _into_town()
 	Raids.ring()
@@ -466,7 +489,7 @@ func test_no_creature_sized_gap_is_left_across_the_lane_at_either_hurdle() -> vo
 
 ## Matt, 13 Nov ("why does the lantern have a health bar?"): the lantern shows nothing until it is struck;
 ## then a row of lights, one for two health, in the HUD's meter style, and the same row in the tracker from
-## the bell. A blow darkens its glass for FLICKER seconds: a flicker, or one steady dark under reduced motion.
+## the anvil. A blow darkens its glass for FLICKER seconds: a flicker, or one steady dark under reduced motion.
 func test_the_lantern_shows_its_health_only_once_struck_and_each_blow_shows_on_it() -> void:
 	var night: RaidNight = await _rung_town()
 	var lamp := night.lantern
@@ -508,7 +531,7 @@ func test_the_lantern_shows_its_health_only_once_struck_and_each_blow_shows_on_i
 	assert_array(RaidLantern.rings(0.0, true)).is_empty()
 	lamp._process(RaidLantern.SWELL + 0.1)
 	assert_bool(lamp.is_processing()).is_false()
-	# the tracker names it and shows the same lights from the bell on
+	# the tracker names it and shows the same lights from the anvil on
 	assert_str(Raids.tracker_text()).contains("Hold the shard lantern")
 	var hud: Control = auto_free(load("res://ui/hud.gd").new())
 	add_child(hud)
@@ -723,7 +746,7 @@ func test_the_first_wave_waits_for_the_player_at_the_square() -> void:
 	var square := night.near_place()
 	assert_bool(square.has_area()).is_true()
 	var centre := square.get_center() * 3.0
-	var far := Vector2(30, 70) * 3.0                                   # the garden walk, where the bell is rung
+	var far := Vector2(30, 70) * 3.0                                   # the garden walk, where the anvil is sounded
 	var fw: Dictionary = Raids.defs.first_night.first_wave
 	assert_bool(night.first_wave_due(float(fw.at_least) - 0.1, centre)).is_false()   # never at once
 	assert_bool(night.first_wave_due(float(fw.at_least), centre)).is_true()
@@ -732,7 +755,7 @@ func test_the_first_wave_waits_for_the_player_at_the_square() -> void:
 	var within := float(fw.within)
 	assert_bool(night.first_wave_due(5.0, (square.position + Vector2(-(within - 5.0), 20)) * 3.0)).is_true()
 	assert_bool(night.first_wave_due(5.0, (square.position + Vector2(-(within + 5.0), 20)) * 3.0)).is_false()
-	# in the scene: the bell rung on the garden walk, nothing comes until the player walks to the square
+	# in the scene: the anvil sounded on the garden walk, nothing comes until the player walks to the square
 	Raids.ring()
 	for i in 10:
 		night._physics_process(1.0)
@@ -854,9 +877,17 @@ func test_a_lost_night_leaves_the_lantern_dark_until_a_night_is_held() -> void:
 	assert_object(pane.get_parent()).is_same(night.lantern_picture())
 	assert_vector(pane.global_position).is_equal(Vector2(352, 320) * 3.0)   # the plinth's foot (data lantern.foot)
 	assert_float(RaidLantern.DIM.a).is_greater(RaidLantern.DARK.a)     # darker than a blow's flicker
-	assert_str(Raids.lead_text()).contains("The shard lantern is dark")
+	assert_int(night.repairs.size()).is_equal(2)                       # and the square looks worse
 	assert_str(" ".join(Dialogue.lines_for("shard_lantern"))).contains("gone dark")
-	assert_str(" ".join(Dialogue.lines_for("hale"))).contains("stays dark until we hold a night")
+	# Hale says how it comes back, in the lead's words; talking to her starts nothing and she does not say so
+	var hale := " ".join(Dialogue.lines_for("hale"))
+	assert_str(hale).contains("stays dark until we hold a night")
+	assert_str(hale).contains("the next time you walk into Crossroads")
+	assert_str(hale).not_contains("Give me the word")
+	assert_str(Raids.state()).is_equal("lost")
+	Quests.notify("talk:hale")
+	assert_str(Raids.state()).is_equal("lost")
+	assert_str(" ".join(Dialogue.lines_for("notice_board"))).contains("THE LANTERN IS DARK")
 	# a zone reload (getting up in town), and a save and a load: still dark
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()
 	await get_tree().process_frame
@@ -878,7 +909,7 @@ func test_a_lost_night_leaves_the_lantern_dark_until_a_night_is_held() -> void:
 	assert_int(Raids.postpones_left()).is_equal(2)
 	assert_bool(Raids.lantern_dark()).is_true()
 	assert_object(_dimmed()).is_not_null()
-	assert_str(Raids.lead_text()).contains("The shard lantern is dark")
+	assert_int((Zones.current.get_node("RaidNight") as RaidNight).repairs.size()).is_equal(2)
 	# putting it off does not light it
 	assert_bool(Raids.postpone()).is_true()
 	assert_bool(Raids.lantern_dark()).is_true()
@@ -888,7 +919,6 @@ func test_a_lost_night_leaves_the_lantern_dark_until_a_night_is_held() -> void:
 	# the second night: a dark lantern pools no light when a wave comes, and the tracker is the night's
 	night = Zones.current.get_node("RaidNight") as RaidNight
 	assert_bool(Raids.ring()).is_true()
-	assert_str(Raids.lead_text()).is_equal("")
 	assert_bool(night.lantern.dark).is_true()
 	night.lantern.swell()
 	assert_bool(night.lantern.is_processing()).is_false()
@@ -901,31 +931,121 @@ func test_a_lost_night_leaves_the_lantern_dark_until_a_night_is_held() -> void:
 	assert_int(int(SaveGame.data.glint)).is_equal(glint + int(GlintCache.balance().raids.first_night))
 	await get_tree().process_frame
 	assert_object(_dimmed()).is_null()
-	assert_str(Raids.lead_text()).is_equal("")
 	assert_str(" ".join(Dialogue.lines_for("shard_lantern"))).not_contains("dark")
+	assert_str(" ".join(Dialogue.lines_for("notice_board"))).contains("THE LANTERN IS LIT")
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()
 	await get_tree().process_frame
 	assert_object(_dimmed()).is_null()
 
-## Going down loses the night too, so it dims the lantern too; and the card on getting up says so.
-func test_going_down_dims_the_lantern_and_the_card_says_what_is_lost() -> void:
+## Going down loses the night too, so it dims the lantern too, and the card on getting up says so. The
+## record only: the real fall, through the game scene, is test_going_down_in_a_night_costs_no_glint.
+func test_going_down_dims_the_lantern_and_the_card_claims_only_what_happened() -> void:
 	_into_town()
 	var hud: Control = auto_free(load("res://ui/hud.gd").new())
 	add_child(hud)
 	Raids.ring()
-	var kept := _kept()
 	Raids.player_downed()
 	assert_bool(Raids.lantern_dark()).is_true()
-	assert_dict(_kept()).is_equal(kept)
+	assert_bool(Raids.downed_in_a_night()).is_true()
+	assert_bool(Raids.lost_while_dark).is_false()
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()          # as game.gd does on getting up
 	await get_tree().process_frame
 	await get_tree().process_frame
+	assert_bool(Raids.downed_in_a_night()).is_false()                  # told: the next defeat is an ordinary one
 	assert_object(_dimmed()).is_not_null()
 	assert_str(hud.shown_text().banner_text).is_equal(RaidNight.LOST_DOWN)
-	for card: String in [RaidNight.LOST_DOWN, RaidNight.LOST_LANTERN]:
+	# no raider reaches the lantern when the player goes down, and the card does not say one did
+	for card: String in [RaidNight.LOST_DOWN, RaidNight.LOST_DOWN_AGAIN]:
+		assert_str(card).not_contains("reached")
+	for card: String in [RaidNight.LOST_DOWN, RaidNight.LOST_LANTERN, RaidNight.LOST_DOWN_AGAIN, RaidNight.LOST_LANTERN_AGAIN]:
 		assert_str(card).contains("until a night is held")
 		assert_str(card).contains("Nothing else is lost")
 		assert_str(card).contains("they will come again on your next walk into town")
+
+## A lantern already dark cannot go out again: a second lost night says it stays dark, either way it is lost.
+func test_a_second_lost_night_says_the_lantern_stays_dark() -> void:
+	assert_array(RaidNight.loss_card("lantern", false)).is_equal(["The shardstruck broke the shard lantern", RaidNight.LOST_LANTERN])
+	assert_array(RaidNight.loss_card("lantern", true)).is_equal(["The shardstruck reached the shard lantern", RaidNight.LOST_LANTERN_AGAIN])
+	assert_array(RaidNight.loss_card("down", false)).is_equal(["The night is lost", RaidNight.LOST_DOWN])
+	assert_array(RaidNight.loss_card("down", true)).is_equal(["The night is lost", RaidNight.LOST_DOWN_AGAIN])
+	for again: String in [RaidNight.LOST_LANTERN_AGAIN, RaidNight.LOST_DOWN_AGAIN]:
+		assert_str(again).contains("stays dark")
+		assert_str(again).not_contains("goes out")
+		assert_str(again).not_contains("went out")
+	# in the scene: the first night lost at the lantern, the second at the lantern again
+	SaveGame.data.settings.reduced_motion = true
+	var night := _into_town()
+	var hud: Control = auto_free(load("res://ui/hud.gd").new())
+	add_child(hud)
+	Raids.ring()
+	night.lantern.batter(night.lantern.max_hp)
+	assert_str(hud.shown_text().banner_text).is_equal(RaidNight.LOST_LANTERN)
+	assert_bool(Zones.go_to("woodland", "crossroads")).is_true()
+	assert_bool(Zones.go_to("crossroads", "woodland")).is_true()
+	await get_tree().process_frame
+	night = Zones.current.get_node("RaidNight") as RaidNight
+	Raids.ring()
+	night.lantern.batter(night.lantern.max_hp)
+	assert_bool(Raids.lost_while_dark).is_true()
+	assert_str(hud.shown_text().banner_text).is_equal(RaidNight.LOST_LANTERN_AGAIN)
+	# and the third by going down
+	assert_bool(Zones.go_to("woodland", "crossroads")).is_true()
+	assert_bool(Zones.go_to("crossroads", "woodland")).is_true()
+	await get_tree().process_frame
+	Raids.ring()
+	Raids.player_downed()
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	assert_str(hud.shown_text().banner_text).is_equal(RaidNight.LOST_DOWN_AGAIN)
+
+## "No progress or Glint lost" (Matt, 13 Nov), through the path the game takes: the player's own `downed`
+## in the game scene, which game.gd answers with Raids.player_downed and then its own _on_downed. While a
+## night runs the purse is untouched and no cache lies anywhere; the defeat after it is an ordinary one and
+## leaves its cache as before.
+func test_going_down_in_a_night_costs_no_glint() -> void:
+	const GAME_SAVE := "user://test_raids_game_save.json"
+	SaveGame.path = GAME_SAVE
+	_after_home_again()
+	SaveGame.data.zone = "woodland"
+	var g: Node2D = load("res://game.tscn").instantiate()
+	add_child(g)
+	for i in 3:
+		await get_tree().physics_frame
+	assert_bool(Zones.go_to("crossroads", "woodland")).is_true()
+	for i in 3:
+		await get_tree().physics_frame
+	assert_str(Raids.state()).is_equal("announced")
+	assert_bool(Raids.ring()).is_true()
+	var player: Player = g.player
+	var kept := _kept()
+	assert_int(int(kept.glint)).is_equal(116)
+	player.global_position = Vector2(640, 930)
+	player.downed.emit()                                               # what the fall's last drawing sends
+	for i in 4:
+		await get_tree().physics_frame
+	assert_str(Raids.state()).is_equal("lost")
+	assert_bool(Raids.lantern_dark()).is_true()
+	assert_dict(_kept()).is_equal(kept)                                # the purse, the quests, the restores
+	assert_array(SaveGame.data.caches).is_empty()
+	assert_int(Zones.current.actors.get_children().filter(func(n: Node) -> bool: return n is GlintCachePickup).size()).is_equal(0)
+	assert_int(player.hp).is_equal(player.max_hp)
+	assert_vector(player.global_position).is_equal(Zones.current.spawn_position("start"))
+	var saved: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(GAME_SAVE))
+	assert_int(int(saved.glint)).is_equal(116)
+	assert_array(saved.caches).is_empty()
+	assert_bool(bool(saved.flags.get("shard_lantern_dark", false))).is_true()
+	# the next defeat, with no night running, keeps the cache rule: a fifth of the purse stays where they fell
+	player.global_position = Vector2(640, 930)
+	player.downed.emit()
+	for i in 4:
+		await get_tree().physics_frame
+	assert_int(int(SaveGame.data.glint)).is_equal(116 - GlintCache.amount_for(116, GlintCache.floor_glint()))
+	assert_int((SaveGame.data.caches as Array).size()).is_equal(1)
+	g.queue_free()
+	await get_tree().process_frame
+	SaveGame.path = SaveGame.DEFAULT_PATH
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(GAME_SAVE))
 
 ## A save made before the stake existed whose raid is `lost`: the lantern is dark from the load on. Any
 ## other state says nothing of an old loss and stays lit.
@@ -948,25 +1068,85 @@ func test_a_save_lost_before_the_stake_existed_loads_dark() -> void:
 	assert_int(SaveGame.load_save(PATH)).is_equal(OK)
 	assert_bool(SaveGame.has_flag("shard_lantern_dark")).is_false()
 
-## The HUD says the lantern is dark where the lead stands, only while no quest is active.
-func test_the_hud_says_the_lantern_is_dark_where_the_lead_stands() -> void:
+## The HUD says the lantern is dark, and how the night comes again, exactly where the first night's lead
+## stands: it hides no other lead (Morel's, while his roof is owed) and no active quest.
+func test_the_hud_says_the_lantern_is_dark_only_where_the_first_nights_lead_stands() -> void:
 	_after_home_again()
 	var player := _attach()
 	var hud: Control = auto_free(load("res://ui/hud.gd").new())
 	hud.player = player
 	add_child(hud)
+	SaveGame.set_flag("first_night_announced")
+	SaveGame.set_flag("shard_lantern_dark")
+	# the torn roof still owed: Morel's lead keeps the tracker, dark lantern or not
 	hud._process(0.0)
-	var lead: String = hud.shown_text().quest_title + hud.shown_text().quest_step
-	assert_str(lead).not_contains("dark")
+	var other: String = hud.shown_text().quest_title + ": " + hud.shown_text().quest_step
+	assert_str(other).not_contains("dark")
+	SaveGame.set_flag("shard_lantern_dark", false)
+	hud._process(0.0)
+	assert_str(hud.shown_text().quest_title + ": " + hud.shown_text().quest_step).is_equal(other)
+	# the roof on: the first night's lead, and its dark wording while the lantern is dark
+	SaveGame.data.quests["a1_the_torn_roof"] = {"state": "done", "step": Quests.defs["a1_the_torn_roof"].steps.size()}
+	hud._process(0.0)
+	assert_str(hud.shown_text().quest_title).is_equal("The first night")
+	assert_str(hud.shown_text().quest_step).is_equal("The shardstruck are camped on the halt road. They come the next time you walk into Crossroads")
 	SaveGame.set_flag("shard_lantern_dark")
 	hud._process(0.0)
 	assert_str(hud.shown_text().quest_title).is_equal("The first night")
-	assert_str(hud.shown_text().quest_step).is_equal("The shard lantern is dark. Hold a night to light it again")
+	assert_str(hud.shown_text().quest_step).is_equal("The shard lantern is dark until a night is held. They come the next time you walk into Crossroads")
 	assert_str(hud.shown_text().lantern).is_equal("")                  # no lights row: no night runs
 	# an active quest keeps the tracker
 	SaveGame.data.quests["home_again"] = {"state": "active", "step": 0}
 	hud._process(0.0)
 	assert_str(hud.shown_text().quest_title).is_not_equal("The first night")
+
+## Under the dark pane the lit picture's light on the iron is gone too: every pixel where the lit and the
+## unlit lantern pictures differ lies under the pane or under one of the unlit picture's parts.
+func test_no_lit_pixel_is_left_round_the_dark_glass() -> void:
+	var night := _into_town()
+	Raids.ring()
+	night.lantern.batter(night.lantern.max_hp)
+	var pane := _dimmed()
+	assert_object(pane.get_node_or_null("Unlit")).is_not_null()
+	var lamp: Dictionary = night.def.lantern
+	var lit := (load("res://zones/crossroads/art/lantern_lit.png") as Texture2D).get_image()
+	var unlit := (load(String(lamp.unlit)) as Texture2D).get_image()
+	assert_vector(Vector2(unlit.get_size())).is_equal(Vector2(lit.get_size()))
+	var pic := night.lantern_picture() as Sprite2D
+	var glass := Rect2(RaidLantern.GLASS.position - pic.offset, RaidLantern.GLASS.size)   # in picture px
+	var parts: Array[Rect2] = []
+	for part: Array in lamp.unlit_parts:
+		parts.append(Rect2(float(part[0]), float(part[1]), float(part[2]), float(part[3])))
+		assert_bool(Rect2(Vector2.ZERO, Vector2(lit.get_size())).encloses(parts[parts.size() - 1])).is_true()
+	var left := []
+	for y in lit.get_height():
+		for x in lit.get_width():
+			if lit.get_pixel(x, y) == unlit.get_pixel(x, y):
+				continue
+			var at := Vector2(x + 0.5, y + 0.5)
+			if glass.has_point(at) or parts.any(func(r: Rect2) -> bool: return r.has_point(at)):
+				continue
+			left.append(Vector2i(x, y))
+	assert_array(left).is_empty()
+
+## A raid already won is never offered, begun, paid or dark again, whatever its record or flags say (a
+## hand-edited or older save).
+func test_a_won_raid_stays_won_lit_and_unpaid_whatever_the_record_says() -> void:
+	_after_home_again()
+	SaveGame.set_flag("first_night_won")
+	SaveGame.set_flag("shard_lantern_dark")
+	SaveGame.data.raid = {"id": "", "state": "none", "postponed": 0, "wave": 0, "layout": {}, "repairs": false}
+	assert_int(SaveGame.save(PATH)).is_equal(OK)
+	SaveGame.reset()
+	assert_int(SaveGame.load_save(PATH)).is_equal(OK)
+	assert_bool(SaveGame.has_flag("shard_lantern_dark")).is_false()    # won: lit, from the load on
+	assert_bool(Raids.earned(Raids.defs.first_night)).is_false()
+	for st: String in ["none", "postponed", "pending", "lost", "announced", "running"]:
+		SaveGame.data.raid.state = st
+		SaveGame.data.raid.id = "first_night"
+		assert_bool(Raids.arrive("crossroads", "woodland")).override_failure_message(st).is_false()
+		assert_str(Raids.state()).is_equal(st)
+	assert_int(int(SaveGame.data.glint)).is_equal(116)
 
 ## "Hale's anvil signals": when the word is given a card says who calls the night, and each of the cue's
 ## three blows throws a spark off the anvil at the forge. Finite, and still under reduced motion.
@@ -1028,7 +1208,6 @@ func test_a_won_night_is_never_offered_again() -> void:
 	assert_bool(Raids.arrive("crossroads", "woodland")).is_false()
 	assert_str(Raids.state()).is_equal("won")
 	assert_dict(Raids.current()).is_equal(Raids.defs.first_night)      # no other raid waits behind it
-	assert_str(Raids.lead_text()).is_equal("")
 	assert_str(Raids.tracker_text()).is_equal("")
 	for who: String in ["hale", "shard_lantern", "moss"]:
 		var says := " ".join(Dialogue.lines_for(who)).to_lower()

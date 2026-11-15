@@ -170,6 +170,10 @@
         ]
       },
       {
+        "if": { "done": ["under_the_stones"], "flags": ["shard_lantern_dark"] },
+        "lines": ["A new note in Moss's hand: THE LANTERN IS DARK. THEY WILL COME FOR IT AGAIN. DO NOT FACE THEM ALONE."]
+      },
+      {
         "if": { "done": ["under_the_stones"] },
         "lines": ["A new note in Moss's hand: THE LANTERN IS LIT. IF ANYTHING COMES FOR ITS LIGHT, DO NOT FACE IT ALONE."]
       },

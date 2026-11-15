@@ -30,9 +30,9 @@
         },
         "lines": [
           "They put the lantern out. The shard's still in its cradle, mind, and we're still here.",
-          "It stays dark until we hold a night. They'll be back down the halt road for it. Give me the word and I'll strike the anvil."
+          "It stays dark until we hold a night. They come the next time you walk into Crossroads, and you'll find me at the anvil."
         ],
-        "why": "the stake (Matt, 13 Nov: \"Shard dims until held\"): after a lost night Hale says what was lost and how it comes back. Priority 6: over her lines before the night (5)"
+        "why": "the stake (Matt, 13 Nov: \"Shard dims until held\"): after a lost night Hale says what was lost and how it comes back, in the lead's own words for when (data/leads.json: the next time you walk into Crossroads). Talking to her starts nothing, and she does not say it does. Priority 6: over her lines before the night (5)"
       },
       {
         "priority": 5,
@@ -80,7 +80,7 @@
         "lines": [
           "The great shard hums in its cradle, bright enough to see from the halt road. Whatever is out there is coming for it."
         ],
-        "why": "one plain line at the lantern itself before the first night (Matt, 13 Nov: \"why would i defend a lantern that's so odd\"): what it holds and that they come for it. Nothing here says what becomes of the shard if the lantern breaks: the story has not said (a question for Matt)"
+        "why": "one plain line at the lantern itself before the first night (Matt, 13 Nov: \"why would i defend a lantern that's so odd\"): what it holds and that they come for it. What becomes of it if the lantern breaks is Matt's answer of 13 Nov (\"Shard dims until held\"): the entry above, while shard_lantern_dark is set"
       }
     ]
   },

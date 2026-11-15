@@ -17,7 +17,8 @@ extends Node2D
 ##
 ## A dark lantern (`dark`: a night was lost and none held since; Matt, 13 Nov, "Shard dims until held") has
 ## no light to pool: `swell` does nothing. Its glass stands dark the whole time (world/raid_night.gd lays
-## `pane` in DARK over the lit picture), and a blow darkens it further for the same flicker.
+## `pane` in DIM, a deeper dark than a blow's DARK, over the lit picture), and a blow darkens it further
+## for the same flicker.
 
 signal fell
 
