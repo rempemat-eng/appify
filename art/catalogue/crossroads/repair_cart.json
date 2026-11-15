@@ -1,7 +1,7 @@
 {
  "id": "crossroads/repair_cart",
  "file": "game/zones/crossroads/art/repair_cart.png",
- "sha256": "b835b7abff1ab38b5cd3727f98915494cabe84c9d5673968a699ebfdd375310f",
+ "sha256": "1e9bfc01460d2e39a805e91a593a9c44b9881412de67ed9690d07c3f7c818bdb",
  "kind": "handcart",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 11,
-   "tones": 31.0,
-   "shapes": 42.18181818181818
+   "tones": 30.454545454545453,
+   "shapes": 41.36363636363637
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.838,
-  "tones_ratio": 1.148,
-  "shapes_ratio": 0.838,
+  "ratio": 0.821,
+  "tones_ratio": 1.128,
+  "shapes_ratio": 0.821,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     126,
     75
    ],
-   "message": "crossroads/repair_cart: detail bar 0.84 of Eastward's prop band (31.0 tones, 42.2 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/repair_cart: detail bar 0.82 of Eastward's prop band (30.5 tones, 41.4 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -56,7 +56,7 @@
     126,
     75
    ],
-   "message": "crossroads/repair_cart: 42% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 42% to 49%, for information: the verdict is on this grid)",
+   "message": "crossroads/repair_cart: 45% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 45% to 47%, for information: the verdict is on this grid)",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],

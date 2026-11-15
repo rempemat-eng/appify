@@ -5139,7 +5139,7 @@ def _wheel_flat(a, wc, R, gap=None, broken=()):
     rn = np.sqrt((dx / rx) ** 2 + (dy / ry) ** 2)
     ang = np.arctan2(dy / ry, dx / rx)
     lost = np.zeros(a.shape, bool) if gap is None else ((ang >= gap[0]) & (ang <= gap[1]))
-    t_w, f_w = q(1.0) / rx, q(2.4) / rx
+    t_w, f_w = q(1.0) / rx, q(1.7) / rx
     tyre = (rn <= 1.0) & (rn > 1.0 - t_w) & ~lost
     fel = (rn <= 1.0 - t_w) & (rn > 1.0 - f_w) & ~lost
     # the tyre's outer face: a band under the front half, the iron's thickness
@@ -5155,7 +5155,18 @@ def _wheel_flat(a, wc, R, gap=None, broken=()):
     a[tyre] = code('iron', 3)
     a[tyre & lit] = code('iron', 4)
     a[tyre & ((dx / rx + dy / ry) > 0.8)] = code('iron', 2)
+    for k in range(10):                                                   # the tyre's rivets
+        ra = k * math.pi / 5 + 0.15
+        if gap is not None and gap[0] - 0.1 <= ra - 2 * math.pi * (ra > math.pi) <= gap[1] + 0.1:
+            continue
+        rx_, ry_ = int(wc[0] + math.cos(ra) * rx * (1 - t_w / 2)), int(wc[1] + math.sin(ra) * ry * (1 - t_w / 2))
+        if 0 <= ry_ < a.shape[0] and 0 <= rx_ < a.shape[1] - 1 and tyre[ry_, rx_]:
+            a[ry_, rx_] = code('iron', 5 if lit[ry_, rx_] else 4)
+            a[ry_, rx_ + 1] = code('iron', 1)
     _codes(a, fel, 'timber', np.where(lit, 4, 3))
+    segf = (np.floor((ang + math.pi) / (math.pi / 3)).astype(int) % 2) == 0   # alternate segments a sibling
+    a[fel & segf & lit] = code('timber_warm', 4)
+    a[fel & segf & ~lit] = code('timber_warm', 3)
     a[fel & ((dx / rx + dy / ry) > 0.8)] = code('timber', 2)
     for k in range(6):                                                    # the felloe's joints
         aj = k * math.pi / 3 + math.pi / 6
@@ -5177,11 +5188,19 @@ def _wheel_flat(a, wc, R, gap=None, broken=()):
         aa = k * math.pi / 3 + 0.3
         reach = 0.45 if k in broken else 1.0 - f_w + 0.05
         ex, ey = wc[0] + math.cos(aa) * rx * reach, wc[1] + math.sin(aa) * ry * reach
-        spm = seg_mask(a.shape, wc[0], wc[1], ex, ey, 1.1) & (inner | (rn <= reach + 0.05))
-        _codes(a, spm, 'timber', 3)
-        T_, Lf, B_, R_ = edges(spm)
-        a[spm & (T_ | Lf)] = code('timber_warm', 4)
-        a[spm & (B_ | R_) & ~(T_ | Lf)] = code('timber_cool', 1)
+        # one texel wide, lit, with a cool texel on its shaded (south-east) side
+        n_ = max(2, int(math.hypot(ex - wc[0], ey - wc[1]) * 1.5))
+        spm = np.zeros(a.shape, bool)
+        for t in np.linspace(0.0, 1.0, n_):
+            px_, py_ = int(wc[0] + (ex - wc[0]) * t), int(wc[1] + (ey - wc[1]) * t)
+            if 0 <= py_ < a.shape[0] and 0 <= px_ < a.shape[1]:
+                spm[py_, px_] = True
+        spm &= (inner | (rn <= reach + 0.05))
+        steep = abs(ey - wc[1]) > abs(ex - wc[0])
+        cool = (VO_shift(spm, 0, 1) if steep else VO_shift(spm, 1, 0)) & ~spm & inner
+        _codes(a, spm, 'timber_warm', 4)
+        _codes(a, cool, 'timber_cool', 1)
+        spm = spm | cool
         if k in broken:
             a[spm & (np.hypot(X - ex, Y - ey) < 1.5)] = code('timber_warm', 5)
         out |= spm
@@ -5196,6 +5215,7 @@ def _wheel_flat(a, wc, R, gap=None, broken=()):
     a[side & (np.abs(dy + hh * 0.4) < 0.6)] = code('iron', 2)
     _codes(a, cap, 'timber_warm', np.where(dx + dy + hh < 0, 5, 4))
     a[cap & (((dx / 1.6) ** 2 + ((dy + hh) / 1.0) ** 2) <= 1.0)] = code('iron', 1)
+    _wheel_flat.open = inner & (a < 0)                    # the setts seen between the spokes (kept open)
     return out | side | cap
 
 
@@ -5246,8 +5266,18 @@ def p_cart_wreck_hd(w, h, seed, hd=False):
             gu = rng.uniform(Lb * 0.9, Lb + Ls - q(3.5))
             ln = rng.uniform(4, 8)
             a[m & (np.abs(Vo + sh_t / 2.0) < 0.55) & (Uo >= gu) & (Uo < gu + ln)] = code('timber', base - 1)
+        for _ in range(8 if not far else 3):                                 # wear dabs along the shaft
+            wu = rng.uniform(Lb * 0.9, Lb + Ls - 3)
+            dab = m & (np.abs(Vo + rng.uniform(1.5, sh_t - 1.5)) < 0.5) & (Uo >= wu) & (Uo < wu + 2)
+            a[dab] = np.maximum((a[dab] // 8) * 8, a[dab] - 1)
         ku = rng.uniform(Lb + 4, Lb + Ls - q(4.0))
         a[m & ((Uo - ku) ** 2 + (Vo + sh_t / 2.0) ** 2 < 1.4)] = code('timber_cool', max(0, base - 2))
+        # the grip bound with cord: bands across it, the cord lit where it turns over the top
+        for bnd in range(4):
+            bu2 = Lb + Ls - q(1.0) - bnd * 3
+            cm = m & (Uo >= bu2 - 1) & (Uo < bu2)
+            a[cm] = code('sand', 2)
+            a[cm & (Vo >= -1.6)] = code('sand_warm', 4)
         # the iron ferrule a hand's breadth from the grip
         fu = Lb + Ls - q(3.4)
         a[m & (Uo >= fu) & (Uo < fu + 2)] = code('iron', 3 if not far else 2)
@@ -5257,6 +5287,11 @@ def p_cart_wreck_hd(w, h, seed, hd=False):
     cb = seg_mask(a.shape, tipx - 1, tipy - 1, tipx, tipy - q(1.8) - 1, 1.4)
     _codes(a, cb, 'timber', 3)
     a[cb & edges(cb)[1]] = code('timber_warm', 4)
+    a[cb & edges(cb)[3]] = code('timber_cool', 1)
+    for py_ in (int(tipy - 1), int(tipy - q(1.8))):                      # the pegs through the tips, end grain lit
+        if 0 <= py_ < a.shape[0]:
+            a[py_, int(tipx) - 1] = code('timber_warm', 5)
+            a[py_, int(tipx)] = code('timber', 1)
 
     # --- the bed's side: two courses of boards, butt joints, grain in clusters -----------------------
     face = (U >= 0) & (U < Lb) & (V >= 0) & (V < Hb)
@@ -5265,7 +5300,7 @@ def p_cart_wreck_hd(w, h, seed, hd=False):
         course = face & (V >= v0) & (V < v1)
         cuts = [0]
         while cuts[-1] < Lb:
-            cuts.append(cuts[-1] + int(rng.integers(q(5.0), q(9.0))))
+            cuts.append(cuts[-1] + int(rng.integers(q(7.0), q(12.0))))
         cuts[-1] = Lb
         for j, (ua, ub) in enumerate(zip(cuts, cuts[1:])):
             bd = course & (U >= ua) & (U < ub)
@@ -5275,10 +5310,10 @@ def p_cart_wreck_hd(w, h, seed, hd=False):
             a[bd & (V < v0 + 1.0)] = code(fam, bt - 2)                      # the gap under it
             a[bd & (U < ua + 1.0)] = code(fam, min(5, bt + 1))              # the sawn end, lit
             a[bd & (U >= ub - 1.0)] = code(fam, bt - 2)                     # the joint
-            for _ in range(int(rng.integers(2, 4))):                        # grain in clusters, a lit lip on each
-                gu = rng.uniform(ua + 2, max(ua + 3, ub - 6))
+            for _ in range(2):                                              # two grain lines, a lit lip on each
+                gu = rng.uniform(ua + 2, max(ua + 3, ub - 9))
                 gv = rng.uniform(v0 + 2.2, v1 - 2)
-                ln = rng.uniform(3, 7)
+                ln = rng.uniform(4, 8)
                 a[bd & (np.abs(V - gv) < 0.55) & (U >= gu) & (U < gu + ln)] = code(fam, bt - 1)
                 a[bd & (np.abs(V - gv - 1.0) < 0.5) & (U >= gu + 1) & (U < gu + ln - 1)] = code(fam, min(5, bt + 1))
             if rng.random() < 0.5:                                          # a knot
@@ -5291,12 +5326,39 @@ def p_cart_wreck_hd(w, h, seed, hd=False):
                 a[ny_:ny_ + 2, nx_:nx_ + 2] = np.where(bd[ny_:ny_ + 2, nx_:nx_ + 2], code('iron', 1), a[ny_:ny_ + 2, nx_:nx_ + 2])
                 if bd[ny_, nx_]:
                     a[ny_, nx_] = code('iron', 4)
+    # two battens nailed up across both courses, proud of them: a lit west edge, a shaded east one,
+    # their shade on the boards east of them, a nail top and bottom
+    for bu in (Lb * 0.26, Lb * 0.8):
+        bm = face & (U >= bu) & (U < bu + q(1.4))
+        _codes(a, bm, 'timber', 3)
+        a[bm & (U < bu + 1.0)] = code('timber_warm', 4)
+        a[bm & (U >= bu + q(1.4) - 1.0)] = code('timber_cool', 1)
+        a[bm & (V >= Hb - 1.1)] = code('timber_warm', 5)
+        _step_down(a, face & (U >= bu + q(1.4)) & (U < bu + q(1.4) + 1.2) & ~bm, 1)
+        for nv in (2.5, Hb - 3.5):
+            nu = bu + q(0.7)
+            nx_ = int(round(e0x - nu * c_ + nv * s_))
+            ny_ = int(round(e0y - nu * s_ - nv * c_))
+            a[ny_, nx_] = code('iron', 4)
+            a[ny_ + 1, nx_] = code('iron', 1)
     a[face & (V >= Hb - 1.1)] = code('timber_warm', 5)                      # the near board's top, in the light
     # over it: the far side board's inside, in shade, and its lit rim
     inside = (U >= 0.8) & (U < Lb - 0.8) & (V >= Hb) & (V < Hb + rim)
     _codes(a, inside, 'timber_cool', np.where(V < Hb + 2, 1, 2))
     rimm = (U >= 0) & (U < Lb) & (V >= Hb + rim) & (V < Hb + rim + 1.4)
     _codes(a, rimm, 'timber_warm', 4)
+    for ju in np.arange(9.0, Lb - 4, 13.0):                              # the far board's butt joints
+        a[(rimm | inside) & (U >= ju) & (U < ju + 1.0)] = code('timber_cool', 1)
+        a[rimm & (U >= ju + 1.0) & (U < ju + 2.0)] = code('timber_warm', 5)
+    # the far board's inside: its seam and the heads of the nails driven through from outside, and the
+    # rim's nail heads, a lit texel over a dark one every few texels
+    a[inside & (np.abs(V - Hb - rim / 2.0) < 0.5) & ((np.floor(U).astype(int) % 9) < 6)] = code('timber_cool', 0)
+    for nu in np.arange(4.0, Lb - 3, 7.0):
+        for (nv, top_, bot_) in ((Hb + rim + 0.5, ('iron', 4), ('iron', 2)), (Hb + 1.2, ('iron', 2), ('iron', 0))):
+            nx_ = int(round(e0x - nu * c_ + nv * s_))
+            ny_ = int(round(e0y - nu * s_ - nv * c_))
+            a[ny_, nx_] = code(*top_)
+            a[ny_, nx_ + 1] = code(*bot_)
     # the tail's end board, turned down to the setts
     tail = (U >= -1.6) & (U < 0) & (V >= 0) & (V < Hb + rim + 1.4)
     _codes(a, tail, 'timber_cool', 2)
@@ -5313,19 +5375,25 @@ def p_cart_wreck_hd(w, h, seed, hd=False):
             if face[ny_, nx_] and not br[ny_, nx_]:
                 a[ny_, nx_] = code('iron', 1)
 
-    # --- the stove-in board: a diagonal ragged break into the dark --------------------------------
-    u0 = Lb * 0.52
-    jag = np.sin(U * 2.3) * 0.8 + np.sin(U * 5.1 + 1) * 0.5
-    lo = 0.8 + (U - u0) * 0.9 + jag                                      # a slash across both courses
-    brk = face & (U >= u0) & (U < u0 + q(5.4)) & (V >= lo) & (V < lo + 4.2 - jag * 0.5) & (V < Hb - 2)
-    a[brk] = code('void', 0)
-    a[brk & (V < lo + 1.5)] = code('soot', 0)                            # the bed's dark floor inside
-    above = VO_shift(brk, -1, 0) & ~brk & face
-    a[above] = code('timber_warm', 5)                                   # the splintered tips, lit
-    tips = face & ~brk & VO_shift(above, -1, 0) & ((np.floor(X).astype(int) % 3) == 0)
-    a[tips] = code('timber_warm', 4)
-    below = VO_shift(brk, 1, 0) & ~brk & face
-    a[below] = code('timber_cool', 1)                                   # the lip under it, in shade
+    # --- the stove-in board: a ragged split up the side, 1 texel wide at its ends and 4 at its middle;
+    # its lips torn into splinter teeth reaching into the dark, the upper lip lit in 2-texel clusters,
+    # the inside the far board's shaded timber, not a void
+    u0, ul = Lb * 0.48, q(6.4)
+    f_ = np.clip((U - u0) / ul, 0, 1)
+    width = 1.0 + 3.4 * np.sin(np.pi * f_)                               # the 1-4-1 taper
+    mid = 1.5 + (U - u0) * 1.15                                          # climbing the side
+    jag = np.where((np.floor(U).astype(int) % 3) == 0, 1.0, 0.0) - np.where((np.floor(U).astype(int) % 4) == 1, 0.8, 0.0)
+    brk = face & (U >= u0) & (U < u0 + ul) & (np.abs(V - mid) < width / 2.0 + 0.3) & (V > 1) & (V < Hb - 2)
+    teeth_up = brk & (V > mid + width / 2.0 - 0.9) & (jag > 0.5) & (width > 2.5)    # splinter teeth down into it
+    teeth_lo = brk & (V < mid - width / 2.0 + 0.6) & ((np.floor(U).astype(int) % 4) == 1) & (width > 2.5)
+    hole = brk & ~teeth_up & ~teeth_lo
+    _codes(a, hole, 'timber_cool', np.where(V < mid, 0, 1))
+    a[teeth_up] = code('timber_warm', 4)
+    a[teeth_lo] = code('timber', 2)
+    up_lip = VO_shift(brk, -1, 0) & ~brk & face
+    a[up_lip & ((np.floor(U).astype(int) // 2) % 2 == 0)] = code('timber_warm', 5)   # lit in 2-texel clusters
+    a[up_lip & ((np.floor(U).astype(int) // 2) % 2 == 1)] = code('timber_warm', 4)
+    a[VO_shift(brk, 1, 0) & ~brk & face] = code('timber_cool', 1)       # the lower lip, in shade
 
     # --- the bare axle end in front of the floor, its cap lit ---------------------------------------
     au, av = Lb * 0.5, -q(1.0)
@@ -5340,6 +5408,7 @@ def p_cart_wreck_hd(w, h, seed, hd=False):
     R = q(6.2)
     wc = (cx - q(5.4), yb - q(1.1))
     _wheel_flat(a, wc, R, gap=(-2.6, -1.9), broken=(1,))
+    wheel_open = _wheel_flat.open
     contacts.append((int(wc[0] - R * 0.7), int(wc[0] + R * 0.8), int(wc[1] + R * FORE + q(1.0)) + 1))
 
     # --- the load slid out of the tail: the burst sack, the grain, three turnips ------------------------
@@ -5347,16 +5416,27 @@ def p_cart_wreck_hd(w, h, seed, hd=False):
     nx_, ny_ = (X - scx) / rx, (Y - scy) / ry
     d = nx_ * nx_ + ny_ * ny_
     sm = d <= 1
-    st = 2.2 + 1.9 * lam(nx_, ny_ * 0.8, np.sqrt(np.clip(1 - d, 0, 1)))
-    st = np.where(np.abs(nx_ + 0.25 - ny_ * 0.45) < 0.1, st - 1.0, st)     # a fold
-    st = np.where(np.abs(nx_ - 0.2 + ny_ * 0.3) < 0.08, st - 1.0, st)      # and another
-    stc = np.clip(np.round(st), 0, 5).astype(int)
-    sfam = np.where(stc >= 4, FI['sand_warm'], np.where(stc <= 1, FI['sand_cool'], FI['sand']))
+    # the intact handcart's sack (p_cart_hd): its ramp and weave, a core shadow low on the east,
+    # folds as dark creases running to the mouth, the mouth frayed
+    weave = (((X.astype(int) // 2) + (Y.astype(int) // 2)) % 2 == 0) & (Y.astype(int) % 2 == 0)
+    st = 2.0 + 1.8 * lam(nx_, ny_ * 0.8, np.sqrt(np.clip(1 - d, 0, 1)))
+    st = np.where((nx_ + ny_ > 0.55) & (d > 0.25), st - 0.9, st)          # the core shadow, lower right
+    for (k0, k1, w_) in ((0.25, 0.45, 0.09), (-0.2, -0.3, 0.08), (0.05, 0.9, 0.07)):
+        st = np.where((np.abs(nx_ + k0 - ny_ * k1) < w_) & (nx_ < 0.55), st - 1.2, st)   # the creases
+    stc = np.clip(np.round(st), 0, 4).astype(int)
+    sfam = np.where(stc >= 3, FI['sand_warm'], np.where(stc <= 1, FI['sand_cool'], FI['sand']))
+    sfam = np.where(weave & (sfam == FI['sand_warm']), FI['sand'], np.where(weave & (sfam == FI['sand']), FI['sand_cool'], sfam))
     a[sm] = (sfam * 8 + stc)[sm]
-    mouth = sm & (nx_ > 0.62) & (np.abs(ny_) < 0.55)                    # its torn mouth, dark inside
+    mouth = sm & (nx_ > 0.6) & (np.abs(ny_) < 0.6)                       # the torn mouth, dark inside
     a[mouth] = code('sand_cool', 0)
-    a[sm & (np.abs(nx_ - 0.62) < 0.1) & (np.abs(ny_) < 0.6)] = code('sand_warm', 4)   # the torn lip
-    a[mouth & (nx_ > 0.85) & (ny_ > 0.0)] = code('sand_warm', 3)        # grain at the lip
+    a[mouth & (nx_ > 0.85) & (ny_ > 0.05)] = code('sand_warm', 3)        # grain at the lip
+    lip = sm & (np.abs(nx_ - 0.6) < 0.1) & (np.abs(ny_) < 0.66)
+    a[lip] = code('sand_warm', 4)
+    # frayed threads standing off the mouth, every other row
+    for fy_ in range(int(scy - ry * 0.6), int(scy + ry * 0.6) + 1, 2):
+        fx_ = int(scx + rx * np.sqrt(max(0.0, 1 - ((fy_ - scy) / ry) ** 2)))
+        if 0 <= fy_ < a.shape[0] and fx_ + 2 < a.shape[1] and a[fy_, fx_ + 1] < 0:
+            a[fy_, fx_ + 1] = code('sand', 3)
     contacts.append((int(scx - rx), int(scx + rx), int(scy + ry) + 1))
     # three turnips: a pale root, its purple shoulder, a tuft; lit at the upper left; one on its side
     for (tx, ty, sz, lying) in ((cx - q(15.2), yb - q(0.4), 1.9, False), (cx + q(4.4), yb + q(0.6), 1.4, True),
@@ -5380,16 +5460,22 @@ def p_cart_wreck_hd(w, h, seed, hd=False):
                 lf = (np.floor(Y) == ly) & (X >= tx - rx_ - 4) & (X < tx - rx_ + 1) & ~tm
                 a[lf] = code(f_, t_)
         else:
-            for (lx0, lx1, t_, f_) in ((tx - 3, tx - 1, 4, 'leaf_warm'), (tx - 1, tx + 1, 3, 'leaf'), (tx + 1, tx + 3, 2, 'leaf_cool')):
-                lf = (X >= lx0) & (X < lx1) & (Y >= ty - ry_ - 4 + (1 if f_ != 'leaf' else 0)) & (Y < ty - ry_ + 1) & ~tm
-                a[lf] = code(f_, t_)
+            # a tuft of fanned leaves from the crown: each a short blade at its own angle, lit on the west
+            fans = (((-2.2, -4.2), (-0.6, -5.0), (1.2, -4.6), (2.8, -3.2)) if sz > 1.5 else
+                    ((-2.0, -3.4), (0.2, -4.4), (2.2, -3.0)))
+            top_y = ty - ry_ + 0.5
+            for j, (fx, fy) in enumerate(fans):
+                bl = seg_mask(a.shape, tx, top_y, tx + fx, top_y + fy, 0.6) & ~tm
+                f_, t_ = (('leaf_warm', 4), ('leaf', 3), ('leaf', 3), ('leaf_cool', 2))[min(j, 3) if len(fans) == 4 else (0, 1, 3)[j]]
+                a[bl] = code(f_, t_)
         contacts.append((int(tx - rx_), int(tx + rx_), int(ty + ry_) + 1))
     contacts.append((int(e0x - q(2.0)), int(e0x + q(3.6)), int(yb)))       # under the tail
 
     keep = nail_lights(a)
     finish(p, keep=keep)
+    a[wheel_open] = -1                                    # no outline inside the felloe: the setts show
     # (after the outline: it lies on the setts) the grain fanning out east of the mouth: two-texel grains in three tones, densest at the mouth
-    for i in range(44):
+    for i in range(64):
         r_ = rng.uniform(0, 1) ** 0.7
         gx = int(scx + rx + 1 + r_ * q(3.6))
         gy = int(scy + rng.uniform(-1.0, 1.0) * (1 + r_ * q(1.4)))
