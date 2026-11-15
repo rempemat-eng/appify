@@ -74,9 +74,9 @@ expect prompt Talk
 talk Hale
 expect said I'll go on ahead
 expect quest road_to_crossroads active go
-wait 0.2
-expect focus none
+# the picture at once: she is gone 0.8 s after the talk closes, and `talk` itself returns a moment after that
 shot 03_hale_on_the_path
+expect focus none
 wait 2.0
 expect focus none
 expect prompt none
