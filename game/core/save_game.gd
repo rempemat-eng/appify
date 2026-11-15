@@ -19,6 +19,8 @@ const DEFAULT_PATH := "user://save_0.json"
 const RAID_STATES := ["none", "announced", "postponed", "pending", "running", "won", "lost"]
 ## The sound settings and their defaults (version 2; ui/sound_menu.gd shows them, core/sound.gd reads them).
 const SOUND_SETTINGS := {"sound_effects": true, "ambience": true, "gentle_sound": false}
+## The pixel scales main/pixel_screen.gd knows; the first is the default.
+const PIXEL_SCALES := ["fill", "whole"]
 
 var data: Dictionary = fresh()
 var path := DEFAULT_PATH
@@ -179,6 +181,12 @@ func _migrate(doc: Dictionary) -> Dictionary:
 	for key: String in SOUND_SETTINGS:
 		if not out.settings[key] is bool:
 			out.settings[key] = SOUND_SETTINGS[key]
+	# and so do reduced motion and the pixel scale (15 Nov, the audit of #494: until then either one refused
+	# the whole save); a scale this build does not know is "fill" too
+	if not out.settings.reduced_motion is bool:
+		out.settings.reduced_motion = false
+	if not (out.settings.pixel_scale is String and String(out.settings.pixel_scale) in PIXEL_SCALES):
+		out.settings.pixel_scale = "fill"
 	out.version = VERSION
 	out.glint = int(out.glint)
 	for cache: Dictionary in out.caches:
@@ -266,12 +274,7 @@ func _document_error(doc: Dictionary) -> Error:
 			for kind: Variant in doc.raid.layout.values():
 				if not kind is String:
 					return ERR_INVALID_DATA
-	var settings: Dictionary = doc.get("settings", {})
-	if settings.has("reduced_motion") and not settings.reduced_motion is bool:
-		return ERR_INVALID_DATA
-	if settings.has("pixel_scale") and not settings.pixel_scale is String:
-		return ERR_INVALID_DATA
-	# the sound settings are not checked here: `_migrate` puts a damaged one back to its default
+	# the settings inside are not checked here: `_migrate` puts a damaged one back to its default
 	return OK
 
 func _target_error(target: String) -> Error:

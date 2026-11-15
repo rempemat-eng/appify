@@ -13,6 +13,7 @@ extends PanelContainer
 ## menu. Side by side, up and down wrap inside each panel and left and right cross between the two (the
 ## engine's nearest-neighbour focus); one above the other, up and down run through both panels in one
 ## ring (`_link`). The mouse and touch tap; Enter, Space and the pad's A press the focused row.
+## While the pause menu's Quit asks (Quit or Stay), this panel stands aside, its room kept.
 
 const ROWS := [
 	["sound_effects", "Sound effects", true],
@@ -26,6 +27,7 @@ var beside: Control                  ## the pause menu: this panel stands at its
 
 var _buttons: Array[Button] = []
 var _below := false                  ## standing below the pause menu, not at its right (a narrow window)
+var _linked := false                 ## `_link` has run once
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -71,7 +73,9 @@ func _add(box: VBoxContainer, key: String) -> void:
 	_buttons.append(b)
 
 func _process(_delta: float) -> void:
-	var paused := get_tree().paused
+	# shown while paused, except while the pause menu's Quit asks (ui/pause_menu.gd asking)
+	var paused := get_tree().paused and not (beside != null and is_instance_valid(beside)
+		and beside.has_method(&"asking") and bool(beside.call(&"asking")))
 	if paused != visible:
 		visible = paused
 		if paused:
@@ -105,7 +109,7 @@ func _stand_beside() -> void:
 		else:
 			position = beside.position + Vector2(beside.size.x + GAP, 0.0)
 		var below := position.y >= beside.position.y + beside.size.y
-		if below != _below:
+		if below != _below or not _linked:
 			_below = below
 			_link()
 	queue_redraw()
@@ -125,6 +129,19 @@ func _link() -> void:
 	their_first.focus_neighbor_top = their_first.get_path_to(mine_last if _below else their_last)
 	mine_first.focus_neighbor_top = mine_first.get_path_to(their_last if _below else mine_last)
 	mine_last.focus_neighbor_bottom = mine_last.get_path_to(their_first if _below else mine_first)
+	# Sideways, by row: side by side, left and right cross between the two panels row for row (the menu's
+	# Pixel scale and Quit both to Gentle sound); one above the other, they stay. Never to a control
+	# outside the two: the raid's prepare screen keeps running under the pause, and the engine's nearest
+	# neighbour reached its buttons from here (15 Nov).
+	for i in theirs.size():
+		var row: Button = theirs[i]
+		row.focus_neighbor_right = row.get_path_to(row if _below else _buttons[mini(i, _buttons.size() - 1)])
+		row.focus_neighbor_left = row.get_path_to(row)
+	for i in _buttons.size():
+		var row := _buttons[i]
+		row.focus_neighbor_left = row.get_path_to(row if _below else theirs[mini(i, theirs.size() - 1)])
+		row.focus_neighbor_right = row.get_path_to(row)
+	_linked = true
 
 ## The focus mark: the pause menu's small gold chevron, left of the focused row.
 func _draw() -> void:

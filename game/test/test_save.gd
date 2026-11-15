@@ -138,7 +138,6 @@ func test_malformed_nested_documents_are_refused_without_mutation() -> void:
 		{"village": {"restored": {"forge": "1"}}},
 		{"player": {"hp": null}}, {"player": {"max_hp": []}},
 		{"zone": 1}, {"spawn": null}, {"glint": true},
-		{"settings": {"reduced_motion": "yes"}}, {"settings": {"pixel_scale": false}},
 	]
 	SaveGame.add_glint(9)
 	var live := SaveGame.data.duplicate(true)
@@ -239,3 +238,58 @@ func test_future_target_is_protected_without_a_prior_load() -> void:
 		assert_int(SaveGame.save(PATH)).is_equal(ERR_UNAVAILABLE)
 		assert_dict(SaveGame.data).is_equal(live)
 		assert_bool(FileAccess.get_file_as_bytes(PATH) == bytes).is_true()
+
+## Reduced motion and pixel scale, damaged (15 Nov, the audit of #494): until then a save whose
+## reduced_motion was not true or false, or whose pixel_scale was not a string, was refused whole, and the
+## progress in it with it (these two documents were in the refused list above). They now load as a damaged
+## sound setting does: the one setting at its default, everything else the save's own, version 2. An
+## unknown pixel scale ("huge") falls back too.
+func test_a_damaged_motion_or_scale_setting_loads_at_its_default_and_keeps_the_progress() -> void:
+	for damage: Dictionary in [{"reduced_motion": "yes"}, {"reduced_motion": 1}, {"reduced_motion": null},
+			{"pixel_scale": false}, {"pixel_scale": 2}, {"pixel_scale": null}, {"pixel_scale": "huge"},
+			{"pixel_scale": ""}, {"reduced_motion": [], "pixel_scale": {}}]:
+		var doc := {"version": 2, "glint": 41, "flags": {"met_hale": true}, "zone": "crossroads",
+			"settings": {"reduced_motion": true, "pixel_scale": "whole", "gentle_sound": true}}
+		for key: String in damage:
+			doc.settings[key] = damage[key]
+		_write_document(doc)
+		SaveGame.reset()
+		assert_int(SaveGame.load_save(PATH)).override_failure_message("refused for %s" % [damage]).is_equal(OK)
+		var settings: Dictionary = SaveGame.data.settings
+		assert_bool(settings.reduced_motion == (false if damage.has("reduced_motion") else true)).override_failure_message(
+			"reduced_motion is %s after %s" % [settings.reduced_motion, damage]).is_true()
+		assert_bool(settings.pixel_scale == ("fill" if damage.has("pixel_scale") else "whole")).override_failure_message(
+			"pixel_scale is %s after %s" % [settings.pixel_scale, damage]).is_true()
+		assert_int(SaveGame.data.version).is_equal(2)
+		assert_int(SaveGame.data.glint).is_equal(41)
+		assert_bool(SaveGame.has_flag("met_hale")).is_true()
+		assert_str(SaveGame.data.zone).is_equal("crossroads")
+		assert_bool(settings.gentle_sound).is_true()
+		# and it saves and loads again as it now is
+		var now := SaveGame.data.duplicate(true)
+		assert_int(SaveGame.save(PATH)).is_equal(OK)
+		SaveGame.reset()
+		assert_int(SaveGame.load_save(PATH)).is_equal(OK)
+		assert_dict(SaveGame.data).is_equal(now)
+	# the two known scales stay as they are
+	for scale: String in ["fill", "whole"]:
+		assert_str(SaveGame._migrate({"settings": {"pixel_scale": scale}}).settings.pixel_scale).is_equal(scale)
+
+## What the fallback above does not open: a document that is not a save of this game is still refused whole.
+func test_what_is_refused_stays_refused_beside_the_setting_fallbacks() -> void:
+	var refused: Array = [
+		[{"version": 99}, ERR_UNAVAILABLE], [{"version": SaveGame.VERSION + 1, "settings": {"pixel_scale": 3}}, ERR_UNAVAILABLE],
+		[{"version": -1}, ERR_INVALID_DATA], [{"version": "2"}, ERR_INVALID_DATA],
+		[{"settings": "fill"}, ERR_INVALID_DATA], [{"settings": []}, ERR_INVALID_DATA], [{"settings": null}, ERR_INVALID_DATA],
+		[{"settings": [], "glint": 4}, ERR_INVALID_DATA], [{"glint": "4", "settings": {"reduced_motion": "yes"}}, ERR_INVALID_DATA],
+		[{"player": [], "settings": {"pixel_scale": false}}, ERR_INVALID_DATA], [{"zone": 3}, ERR_INVALID_DATA],
+	]
+	SaveGame.add_glint(6)
+	var live := SaveGame.data.duplicate(true)
+	for pair: Array in refused:
+		_write_document(pair[0])
+		var bytes := FileAccess.get_file_as_bytes(PATH)
+		assert_int(SaveGame.load_save(PATH)).override_failure_message("%s was not refused" % [pair[0]]).is_equal(pair[1])
+		assert_dict(SaveGame.data).is_equal(live)
+		assert_bool(FileAccess.get_file_as_bytes(PATH) == bytes).is_true()
+		assert_dict(SaveGame._migrate(pair[0])).is_empty()
