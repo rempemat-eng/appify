@@ -174,7 +174,12 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
    last leg ran through the well). A raider strikes the lantern only from beside its post. Wave 1 waits
    until the player comes within 60 px of the square (or 25 s), because the bell is rung where the player
    walked in, about 20 s from the street.
-5. **Win.** A purse of 30 Glint is paid once and `first_night_won` is set. The hurdles and the lantern's
+5. **Win.** A purse of 30 Glint is paid once and `first_night_won` is set. The build's closing card
+   ("The valley holds", "Here the story rests, for now") waits for this as well as for *Home again* and
+   *The torn roof* (15 Nov; it used to show with the two quests alone, before the night had been played):
+   it follows the night's own card when the roof was done first, and comes with the roof otherwise.
+   While the night is owed and no quest is active the tracker names it: "The lit lantern" before the
+   announcement, "The first night" while it is put off, due or lost (`game/data/leads.json`). The hurdles and the lantern's
    bar clear away. The bell tower is offered as a restore (`bell_tower`, 50 Glint, act 1's id and price):
    its mark stands before the library's door from then on, and Hale points to it. Its picture (the
    cupola) comes with stage 1, so paying it changes no picture yet.
@@ -188,7 +193,8 @@ map use the blockout's flat colours. There is no bell or horn sound yet.
 
 `test/test_raids.gd` holds the rules. `game/tools/routes/first_night.txt` plays the end of the slice with
 real input, from a save made just after *Home again* through the announcement, both postponements, a quit
-on the screen, the three waves and the win, to Hale's offer.
+on the screen, the three waves and the win, to Hale's offer, and then *The torn roof* to the closing card.
+`routes/main.txt` ends with every quest done, the night announced and put off, and no closing card.
 
 ## Open for Matt
 

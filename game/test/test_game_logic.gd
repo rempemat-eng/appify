@@ -249,6 +249,7 @@ func test_the_closing_card_waits_for_the_last_quest() -> void:
 		SaveGame.data.quests[q] = {"state": "done", "step": Quests.defs[q].steps.size()}
 	SaveGame.data.quests["a1_the_torn_roof"] = {"state": "active", "step": 1}
 	SaveGame.set_flag("seen:opening")
+	SaveGame.set_flag("first_night_won")      # the night held first (15 Nov: the card waits for it too, below)
 	var g := _game()
 	await _ticks(2)
 	var hud: Control = g.get_node("UI/HUD")
@@ -497,3 +498,90 @@ func test_the_settle_effect_is_finite_and_static_under_reduced_motion() -> void:
 	await _frames(2)
 	assert_str(hud.shown_text().banner).is_equal("")
 	assert_object(Zones.current.get_node_or_null("Actors/CampSettle")).is_null()
+
+# --- the end of the slice waits for the first night (15 Nov) -----------------------------------
+func _slice_quests_done() -> void:
+	for q: String in ["woodland_stones", "road_to_crossroads", "cold_forge", "under_the_stones", "home_again", "a1_the_torn_roof"]:
+		SaveGame.data.quests[q] = {"state": "done", "step": Quests.defs[q].steps.size()}
+	for f: String in ["seen:opening", "shard_home:woodland", "hale_walked_home", "visited:crossroads", "visited:woodland"]:
+		SaveGame.set_flag(f)
+	SaveGame.data.village.restored["forge"] = 1
+
+## "Here the story rests" came with Home again and The torn roof done, before the first night had been
+## played. It waits for the night now, and while the night is owed the tracker names it.
+func test_the_closing_card_waits_for_the_first_night_and_the_tracker_names_it_meanwhile() -> void:
+	_slice_quests_done()
+	SaveGame.data.zone = "crossroads"
+	var g := _game()
+	await _ticks(2)
+	await _frames(3)
+	var hud: Control = g.get_node("UI/HUD")
+	# every quest done, the night not yet announced (a load is not a walk into town): no card, and a lead for it
+	assert_str(Raids.state()).is_equal("none")
+	assert_str(hud.shown_text().banner).is_equal("")
+	assert_bool(SaveGame.has_flag("seen:closing")).is_false()
+	assert_str(hud.shown_text().quest_title).is_equal("The lit lantern")
+	assert_str(hud.shown_text().quest_step).contains("when you next walk into Crossroads")
+	# announced and put off, once and twice: the tracker names the night, still no card
+	for left: int in [1, 0]:
+		assert_bool(Raids.arrive("crossroads", "woodland")).is_true()
+		assert_bool(Raids.postpone()).is_true()
+		assert_int(Raids.postpones_left()).is_equal(left)
+		await _frames(2)
+		assert_str(hud.shown_text().quest_title).is_equal("The first night")
+		assert_str(hud.shown_text().quest_step).contains("the next time you walk into Crossroads")
+		assert_dict(Quests.due_card()).is_empty()
+	# the bell: the raid's own line takes the tracker
+	assert_bool(Raids.arrive("crossroads", "woodland")).is_true()
+	assert_bool(Raids.ring()).is_true()
+	await _frames(2)
+	assert_str(hud.shown_text().quest_step).contains("Hold the")
+	# lost: owed again, named again, no card
+	Raids.lose("lantern")
+	await _frames(2)
+	assert_str(hud.shown_text().quest_title).is_equal("The first night")
+	assert_dict(Quests.due_card()).is_empty()
+	assert_bool(SaveGame.has_flag("seen:closing")).is_false()
+	# won: the closing card, after the night's own card has gone, and the closing lead
+	assert_bool(Raids.arrive("crossroads", "woodland")).is_true()
+	assert_bool(Raids.ring()).is_true()
+	hud.show_card("The first night", "The lantern held", "", 1.0)      # as world/raid_night.gd does on the win
+	assert_int(Raids.win()).is_greater(0)
+	await _frames(2)
+	assert_str(hud.shown_text().banner).is_equal("The first night")
+	assert_bool(SaveGame.has_flag("seen:closing")).is_false()
+	await get_tree().create_timer(2.2).timeout
+	assert_str(hud.shown_text().banner).is_equal("The valley holds")
+	assert_str(hud.shown_text().quest_title).is_equal("The valley holds")
+	assert_bool(SaveGame.has_flag("seen:closing")).is_true()
+
+## The other order: the night won before The torn roof (routes/first_night.txt plays it from a save
+## made just after Home again). The card comes with the roof, as before.
+func test_the_closing_card_comes_with_the_last_quest_when_the_night_was_won_first() -> void:
+	_slice_quests_done()
+	SaveGame.data.quests["a1_the_torn_roof"] = {"state": "active", "step": 1}
+	SaveGame.set_flag("first_night_announced")
+	SaveGame.set_flag("first_night_won")
+	var g := _game()
+	await _ticks(2)
+	var hud: Control = g.get_node("UI/HUD")
+	assert_str(hud.shown_text().banner).is_equal("")
+	Quests.notify("talk:morel")
+	await _frames(3)
+	assert_str(hud.shown_text().banner).is_equal("The valley holds")
+
+## A save from main that already saw the closing card (seen:closing) with the night unplayed: the card
+## is not shown twice, and the tracker names the night it still owes.
+func test_a_save_that_saw_the_closing_card_before_the_night_is_not_shown_it_again() -> void:
+	_slice_quests_done()
+	SaveGame.set_flag("seen:closing")
+	var g := _game()
+	await _ticks(2)
+	await _frames(3)
+	var hud: Control = g.get_node("UI/HUD")
+	assert_str(hud.shown_text().quest_title).is_equal("The lit lantern")
+	SaveGame.set_flag("first_night_announced")
+	SaveGame.set_flag("first_night_won")
+	await _frames(2)
+	assert_dict(Quests.due_card()).is_empty()
+	assert_str(hud.shown_text().quest_title).is_equal("The valley holds")

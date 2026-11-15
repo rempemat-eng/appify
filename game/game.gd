@@ -125,6 +125,19 @@ func _setup_raid_screen() -> void:
 		if hud.guidance and not Zones.in_lab():
 			raid_screen.open())
 	Raids.changed.connect(func(_st: String) -> void: autosave())
+	Raids.finished.connect(_after_raid)
+
+## A night won can be the last thing this build's story waits for (data/leads.json: the closing card asks
+## for first_night_won). The night's own card comes first ("The lantern held", world/raid_night.gd); the
+## closing card follows once that one has gone.
+func _after_raid(won: bool) -> void:
+	if not won:
+		return
+	await get_tree().create_timer(0.5).timeout
+	while is_inside_tree() and str(hud.shown_text().get("banner", "")) != "":
+		await get_tree().create_timer(0.5).timeout
+	if is_inside_tree():
+		_show_due_card()
 
 ## True when the game was started with --debug-controls: the character keys act and their label shows.
 func debug_controls() -> bool:
@@ -219,7 +232,7 @@ func _on_camp_cleared(camp: Camp, middle: Vector2) -> void:
 	settle.global_position = middle
 
 ## The story's title cards (data/leads.json): the opening on a new game, the closing beat when the last
-## quest of this build is done. Each shows once a save; a card waits for an open dialogue to close.
+## quest of this build is done and the first night is won. Each shows once a save; a card waits for an open dialogue to close.
 func _show_due_card() -> void:
 	if not hud.guidance or Zones.in_lab():
 		return

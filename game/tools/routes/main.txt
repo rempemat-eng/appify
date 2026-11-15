@@ -1,5 +1,6 @@
 # The whole build, in order, from a fresh save: the woodland, Crossroads, the Undercroft and back, to the
-# closing card. The game is closed and started again after every step that moves the story (`restart`),
+# last quest and the first night announced and put off (routes/first_night.txt plays the night and the
+# closing card). The game is closed and started again after every step that moves the story (`restart`),
 # and the player is downed once at each of the three fights. Commands: tools/play_driver.gd.
 
 step a new game shows the title card and the first lead
@@ -310,11 +311,13 @@ talk Morel
 expect said A roof!
 expect quest a1_the_torn_roof done
 
-step the closing beat: the card, Moss, the notice board, the hut
+step the story does not rest yet: the first night is owed, so no closing card, and the tracker says so
 wait 1.0
-expect banner The valley holds
-expect hud The Col Path is still buried
-shot 09_closing
+expect banner none
+expect noflag seen:closing
+expect hud The lit lantern
+expect hud when you next walk into Crossroads
+shot 09_night_owed
 goto 1152 830 10
 talk Moss
 expect said The Col Path is still buried
@@ -332,5 +335,25 @@ expect quest a1_the_torn_roof done
 expect restored apothecary
 expect glint 76
 expect banner none
-expect hud The Col Path is still buried
+expect hud The lit lantern
+
+step out and back: the night is announced; put off, the tracker names it, and the story still does not rest
+door 12 210 woodland
+door 951 1356 crossroads
+wait 1.0
+expect raid announced
+expect raidscreen yes
+button Not tonight
+expect raid postponed
+expect raidscreen no
+expect hud The first night
+expect hud the next time you walk into Crossroads
+expect banner none
+expect noflag seen:closing
+shot 10_night_put_off
+restart
+expect raid postponed
+expect raidscreen no
+expect hud The first night
+expect banner none
 end
