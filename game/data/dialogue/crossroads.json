@@ -15,7 +15,7 @@
       },
       {
         "if": { "step": ["under_the_stones", "lantern"] },
-        "lines": ["That's the light that fell? Put it in the lantern by the well. The old folk said that's what it was for."]
+        "lines": ["That's the light that fell? Put it in the shard lantern on the square. The old folk said that's what it was for."]
       },
       {
         "if": { "active": ["under_the_stones"] },
@@ -196,10 +196,10 @@
       },
       {
         "if": { "step": ["under_the_stones", "lantern"] },
-        "lines": ["You lift the shard into the lantern's cradle. Light runs down the iron and into the well."]
+        "lines": ["You lift the shard into the lantern's cradle. Its light spills over the setts and across the walk to the well, and far down the water stirs."]
       },
       {
-        "lines": ["An iron lantern beside the well, older than the town, with a dozen empty cradles."]
+        "lines": ["The shard lantern, alone on its ring of setts across the walk from the well. Older than the town, with a dozen empty cradles."]
       }
     ]
   },
