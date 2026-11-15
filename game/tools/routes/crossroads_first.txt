@@ -31,13 +31,17 @@ talk Moss
 expect said Have you seen Hale
 expect quest road_to_crossroads none
 
-step back for Hale: the road's first step is already done, and she goes ahead as her talk closes
+step back for Hale, met from the east, standing on her way: she goes ahead round Bramble, not through him
 door 12 210 woodland
-goto 556 1300 10
+goto 652 1305 10
+expect prompt Talk
 talk Hale
 expect said I'll go on ahead
 expect quest road_to_crossroads active moss
-wait 2.5
+wait 0.3
+expect focus none
+shot 01b_hale_goes_round
+wait 2.0
 expect focus none
 expect prompt none
 

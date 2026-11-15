@@ -74,7 +74,7 @@ expect prompt Talk
 talk Hale
 expect said I'll go on ahead
 expect quest road_to_crossroads active go
-wait 0.4
+wait 0.2
 expect focus none
 shot 03_hale_on_the_path
 wait 2.0
