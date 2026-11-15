@@ -44,12 +44,16 @@ expect hp 5
 expect quest woodland_stones active clear_camp
 expect enemies 3
 
-step free the mosslings
+step free the mosslings: the meadow settles, and the HUD says it is quiet
 goto 640 1392 20
 fight 180
 expect flag camp_cleared:meadow
 expect quest woodland_stones active return
+expect banner The meadow is quiet
+shot 02b_meadow_quiet
+waitfor 8 banner none
 restart
+expect banner none
 expect flag camp_cleared:meadow
 expect enemies 0
 
@@ -168,6 +172,9 @@ expect quest under_the_stones active rooms
 
 step free the rooms: 3 Glint a creature, and the cache is picked up again (every cache, if the fight cost another)
 fight 300
+expect flag camp_cleared:undercroft_stair_hall
+expect flag camp_cleared:undercroft_root_corridor
+expect flag camp_cleared:undercroft_seal_room
 expect flag camp_cleared:undercroft_rooms
 expect quest under_the_stones active thornback
 caches
