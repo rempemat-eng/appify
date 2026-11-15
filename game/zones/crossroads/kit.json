@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "54065f952c2656f051d370a792634148c37b164f731bbf2b7b6a8e5d30ea2f7f",
+ "inputs": "8fb8d93531b5bae3ede46b3e5b07bc13c7783dc3272d848d4edc65a8c8bd88ab",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -244,7 +244,7 @@
    "pots": [
     [
      183.5,
-     22
+     35
     ]
    ]
   },
@@ -578,12 +578,12 @@
    "kind": "lantern",
    "png": "lantern_dark.png",
    "foot": [
-    936,
-    936
+    1056,
+    960
    ],
    "offset": [
-    -42,
-    -218
+    -33,
+    -182
    ],
    "cond": {
     "not_flags": [
@@ -591,10 +591,10 @@
     ]
    },
    "solid": [
-    307,
-    290,
-    10,
-    22
+    344,
+    314,
+    16,
+    6
    ]
   },
   {
@@ -602,12 +602,12 @@
    "kind": "lantern_lit",
    "png": "lantern_lit.png",
    "foot": [
-    936,
-    936
+    1056,
+    960
    ],
    "offset": [
-    -42,
-    -218
+    -33,
+    -182
    ],
    "cond": {
     "flags": [
@@ -615,10 +615,10 @@
     ]
    },
    "solid": [
-    307,
-    290,
-    10,
-    22
+    344,
+    314,
+    16,
+    6
    ]
   },
   {
@@ -703,8 +703,8 @@
    "kind": "notice_board",
    "png": "notice_board.png",
    "foot": [
-    708,
-    672
+    648,
+    696
    ],
    "offset": [
     -48,
@@ -1138,7 +1138,7 @@
    "kind": "kit_lantern",
    "png": "kit_lantern_24.png",
    "foot": [
-    876,
+    864,
     600
    ],
    "offset": [
@@ -1147,7 +1147,7 @@
    ],
    "cond": null,
    "solid": [
-    290,
+    286,
     198,
     4,
     3
@@ -1737,8 +1737,8 @@
    "kind": "debris",
    "png": "debris_b.png",
    "foot": [
-    1116,
-    936
+    1176,
+    900
    ],
    "offset": [
     -45,
@@ -1814,7 +1814,7 @@
    "kind": "bench",
    "png": "bench_58.png",
    "foot": [
-    816,
+    864,
     1104
    ],
    "offset": [
@@ -1823,7 +1823,7 @@
    ],
    "cond": null,
    "solid": [
-    260.0,
+    276.0,
     362,
     24,
     6
@@ -1994,8 +1994,8 @@
    "kind": "shadow",
    "png": "lantern_dark_shadow.png",
    "foot": [
-    912,
-    932
+    1029,
+    956
    ],
    "offset": [
     0,
@@ -2014,8 +2014,8 @@
    "kind": "shadow",
    "png": "lantern_lit_shadow.png",
    "foot": [
-    912,
-    932
+    1029,
+    956
    ],
    "offset": [
     0,

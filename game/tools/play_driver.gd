@@ -479,6 +479,11 @@ func expect(a: PackedStringArray) -> String:
 				if b.has_method("standing") and b.standing():
 					standing += 1
 			return "" if standing == int(a[2]) else "%d hurdles stand" % standing
+		"lantern":
+			# the shard lantern during a raid: "unhurt" (and showing no lights), "hurt" (its lights up) or "gone"
+			var lamp := get_tree().get_first_node_in_group("raid_lantern") as RaidLantern
+			var is_now := "gone" if lamp == null else ("hurt" if lamp.hurt() else "unhurt")
+			return "" if is_now == a[2] else "the lantern is %s" % is_now
 		"battering":
 			for c2 in get_tree().get_nodes_in_group("enemy"):
 				if c2 is RaidCreature and not c2.dead and c2.blocker is RaidBarricade:
@@ -725,12 +730,25 @@ func defend(limit: float, station := Vector2.INF, fallback := Vector2.INF) -> St
 			await _sleep(0.05)
 			continue
 		# out of reach from here: to whichever station it can be hit from (this one first), else after it
+		# Once both hurdles are down the street's mouth is no station any more: a raider still marching up the
+		# street (state "leash") is waited for at the lantern's station, where the lane's end is in reach, and
+		# not walked back to (the walk there and back gave the lantern away)
 		var goal := target.global_position
-		for st: Vector2 in [station, held, fallback]:
+		var stations: Array[Vector2] = [station]
+		if standing:
+			stations.append_array([held, fallback])
+		for st: Vector2 in stations:
 			if st != Vector2.INF and st.distance_to(target.global_position) <= 320.0 \
 					and not Arrow.walled_off(space, st, target.global_position):
 				goal = st
 				break
+		if goal == target.global_position and not standing and fallback != Vector2.INF and str(target.get("state")) == "leash":
+			if p.global_position.distance_to(fallback) > 30.0:
+				await goto(fallback, 24.0)
+			else:
+				hold(Vector2.ZERO)
+				await _sleep(0.1)
+			continue
 		if goal != target.global_position and p.global_position.distance_to(goal) > 30.0:
 			# to that station with the routes' own walker (plans round the well, sidesteps when stuck)
 			await goto(goal, 24.0)
