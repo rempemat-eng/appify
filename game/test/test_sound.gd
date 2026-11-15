@@ -567,6 +567,100 @@ func test_focus_wraps_inside_the_panel_and_crosses_between_the_two() -> void:
 	for b: Button in rows:
 		assert_bool(pause_rows.has(b.find_valid_focus_neighbor(SIDE_LEFT))).is_true()
 
+func _press(event: InputEvent) -> void:
+	event.set("pressed", true)
+	get_viewport().push_input(event, true)                       # positions are the viewport's own
+	var up := event.duplicate()
+	up.set("pressed", false)
+	get_viewport().push_input(up, true)
+
+func _key(code: Key) -> InputEventKey:
+	var e := InputEventKey.new()
+	e.keycode = code
+	e.physical_keycode = code
+	return e
+
+func _pad(button: JoyButton) -> InputEventJoypadButton:
+	var e := InputEventJoypadButton.new()
+	e.button_index = button
+	return e
+
+## Real events through the viewport, not the focus tables: the arrow keys and Enter, and the d-pad.
+## A gamepad moves the focus here and cannot press: Godot 4's `ui_accept` holds Enter and Space and no pad
+## button, and core/inputs.gd adds none, so no menu row in the game answers to A yet (the pause menu's
+## neither). That is the input map's to settle, not sound's; this test holds what a pad does reach.
+func test_the_sound_panel_is_reached_by_the_keys_and_by_the_dpad() -> void:
+	var path: String = SaveGame.path
+	SaveGame.path = PATH
+	var menus := _menus()
+	var pause: Control = menus[0]
+	var sound: SoundMenu = menus[1]
+	for menu: Control in [pause, sound]:
+		assert_bool(menu.fit_screen(Vector2(1920, 1080), 2.0, Vector2.ZERO, 1.0, Rect2(0, 0, 1920, 1080))).is_true()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	sound._stand_beside()
+	var rows: Array = sound.get("_buttons")
+	var pause_rows: Array = pause.get("_buttons")
+	# the keyboard: the pause menu opens on its first row; Right crosses over, Down moves, Enter switches
+	pause_rows[0].grab_focus()
+	_press(_key(KEY_RIGHT))
+	var at := rows.find(get_viewport().gui_get_focus_owner())
+	assert_int(at).is_greater_equal(0)
+	_press(_key(KEY_DOWN))
+	var below: Button = rows[(at + 1) % 3]
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(below)
+	var was: bool = sound.is_on(below.name)
+	_press(_key(KEY_ENTER))
+	assert_bool(sound.is_on(below.name)).is_equal(not was)
+	_press(_key(KEY_LEFT))                                       # and back to the pause menu
+	assert_bool(pause_rows.has(get_viewport().gui_get_focus_owner())).is_true()
+	# the gamepad: the same walk on the d-pad
+	pause_rows[0].grab_focus()
+	_press(_pad(JOY_BUTTON_DPAD_RIGHT))
+	at = rows.find(get_viewport().gui_get_focus_owner())
+	assert_int(at).is_greater_equal(0)
+	_press(_pad(JOY_BUTTON_DPAD_UP))
+	var above: Button = rows[(at + 2) % 3]
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(above)
+	_press(_pad(JOY_BUTTON_DPAD_LEFT))
+	assert_bool(pause_rows.has(get_viewport().gui_get_focus_owner())).is_true()
+	SaveGame.path = path
+
+## A tap or a click (a touch reaches a Button as the mouse press the engine makes of it; the setting for
+## that is on). In play no press reaches these rows yet, nor the pause menu's own: the pause menu's dim is
+## a top-level control that stops the mouse, and the engine asks top-level controls first, so it takes
+## every press while the game is paused (played on main, 15 Nov: a click on Resume leaves the game
+## paused). That is the pause menu's to mend. This test holds the panel's half: with the dim letting
+## presses through, each row answers one.
+func test_a_press_reaches_each_sound_row_once_the_pause_menus_dim_lets_it_through() -> void:
+	var path: String = SaveGame.path
+	SaveGame.path = PATH
+	var menus := _menus()
+	var pause: Control = menus[0]
+	var sound: SoundMenu = menus[1]
+	for menu: Control in [pause, sound]:
+		assert_bool(menu.fit_screen(Vector2(1920, 1080), 2.0, Vector2.ZERO, 1.0, Rect2(0, 0, 1920, 1080))).is_true()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	sound._stand_beside()
+	var rows: Array = sound.get("_buttons")
+	var dim: ColorRect = pause.get("_dim")
+	dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	assert_bool(bool(ProjectSettings.get_setting("input_devices/pointing/emulate_mouse_from_touch"))).is_true()
+	var host: Control = pause.get_parent()
+	for b: Button in rows:
+		var was: bool = sound.is_on(b.name)
+		# the test runner's window is 64 pixels square and a press outside it finds nothing: bring the row in
+		host.position += get_viewport().get_visible_rect().get_center() - b.get_global_rect().get_center()
+		var tap := InputEventMouseButton.new()
+		tap.button_index = MOUSE_BUTTON_LEFT
+		tap.position = b.get_global_rect().get_center()
+		tap.global_position = tap.position
+		_press(tap)
+		assert_bool(sound.is_on(b.name)).override_failure_message("a press on %s did nothing" % b.name).is_equal(not was)
+	SaveGame.path = path
+
 # --- hooks ------------------------------------------------------------------------------------
 func test_a_glancing_arrow_clinks() -> void:
 	_listen()

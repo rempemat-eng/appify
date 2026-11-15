@@ -182,6 +182,8 @@ The pause menu has a Sound panel beside it (`game/ui/sound_menu.gd`), with rows 
 - **Ambience** (on by default): the loop's own switch.
 - **Gentle sound** (off by default): confirms and moments only, and no two effects within 400 ms. It does not follow Reduced motion and Reduced motion does not follow it.
 
+**Reaching it (played and tested, 15 Nov).** The keyboard reaches and switches every row: Right from the pause menu crosses to the panel, Up and Down wrap inside it, Enter or Space switches, Left goes back. A gamepad's d-pad and stick move the focus the same way, but no pad button presses a row: Godot 4's `ui_accept` holds Enter and Space only and `core/inputs.gd` adds no pad button to it, so the pause menu's own rows do not answer to A either. A mouse click or a tap does not reach a row of either panel: the pause menu's dim is a top-level control that stops the mouse, and the engine asks top-level controls before the panels, so it takes every press while the game is paused (on main too: a click on Resume leaves the game paused). Both are the pause menu's and the input map's to mend, not sound's, and neither is changed here. The panel's rows themselves answer a press once the dim lets one through (`test/test_sound.gd`).
+
 They are saved with the other settings (`settings.sound_effects`, `settings.ambience`, `settings.gentle_sound`). The save's version went from 1 to 2 for them: a save from before sound loads with the defaults (`game/test/fixtures/saves/v1-main-before-sound.json`, a save written by main on 13 Nov).
 
 ### Not verified
