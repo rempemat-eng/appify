@@ -41,6 +41,8 @@ extends Node
 ##       raid <state> (core/raids.gd: none, announced, postponed, pending, running, won, lost) | raidscreen <yes|no>
 ##       defences <n> (hurdles standing) | repairs <yes|no> (the brief repairs after a lost night)
 ##       battering (a raider is battering a hurdle) | wave <n> (the night's wave under way, from 1)
+##       dimmed <yes|no> (the shard lantern's glass stands dark in the zone: a night lost, none held since)
+##       anvilcall (the sparks of Hale's three blows are at her anvil now)
 ##   restart                 close the window as a player would; the runner starts the game again from the
 ##                           save and the route carries on at the next line
 ##   end                     pass (the end of the file passes too)
@@ -484,6 +486,15 @@ func expect(a: PackedStringArray) -> String:
 			var lamp := get_tree().get_first_node_in_group("raid_lantern") as RaidLantern
 			var is_now := "gone" if lamp == null else ("hurt" if lamp.hurt() else "unhurt")
 			return "" if is_now == a[2] else "the lantern is %s" % is_now
+		"dimmed":
+			# what the zone shows, not the flag: the dark pane over the lit lantern's picture (world/raid_night.gd)
+			var night := Zones.current.get_node_or_null("RaidNight") as RaidNight
+			var dark := night != null and is_instance_valid(night.dimmed) and night.dimmed.is_visible_in_tree()
+			return "" if dark == (a[2] == "yes") else "the lantern's glass is %s" % ("dark" if dark else "not dark")
+		"anvilcall":
+			var night2 := Zones.current.get_node_or_null("RaidNight") as RaidNight
+			var struck := night2 != null and is_instance_valid(night2.anvil_call) and night2.anvil_call.is_visible_in_tree()
+			return "" if struck else "no spark is at the anvil"
 		"battering":
 			for c2 in get_tree().get_nodes_in_group("enemy"):
 				if c2 is RaidCreature and not c2.dead and c2.blocker is RaidBarricade:

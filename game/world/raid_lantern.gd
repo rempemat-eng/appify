@@ -14,6 +14,10 @@ extends Node2D
 ## its light pools once on the setts at its foot (`swell`): three hard-edged rings on the shard's own ramp
 ## that spread and go, drawn on the ground under everyone; under reduced motion the pool stands still for
 ## that long. Both are finite, and nothing here loops.
+##
+## A dark lantern (`dark`: a night was lost and none held since; Matt, 13 Nov, "Shard dims until held") has
+## no light to pool: `swell` does nothing. Its glass stands dark the whole time (world/raid_night.gd lays
+## `pane` in DARK over the lit picture), and a blow darkens it further for the same flicker.
 
 signal fell
 
@@ -24,6 +28,7 @@ const FLICKER := 0.3
 const SWELL := 0.9
 const ARCH := 9.0                     ## how far the head's arch drops from its crown to the posts
 const DARK := Color(0.106, 0.063, 0.2, 0.62)      ## the palette's void over the glass
+const DIM := Color(0.106, 0.063, 0.2, 0.8)        ## the same void, deeper: the glass of a lantern gone dark
 ## The pool of light at its foot, outermost first: a half-width in texels and its colour (dusk 2, 3, 4).
 const POOL: Array = [[60.0, Color("#584187")], [42.0, Color("#7262a4")], [24.0, Color("#927bb2")]]
 const POOL_FLAT := 0.46               ## the pool lies on the ground: this much of its width deep
@@ -31,6 +36,7 @@ const POOL_ALPHA := 0.4
 
 var max_hp := 12
 var hp := 12
+var dark := false                     ## the shard is dimmed: no pool of light when a wave comes
 var _struck := 0.0
 var _swell := 0.0
 var _pool: Node2D
@@ -77,6 +83,8 @@ func batter(amount: int, _dir: Vector2 = Vector2.ZERO) -> bool:
 
 ## A wave has come for it: its light pools once at its foot.
 func swell() -> void:
+	if dark:
+		return
 	_swell = SWELL
 	set_process(true)
 	_pool.queue_redraw()

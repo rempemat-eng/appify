@@ -4,8 +4,8 @@
 # square. The save is from before raids (no `raid` record), so loading it is the migration too: nothing is
 # sprung on load. The lantern's light has drawn the shardstruck: the night is announced on the next walk into
 # town, put off twice, then due; the prepare screen (untimed, both pads filled with Hale's hurdles) comes back
-# after a quit; the bell rings and three waves come down the halt road and are freed; the purse is paid and
-# Hale offers the bell tower. A raid lost is held by test/test_raids.gd, not played here.
+# after a quit; Hale strikes her anvil and three waves come down the halt road and are freed; the purse is
+# paid and Hale says it was the one night. A raid lost is played by first_night_lost.txt.
 # Commands: tools/play_driver.gd.
 
 step in the square just after Home again: a load springs nothing
@@ -61,9 +61,10 @@ wait 1.0
 expect raid announced
 expect raidscreen yes
 
-step ring the bell: Hale's hurdles on both pads; the first wave waits for Bramble at the square
-button Ring the bell
+step sound the anvil: Hale's hurdles on both pads; the first wave waits for Bramble at the square
+button Sound the anvil
 expect raid running
+expect banner The first night
 expect raidscreen no
 expect defences 2
 expect hud Hold the shard lantern
@@ -81,20 +82,23 @@ expect defences 2
 shot 04_at_the_hurdle
 
 step defend the night from the square: three waves down the halt road
-# by the street's mouth while a hurdle stands, then south-east of the lantern, in sight of the lane's last leg
-# and the strike spot (338, 326 world px), and just beyond a raider's notice (60 world px) of it
-defend 420 640 930 1200 1020
+# by the street's mouth while a hurdle stands, then beside the lantern: 20 world px south of its plinth's foot
+# (352, 320 world px), in sight of the lane's last leg and 59 texels from the strike spot (338, 326 world px)
+defend 420 640 930 1056 1020
 expect raid won
 expect flag first_night_won
 expect glint 146
 expect defences 0
 expect lantern gone
+expect dimmed no
+expect noflag shard_lantern_dark
 shot 05_held
 
-step Hale offers the bell tower
+step Hale says it was the one night: no next lot, no bell
 goto 1530 936 10
 talk HaleForge
-expect said bell
+expect said that was the one night
+expect said They'll not come for it again
 restart
 expect raid won
 expect glint 146

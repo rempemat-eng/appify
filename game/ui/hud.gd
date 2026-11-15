@@ -161,9 +161,13 @@ func _process(delta: float) -> void:
 	# a lab zone is not part of the story: no quest and no lead pointing somewhere it cannot lead
 	# a raid under way takes the tracker (core/raids.gd: "The first night: Hold the shard lantern (wave 1 of 3)", and
 	# "(the shardstruck are coming)" until wave 1 comes)
+	# while the shard lantern is dark (a night lost, none held since) and no quest is active, the lead's place
+	# says so (core/raids.gd lead_text)
 	var raid := Raids.tracker_text()
+	if raid == "" and guidance and Quests.tracked_id() == "":
+		raid = Raids.lead_text()
 	_show_quest("" if Zones.in_lab() else (raid if raid != "" else Quests.tracked_text(guidance)))
-	_show_lantern(get_tree().get_first_node_in_group("raid_lantern") as RaidLantern if raid != "" else null)
+	_show_lantern(get_tree().get_first_node_in_group("raid_lantern") as RaidLantern if Raids.running() else null)
 	var f: Node = player.focus
 	var prompt := f != null and is_instance_valid(f) and not Dialogue.busy
 	_prompt.visible = prompt
@@ -209,7 +213,7 @@ func _meter(row: HBoxContainer, key: String, full: int, total: int, art: String)
 	for i in total:
 		(row.get_child(i) as TextureRect).texture = load("res://ui/art/%s_%s.png" % [art, "full" if i < now.x else "empty"])
 
-## The shard lantern's lights under the raid's line, from the bell on: what to protect, before the first
+## The shard lantern's lights under the raid's line, from the anvil on: what to protect, before the first
 ## blow (the lantern itself shows them only once it is hurt). Hidden when no raid runs.
 func _show_lantern(lantern: RaidLantern) -> void:
 	var now := Vector2i(lantern.hp, lantern.max_hp) if lantern != null else Vector2i(-1, -1)

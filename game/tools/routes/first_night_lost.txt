@@ -1,0 +1,163 @@
+#! save: first_night.save.json
+# The first night lost, then held (Matt, 13 Nov: "Shard dims until held"; core/raids.gd, world/raid_night.gd),
+# played with real input from the save first_night.txt starts from. The player takes both hurdles off the
+# pads and stands on the garden walk while the shardstruck walk down an open road and break the shard
+# lantern. The lantern is dark from that moment: on the square, after a quit and a load, after walking out
+# and back in, on the prepare screen and through the next night, and nothing else is taken (the Glint, the
+# restores and the quests are as they were). The second night is put back as Hale set it and held from the
+# square, and the lantern is lit again and stays lit; Hale says it was the one night.
+# No pilot plays the loss: it is `button`, `wait` and `waitfor` only. The second night uses `defend` as
+# first_night.txt does, with the state checked before it at the moments the beats depend on.
+# Commands: tools/play_driver.gd.
+
+step in the square after Home again: the lantern lit, nothing owed
+wait 1.0
+expect zone crossroads
+expect raid none
+expect dimmed no
+expect noflag shard_lantern_dark
+expect glint 116
+
+step the night is announced; both hurdles are taken off the pads
+door 12 210 woodland
+door 951 1356 crossroads
+wait 1.0
+expect raid announced
+expect raidscreen yes
+button Pad_pad_halt_street
+button Pad_pad_street_mouth
+shot 01_empty_pads
+
+step the anvil is sounded with the road open: Hale's card, no hurdle, the lantern still lit
+button Sound the anvil
+expect raid running
+expect raidscreen no
+expect banner The first night
+expect defences 0
+expect lantern unhurt
+expect dimmed no
+expect enemies 0
+
+step nobody defends it: the shardstruck come down the open road and break the lantern
+# the garden walk, where the screen came up: far from the square, so wave 1 comes after its longest wait
+waitfor 40 wave 1
+expect defences 0
+expect dimmed no
+waitfor 90 raid lost
+expect banner The first night
+expect dimmed yes
+expect flag shard_lantern_dark
+expect repairs yes
+expect lantern gone
+expect glint 116
+expect restored forge
+expect restored fern_cottage
+expect quest home_again done
+expect noflag first_night_won
+
+step on the square: the shard lantern is dark, and the HUD and the lantern say so
+# the raiders walk back down the halt road, and the card has gone
+waitfor 60 enemies 0
+wait 8.0
+goto 1056 1010 10
+expect dimmed yes
+expect hud The shard lantern is dark
+expect banner none
+shot 02_dark_lantern
+talk ShardLantern
+expect said its glass gone dark
+
+step Hale says what was lost and how it comes back
+goto 1530 936 10
+talk HaleForge
+expect said It stays dark until we hold a night
+
+step a quit and a load: still dark, still lost, nothing taken
+restart
+wait 1.0
+expect raid lost
+expect raidscreen no
+expect dimmed yes
+expect flag shard_lantern_dark
+expect hud The shard lantern is dark
+expect glint 116
+
+step out to the woodland and back: the repairs are mended, the night is offered again, the lantern is still dark
+door 12 210 woodland
+door 951 1356 crossroads
+wait 1.0
+expect raid announced
+expect raidscreen yes
+expect repairs no
+expect dimmed yes
+expect flag shard_lantern_dark
+shot 03_offered_again
+button Not tonight
+expect raid postponed
+expect dimmed yes
+
+step putting it off lights nothing: the third walk in, and Hale's hurdles go back on the pads
+door 12 210 woodland
+door 951 1356 crossroads
+wait 1.0
+expect raid announced
+expect raidscreen yes
+expect dimmed yes
+button Pad_pad_halt_street
+button Pad_pad_street_mouth
+button Sound the anvil
+expect raid running
+expect defences 2
+expect dimmed yes
+expect lantern unhurt
+expect enemies 0
+goto 640 930 20
+waitfor 10 wave 1
+# a dark lantern pools no light when the wave comes, and stays dark through the night
+expect dimmed yes
+expect defences 2
+
+step the second night is held from the square
+waitfor 40 battering
+expect defences 2
+expect dimmed yes
+defend 420 640 930 1056 1020
+expect raid won
+expect flag first_night_won
+expect glint 146
+expect dimmed no
+expect noflag shard_lantern_dark
+expect banner The first night
+shot 04_lit_again
+
+step Hale says it was the one night, line by line (no `talk` here: each line is read off the box)
+goto 1530 936 10
+expect focus HaleForge
+key E
+wait 2.0
+expect line They broke on my hurdles and your bow. That's the night held.
+shot 05_hale_night_held
+key E
+wait 3.0
+expect line And that was the one night. They came for this light and they've had their answer. They'll not come for it again.
+shot 06_hale_one_night
+key E
+wait 0.6
+expect line none
+expect said that was the one night
+
+step a quit and a load, then a walk out and in: lit, won, and nothing more comes
+restart
+wait 1.0
+expect raid won
+expect dimmed no
+expect noflag shard_lantern_dark
+expect glint 146
+door 12 210 woodland
+door 951 1356 crossroads
+wait 1.0
+expect raid won
+expect raidscreen no
+expect repairs no
+expect dimmed no
+end

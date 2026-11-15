@@ -7,7 +7,7 @@ extends RefCounted
 ## Every cue has a tier (game/audio/cues.json, written by scripts/audio/game_sounds.py):
 ##   confirm   the answer to a press (a menu choice, a line turning, the pause menu). Always plays while
 ##             effects are on: it tells the player the press landed.
-##   moment    a beat of the game (a shot, a hit, a tell, a door, a quest, the bell). Plays while effects
+##   moment    a beat of the game (a shot, a hit, a tell, a door, a quest, the anvil). Plays while effects
 ##             are on.
 ##   flavour   pleasant once, tiring when stacked (the bow's creak): at most one every
 ##             FLAVOUR_GAP_MS, and none with Gentle sound.
