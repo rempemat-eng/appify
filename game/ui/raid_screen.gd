@@ -182,6 +182,9 @@ static func _pads_sentence(def: Dictionary) -> String:
 
 func _build_pads() -> void:
 	for b in _pad_buttons.values():
+		# out of the tree at once: a button only queued for freeing keeps its name until the frame ends, and the
+		# new pad's button would be given another (the screen opened a second time in one session)
+		_map.remove_child(b as Node)
 		(b as Node).queue_free()
 	_pad_buttons.clear()
 	_pad_x.clear()
@@ -241,10 +244,10 @@ func _draw_map() -> void:
 	_map.draw_rect(Rect2(Vector2(8, y - 4), Vector2(MAP.x - 40, 8)), ROAD)
 	var font := UiStyle.font()
 	_map.draw_string(font, Vector2(8, y - 14), "Halt road", HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.SIZE, UiStyle.DIM)
-	# the lantern: a post and its lit cap
+	# the lantern: a post and its cap, lit unless the lantern is dark (a night lost, none held since)
 	var lx := MAP.x - 24.0
 	_map.draw_rect(Rect2(Vector2(lx - 2, y - 14), Vector2(4, 22)), POST)
-	_map.draw_rect(Rect2(Vector2(lx - 6, y - 22), Vector2(12, 9)), LAMP)
+	_map.draw_rect(Rect2(Vector2(lx - 6, y - 22), Vector2(12, 9)), ROAD_EDGE if Raids.lantern_dark() else LAMP)
 	var name_w := font.get_string_size("Shard lantern", HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.SIZE).x
 	_map.draw_string(font, Vector2(minf(lx - name_w / 2.0, MAP.x - name_w - 2.0), y + 24), "Shard lantern", HORIZONTAL_ALIGNMENT_LEFT, -1, UiStyle.SIZE, UiStyle.DIM)
 	var def := Raids.current()

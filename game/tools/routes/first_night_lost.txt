@@ -46,6 +46,8 @@ expect dimmed no
 waitfor 90 raid lost
 expect banner The first night
 expect dimmed yes
+wait 0.6
+shot 02_lost_card
 expect flag shard_lantern_dark
 expect repairs yes
 expect lantern gone
@@ -63,7 +65,7 @@ goto 1056 1010 10
 expect dimmed yes
 expect hud The shard lantern is dark
 expect banner none
-shot 02_dark_lantern
+shot 03_dark_lantern
 talk ShardLantern
 expect said its glass gone dark
 
@@ -91,7 +93,7 @@ expect raidscreen yes
 expect repairs no
 expect dimmed yes
 expect flag shard_lantern_dark
-shot 03_offered_again
+shot 04_offered_again
 button Not tonight
 expect raid postponed
 expect dimmed yes
@@ -128,7 +130,11 @@ expect glint 146
 expect dimmed no
 expect noflag shard_lantern_dark
 expect banner The first night
-shot 04_lit_again
+wait 0.6
+shot 05_held_card
+goto 1056 1010 10
+expect dimmed no
+shot 06_lit_again
 
 step Hale says it was the one night, line by line (no `talk` here: each line is read off the box)
 goto 1530 936 10
@@ -136,11 +142,11 @@ expect focus HaleForge
 key E
 wait 2.0
 expect line They broke on my hurdles and your bow. That's the night held.
-shot 05_hale_night_held
+shot 07_hale_night_held
 key E
 wait 3.0
 expect line And that was the one night. They came for this light and they've had their answer. They'll not come for it again.
-shot 06_hale_one_night
+shot 08_hale_one_night
 key E
 wait 0.6
 expect line none

@@ -421,6 +421,9 @@ func test_the_prepare_screen_is_untimed_touch_sized_and_sounds_the_anvil() -> vo
 	screen.open()
 	await get_tree().process_frame
 	assert_bool(screen._later.visible).is_false()
+	# opened again in the same session, the pads' buttons keep their names (the play driver presses them by name)
+	var names := screen.targets().map(func(b: Button) -> String: return String(b.name))
+	assert_array(names).contains(["Pad_pad_halt_street", "Pad_pad_street_mouth", "SoundTheAnvil"])
 	screen._on_ring()
 	assert_str(Raids.state()).is_equal("running")
 	assert_bool(screen.is_open()).is_false()
