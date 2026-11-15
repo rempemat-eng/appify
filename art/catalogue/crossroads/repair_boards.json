@@ -51,7 +51,8 @@
  "reviewed": "2026-11-15",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-15",
+  "note": "Round 2 at 31c26223, sha 05e2f147. B1-B3 closed: straight planks, lit top arris and dark lower one, lit west end grain with a ring mark, nails with a lit texel, shade east and down on the wall. Bar 0.933. detail.cluster_noise 43 % (phases 34-43 %, polish) rejected as structure: the window glass and curtain between the planks, nails and the cast shade. Polish: the vertical scuff and saw marks (top plank x12 and x34, bottom plank x11 and x25) span the plank's height and read as butt joints at 3x; shorten them to 2 texels or turn them along the grain."
  }
 }

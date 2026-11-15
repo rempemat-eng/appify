@@ -21,7 +21,8 @@
  "reviewed": "2026-11-15",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-15",
+  "note": "Round 2 at 31c26223, sha efaafa79. New ground (88c20445) with this picture at foot (653,788) is identical, texel for texel, to the approved ground 7811813e: 0 mismatches over 1411 texels. It is the same cast that passed; hidden with the handcart under not_flags shard_lantern_dark."
  }
 }
