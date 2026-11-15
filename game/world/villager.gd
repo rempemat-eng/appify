@@ -11,6 +11,9 @@ extends CastSprite
 @export var talk_radius := 40.0 * 3.0       ## world px times DENSITY
 
 var walking := Vector2.ZERO                 ## the direction it is walking in; zero: standing
+## While its Interactable is leaving (world/walk_off.gd): the way it faces when it stands, with its rest
+## clip and never the talk turned to the player (audit 3 of #495). Zero: its facing as it is.
+var heading := Vector2.ZERO
 
 func _ready() -> void:
 	if character == "" or not load_character(character):
@@ -25,6 +28,11 @@ func _process(delta: float) -> void:
 		return
 	if walking != Vector2.ZERO and has_clip("walk"):
 		play_clip("walk", CastSprite.facing_for(walking, facing))
+		advance(delta)
+		return
+	var host := get_parent() as Interactable
+	if host != null and host.leaving:
+		play_clip(_rest_clip(), CastSprite.facing_for(heading, facing))
 		advance(delta)
 		return
 	var player := get_tree().get_first_node_in_group("player") as Node2D
