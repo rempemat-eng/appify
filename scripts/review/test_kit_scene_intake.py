@@ -88,7 +88,9 @@ class RealSource(unittest.TestCase):
     def test_legacy_woodland_and_crossroads_are_byte_unchanged(self):
         expected = {
             'woodland': 'ed0afbaee28e70a10d56c46ffe6cf83c1b6855b29b5f4ae76cc91b57510f5851',
-            'crossroads': '1b38e86c0cacd60a171668465c2316982297dd353db0a5b3d2e8e604a638a577',
+            # #499 (the bell tower) adds cupola_empty/cupola_hung, cupola_shadow, fallen_bell and
+            # fallen_bell_shadow; every changed pixel lies within those pictures (was 1b38e86c...)
+            'crossroads': '68cbf3c7676aa18c2f35271d2319b54bb980244df18d7748a988ec1fa7131cc5',
         }
         for name, digest in expected.items():
             self.assertEqual(hashlib.sha256(SN.composite(SN.load_zone(name)).tobytes()).hexdigest(), digest)
