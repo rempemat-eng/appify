@@ -7,7 +7,9 @@ that loses a calibration fault, or starts flagging clean art, fails here first.
 """
 from __future__ import annotations
 
+import contextlib
 import datetime
+import io
 import json
 import hashlib
 import os
@@ -392,30 +394,37 @@ class Scene(unittest.TestCase):
 
 class DormantQuestWiring(unittest.TestCase):
     """A quest this build can never start (core/quests.gd) cannot leave a player stuck: its unsendable
-    events are advice. A quest that can start keeps every unsendable event as a blocker."""
+    events are advice. A quest that can start keeps every unsendable event as a blocker, and so does a
+    quest whose start names something that exists nowhere (a typo, not content that is waiting)."""
 
     def setUp(self):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         self.game = Path(tmp.name) / 'game'
-        for d in ('data/quests', 'data/dialogue', 'zones/home'):
+        for d in ('data/quests', 'data/dialogue', 'data/plans', 'data/raids', 'zones/home'):
             (self.game / d).mkdir(parents=True)
         self.zones = {'home': 'res://zones/home/home.tscn'}
-        (self.game / 'data/dialogue/home.json').write_text(json.dumps({'elder': {'entries': []}}))
+        # speakers with dialogue, and a zone that is written but not registered: content that is waiting
+        (self.game / 'data/dialogue/home.json').write_text(json.dumps(
+            {k: {'entries': []} for k in ('elder', 'drover', 'hut_warden', 'tam')}))
+        (self.game / 'data/plans/frostline.json').write_text(json.dumps({'id': 'frostline', 'camps': ['fold']}))
         self.home = SimpleNamespace(spawns={'start': (0, 0)}, doors=[], camps=['den'], restores=[], plan={},
                                     talkers=[dict(speaker='elder', pos=(10, 10), key='People/elder')])
         self.enterContext(patch.object(SN, 'GAME', str(self.game)))
         self.enterContext(patch.object(SN, 'load_zone', side_effect=lambda zid: self.home))
+
+    def write(self, rel, data):
+        (self.game / rel).write_text(json.dumps(data))
 
     def quest(self, qid, on, cond=None, steps=(), **more):
         start = {'on': on}
         if cond:
             start['if'] = cond
         q = dict(id=qid, start=start, steps=[{'id': f's{i}', 'on': ev} for i, ev in enumerate(steps)], **more)
-        (self.game / 'data/quests' / f'{qid}.json').write_text(json.dumps(q))
+        self.write(f'data/quests/{qid}.json', q)
 
     def wiring(self):
-        (self.game / 'data/zones.json').write_text(json.dumps(self.zones))
+        self.write('data/zones.json', self.zones)
         return [f for f in SN.check_wiring(['home']) if f.detector == 'logic.wiring' and f.subject != 'home']
 
     def severities(self, fs, qid):
@@ -425,7 +434,7 @@ class DormantQuestWiring(unittest.TestCase):
         self.quest('lost_flock', 'talk:drover', steps=['camp:fold', 'talk:drover'])
         fs = self.wiring()
         self.assertEqual(self.severities(fs, 'lost_flock'), [('polish', 'talk:drover'), ('polish', 'camp:fold')])
-        self.assertIn('no zone places a talk "drover"', fs[0].message)
+        self.assertIn('places a talk "drover"', fs[0].message)
 
     def test_a_missing_speaker_in_a_startable_quest_is_still_a_blocker(self):
         self.quest('errand', 'talk:elder', steps=['talk:drover', 'camp:den'])
@@ -459,26 +468,73 @@ class DormantQuestWiring(unittest.TestCase):
         self.quest('unbuilt', 'talk:elder', {'flags': ['zone_built:frostline']}, rewards={'flags': ['lever_pulled']})
         self.quest('lever', 'talk:elder', {'flags': ['lever_pulled']}, steps=['talk:tam'])
         self.quest('camp', 'talk:elder', {'flags': ['camp_cleared:den']}, steps=['talk:iona'])
+        self.quest('nobody', 'talk:elder', {'flags': ['set_by_noone']}, steps=['talk:mira'])
         fs = self.wiring()
         self.assertEqual(self.severities(fs, 'lever'), [('blocker', 'talk:tam')])
         self.assertEqual(self.severities(fs, 'camp'), [('blocker', 'talk:iona')])
+        self.assertEqual(self.severities(fs, 'nobody'), [('blocker', 'talk:mira')])
 
     def test_a_speaker_named_in_a_zone_that_cannot_be_read_keeps_the_quest_startable(self):
+        # also through a scene the unreadable zone instances, and a restore site's default speaker
         self.zones['lab'] = 'res://zones/lab/lab.tscn'
         (self.game / 'zones/lab').mkdir()
-        (self.game / 'zones/lab/lab.tscn').write_text('speaker_id = "drover"\n')
+        (self.game / 'zones/lab/lab.tscn').write_text('[ext_resource path="res://kit/hut.tscn" id="1"]\n'
+                                                      'speaker_id = "drover"\n')
+        (self.game / 'kit').mkdir()
+        (self.game / 'kit/hut.tscn').write_text('speaker_id = "hut_warden"\nrestore_id = "roof"\n')
         SN.load_zone.side_effect = lambda zid: self.home if zid == 'home' else (_ for _ in ()).throw(
             SN.SceneIntakeError(zid, 'unreadable'))
+        self.write('data/dialogue/more.json', {'restore_roof': {'entries': []}})
         self.quest('lost_flock', 'talk:drover', steps=['camp:fold'])
-        self.assertEqual(self.severities(self.wiring(), 'lost_flock'), [('blocker', 'talk:drover'), ('blocker', 'camp:fold')])
+        self.quest('hut', 'talk:hut_warden', steps=['camp:fold'])
+        self.quest('roof', 'talk:restore_roof', steps=['camp:fold'])
+        fs = self.wiring()
+        self.assertEqual(self.severities(fs, 'lost_flock'), [('blocker', 'talk:drover'), ('blocker', 'camp:fold')])
+        self.assertEqual(self.severities(fs, 'hut'), [('blocker', 'talk:hut_warden'), ('blocker', 'camp:fold')])
+        self.assertEqual(self.severities(fs, 'roof'), [('blocker', 'talk:restore_roof'), ('blocker', 'camp:fold')])
+
+    def test_a_raid_offered_restore_site_sends_its_restore_and_talk(self):
+        # raids.gd offer_restores + raid_night.gd _set_out_offer: a RestoreSite with restore_id = offer.id
+        self.write('data/raids/night.json', {'id': 'night', 'zone': 'home', 'reward': {'offers': {'id': 'bell'}}})
+        self.quest('ring', 'restore:bell', steps=['talk:hut_warden'])
+        self.quest('ask', 'talk:restore_bell', steps=['talk:tam'])
+        fs = self.wiring()
+        self.assertEqual(self.severities(fs, 'ring'), [('blocker', 'talk:hut_warden')])
+        self.assertEqual(self.severities(fs, 'ask'), [('blocker', 'talk:tam')])
+
+    def test_a_room_camp_sends_its_camp_event(self):
+        # camp.gd:70-74 sends camp:<room id> for each room of a placed camp in data/camps.json
+        self.write('data/camps.json', {'den': {'zone': 'home', 'rooms': [{'id': 'den_hall', 'room': 'hall'}]}})
+        self.quest('hall', 'camp:den_hall', steps=['talk:hut_warden'])
+        self.assertEqual(self.severities(self.wiring(), 'hall'), [('blocker', 'talk:hut_warden')])
+
+    def test_a_start_that_names_nothing_that_exists_is_a_typo_and_stays_a_blocker(self):
+        self.quest('typo_talk', 'talk:hael', steps=['talk:drover'])                # no dialogue for "hael"
+        self.quest('typo_camp', 'camp:nowhere_camp', steps=['talk:drover'])       # named nowhere under game/
+        self.quest('typo_zone', 'talk:elder', {'flags': ['zone_built:frostlne']}, steps=['talk:drover'])
+        fs = self.wiring()
+        self.assertEqual(self.severities(fs, 'typo_talk'), [('blocker', 'talk:hael'), ('blocker', 'talk:drover')])
+        self.assertEqual(self.severities(fs, 'typo_camp'), [('blocker', 'camp:nowhere_camp'), ('blocker', 'talk:drover')])
+        self.assertEqual(self.severities(fs, 'typo_zone'), [('blocker', 'talk:drover')])
+
+    def test_a_missing_quest_reference_is_a_fault_not_a_reason(self):
+        self.quest('home_again', 'talk:elder')
+        self.quest('next', 'talk:elder', {'done': ['home_agian']}, steps=['talk:drover'])
+        fs = self.wiring()
+        mine = [f for f in fs if f.subject == 'next']
+        self.assertEqual([(f.severity, f.message.split('"')[1]) for f in mine],
+                         [('fault', 'home_agian'), ('blocker', 'talk:drover')])
+        self.assertNotIn('dormant', mine[1].extra)
 
     def test_the_same_event_twice_in_one_quest_is_one_finding(self):
         self.quest('errand', 'talk:elder', steps=['talk:drover', 'camp:den', 'talk:drover'])
         self.assertEqual(self.severities(self.wiring(), 'errand'), [('blocker', 'talk:drover')])
 
-    def test_a_wiring_finding_is_counted_once_in_the_report(self):
-        wire = core.Finding('logic.wiring', 'blocker', (0, 0, 1, 1), 'quest q: event "talk:x" can never be sent', 'fix',
-                            subject='q')
+    def test_wiring_without_a_place_is_counted_once_and_located_wiring_stays_boxed(self):
+        wire = core.Finding('logic.wiring', 'blocker', SN.PLACEHOLDER_BOX, 'quest q: event "talk:x" can never be sent',
+                            'fix', subject='q')
+        door = core.Finding('logic.wiring', 'blocker', (20, 20, 60, 60), 'home: door gate sends the player nowhere', 'fix',
+                            subject='gate')
         other = core.Finding('logic.occlusion', 'fault', (1, 1, 3, 3), 'sorts wrong', 'fix')
         zone = SimpleNamespace(size=(8, 8), sprites=[], spawns={'start': (1, 1)}, doors=[])
         seen = {}
@@ -487,18 +543,23 @@ class DormantQuestWiring(unittest.TestCase):
             seen['extra'] = list(extra or [])
             return dict(picture=name, findings=[f.to_json() for f in extra or []], grid=[])
 
+        printed = io.StringIO()
         with tempfile.TemporaryDirectory() as out, \
                 patch.object(R.SN, 'load_zone', return_value=zone), \
-                patch.object(R.SN, 'review_zone', return_value={'findings': [wire, other]}), \
+                patch.object(R.SN, 'review_zone', return_value={'findings': [wire, door, other]}), \
                 patch.object(R.SN, 'composite', return_value=np.zeros((8, 8, 4), np.uint8)), \
                 patch.object(R, 'review_picture', side_effect=picture), \
                 patch.object(R, '_kit_plan', return_value=None), \
-                patch('sys.stdout'):
+                contextlib.redirect_stdout(printed):
             self.assertEqual(R.main(['woodland', '--no-render', '--out', out]), 1)
             report = json.load(open(os.path.join(out, 'report.json')))
-        self.assertEqual([f.detector for f in seen['extra']], ['logic.occlusion'])
-        self.assertEqual([f['detector'] for f in report['scene']['findings']], ['logic.wiring', 'logic.occlusion'])
-        self.assertEqual(report['counts'], {'blocker': 1, 'fault': 2, 'polish': 0})
+        self.assertEqual([f.subject for f in seen['extra']], ['gate', ''])
+        self.assertEqual([f['subject'] for f in report['scene']['findings']], ['q', 'gate', ''])
+        # occurrences: the placeholder once; the door and the occlusion in the scene and on the composite
+        self.assertEqual(report['counts'], {'blocker': 3, 'fault': 2, 'polish': 0})
+        text = printed.getvalue()
+        self.assertIn('[scene #1] blocker logic.wiring', text)
+        self.assertIn('event "talk:x" can never be sent', text)
 
 
 class Gate(unittest.TestCase):

@@ -991,10 +991,39 @@ CODE_FLAG_PREFIXES = ('camp_cleared:', 'visited:', 'seen:')
 CODE_FLAG_SUFFIXES = ('_announced', '_postponed')
 ZONE_BUILT = 'zone_built:'        # core/quests.gd has_flag: holds while the zone is in data/zones.json
 QUEST_REFS = ('done', 'active', 'started')     # core/quests.gd check(): each needs that quest started
+PLACEHOLDER_BOX = (0, 0, 1, 1)    # a wiring finding about the build, not a place in a zone
+_TEXT_EXT = ('.gd', '.json', '.tscn', '.tres', '.cfg')
 
 
 def _quoted_in(arg: str, texts) -> bool:
     return any(f'"{arg}"' in t for t in texts)
+
+
+def _game_text(cache: dict, with_dialogue: bool) -> str:
+    """Every text file under game/ but data/quests/, test/ and .godot/ (and, unless `with_dialogue`,
+    data/dialogue/), joined. A file that cannot be read is replaced by a marker that matches anything."""
+    key = 'all' if with_dialogue else 'setters'
+    if key not in cache:
+        skip = {os.path.join(GAME, 'data', 'quests'), os.path.join(GAME, 'test'), os.path.join(GAME, '.godot')}
+        if not with_dialogue:
+            skip.add(os.path.join(GAME, 'data', 'dialogue'))
+        texts, blind = [], False
+        for root, dirs, files in os.walk(GAME):
+            dirs[:] = sorted(d for d in dirs if os.path.join(root, d) not in skip)
+            for f in sorted(files):
+                if f.endswith(_TEXT_EXT):
+                    try:
+                        with open(os.path.join(root, f), encoding='utf-8', errors='replace') as h:
+                            texts.append(h.read())
+                    except OSError:
+                        blind = True
+        cache[key] = (None if blind else '\n'.join(texts))
+    return cache[key]
+
+
+def _mentioned(word: str, text) -> bool:
+    """`word` as a whole id in `text` (None: some file could not be read, so it may be anywhere)."""
+    return text is None or re.search(r'(?<![\w])' + re.escape(word) + r'(?![\w])', text) is not None
 
 
 def _flag_set_outside_quests(flag: str, cache: dict) -> bool:
@@ -1003,58 +1032,84 @@ def _flag_set_outside_quests(flag: str, cache: dict) -> bool:
     reads conditions) and test/. Conservative: a mention that only reads the flag still counts."""
     if flag.startswith(CODE_FLAG_PREFIXES) or flag.endswith(CODE_FLAG_SUFFIXES):
         return True
-    if 'texts' not in cache:
-        texts = []
-        skip = {os.path.join(GAME, 'data', 'quests'), os.path.join(GAME, 'data', 'dialogue'), os.path.join(GAME, 'test'),
-                os.path.join(GAME, '.godot')}
-        for root, dirs, files in os.walk(GAME):
-            dirs[:] = [d for d in dirs if os.path.join(root, d) not in skip]
-            for f in files:
-                if f.endswith(('.gd', '.json', '.tscn', '.tres', '.cfg')):
-                    try:
-                        with open(os.path.join(root, f), encoding='utf-8', errors='replace') as h:
-                            texts.append(h.read())
-                    except OSError:
-                        texts.append(flag)    # unreadable: assume it may set the flag
-        cache['texts'] = texts
-    return any(flag in t for t in cache['texts'])
+    text = _game_text(cache, with_dialogue=False)
+    return text is None or flag in text
 
 
-def dormant_quests(quests: dict, zones: dict, speakers: set, camps: set, restores: set, restore_text: str,
-                   unreadable_texts: list) -> dict:
+def quest_refs(q: dict) -> list:
+    """(where, quest id) for every quest a quest's conditions name (start `if`, step `if`/`done_if`)."""
+    conds = [('start', (q.get('start') or {}).get('if'))]
+    for st in q.get('steps', []):
+        conds += [(f'step {st.get("id", "?")}', st.get('if')), (f'step {st.get("id", "?")}', st.get('done_if'))]
+    out = []
+    for where, cond in conds:
+        if not isinstance(cond, dict):
+            continue
+        for k in QUEST_REFS + ('not_started',):
+            out += [(where, r) for r in cond.get(k, []) if isinstance(r, str)]
+        for k in ('step', 'past', 'not_past'):
+            if isinstance(cond.get(k), list) and cond[k]:
+                out.append((where, cond[k][0]))
+    return out
+
+
+@dataclass
+class EventSources:
+    """What can send each quest event in this build (core/quests.gd's notify callers)."""
+    zones: dict                   # data/zones.json: enter:<zone> (zones.gd:103), zone_built:<zone>
+    speakers: set                 # talk:<speaker>: placed speaker_ids (interactable.gd, rest_spot.gd) and
+                                  # restore_<id> for every restore site (restore_site.gd:15-16)
+    camps: set                    # camp:<id>: placed camp_ids and their room camps (camp.gd:70-74, data/camps.json)
+    restores: set                 # restore:<id>: placed restore sites and raid offers (raids.gd:356-370,
+                                  # raid_night.gd:438-452)
+    dialogue: set                 # speakers with a dialogue entry
+    unreadable_texts: list | None = None   # the text of zones that cannot be read; None: some of it is unreadable
+
+    def sends(self, ev: str) -> bool:
+        kind, _, arg = ev.partition(':')
+        if kind == 'talk':
+            return arg in self.speakers
+        if kind == 'camp':
+            return arg in self.camps
+        if kind == 'restore':
+            return arg in self.restores
+        if kind == 'enter':
+            return arg in self.zones
+        return True
+
+    def maybe_in_unreadable(self, ev: str) -> bool:
+        kind, _, arg = ev.partition(':')
+        if kind not in ('talk', 'camp', 'restore') or self.unreadable_texts is None:
+            return kind in ('talk', 'camp', 'restore')
+        names = [arg] + ([arg[len('restore_'):]] if kind == 'talk' and arg.startswith('restore_') else [])
+        return any(_quoted_in(n, self.unreadable_texts) for n in names)
+
+
+def dormant_quests(quests: dict, src: EventSources, cache: dict | None = None) -> dict:
     """{quest id: why it cannot start in this build} for every quest the game can never start,
     mirroring core/quests.gd: a quest starts only in notify() (quests.gd:226-231), when its start
     `on` event arrives and its start `if` holds (check(), quests.gd:149-186). So it is dormant when
 
-      - its start event can never be sent: a talk to a speaker no zone places (interactable.gd,
-        rest_spot.gd, restore_site.gd's default "restore_<id>"), a camp or restore site no zone has,
-        or an enter of a zone not in data/zones.json (zones.gd:103);
-      - its start condition asks for "zone_built:<zone>" and the zone is not in data/zones.json
-        (has_flag, quests.gd:145-150);
+      - its start event can never be sent (EventSources.sends) and what it waits for is real content:
+        a talk to a speaker with a dialogue entry, or a camp, restore site or zone whose id appears
+        somewhere under game/ outside the quest files and tests. A name found nowhere is a typo, and
+        the quest stays startable (its events stay blockers);
+      - its start condition asks for "zone_built:<zone>", the zone is not in data/zones.json
+        (has_flag, quests.gd:145-150) and the zone appears somewhere under game/ (not a typo);
       - its start condition needs another quest done, active or started (done/active/started, and the
-        quest named by step/past) and that quest is dormant or does not exist;
+        quest named by step/past) and that quest is dormant (a quest that does not exist is a fault of
+        its own, quest_refs, never a reason);
       - its start condition needs a flag that nothing outside the quest files may set and that only
-        dormant quests set (step set_flags, rewards flags, next_visit_flags).
+        dormant quests set (step set_flags, rewards flags, next_visit_flags; at least one).
 
     Anything this cannot decide counts as startable: no start event, an unknown event kind, an event
-    whose name appears in a zone that cannot be read (`unreadable_texts`, its files' text; None when a
-    file of one cannot be opened, so any talk, camp or restore may be there), any other condition
-    (glint, restores, not_*)."""
-    def fires(ev):
-        kind, _, arg = ev.partition(':')
+    whose name appears in a zone that cannot be read, any other condition (glint, restores, not_*)."""
+    cache = {} if cache is None else cache
+
+    def waiting(kind, arg):
         if kind == 'talk':
-            ok = arg in speakers or arg in {'restore_' + r for r in restores}
-        elif kind == 'camp':
-            ok = arg in camps
-        elif kind == 'restore':
-            ok = arg in restore_text or arg in restores
-        elif kind == 'enter':
-            return arg in zones, f'it starts on "{ev}" and {arg} is not in data/zones.json'
-        else:
-            return True, ''
-        if not ok and (unreadable_texts is None or _quoted_in(arg, unreadable_texts)):
-            ok = True
-        return ok, f'it starts on "{ev}" and no zone places a {kind} "{arg}"'
+            return arg in src.dialogue
+        return _mentioned(arg, _game_text(cache, with_dialogue=True))
 
     setters = {}
     for qid, q in quests.items():
@@ -1063,19 +1118,20 @@ def dormant_quests(quests: dict, zones: dict, speakers: set, camps: set, restore
             fl += list(s.get('set_flags', []))
         for f in fl:
             setters.setdefault(f, set()).add(qid)
-    cache = {}
     why = {}
     for qid, q in quests.items():
         start = q.get('start') or {}
         reasons = []
         ev = start.get('on')
-        if ev:
-            ok, reason = fires(ev)
-            if not ok:
-                reasons.append(reason)
+        if ev and not src.sends(ev) and not src.maybe_in_unreadable(ev):
+            kind, _, arg = ev.partition(':')
+            if waiting(kind, arg):
+                reasons.append(f'it starts on "{ev}" and no zone in this build '
+                               + (f'has {arg} in data/zones.json' if kind == 'enter' else f'places a {kind} "{arg}"'))
         for f in (start.get('if') or {}).get('flags', []):
-            if f.startswith(ZONE_BUILT) and f[len(ZONE_BUILT):] not in zones:
-                reasons.append(f'its start needs "{f}" and {f[len(ZONE_BUILT):]} is not in data/zones.json')
+            z = f[len(ZONE_BUILT):]
+            if f.startswith(ZONE_BUILT) and z not in src.zones and waiting('zone', z):
+                reasons.append(f'its start needs "{f}" and {z} is not in data/zones.json')
         if reasons:
             why[qid] = '; '.join(reasons)
     # chains: iterate until nothing more becomes dormant (the least set the game can start)
@@ -1090,27 +1146,70 @@ def dormant_quests(quests: dict, zones: dict, speakers: set, camps: set, restore
             for k in ('step', 'past'):
                 if isinstance(cond.get(k), list) and cond[k]:
                     refs.append(cond[k][0])
-            reason = None
-            for r in refs:
-                if r not in quests:
-                    reason = f'its start needs quest {r}, which does not exist'
-                elif r in why:
-                    reason = f'its start needs quest {r}, which cannot start ({why[r]})'
-                if reason:
-                    break
+            reason = next((f'its start needs quest {r}, which cannot start ({why[r]})' for r in refs if r in why), None)
             if reason is None:
                 for f in cond.get('flags', []):
                     if f.startswith(ZONE_BUILT) or _flag_set_outside_quests(f, cache):
                         continue
                     by = setters.get(f, set())
-                    if all(s in why for s in by):
-                        reason = (f'its start needs flag "{f}", set only by '
-                                  + (', '.join(sorted(by)) + ', which cannot start' if by else 'nothing'))
+                    if by and all(s in why for s in by):
+                        reason = f'its start needs flag "{f}", set only by {", ".join(sorted(by))}, which cannot start'
                         break
             if reason:
                 why[qid] = reason
                 changed = True
     return why
+
+
+def _zone_texts(zones: dict, zid: str) -> tuple[list, bool]:
+    """The text of a zone that cannot be read: its folder, the scenes it instances (followed), its kit
+    plan and its plan. The flag is True when a file of it could not be opened."""
+    texts, blind, seen = [], False, set()
+    todo = glob.glob(os.path.join(os.path.dirname(res_path(str(zones[zid]))), '**', '*'), recursive=True)
+    todo += [os.path.join(GAME, 'kit', 'zones', zid + '.json'), os.path.join(GAME, 'data', 'plans', zid + '.json')]
+    while todo:
+        path = os.path.normpath(todo.pop())
+        if path in seen or not os.path.isfile(path) or not path.endswith(('.tscn', '.json', '.tres')):
+            continue
+        seen.add(path)
+        try:
+            with open(path, encoding='utf-8', errors='replace') as h:
+                text = h.read()
+        except OSError:
+            blind = True              # a file nobody can read might place anything
+            continue
+        texts.append(text)
+        todo += [res_path(m) for m in re.findall(r'path="(res://[^"]+\.(?:tscn|tres))"', text)]
+    return texts, blind
+
+
+def _json_or(path: str, default):
+    try:
+        with open(path) as h:
+            return json.load(h)
+    except (OSError, ValueError):
+        return default
+
+
+def event_sources(zones: dict, loaded: dict, unreadable: dict, dialogue: dict) -> EventSources:
+    camps = {c for z in loaded.values() for c in z.camps}
+    rooms = _json_or(os.path.join(GAME, 'data', 'camps.json'), {})
+    for cid, entry in (rooms.items() if isinstance(rooms, dict) else []):
+        if cid in camps and isinstance(entry, dict):
+            camps |= {r['id'] for r in entry.get('rooms', []) if isinstance(r, dict) and r.get('id')}
+    restores = {r for z in loaded.values() for r in z.restores}
+    for p in sorted(glob.glob(os.path.join(GAME, 'data', 'raids', '*.json'))):
+        raid = _json_or(p, {})
+        offer = (raid.get('reward') or {}).get('offers') if isinstance(raid, dict) else None
+        if isinstance(offer, dict) and offer.get('id') and (not raid.get('zone') or raid['zone'] in zones):
+            restores.add(str(offer['id']))
+    speakers = {t['speaker'] for z in loaded.values() for t in z.talkers} | {'restore_' + r for r in restores}
+    texts, blind = [], False
+    for zid in unreadable:
+        t, b = _zone_texts(zones, zid)
+        texts += t
+        blind = blind or b
+    return EventSources(zones, speakers, camps, restores, set(dialogue), None if blind else texts)
 
 
 def check_wiring(zone_ids=None) -> list[Finding]:
@@ -1131,13 +1230,11 @@ def check_wiring(zone_ids=None) -> list[Finding]:
     for p in glob.glob(os.path.join(GAME, 'data', 'dialogue', '*.json')):
         dialogue.update(json.load(open(p)))
     fs = []
-    speakers = {t['speaker'] for z in loaded.values() for t in z.talkers}
-    camps = {c for z in loaded.values() for c in z.camps}
     for zid, z in loaded.items():
         if zone_ids and zid not in zone_ids:
             continue
         if 'start' not in z.spawns:
-            fs.append(Finding('logic.wiring', 'blocker', (0, 0, 1, 1), f'{zid}: no spawn named start',
+            fs.append(Finding('logic.wiring', 'blocker', PLACEHOLDER_BOX, f'{zid}: no spawn named start',
                               'add a Marker2D "start" under Spawns', subject=zid))
         for d in z.doors:
             x, y = d['pos']
@@ -1165,57 +1262,43 @@ def check_wiring(zone_ids=None) -> list[Finding]:
                                   'add the speaker to data/dialogue/*.json', subject=t['speaker']))
     quests = {}
     for p in sorted(glob.glob(os.path.join(GAME, 'data', 'quests', '*.json'))):
-        q = json.load(open(p))
-        quests[q.get('id', os.path.basename(p)[:-5])] = q
+        q = _json_or(p, None)
+        if isinstance(q, dict):
+            quests[q.get('id', os.path.basename(p)[:-5])] = q
+    src = event_sources(zones, loaded, unreadable, dialogue)
     # Quests this build can never start (core/quests.gd): their unsendable events cannot leave a player
     # stuck, so they are advice; in a quest that can start they stay blockers.
-    unreadable_texts, blind = [], False
-    for zid in unreadable:
-        paths = glob.glob(os.path.join(os.path.dirname(res_path(str(zones[zid]))), '**', '*'), recursive=True)
-        paths += [os.path.join(GAME, 'kit', 'zones', zid + '.json'), os.path.join(GAME, 'data', 'plans', zid + '.json')]
-        for path in paths:
-            if os.path.isfile(path) and path.endswith(('.tscn', '.json', '.tres')):
-                try:
-                    with open(path, encoding='utf-8', errors='replace') as h:
-                        unreadable_texts.append(h.read())
-                except OSError:
-                    blind = True          # a file nobody can read might place anything
-    restores = {r for z in loaded.values() for r in z.restores}
-    plans_text = ' '.join(json.dumps(z.plan or {}) for z in loaded.values())
-    dormant = dormant_quests(quests, zones, speakers, camps, restores, plans_text, None if blind else unreadable_texts)
+    dormant = dormant_quests(quests, src)
     for qid, q in quests.items():
+        for where, ref in quest_refs(q):
+            if ref not in quests:
+                fs.append(Finding('logic.wiring', 'fault', PLACEHOLDER_BOX,
+                                  f'quest {qid}: its {where} condition names quest "{ref}", which does not exist '
+                                  '(the condition can never hold as written)', 'fix the quest id', subject=qid))
         events = [q.get('start', {}).get('on')] + [s.get('on') for s in q.get('steps', [])]
         seen = set()
         for ev in events:
             if not ev or ev in seen:
                 continue                  # the same event twice in one quest is one finding
             seen.add(ev)
+            if src.sends(ev):
+                continue
             kind, _, arg = ev.partition(':')
-            ok = True
-            if kind == 'talk':
-                ok = arg in speakers
-            elif kind == 'camp':
-                ok = arg in camps
-            elif kind == 'enter':
-                ok = arg in zones
-            elif kind == 'restore':
-                ok = any(arg in json.dumps(z.plan or {}) for z in loaded.values())
-            if not ok:
-                msg = (f'quest {q["id"]}: event "{ev}" can never be sent (no {kind} "{arg}" in any zone'
-                       + (f' that can be read; unreadable: {", ".join(sorted(unreadable))}' if unreadable else '')
-                       + ')')
-                if qid in dormant:
-                    fs.append(Finding('logic.wiring', 'polish', (0, 0, 1, 1),
-                                      msg + f'; the quest cannot start in this build, so no player meets it: '
-                                      f'{dormant[qid]}', 'place the speaker, camp, zone or restore site before the '
-                                      'quest can start, or fix the event name', subject=q['id'],
-                                      extra=dict(dormant=dormant[qid])))
-                else:
-                    fs.append(Finding('logic.wiring', 'blocker', (0, 0, 1, 1), msg,
-                                      'place the speaker, camp, zone or restore site, or fix the event name',
-                                      subject=q['id']))
+            msg = (f'quest {qid}: event "{ev}" can never be sent (no {kind} "{arg}" in any zone'
+                   + (f' that can be read; unreadable: {", ".join(sorted(unreadable))}' if unreadable else '')
+                   + ')')
+            if qid in dormant:
+                fs.append(Finding('logic.wiring', 'polish', PLACEHOLDER_BOX,
+                                  msg + f'; the quest cannot start in this build, so no player meets it: '
+                                  f'{dormant[qid]}', 'place the speaker, camp, zone or restore site before the '
+                                  'quest can start, or fix the event name', subject=qid,
+                                  extra=dict(dormant=dormant[qid])))
+            else:
+                fs.append(Finding('logic.wiring', 'blocker', PLACEHOLDER_BOX, msg,
+                                  'place the speaker, camp, zone or restore site, or fix the event name',
+                                  subject=qid))
     for zid, err in sorted(unreadable.items()):
-        fs.append(Finding('logic.wiring', 'polish', (0, 0, 1, 1),
+        fs.append(Finding('logic.wiring', 'polish', PLACEHOLDER_BOX,
                           f'cross-zone wiring left out {zid}, which cannot be read ({err}); its doors, speakers, camps '
                           'and restore sites were not counted', f'review {zid} on its own: it is refused until its '
                           'scene intake passes', subject=zid))

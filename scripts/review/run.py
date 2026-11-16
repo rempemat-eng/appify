@@ -296,9 +296,11 @@ def main(argv=None):
         report['scene'] = dict(zone=zone, size=list(z.size), sprites=len(z.sprites), spawns=list(z.spawns),
                                doors=[{k: d[k] for k in ('name', 'zone', 'spawn')} for d in z.doors],
                                findings=[f.to_json() for f in res['findings']])
-        # Wiring is about the whole build (doors, quests across zones), not a place in the picture: it is
-        # reported once, in the scene findings, and not again on the zone composite.
-        drawn = [f for f in res['findings'] if f.detector != 'logic.wiring']
+        # A wiring finding with no place in the zone (a quest event, a zone left out: the placeholder box)
+        # is reported once, in the scene findings. A located one (a door, a speaker) is boxed on the
+        # composite like every other scene finding, and so, like them, is listed in both.
+        drawn = [f for f in res['findings']
+                 if not (f.detector == 'logic.wiring' and tuple(f.box) == SN.PLACEHOLDER_BOX)]
         report['pictures'].append(review_picture(comp, a.H, f'{zone}_zone', out,
                                                  extra=drawn + kit_findings, biome=a.biome))
         if not a.no_render:
@@ -339,6 +341,9 @@ def main(argv=None):
     for p in report['pictures']:
         for i, f in enumerate(p['findings']):
             print(f'  [{p["picture"]} #{i + 1}] {f["severity"]:7s} {f["detector"]:24s} {f["box"]} {f["message"][:110]}')
+    if report['scene']:
+        for i, f in enumerate(report['scene']['findings']):
+            print(f'  [scene #{i + 1}] {f["severity"]:7s} {f["detector"]:24s} {f["box"]} {f["message"][:110]}')
     return 2 if report.get('incomplete') else (1 if counts['blocker'] or counts['fault'] else 0)
 
 
