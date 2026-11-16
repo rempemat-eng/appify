@@ -3,7 +3,7 @@ extends Interactable
 ## A "restore here" mark on a broken building or lot (game-design.md 7.3). Interacting shows the site's
 ## lines (data/dialogue: speaker "restore_<restore_id>", chosen by condition, so the text can say whether
 ## the Glint is there) and then restores it through Village when it can. The "!" shows while a quest
-## waits on "restore:<restore_id>".
+## waits on "restore:<restore_id>", or while a raid's offered restore is offered and unpaid.
 ##
 ## A mark is there once its restore's own condition holds (the plan's `restores[].if`, which Village
 ## also checks before taking the Glint): Crossroads' marks wait for their quest to ask, so nothing is
@@ -37,5 +37,9 @@ func interact() -> void:
 	if could:
 		Village.restore(restore_id)
 
+## The "!" while a quest waits on the restore; and while a raid's offered restore (the bell tower, which
+## no quest of the slice waits on) is offered and unpaid, so its mark can be found.
 func wants_talk() -> bool:
-	return not Village.is_restored(restore_id) and waits_on("restore:" + restore_id)
+	if Village.is_restored(restore_id):
+		return false
+	return waits_on("restore:" + restore_id) or (asked() and Raids.offers(restore_id))

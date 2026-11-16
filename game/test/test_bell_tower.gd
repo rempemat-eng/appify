@@ -87,6 +87,59 @@ func test_its_mark_stands_by_the_library_door_only_after_the_win() -> void:
 	assert_bool(_shown(zone, "Actors/If_bell_tower_site/BellTowerSite")).is_true()
 	assert_object(zone.get_node_or_null("Actors/BellTowerSite")).is_null()
 
+## The "!" the rule drew before 16 Nov: a quest waits on the restore and it is unpaid.
+func _quest_mark(s: RestoreSite) -> bool:
+	return not Village.is_restored(s.restore_id) and s.waits_on("restore:" + s.restore_id)
+
+## Each restore mark in the scene: [drawn (shown and raising its "!"), shown at all].
+func _marks(zone: Node) -> Dictionary:
+	var out := {}
+	for path: String in ["Actors/If_smithy_site/SmithySite", "Actors/If_fern_site/FernSite",
+			"Actors/If_apothecary_site/ApothecarySite", "Actors/If_bell_tower_site/BellTowerSite"]:
+		var s := zone.get_node_or_null(path) as RestoreSite
+		assert_object(s).override_failure_message("the scene has no %s" % path).is_not_null()
+		if s != null:
+			out[s.restore_id] = [s.is_visible_in_tree() and s.wants_talk(), s.is_visible_in_tree()]
+			if s.restore_id != "bell_tower":                            # the other marks keep the quest's rule
+				assert_bool(s.wants_talk()).override_failure_message("%s's !" % s.restore_id) \
+					.is_equal(_quest_mark(s))
+	return out
+
+func test_the_mark_raises_its_marker_while_offered_and_unpaid() -> void:
+	# no quest of the slice waits on restore:bell_tower, so its mark shows the "!" because the night offers
+	# it (Raids.offers); the forge, the Ferns' door and the apothecary keep the quest's rule (logic audit of
+	# #499 at 95ef791e)
+	var zone := _town()
+	var m := _marks(zone)                                           # a new game
+	assert_array(m.bell_tower).is_equal([false, false])
+	assert_array(m.apothecary).is_equal([false, false])
+	for q: String in SLICE:                                         # Home again done, the night not yet won
+		SaveGame.data.quests[q] = {"state": "done", "step": Quests.defs[q].steps.size()}
+	SaveGame.set_flag("shard_home:woodland")
+	SaveGame.data.village.restored = {"forge": 1, "fern_cottage": 1}
+	SaveGame.data.glint = 500
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	m = _marks(Zones.current)
+	assert_array(m.bell_tower).is_equal([false, false])
+	assert_array(m.apothecary).is_equal([false, false])              # not before The torn roof starts
+	SaveGame.data.quests.a1_the_torn_roof = {"state": "active", "step": 0}
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	m = _marks(Zones.current)
+	assert_bool(m.apothecary[1]).is_true()
+	assert_array(m.bell_tower).is_equal([false, false])
+	SaveGame.data.quests.erase("a1_the_torn_roof")
+	_night_won()                                                    # won: the bell's mark raises its "!"
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	zone = Zones.current
+	m = _marks(zone)
+	assert_array(m.bell_tower).is_equal([true, true])
+	assert_array(m.apothecary).is_equal([false, false])
+	var site := zone.get_node("Actors/If_bell_tower_site/BellTowerSite") as RestoreSite
+	await site.interact()                                           # paid: the mark and its "!" are gone
+	assert_bool(Village.is_restored("bell_tower")).is_true()
+	m = _marks(zone)
+	assert_array(m.bell_tower).is_equal([false, false])
+
 func test_the_win_tells_the_zone_at_once() -> void:
 	# Raids.win() reports its reward flags as Village.changed, so a Conditional or a restore mark waiting on
 	# first_night_won refreshes there and then, not on the next load (review of #499, round 1)

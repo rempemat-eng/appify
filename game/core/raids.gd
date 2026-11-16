@@ -376,6 +376,15 @@ func offer_restores() -> void:
 		site.offered_by = id
 		Village.sites[offer.id] = site
 
+## True when a raid's reward offers the restore `restore_id` (the first night's bell tower). Its
+## mark shows the "!" while it is offered and unpaid, though no quest of the slice waits on it
+## (world/restore_site.gd).
+func offers(restore_id: String) -> bool:
+	for id: String in defs:
+		if String(defs[id].get("reward", {}).get("offers", {}).get("id", "")) == restore_id:
+			return true
+	return false
+
 ## The HUD's tracker line while the night runs ("" otherwise).
 func tracker_text() -> String:
 	if not running():

@@ -97,6 +97,7 @@ expect raid won
 expect flag first_night_won
 expect glint 146
 expect shown Actors/If_bell_tower_site/BellTowerSite yes
+expect marker Actors/If_bell_tower_site/BellTowerSite yes
 expect defences 0
 expect lantern gone
 expect dimmed no
@@ -171,6 +172,7 @@ expect shown Props/If_cupola_hung/CupolaHung yes
 expect shown Props/If_cupola_empty/CupolaEmpty no
 expect shown Props/If_fallen_bell/FallenBell no
 expect prompt none
+expect marker Actors/If_bell_tower_site/BellTowerSite no
 expect hud The Col Path is still buried
 shot 07_bell_hung
 restart
