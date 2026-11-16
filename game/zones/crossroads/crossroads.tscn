@@ -329,6 +329,8 @@ shape = SubResource("s6")
 collision_mask = 0
 metadata/impact_face = 90
 metadata/impact_material = "timber"
+metadata/impact_stone_below = 11
+metadata/impact_no_stick = [Rect2(-89, 54, 33, 36), Rect2(55, 54, 33, 36)]
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_hut"]
 position = Vector2(960, 132)
@@ -347,6 +349,9 @@ shape = SubResource("s8")
 collision_mask = 0
 metadata/impact_face = 110
 metadata/impact_material = "timber"
+metadata/impact_stone_below = 63
+metadata/impact_no_stick = [Rect2(-61, 52, 37, 40), Rect2(11, 52, 37, 40)]
+metadata/impact_timber = [Rect2(-140, 0, 62, 84), Rect2(37, 0, 69, 84)]
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_north_cottages"]
 position = Vector2(1176, 540)
@@ -383,6 +388,9 @@ shape = SubResource("s10")
 collision_mask = 0
 metadata/impact_face = 110
 metadata/impact_material = "timber"
+metadata/impact_stone_below = 63
+metadata/impact_no_stick = [Rect2(13, 54, 33, 36)]
+metadata/impact_timber = [Rect2(-92, 0, 67, 85)]
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_fern_cottage"]
 position = Vector2(1476, 1176)
