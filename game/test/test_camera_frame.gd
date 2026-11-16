@@ -120,3 +120,31 @@ func test_the_camera_keeps_the_player_in_view_after_the_window_is_resized() -> v
 	assert_vector(Vector2(manager.screen_size)).is_equal(Screen.ART)
 	manager.screen_size = was if was != Vector2i(3024, 1964) else Vector2i(Screen.ART)
 	Zones.current = null
+
+func test_the_real_main_scene_keeps_the_player_in_the_picture_after_a_real_resize() -> void:
+	# after the auditor's reproduction on #506: the real main.tscn and a real resize of the root window to a
+	# Retina 16:10 size; it failed on the base (the player off the picture) and passes with the pin
+	SaveGame.reset()
+	var root := get_tree().root
+	var was_size := root.size
+	var main: Node = auto_free(load("res://main.tscn").instantiate())
+	add_child(main)
+	await get_tree().process_frame
+	var manager := root.get_node("PhantomCameraManager")
+	root.size = Vector2i(3024, 1964)
+	root.size_changed.emit()
+	await get_tree().process_frame
+	assert_vector(Vector2(manager.screen_size)).is_equal(Vector2(960, 540))
+	var g: Node = main.get_node("Screen/World/Game")
+	Zones.go_to("woodland", "start")
+	for spot: Vector2 in [Vector2(505, 1660), Vector2(910, 735), Vector2(130, 1150), Vector2(410, 160)]:
+		g.player.global_position = spot
+		for i in 90:
+			await get_tree().physics_frame
+		var on: Vector2 = g.player.get_global_transform_with_canvas().origin
+		assert_bool(Rect2(Vector2.ZERO, Vector2(960, 540)).grow(-24.0).has_point(on)).override_failure_message(
+			"the player at %s is at %s on the picture" % [spot, on]).is_true()
+	root.size = was_size
+	root.size_changed.emit()
+	manager.screen_size = Vector2i(960, 540)
+	Zones.current = null

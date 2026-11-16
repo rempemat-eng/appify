@@ -3,7 +3,8 @@
 # after the first resize, so the camera stopped short of the zone's ends and the player walked out of the
 # picture. Here the picture stays centred in the window at every size, in both pixel scales, the player
 # stays in it at the woodland's four sides and through a door, and the mouse still aims where it points.
-# The Xvfb screen of the runner is 960 x 540; a window may be bigger than it. Commands: tools/play_driver.gd.
+# The runner's Xvfb screen is 1920 x 1200 (tools/playtest.sh), bigger than every window here, so the
+# warped pointer is never held at its edge. Commands: tools/play_driver.gd.
 
 step a 1440 x 900 window (a 16:10 laptop): the top of the woodland
 wait 1.0
