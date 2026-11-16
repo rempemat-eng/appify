@@ -5970,4 +5970,11 @@ PROPS_HD = {
     # the shard lantern (13 Nov): the housing that holds the shards, no longer a street lamp
     'lantern': lambda w, h, s: p_shard_lantern(w, h, s, lit=False),
     'lantern_lit': lambda w, h, s: p_shard_lantern(w, h, s, lit=True),
+    # the library's bell where the storm threw it, until the bell tower is restored (belfry.py)
+    'bell': lambda w, h, s: _belfry().bell_fallen(w, h, s, hd=True),
 }
+
+
+def _belfry():
+    from . import belfry
+    return belfry
