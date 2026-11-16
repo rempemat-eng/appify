@@ -115,7 +115,7 @@ line and a gate onto the path crossing its run.
 | `crossroads_debris_b` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_debris_c` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
 | `crossroads_debris_d` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |
-| `crossroads_fallen_bell` | aftermath | clutter | - | on route; on water | **fine** | The library's bell where the storm threw it, below its door, until the bell tower is restored (its condition). |
+| `crossroads_fallen_bell` | aftermath | clutter | - | on route; on water | **fine** | The library's bell where the storm threw it, on its side under the library's east window, until the bell tower is restored (its condition). |
 | `crossroads_fence` | contain | boundary | - | on route; on water | **fixed** | Retired (3 Nov): one straight post-and-rail segment could not close an enclosure. Replaced by the modular fence cells `fence_wattle_*` and `fence_picket_*` (scripts/art/kit/fences.py): straights, corners, Ts, a cross, end posts and a gate three cells wide, which close loops (enclosures.py). |
 | `crossroads_fern_cottage` | live | house | - | on route; on water | **fine** | A cottage on a lane. |
 | `crossroads_fern_rubble` | aftermath | clutter | - | on water | **fine** | Storm debris: only in the broken stage, under its condition (rules.stage_debris); clears as the village is restored. |

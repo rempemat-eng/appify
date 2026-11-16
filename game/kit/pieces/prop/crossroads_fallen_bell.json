@@ -6,15 +6,15 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "fallen_bell",
    "weight": 1.0,
    "png": "res://zones/crossroads/art/fallen_bell.png",
    "foot": [
-    25,
-    36
+    19,
+    35
    ]
   }
  ],
@@ -27,11 +27,11 @@
  },
  "geometry": {
   "size_px": [
-   49,
-   37
+   38,
+   35
   ],
   "size_cells": [
-   3,
+   2,
    2
   ],
   "z_sort": "foot",
@@ -45,8 +45,8 @@
    "shape": "rect"
   },
   "foot": [
-   25,
-   36
+   19,
+   35
   ],
   "footprint": [
    [

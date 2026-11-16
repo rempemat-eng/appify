@@ -4596,8 +4596,8 @@
   ],
   "deck": null,
   "foot": [
-   25,
-   36
+   19,
+   35
   ],
   "footprint": [
    [
@@ -4627,7 +4627,7 @@
   "role": "clutter",
   "shadow": null,
   "size_cells": [
-   3,
+   2,
    2
   ],
   "snap": "cell",
@@ -4644,8 +4644,8 @@
   "variants": {
    "fallen_bell": {
     "foot": [
-     25,
-     36
+     19,
+     35
     ],
     "png": "res://zones/crossroads/art/fallen_bell.png"
    }
