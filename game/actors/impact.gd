@@ -52,9 +52,9 @@ const DUST_LIT := Color("#d6b187")
 const DUST := Color("#c39771")
 const DUST_DARK := Color("#a87c60")
 const SPLINTER := Color("#a87c52")
-## SPLAT tints of the two shots: the toad's seed (earth 4 over its husk) and the Thornback's thorn (sand 3
-## over its plum), both from the shots' own pictures.
-const SEED_TINT: Array[Color] = [Color("#947b60"), Color("#4a3c2c")]
+## SPLAT tints of the two shots: the toad's seed (its pale flesh, grass 5, over its husk) and the Thornback's
+## thorn (sand 3 over its plum), from the shots' own pictures.
+const SEED_TINT: Array[Color] = [Color("#cfcf84"), Color("#4a3c2c")]
 const THORN_TINT: Array[Color] = [Color("#d4b488"), Color("#82204f")]
 
 const CARDINAL: Array[Vector2] = [Vector2(1, 0), Vector2(0, 1), Vector2(-1, 0), Vector2(0, -1)]
@@ -300,9 +300,9 @@ func _draw_streaks(o: Vector2, f: int) -> void:
 ## A puff of dust from the contact, rising and spreading; with `splinters`, two chips of wood flying off.
 func _draw_dust(o: Vector2, f: int, clumps: int, splinters: bool) -> void:
 	var side := dir.orthogonal().normalized()
-	var radius: Array[float] = [2.0, 3.0, 3.0, 2.0]
-	var rise: Array[float] = [0.0, 1.0, 3.0, 5.0]
-	var spread: Array[float] = [2.0, 3.0, 5.0, 6.0]
+	var radius: Array[float] = [3.0, 4.0, 4.0, 3.0]
+	var rise: Array[float] = [0.0, 2.0, 4.0, 6.0]
+	var spread: Array[float] = [3.0, 5.0, 7.0, 8.0]
 	var r := radius[f] if clumps > 2 else radius[f] - 1.0
 	for c in clumps:
 		var across := (float(c) - float(clumps - 1) * 0.5) * spread[f]
@@ -312,10 +312,14 @@ func _draw_dust(o: Vector2, f: int, clumps: int, splinters: bool) -> void:
 		var pts := []
 		var cols := []
 		for s: float in [-1.0, 1.0]:
+			# a chip two texels long, flying back off the face and turning as it goes
 			var away := (-dir + side * s * 1.2 + Vector2(0, -0.5)).normalized()
-			pts.append(o + away * (3.0 + 3.0 * f))
+			var at := o + away * (4.0 + 4.0 * f)
+			pts.append(at)
+			pts.append(at + (away.orthogonal() if f == 1 else away).round())
 			cols.append(SPLINTER)
-		_cells(pts, 2, cols)
+			cols.append(SPLINTER)
+		_cells(pts, 1, cols)
 
 ## A round clump of dust, its upper left lit and its lower right in shade, no outline (dust is soft).
 func _disc(c: Vector2, r: float, a: float) -> void:
@@ -341,23 +345,25 @@ func _draw_splat(o: Vector2, f: int) -> void:
 	var cols := []
 	match f:
 		0:
-			_cells([o], 5, [light])
-			draw_rect(Rect2(o.round() + Vector2(-2, 1), Vector2(5, 1)), dark)
+			var blob := Rect2(o.round() - Vector2(3, 2), Vector2(7, 5))
+			draw_rect(blob.grow(1.0), INK)
+			draw_rect(blob, light)
+			draw_rect(Rect2(blob.position + Vector2(0, 4), Vector2(7, 1)), dark)
 		1:
 			for i in 6:
 				var v := Vector2.RIGHT.rotated(TAU * i / 6.0 + 0.3)
-				pts.append(o + v * 5.0)
+				pts.append(o + v * 7.0)
 				cols.append(_lit(v, light, dark))
-			_cells(pts, 2, cols)
+			_cells(pts, 3, cols)
 		2:
 			for i in 6:
 				var v := Vector2.RIGHT.rotated(TAU * i / 6.0 + 0.3)
-				pts.append(o + v * 8.0 + Vector2(0, 1))
+				pts.append(o + v * 10.0 + Vector2(0, 1))
 				cols.append(_lit(v, light, dark))
-			_cells(pts, 1, cols)
+			_cells(pts, 2, cols)
 		3:
-			for i in 3:
-				var v := Vector2.RIGHT.rotated(TAU * i / 3.0 + 0.8)
-				pts.append(o + v * 10.0 + Vector2(0, 3))
+			for i in 4:
+				var v := Vector2.RIGHT.rotated(TAU * i / 4.0 + 0.8)
+				pts.append(o + v * 12.0 + Vector2(0, 3))
 				cols.append(dark)
 			_cells(pts, 1, cols)
