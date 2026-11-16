@@ -88,8 +88,20 @@ for ROUTE in "${ROUTES[@]}"; do
   fi
   ROUTE=$(cd "$(dirname "$ROUTE")" && pwd)/$(basename "$ROUTE")
   DIR="$OUT/$NAME"
-  rm -rf "$DIR"
-  mkdir -p "$DIR"
+  if [ -e "$DIR" ]; then
+    # Keep prior route evidence before a later attempt writes result/log/pictures.
+    PREVIOUS=1
+    while [ -e "$DIR.previous-$PREVIOUS" ]; do
+      PREVIOUS=$((PREVIOUS + 1))
+    done
+    if ! mv -- "$DIR" "$DIR.previous-$PREVIOUS"; then
+      echo "FAIL $NAME: cannot preserve previous reports at $DIR" >&2
+      FAILED=1
+      continue
+    fi
+    echo "playtest: kept previous reports at $DIR.previous-$PREVIOUS"
+  fi
+  mkdir -p "$DIR" || { FAILED=1; continue; }
   # one profile for the whole route: a restart loads the save the session before it wrote
   PROFILE="$TMP/profile-$NAME"
   mkdir -p "$PROFILE"/{home,data,config,cache}
