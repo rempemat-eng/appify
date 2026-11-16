@@ -247,6 +247,44 @@ func aim_at(world: Vector2) -> void:
 	Input.parse_input_event(e)
 	Input.warp_mouse(screen)
 
+## Combat keeps the same aim ray, but does not click a HUD control under the cursor.
+## Both the ray and the HUD rectangles are on the player's viewport, before the window's pixel scale.
+func _aim_for_fight(world: Vector2) -> bool:
+	var p := player()
+	var origin := p.global_position + Vector2(0, -8 * Player.DENSITY)   # Player._update_aim's origin
+	var ray := world - origin
+	var canvas := p.get_viewport().get_canvas_transform()
+	var h := get_tree().get_first_node_in_group("hud")
+	var rects: Array[Rect2] = []
+	var pending: Array[Node] = []
+	if h != null:
+		pending.append(h)
+	while not pending.is_empty():
+		var node: Node = pending.pop_back()
+		pending.append_array(node.get_children())
+		if node is Control:
+			var control := node as Control
+			if control.is_visible_in_tree() and control.mouse_filter != Control.MOUSE_FILTER_IGNORE \
+					and control.get_viewport() == p.get_viewport():
+				var rect: Rect2 = control.get_global_transform_with_canvas() * Rect2(Vector2.ZERO, control.size)
+				if rect.has_area():
+					rects.append(rect.grow(1.0))
+	var steps := maxi(1, ceili(((canvas * world) - (canvas * origin)).length()))
+	for i in steps:
+		var point := origin + ray * (1.0 - float(i) / float(steps))
+		if i > 0 and point.distance_squared_to(origin) <= 16.0:   # Player ignores mouse aim this close
+			break
+		var at: Vector2 = canvas * point
+		var blocked := false
+		for rect: Rect2 in rects:
+			if rect.has_point(at):
+				blocked = true
+				break
+		if not blocked:
+			aim_at(point)
+			return true
+	return false
+
 func click() -> void:
 	var at := get_viewport().get_mouse_position()
 	for down: bool in [true, false]:
@@ -767,6 +805,9 @@ func defend(limit: float, station := Vector2.INF, fallback := Vector2.INF) -> St
 	var hurt_seen := _hurt
 	_landed_t = now()
 	while now() - start < limit and Raids.running():
+		if get_tree().paused:
+			hold(Vector2.ZERO)
+			return "game paused during fight"
 		if not p.is_inside_tree() or p.is_defeated():
 			hold(Vector2.ZERO)
 			await _sleep(0.2)
@@ -839,7 +880,9 @@ func defend(limit: float, station := Vector2.INF, fallback := Vector2.INF) -> St
 		var point_blank := d <= BESIDE and str(target.get("role")) == "shooter"
 		if point_blank or (d <= 320.0 and not Arrow.walled_off(space, p.global_position, target.global_position)):
 			hold(Vector2.ZERO)
-			aim_at(aim)
+			if not _aim_for_fight(aim):
+				hold(Vector2.ZERO)
+				return "no HUD-clear fight aim"
 			if not p.is_shooting() and not p.is_rolling():
 				await click()
 				shots += 1
@@ -1043,6 +1086,10 @@ func fight(limit: float) -> String:
 	_fight_gap = 1e9
 	_fighting = true
 	while now() - start < limit and SaveGame.data.zone == zone:
+		if get_tree().paused:
+			hold(Vector2.ZERO)
+			_fighting = false
+			return "game paused during fight"
 		if _downs != seen_downs:
 			seen_downs = _downs
 			if _downs - downs0 > MAX_DOWNS:
@@ -1071,9 +1118,17 @@ func fight(limit: float) -> String:
 		if near == null:
 			break
 		if near is Thornback:
-			rolls += await _boss_turn(p, near as Thornback)
+			var boss_rolls := await _boss_turn(p, near as Thornback)
+			if boss_rolls < 0:
+				hold(Vector2.ZERO)
+				_fighting = false
+				return "no HUD-clear fight aim"
+			rolls += boss_rolls
 			continue
-		aim_at(near.global_position + Vector2(0, -24))
+		if not _aim_for_fight(near.global_position + Vector2(0, -24)):
+			hold(Vector2.ZERO)
+			_fighting = false
+			return "no HUD-clear fight aim"
 		var out_of_door := _away_from_doors(p.global_position, _door_rects().filter(
 			func(r: Rect2) -> bool: return r.has_point(p.global_position)))
 		if out_of_door != Vector2.ZERO and not p.is_rolling():
@@ -1131,7 +1186,8 @@ func fight(limit: float) -> String:
 ## One turn of the fight against the Thornback (bosses/thornback.gd), which the general pilot above loses:
 ## it now charges a player who stays close and heals 3 s after the player has left its arena. Rolls across
 ## a charge as it commits or arrives, away from a slam, across a thorn; keeps 170 to 320 texels off and
-## inside the arena (outside it its arrows glance); shoots when it is standing still. Returns the rolls.
+## inside the arena (outside it its arrows glance); shoots when it is standing still. Returns the rolls,
+## or -1 when the unchanged aim ray has no HUD-clear click point.
 func _boss_turn(p: Node2D, b: Thornback) -> int:
 	var st := b.state
 	if st == "windup" and _boss_last != "windup":
@@ -1167,7 +1223,8 @@ func _boss_turn(p: Node2D, b: Thornback) -> int:
 		await _sleep(0.3)
 		hold(Vector2.ZERO)
 		return 1
-	aim_at(b.global_position + Vector2(0, -24))
+	if not _aim_for_fight(b.global_position + Vector2(0, -24)):
+		return -1
 	var move := Vector2.ZERO
 	var safe := arena.grow(-45.0)
 	if arena.size != Vector2.ZERO and (not safe.has_point(p.global_position) or not b.player_in_arena()):
