@@ -6,7 +6,9 @@
 # town, put off twice, then due; the prepare screen (untimed, both pads filled with Hale's hurdles) comes back
 # after a quit; Hale strikes her anvil and three waves come down the halt road and are freed; the purse is
 # paid and Hale says it was the one night. Then the last quest, The torn roof: with the night won and the
-# roof on, the closing card shows (it waits for both). A raid lost is played by first_night_lost.txt.
+# roof on, the closing card shows (it waits for both). Last, the bell tower, which nothing waits on (Matt, 13
+# Nov, decision (d)): the bell's look line names the mark by the library door, 50 Glint hangs the bell in the
+# cupola and takes it out of the street, and a restart keeps it so. A raid lost is played by first_night_lost.txt.
 # Commands: tools/play_driver.gd.
 
 step in the square just after Home again: a load springs nothing
@@ -148,4 +150,32 @@ expect raid won
 expect glint 106
 expect banner none
 expect hud The Col Path is still buried
+
+step after the story rests, the bell tower (optional): the bell's line points to the mark, and paying hangs it
+expect restored forge
+expect notrestored bell_tower
+expect shown Props/If_cupola_empty/CupolaEmpty yes
+expect shown Props/If_cupola_hung/CupolaHung no
+expect shown Props/If_fallen_bell/FallenBell yes
+goto 840 690 10
+talk FallenBell
+expect said The mark by the library door
+goto 744 690 10
+expect prompt Restore
+talk BellTowerSite
+expect said You pay 50 Glint
+expect restored bell_tower
+expect glint 56
+expect shown Props/If_cupola_hung/CupolaHung yes
+expect shown Props/If_cupola_empty/CupolaEmpty no
+expect shown Props/If_fallen_bell/FallenBell no
+expect prompt none
+expect hud The Col Path is still buried
+shot 07_bell_hung
+restart
+expect restored bell_tower
+expect glint 56
+expect shown Props/If_cupola_hung/CupolaHung yes
+expect shown Props/If_fallen_bell/FallenBell no
+expect banner none
 end

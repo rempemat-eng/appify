@@ -349,9 +349,9 @@ func lane(def: Dictionary = {}) -> PackedVector2Array:
 				out.append(Vector2(float(p[0]), float(p[1])))
 	return out
 
-## The restore a won raid offers (the first night: the bell tower for stage 1), in Village.sites while the
-## raid is won in this save and gone again otherwise (a load, a new game). A plan that defines the same
-## restore keeps its own entry. Not offered before the win: the story model (test/story/test_story_model.gd)
+## The restore a won raid offers, in Village.sites while the raid is won in this save and gone again
+## otherwise (a load, a new game). A plan that defines the same restore keeps its own entry: the first
+## night's bell tower is the Crossroads plan's since 16 Nov, so this fallback no longer applies to it. Not offered before the win: the story model (test/story/test_story_model.gd)
 ## asks every site in Village.sites to be payable from every state.
 func offer_restores() -> void:
 	for id: String in defs:

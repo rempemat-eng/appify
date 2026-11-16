@@ -49,6 +49,7 @@ extends Node
 ##       battering (a raider is battering a hurdle) | wave <n> (the night's wave under way, from 1)
 ##       dimmed <yes|no> (the shard lantern's glass stands dark in the zone: a night lost, none held since)
 ##       anvilcall (the sparks of Hale's three blows are at her anvil now)
+##       shown <path> <yes|no> (a node of the zone scene by its path, drawn now or hidden: Props/If_cupola_hung/CupolaHung)
 ##   restart                 close the window as a player would; the runner starts the game again from the
 ##                           save and the route carries on at the next line
 ##   end                     pass (the end of the file passes too)
@@ -529,6 +530,14 @@ func expect(a: PackedStringArray) -> String:
 			return "no raider is battering a hurdle"
 		"wave":
 			return "" if Raids.running() and int(Raids.rec().wave) + 1 == int(a[2]) else "the raid is %s at wave %d" % [Raids.state(), int(Raids.rec().wave) + 1]
+		"shown":
+			# a node of the zone scene by its path (Props/If_cupola_hung/CupolaHung): drawn on screen now or not,
+			# as the player sees it (a Conditional hides what its condition does not hold)
+			var node := Zones.current.get_node_or_null(NodePath(a[2])) as CanvasItem if Zones.current != null else null
+			if node == null:
+				return "the zone has no %s" % a[2]
+			var vis := node.is_visible_in_tree()
+			return "" if vis == (a[3] == "yes") else "%s is %s" % [a[2], "shown" if vis else "hidden"]
 		"repairs":
 			var shown := not get_tree().get_nodes_in_group("raid_repair").filter(func(n: Node) -> bool: return not n.is_queued_for_deletion()).is_empty()
 			return "" if shown == (a[2] == "yes") else "the repairs are %s" % ("shown" if shown else "not shown")
