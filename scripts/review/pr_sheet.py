@@ -452,7 +452,7 @@ def _scene(repo: Path, out: Path, pinned: dict, zone: str, registry: dict,
             raise ReviewError('scene producer exit does not agree with its reported detector counts')
         row.update(status='fail' if expected_code else 'pass', counts=counts,
                    expected_spawns=requested, capture_count=len(expected),
-                   counts_note='Reported occurrences: scene findings also appear in the zone composite; not unique faults.')
+                   counts_note='Reported occurrences: scene findings other than wiring also appear in the zone composite; not unique faults.')
         row['evidence']['preview'] = _relative(out, folder / (expected[0] + '.png'))
         row['evidence']['gate_sheet'] = _relative(out, folder / (expected[0] + '_boxed.png'))
     except (ReviewError, OSError, ValueError, TypeError, Image.DecompressionBombError) as exc:

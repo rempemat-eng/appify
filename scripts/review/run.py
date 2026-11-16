@@ -296,8 +296,11 @@ def main(argv=None):
         report['scene'] = dict(zone=zone, size=list(z.size), sprites=len(z.sprites), spawns=list(z.spawns),
                                doors=[{k: d[k] for k in ('name', 'zone', 'spawn')} for d in z.doors],
                                findings=[f.to_json() for f in res['findings']])
+        # Wiring is about the whole build (doors, quests across zones), not a place in the picture: it is
+        # reported once, in the scene findings, and not again on the zone composite.
+        drawn = [f for f in res['findings'] if f.detector != 'logic.wiring']
         report['pictures'].append(review_picture(comp, a.H, f'{zone}_zone', out,
-                                                 extra=res['findings'] + kit_findings, biome=a.biome))
+                                                 extra=drawn + kit_findings, biome=a.biome))
         if not a.no_render:
             spawns = a.spawn or list(z.spawns)
             try:
