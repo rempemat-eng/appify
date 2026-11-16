@@ -338,6 +338,33 @@ flip_h = true
                 self.flush()
                 self.fails(reason)
 
+    def test_transparent_logic_layer_as_the_editor_saves_it_is_supported_and_nothing_else(self):
+        # The world editor saves Ground/Cells (and Tiers) with self_modulate alpha 0, the value
+        # terrain_ground.gd sets again in _ready; it draws nothing, so the composite is unchanged.
+        before = SN.composite(SN.load_zone('example'))
+        original = self.text
+        cells = '[node name="Cells" type="TileMapLayer" parent="Ground"]'
+        tiers = ('[node name="Tiers" type="TileMapLayer" parent="Ground"]\nself_modulate = Color(1, 1, 1, 0)\n'
+                 'tile_map_data = PackedByteArray()\n[node name="Props"')
+        self.text = original.replace(cells, cells + '\nself_modulate = Color(1, 1, 1, 0)').replace('[node name="Props"', tiers)
+        self.flush()
+        np.testing.assert_array_equal(SN.composite(SN.load_zone('example')), before)
+        for before_text, after_text in [
+            (cells, cells + '\nself_modulate = Color(1, 1, 1, 0.45)'),           # the visible debug overlay
+            (cells, cells + '\nself_modulate = Color(1, 0, 0, 0)'),
+            (cells, cells + '\nmodulate = Color(1, 1, 1, 0)'),                   # modulate reaches children
+            (cells, cells + '\nself_modulate = Color(1, 1, 1, 0)\nmaterial = ExtResource("bake")'),
+            ('[node name="Props" type="Node2D" parent="."]',
+             '[node name="Props" type="Node2D" parent="."]\nself_modulate = Color(1, 1, 1, 0)'),
+            ('[node name="Props" type="Node2D" parent="."]',                    # not a layer of the TerrainGround
+             '[node name="Props" type="Node2D" parent="."]\n[node name="Cells" type="TileMapLayer" parent="Props"]\n'
+             'self_modulate = Color(1, 1, 1, 0)'),
+        ]:
+            with self.subTest(change=after_text):
+                self.text = original.replace(before_text, after_text, 1)
+                self.flush()
+                self.fails('inherited material or modulation')
+
     def test_review_of_a_healthy_zone_runs_while_another_zone_is_incomplete(self):
         # A second registered zone whose intake fails (as brackens_lab's did on d5cc6927).
         broken = self.text.replace('[node name="Cells" type="TileMapLayer" parent="Ground"]',

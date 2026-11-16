@@ -208,6 +208,20 @@ def _transform(props: dict) -> np.ndarray:
     return np.array([[c * sx, -s * sy, x], [s * sx, c * sy, y], [0, 0, 1]], float)
 
 
+def _hidden_logic_layer(n: dict, p: dict | None) -> bool:
+    """A TerrainGround's logical Cells/Tiers TileMapLayer saved fully transparent, as the world editor
+    writes it (addons/world_editor/operations.gd) and as terrain_ground.gd sets it again in _ready
+    (show_cells off, which _kit_ground requires). That self_modulate draws nothing and reaches no
+    child, so the composite is unchanged; any other value or node is still refused."""
+    if n.get('type') != 'TileMapLayer' or n.get('name') not in ('Cells', 'Tiers') or p is None:
+        return False
+    if p['node']['props'].get('script') != ('ExtResource', 'res://world/terrain/terrain_ground.gd'):
+        return False
+    m = re.fullmatch(r'Color\(\s*([-+\d.eE]+)\s*,\s*([-+\d.eE]+)\s*,\s*([-+\d.eE]+)\s*,\s*([-+\d.eE]+)\s*\)',
+                     str(n['props'].get('self_modulate', '')))
+    return bool(m) and tuple(float(v) for v in m.groups()) == (1.0, 1.0, 1.0, 0.0)
+
+
 def _kit_nodes(tscn: dict) -> list[dict]:
     flat, out, state = _expanded(tscn), [], {}
     for draw_order, (key, n) in enumerate(flat.items()):
@@ -216,7 +230,8 @@ def _kit_nodes(tscn: dict) -> list[dict]:
             raise ValueError('missing scene parent at ' + key)
         p = state.get(parent) if key != '.' else None
         props = n['props']
-        if any(k in props for k in ('material', 'modulate', 'self_modulate')):
+        hidden_logic = _hidden_logic_layer(n, p)
+        if any(k in props for k in ('material', 'modulate', 'self_modulate') if not (hidden_logic and k == 'self_modulate')):
             raise ValueError('unsupported inherited material or modulation at ' + key)
         mat = (p['matrix'] if p else np.eye(3)) @ _transform(props)
         pos = tuple(mat[:2, 2])
