@@ -37,10 +37,11 @@ var _dim: ColorRect
 var _panel: PanelContainer
 var _row := float(UiStyle.TOUCH)
 var _paused_away := false               ## open, but standing aside while the game is paused
+var _pause_focus: Control               ## its focused button before the synchronous pause hide
 
 func _ready() -> void:
-	# it watches the pause (`_process`) even where its parent does not run under it
-	process_mode = Node.PROCESS_MODE_ALWAYS
+	# Explicit even under the always-processing Game: pause notifications hide it before another input.
+	process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_to_group("raid_screen")
 	add_to_group(&"pause_screen_layout")
 	visible = false
@@ -121,12 +122,16 @@ func open() -> void:
 	_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
 	if player != null and "input_enabled" in player:
 		player.set("input_enabled", false)
-	_ring.grab_focus.call_deferred()
+	if get_tree().paused:
+		_stand_aside()
+	else:
+		_focus_first.call_deferred()
 
 func close() -> void:
 	if not is_open():
 		return
 	_paused_away = false
+	_pause_focus = null
 	visible = false
 	var f := get_viewport().gui_get_focus_owner() if is_inside_tree() else null
 	if f != null and is_ancestor_of(f):
@@ -138,24 +143,57 @@ func close() -> void:
 func is_open() -> bool:
 	return visible or _paused_away
 
-## While the game is paused the screen stands aside, still open: hidden, so the pause menu is drawn over
-## the world and not under this screen, and none of its buttons can take the focus (Tab), a key or a tap
-## (the audit of #496: it was drawn over the menu, and Tab then Enter sounded the anvil while paused). It
-## comes back as it was on resume; the pause menu hands the focus back to "Sound the anvil".
-func _process(_delta: float) -> void:
-	var paused := get_tree().paused
-	if paused and visible:
-		_paused_away = true
-		visible = false
-	elif not paused and _paused_away:
+## A pause notification is synchronous; polling in the next process step leaves one input frame in
+## which Enter or A can still press the anvil. PAUSABLE also keeps the hidden buttons from processing.
+func _notification(what: int) -> void:
+	if not is_node_ready():
+		return
+	if what == NOTIFICATION_PAUSED:
+		_stand_aside()
+	elif what == NOTIFICATION_UNPAUSED and _paused_away:
 		_paused_away = false
 		visible = true
+		restore_focus.call_deferred()
+
+func _stand_aside() -> void:
+	if not visible:
+		return
+	var had := get_viewport().gui_get_focus_owner()
+	_pause_focus = had if had != null and is_ancestor_of(had) else null
+	_paused_away = true
+	visible = false
+	if is_instance_valid(_pause_focus):
+		_pause_focus.release_focus()
+
+func _focus_first() -> void:
+	if is_inside_tree() and is_visible_in_tree() and not get_tree().paused:
+		_ring.grab_focus()
+
+## The pause menu calls this after releasing its own focus too. Keep another valid focus owner; when
+## nothing owns it, return to the selected raid button, or the first button if none was kept.
+func restore_focus() -> void:
+	if not is_inside_tree() or not is_visible_in_tree() or get_tree().paused:
+		return
+	if get_viewport().gui_get_focus_owner() != null:
+		return
+	var back := _pause_focus
+	_pause_focus = null
+	if not is_instance_valid(back) or not back.is_inside_tree() or not back.is_visible_in_tree() \
+			or not is_ancestor_of(back) or back.focus_mode == Control.FOCUS_NONE:
+		back = _ring
+	if back is BaseButton and (back as BaseButton).disabled:
+		back = _ring
+	back.grab_focus()
 
 func _on_ring() -> void:
+	if get_tree().paused:
+		return
 	if Raids.ring():
 		close()
 
 func _on_later() -> void:
+	if get_tree().paused:
+		return
 	if Raids.postpone():
 		Sound.play(&"ui_cancel")
 		close()
@@ -249,6 +287,8 @@ static func _along(lane: PackedVector2Array, at: Vector2) -> float:
 	return out
 
 func _on_pad(id: String) -> void:
+	if get_tree().paused:
+		return
 	Raids.cycle_pad(id)
 	Sound.play(&"ui_confirm")
 	_refresh()

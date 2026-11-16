@@ -162,6 +162,14 @@
    "seconds": 0.2,
    "what": "the toad's shot leaving"
   },
+  "shot_wall": {
+   "files": [
+    "sfx/shot_wall.wav"
+   ],
+   "tier": "moment",
+   "seconds": 0.16,
+   "what": "a creature's shot breaking on a solid"
+  },
   "enemy_freed": {
    "files": [
     "sfx/enemy_freed.wav"
