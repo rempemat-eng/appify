@@ -280,10 +280,35 @@ func _z(zone: Zone, node: CanvasItem) -> int:
 		k = k.get_parent()
 	return z
 
+## A drawn zone's roof overlays (kit.json objects of kind "cupola": a cupola on its building's ridge, in its
+## states, and its shadow on the roof): sprite name -> its owner building's sprite name. They stand far above
+## their own drawn feet, so they sort by their building's (tools/gen_village.py SORTS_WITH_OWNER).
+func _roof_overlays(id: String) -> Dictionary:
+	var out := {}
+	var path := "res://zones/%s/kit.json" % id
+	if not FileAccess.file_exists(path):
+		return out
+	var kit: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(kit) != TYPE_DICTIONARY:
+		return out
+	for o: Variant in kit.get("objects", []):
+		if typeof(o) == TYPE_DICTIONARY and String(o.get("kind", "")) == "cupola" and o.has("of"):
+			out[String(o.id).to_pascal_case()] = String(o.of).to_pascal_case()
+	return out
+
+func _drawn_feet(s: Sprite2D) -> float:
+	var used := s.texture.get_image().get_used_rect()
+	return s.global_position.y + s.offset.y + used.end.y - (s.texture.get_height() / 2.0 if s.centered else 0.0)
+
 func test_every_sorted_picture_sorts_by_its_drawn_feet() -> void:
 	for id in ZONES:
 		var zone := _enter(id)
 		var checked := 0
+		var roof := _roof_overlays(id)
+		var sprites := {}
+		for n in _all(zone):
+			if n is Sprite2D:
+				sprites[String(n.name)] = n
 		for n in _all(zone):
 			var s := n as Sprite2D
 			if s == null or s.texture == null or s is LoopFx or s.hframes > 1 or _z(zone, s) != 0:
@@ -295,8 +320,17 @@ func test_every_sorted_picture_sorts_by_its_drawn_feet() -> void:
 				continue
 			if String(s.name).ends_with("Damage") or s.get_parent().name == "ThornbackAtRest":
 				continue                    # an overlay sorts one texel in front of its building; the boss asleep is an actor
-			var used := s.texture.get_image().get_used_rect()
-			var feet := s.global_position.y + s.offset.y + used.end.y - (s.texture.get_height() / 2.0 if s.centered else 0.0)
+			if roof.has(String(s.name)):
+				# a roof overlay is exempt from its own feet only because it sorts with its building: held here
+				var owner := sprites.get(roof[String(s.name)]) as Sprite2D
+				assert_object(owner).override_failure_message("%s: no sprite for its building %s" % [_where(s), roof[String(s.name)]]).is_not_null()
+				if owner != null:
+					var bfeet := _drawn_feet(owner)
+					assert_float(absf(item.global_position.y - bfeet)).override_failure_message(
+						"%s: sorts %d px from its building's drawn feet" % [_where(s), item.global_position.y - bfeet]).is_less_equal(3.0)
+				checked += 1
+				continue
+			var feet := _drawn_feet(s)
 			assert_float(absf(item.global_position.y - feet)).override_failure_message(
 				"%s: its y-sort point is %d px from its drawn feet" % [_where(s), item.global_position.y - feet]).is_less_equal(2.0)
 			checked += 1
