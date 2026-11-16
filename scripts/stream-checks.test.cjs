@@ -18,6 +18,11 @@ const {
   FAST_TIMEOUT,
   hostedPins,
   main: cli,
+  keepFailure,
+  processTable,
+  descendants,
+  isOwnRunner,
+  stopOwn,
   globToRegExp,
   workflowPaths,
   hostedRuns,
@@ -150,6 +155,83 @@ async function testRouteFailureVoidsEveryRun(folder) {
     reusableRecord([pass, { ...other, id: 'route:main#3' }], steps[1], 't', 'tools'),
     null,
   );
+}
+
+/** #492: a rerun must not write over the log (or a route's pictures) of a run that failed. */
+async function testFailedLogsAreKept(folder) {
+  const routes = [{ name: 'main', files: [] }];
+  const steps = plan({ changed: [], routes, mode: 'routes', extra: ['main'] });
+  const logs = path.join(folder, 'kept');
+  fs.mkdirSync(logs, { recursive: true });
+  let run = 0;
+  const execute = async (step) => {
+    run++;
+    const log = path.join(logs, `${step.id.replace(/[^a-z0-9_-]+/gi, '-')}.log`);
+    const out = log.slice(0, -4);
+    fs.writeFileSync(log, `run ${run}\n`);
+    fs.mkdirSync(out, { recursive: true });
+    fs.writeFileSync(path.join(out, 'fail.png'), `picture ${run}`);
+    return { exit: run <= 2 ? 1 : 0, seconds: 1, waited: 0, log, out };
+  };
+  const { options, lines } = chain(folder, 'kept', { steps, execute, mode: 'routes' });
+  await runChain(options);
+  await runChain(options);
+  lines.length = 0;
+  assert.equal((await runChain(options)).ok, true);
+  const first = path.join(logs, 'route-main-1');
+  assert.equal(fs.readFileSync(`${first}.fail-1.log`, 'utf8'), 'run 1\n');
+  assert.equal(fs.readFileSync(`${first}.fail-2.log`, 'utf8'), 'run 2\n');
+  assert.equal(fs.readFileSync(path.join(`${first}.fail-2`, 'fail.png'), 'utf8'), 'picture 2');
+  assert.equal(fs.readFileSync(`${first}.log`, 'utf8'), 'run 3\n', 'a pass keeps the plain name');
+  const earlier = lines.filter((line) => line.startsWith('EARLIER'));
+  assert.equal(earlier.length, 2, lines.join('\n'));
+  assert.ok(earlier[0].includes(`${first}.fail-1.log  ${first}.fail-1`), earlier[0]);
+  assert.ok(earlier[1].includes(`${first}.fail-2.log`), earlier[1]);
+  const records = readRecords(options.resultsFile).filter((r) => r.state === 'done' && r.exit);
+  assert.deepEqual(
+    records.map((r) => path.basename(r.log)),
+    ['route-main-1.fail-1.log', 'route-main-1.fail-2.log'],
+  );
+  // a path that does not exist (a step that never started) is left as it is
+  assert.deepEqual(keepFailure({ log: path.join(logs, 'none.log') }), {
+    log: path.join(logs, 'none.log'),
+    out: undefined,
+  });
+}
+
+const quiet = () => {};
+/** #491: --stop ends only the chain this worktree recorded and what it started. */
+function testStopOnlyOwnTree(folder) {
+  const proc = path.join(folder, 'proc');
+  const worktree = path.join(folder, 'tree');
+  const fake = (pid, ppid, argv) => {
+    fs.mkdirSync(path.join(proc, String(pid)), { recursive: true });
+    fs.writeFileSync(path.join(proc, String(pid), 'stat'), `${pid} (a name) with) S ${ppid} 1 1`);
+    fs.writeFileSync(path.join(proc, String(pid), 'cmdline'), `${argv.join('\0')}\0`);
+  };
+  const script = path.join(worktree, 'scripts', 'stream-checks.cjs');
+  fake(10, 1, ['node', script]); // this worktree's runner
+  fake(11, 10, ['flock', 'lock', 'bash']);
+  fake(12, 11, ['godot']);
+  fake(20, 1, ['node', '/elsewhere/scripts/stream-checks.cjs']); // another stream's runner
+  fake(21, 20, ['godot']);
+  assert.deepEqual(descendants(processTable(proc), 10), [12, 11]);
+  assert.ok(isOwnRunner(worktree, 10, proc));
+  assert.equal(isOwnRunner(worktree, 20, proc), false);
+  const killed = [];
+  const kill = (pid) => killed.push(pid);
+  assert.equal(stopOwn(worktree, { proc, kill, log: quiet }), 1, 'no record: nothing stopped');
+  const record = path.join(worktree, '.cache', 'stream-checks', 'runner.pid');
+  fs.mkdirSync(path.dirname(record), { recursive: true });
+  fs.writeFileSync(record, JSON.stringify({ pid: 20 }));
+  assert.equal(stopOwn(worktree, { proc, kill, log: quiet }), 1, 'a pid that is not ours');
+  assert.deepEqual(killed, []);
+  fs.writeFileSync(record, JSON.stringify({ pid: 10 }));
+  assert.equal(stopOwn(worktree, { proc, kill, log: quiet }), 0);
+  assert.deepEqual(killed, [12, 11, 10], 'the step first, the runner last, nothing of pid 20');
+  assert.equal(fs.existsSync(record), false);
+  // the real table has this process under its parent
+  assert.ok(processTable().some((row) => row.pid === process.pid && row.ppid === process.ppid));
 }
 
 /** Audit B3: a rename must show the path it left as well as the one it made. */
@@ -721,6 +803,8 @@ async function main() {
     await testSummaryNamesModeAndNothingSelected(folder);
     await testFastRunsAreLabelledAndKeptApart(folder);
     await testZeroBudgetStartsNothing(folder);
+    await testFailedLogsAreKept(folder);
+    testStopOnlyOwnTree(folder);
   } finally {
     fs.rmSync(folder, { recursive: true, force: true });
   }
@@ -729,7 +813,7 @@ async function main() {
   testArtBytesPreflight();
   await testRepeatMustBeAWholeNumber();
   console.log(
-    'Stream check runner: plans, hosted path filters, verify:game, resumed results, voided route runs, renames, the toolchain key and the fast mode pass.',
+    'Stream check runner: plans, hosted path filters, verify:game, resumed results, voided route runs, renames, the toolchain key, the fast mode, kept failure logs and --stop pass.',
   );
 }
 main().catch((error) => {
