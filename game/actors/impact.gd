@@ -142,25 +142,45 @@ static func body_lift(body: Node, height: float) -> float:
 	return height
 
 ## The drawn face of `body`: {"height": texels from its foot to the top of the face as drawn (0: none),
-## "material": "timber", "earth" or "stone"}. Written by the zone generators as the metas `impact_face` and
-## `impact_material` (tools/gen_blockout.py `solid(face=...)`), or answered by a method `impact_face()`.
+## "material": "timber", "earth" or "stone", "stone_below": the top of a stone plinth under a timber or earth
+## wall (0: none), "no_stick": the windows, Rect2s of (x from the box's centre, lift) where nothing sticks}.
+## Written by the zone generators as the metas `impact_face`, `impact_material`, `impact_stone_below` and
+## `impact_no_stick` (tools/gen_blockout.py `solid(face=...)`), or answered by a method `impact_face()`.
 static func face_of(body: Node) -> Dictionary:
 	if body == null or not is_instance_valid(body):
-		return {"height": 0.0, "material": ""}
+		return {"height": 0.0, "material": "", "stone_below": 0.0, "no_stick": []}
 	if body.has_method("impact_face"):
 		return body.call("impact_face")
-	return {"height": float(body.get_meta("impact_face", 0.0)), "material": String(body.get_meta("impact_material", ""))}
+	return {"height": float(body.get_meta("impact_face", 0.0)), "material": String(body.get_meta("impact_material", "")),
+		"stone_below": float(body.get_meta("impact_stone_below", 0.0)), "no_stick": body.get_meta("impact_no_stick", [])}
 
-## True when a shot whose ground point was at `from` one step before it met `body`, flying `lift` texels up,
-## sticks in it (#509 round 2, F1b): the body has a timber or earth face, the shot crossed the body's south edge
-## (it was south of the box's bottom and within its width; no body declares a side face), and it meets the
-## face at least FACE_TOP below the face's drawn top. Anything else, the shot falls (it is never moved down).
-static func sticks(body: Node, from: Vector2, lift: float) -> bool:
+## What a shot whose ground point was at `from` one step before it met `body`, flying `lift` texels up, does
+## there: "stick" (in a timber or earth face, see below), "stone" (it met stone: a stone face, or the stone
+## plinth under a timber wall, at or below its top), "window" (a window of a timber wall: nothing to stick in)
+## or "drop" (no face, another edge, or above the face's top). Only "stick" leaves the arrow stuck.
+## It sticks only when it crossed the body's south edge (it was south of the box's bottom and within its
+## width; no body declares a side face) and meets the face at least FACE_TOP below the face's drawn top
+## (#509 round 2, F1b); then the plinth and the windows decide (#509 follow-up, 16 Nov).
+static func face_hit(body: Node, from: Vector2, lift: float) -> String:
 	var face := face_of(body)
-	if float(face.height) <= 0.0 or not STICKY.has(String(face.material)) or lift > float(face.height) - FACE_TOP:
-		return false
+	var height := float(face.height)
+	if height <= 0.0:
+		return "drop"
 	var box := box_of(body)
-	return box.size != Vector2.ZERO and from.y > box.end.y and from.x >= box.position.x and from.x <= box.end.x
+	var south := box.size != Vector2.ZERO and from.y > box.end.y and from.x >= box.position.x and from.x <= box.end.x
+	if not south or lift > height - FACE_TOP:
+		return "drop"
+	if not STICKY.has(String(face.material)) or lift <= float(face.stone_below):
+		return "stone"
+	var at := Vector2(from.x - box.get_center().x, lift)
+	for window: Variant in face.no_stick:
+		if window is Rect2 and (window as Rect2).has_point(at):
+			return "window"
+	return "stick"
+
+## True when a shot sticks in `body` (`face_hit` says "stick").
+static func sticks(body: Node, from: Vector2, lift: float) -> bool:
+	return face_hit(body, from, lift) == "stick"
 
 ## The global rectangle of a body's first rectangle shape (unrotated), or an empty Rect2.
 static func box_of(body: Node) -> Rect2:
@@ -211,15 +231,17 @@ static func lifetime_of(what: Kind, still: bool, with_shaft := true) -> float:
 	return burst
 
 ## Holds the world still for HIT_STOP real seconds: the arrow's weight on a hit that counted. Nothing under
-## reduced motion, and nothing while another hold (the melee's) is under way. Returns whether it held.
-static func hit_stop(tree: SceneTree) -> bool:
+## reduced motion, and nothing while another hold (the melee's) is under way. Returns the real-time timer
+## that ends the hold (it counts HIT_STOP and ignores the time scale), or null when it did not hold.
+static func hit_stop(tree: SceneTree) -> SceneTreeTimer:
 	if tree == null or SaveGame.setting("reduced_motion", false) or Engine.time_scale < 1.0:
-		return false
+		return null
 	Engine.time_scale = HOLD_SCALE
 	_hold_token += 1
 	var mine := _hold_token
-	tree.create_timer(HIT_STOP, true, false, true).timeout.connect(func() -> void: release_hold(mine))
-	return true
+	var timer := tree.create_timer(HIT_STOP, true, false, true)
+	timer.timeout.connect(func() -> void: release_hold(mine))
+	return timer
 
 ## The newest arrow hold's token (0 before any).
 static func hold_token() -> int:
