@@ -232,6 +232,56 @@ function readRecords(file) {
   return records;
 }
 const passedRecord = (record) => record.state === 'done' && record.exit === 0;
+const failStem = (file) => (file && file.endsWith('.log') ? file.slice(0, -4) : file);
+const failName = (file, n) =>
+  file && `${failStem(file)}.fail-${n}${file.endsWith('.log') ? '.log' : ''}`;
+/** A failed step's log, and a route's output folder (its log.txt and fail.png), is evidence: move
+ * both to `<name>.fail-<n>` before a rerun of the step writes over them (#492). Returns the paths
+ * they now have; a path that does not exist is returned as it is. */
+function keepFailure({ log, out }) {
+  const there = (file) => Boolean(file) && fs.existsSync(file);
+  let n = 1;
+  while (there(failName(log, n)) || there(failName(out, n))) n++;
+  const keep = (file) => {
+    if (!there(file)) return file;
+    try {
+      fs.renameSync(file, failName(file, n));
+      return failName(file, n);
+    } catch {
+      return file; // the record keeps the path it has: a failure is never lost over a rename
+    }
+  };
+  return { log: keep(log), out: keep(out) };
+}
+/** The kept failure logs and folders under `folder` (two levels: <tree>/<step>.fail-<n>) and
+ * their size in bytes. */
+function keptFailures(folder) {
+  const size = (file) => {
+    try {
+      const stat = fs.statSync(file);
+      if (!stat.isDirectory()) return stat.size;
+      return fs.readdirSync(file).reduce((sum, name) => sum + size(path.join(file, name)), 0);
+    } catch {
+      return 0;
+    }
+  };
+  const kept = [];
+  const look = (dir, depth) => {
+    let names = [];
+    try {
+      names = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of names) {
+      const file = path.join(dir, entry.name);
+      if (/\.fail-\d+(\.log)?$/.test(entry.name)) kept.push(file);
+      else if (entry.isDirectory() && depth > 0) look(file, depth - 1);
+    }
+  };
+  look(folder, 1);
+  return { count: kept.length, bytes: kept.reduce((sum, file) => sum + size(file), 0) };
+}
 /** The record that lets a step be skipped on this tree and toolchain, or null. Only the NEWEST
  * finished record of the step counts, so a pass never outlives a later failure. For a route, a
  * failure of any of its runs voids every run before it: the passes that count come after the last
@@ -330,6 +380,8 @@ async function runChain({
     const got = await execute(step);
     // an edit while a step ran: its result belongs to no tree, and neither would the next one's
     const moved = treeNow() !== tree;
+    const ok = got.exit === 0 && !moved;
+    const kept = ok ? got : keepFailure(got);
     const record = {
       id: step.id,
       tree,
@@ -341,10 +393,10 @@ async function runChain({
       waited: got.waited,
       started,
       finished: new Date(now()).toISOString(),
-      log: got.log,
+      log: kept.log,
+      ...(kept.out ? { out: kept.out } : {}),
     };
     write(record);
-    const ok = got.exit === 0 && !moved;
     const note = moved ? 'the working tree changed during the step: run again' : `exit ${got.exit}`;
     log(
       `[stream-checks] ${label}${ok ? 'PASS' : 'FAIL'} ${step.id} (${got.seconds}s, waited ${got.waited}s)`,
@@ -363,11 +415,11 @@ async function runChain({
       .length;
   for (const row of rows)
     log(
-      `${row.state.padEnd(7)} ${row.id.padEnd(28)} ${(row.seconds === undefined ? '' : `${row.seconds}s`).padStart(6)}  ${row.note || ''}${row.log && row.state === 'FAIL' ? `  ${row.log}` : ''}`,
+      `${row.state.padEnd(7)} ${row.id.padEnd(28)} ${(row.seconds === undefined ? '' : `${row.seconds}s`).padStart(6)}  ${row.note || ''}${row.log && row.state === 'FAIL' ? `  ${row.log}` : ''}${row.out && row.state === 'FAIL' ? `  ${row.out}` : ''}`,
     );
   for (const record of earlier)
     log(
-      `EARLIER ${String(record.id).padEnd(28)} failed on this tree (${record.state === 'moved' ? 'the tree changed during the step' : `exit ${record.exit}`}, finished ${record.finished})${record.log ? `  ${record.log}` : ''}`,
+      `EARLIER ${String(record.id).padEnd(28)} failed on this tree (${record.state === 'moved' ? 'the tree changed during the step' : `exit ${record.exit}`}, finished ${record.finished})${record.log ? `  ${record.log}` : ''}${record.out ? `  ${record.out}` : ''}`,
     );
   const reused = rows.filter((row) => /^(FAST )?reused/.test(row.note || '')).length;
   const fastRows = rows.filter((row) => row.fast).length;
@@ -379,6 +431,11 @@ async function runChain({
   else
     log(
       `stream-checks: ${mode} mode, tree ${tree} head ${head}: ${count('PASS')} passed (${reused} reused), ${count('FAIL')} failed, ${count('NOT RUN')} not run${earlier.length ? `, ${earlier.length} earlier failure${earlier.length === 1 ? '' : 's'} on this tree (listed above)` : ''}`,
+    );
+  const kept = keptFailures(path.dirname(resultsFile));
+  if (kept.count)
+    log(
+      `stream-checks: kept failures (logs and route folders): ${kept.count}, ${(kept.bytes / 1e6).toFixed(1)} MB under ${path.dirname(resultsFile)}`,
     );
   if (fastRows)
     log(
@@ -617,6 +674,7 @@ function executeStep(root, folder, tree) {
         }
         resolve({
           exit,
+          ...(step.kind === 'route' ? { out: env.PLAYTEST_OUT } : {}),
           seconds: Math.round(end - began),
           waited: Math.max(0, Math.round(began - asked / 1000)),
           log: logFile,
@@ -659,10 +717,162 @@ async function verifyGame({ root, changed, run = runProcess, log = console.log }
   return { ok: failed.length === 0, refused: false };
 }
 
+/** Every process on the machine as { pid, ppid, start, state } (Linux /proc; elsewhere an empty
+ * list). `start` is field 22 of /proc/<pid>/stat, the clock tick it started at: with the pid it
+ * names one process, and a pid the system hands out again has another start. */
+function processTable(proc = '/proc') {
+  const table = [];
+  let names = [];
+  try {
+    names = fs.readdirSync(proc).filter((name) => /^\d+$/.test(name));
+  } catch {
+    return table;
+  }
+  for (const name of names) {
+    const row = procStat(proc, Number(name));
+    if (row) table.push(row);
+  }
+  return table;
+}
+/** One process's stat line, or null when it has ended. */
+function procStat(proc, pid) {
+  try {
+    // the command name in brackets may hold spaces: the fields after the last ')' are fixed
+    const stat = fs.readFileSync(path.join(proc, String(pid), 'stat'), 'utf8');
+    const fields = stat.slice(stat.lastIndexOf(')') + 2).split(' '); // fields[0] is field 3
+    return { pid, state: fields[0], ppid: Number(fields[1]), start: fields[19] };
+  } catch {
+    return null;
+  }
+}
+const procArgv = (proc, pid) => {
+  try {
+    return fs.readFileSync(path.join(proc, String(pid), 'cmdline'), 'utf8').split('\0');
+  } catch {
+    return [];
+  }
+};
+/** The processes started from `pid`, each before the one that started it; never `pid` itself. */
+function descendants(table, pid) {
+  const found = [];
+  const walk = (parent) => {
+    for (const row of table)
+      if (row.ppid === parent && !found.includes(row.pid)) {
+        found.push(row.pid);
+        walk(row.pid);
+      }
+  };
+  walk(pid);
+  return found.toReversed();
+}
+/** Where a running chain records its own pid: under this worktree's .cache, so a stop never has
+ * to look for a runner by name (#491: a broad match killed another stream's runner). */
+const pidFile = (root) => path.join(root, '.cache', 'stream-checks', 'runner.pid');
+/** What the runner writes there: its pid, the start of that pid and its working directory. */
+function runnerRecord(pid = process.pid, proc = '/proc') {
+  return { pid, start: procStat(proc, pid)?.start ?? null, cwd: process.cwd() };
+}
+/** Is the recorded process this worktree's runner? The pid must have the recorded start (else the
+ * system gave it to another process since), be a node, and its script argument, resolved against
+ * its own working directory, must be this worktree's script. A relative `scripts/stream-checks.cjs`
+ * (as npm starts it) counts; an editor or `git log` with the path in its argv does not. */
+function isOwnRunner(root, record, proc = '/proc') {
+  const now = procStat(proc, record.pid);
+  if (!now || now.state === 'Z' || !record.start || now.start !== String(record.start))
+    return false;
+  const argv = procArgv(proc, record.pid);
+  let cwd;
+  try {
+    cwd = fs.readlinkSync(path.join(proc, String(record.pid), 'cwd'));
+  } catch {
+    return false;
+  }
+  return (
+    /^node(js)?$/.test(path.basename(argv[0] || '')) &&
+    Boolean(argv[1]) &&
+    path.resolve(cwd, argv[1]) === path.join(root, 'scripts', 'stream-checks.cjs')
+  );
+}
+const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+/** `npm run stream:checks -- --stop`: end this worktree's running chain and only the processes
+ * it started (the step, its lock wait, its Godot and Xvfb). Nothing found by name is touched.
+ * SIGTERM first; after up to `grace` ms, SIGKILL to the ones of that first list still alive. */
+async function stopOwn(
+  root,
+  {
+    proc = '/proc',
+    kill = process.kill,
+    log = console.log,
+    grace = 10_000,
+    sleep = pause,
+    now = Date.now,
+  } = {},
+) {
+  let record = null;
+  try {
+    record = JSON.parse(fs.readFileSync(pidFile(root), 'utf8'));
+  } catch {
+    /* no record */
+  }
+  if (!record || !Number.isInteger(record.pid)) {
+    log(`stream-checks: no running chain recorded for ${root}; nothing stopped`);
+    return 1;
+  }
+  if (!isOwnRunner(root, record, proc)) {
+    log(
+      `stream-checks: recorded pid ${record.pid} is not this worktree's runner (stale record, removed); nothing stopped`,
+    );
+    fs.rmSync(pidFile(root), { force: true });
+    return 1;
+  }
+  const table = processTable(proc);
+  const snapshot = [...descendants(table, record.pid), record.pid].map((pid) => ({
+    ...table.find((row) => row.pid === pid),
+    command: procArgv(proc, pid).filter(Boolean).join(' '),
+  }));
+  const signal = (rows, name) => {
+    for (const row of rows)
+      try {
+        kill(row.pid, name);
+      } catch {
+        /* already gone */
+      }
+  };
+  // a process of the snapshot is alive while its pid still has the start it had then
+  const alive = () =>
+    snapshot.filter((row) => {
+      const at = procStat(proc, row.pid);
+      return at && at.state !== 'Z' && at.start === row.start;
+    });
+  signal(snapshot, 'SIGTERM');
+  const until = now() + grace;
+  let left = alive();
+  while (left.length && now() < until) {
+    await sleep(250);
+    left = alive();
+  }
+  for (const row of left)
+    log(`stream-checks: still running after SIGTERM: ${row.pid} ${row.command}`);
+  if (left.length) {
+    signal(left, 'SIGKILL');
+    await sleep(500);
+    left = alive();
+  }
+  const gone = snapshot.filter((row) => !left.includes(row));
+  for (const row of gone) log(`stream-checks: exited ${row.pid} ${row.command}`);
+  for (const row of left) log(`stream-checks: did not exit ${row.pid} ${row.command}`);
+  if (!left.some((row) => row.pid === record.pid)) fs.rmSync(pidFile(root), { force: true });
+  log(
+    `stream-checks: stopped the chain ${record.pid} of ${root}: ${gone.length} of ${snapshot.length} process(es) exited${left.length ? `, ${left.length} did not` : ''}`,
+  );
+  return left.length ? 1 : 0;
+}
+
 function usage(why) {
   console.error(
     (why ? `stream-checks: ${why}\n` : '') +
       'Usage: stream-checks.cjs [--final] [--plan] [--fresh] [--keep-going] [--budget=<s>] [--base=<ref>] [--allow=<path>]\n' +
+      "       stream-checks.cjs --stop   (ends this worktree's running chain and only what it started)\n" +
       '       stream-checks.cjs routes <name>... [--repeat=<n> | --fast]\n       stream-checks.cjs verify-game [--base=<ref>]',
   );
   return 2;
@@ -673,7 +883,7 @@ async function main(argv) {
   const words = argv.filter((arg) => !arg.startsWith('--'));
   const value = (name, fallback) =>
     flags.find((flag) => flag.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
-  const known = /^--(final|plan|fresh|keep-going|fast|(base|budget|repeat|allow)=.+)$/;
+  const known = /^--(final|plan|fresh|keep-going|fast|stop|(base|budget|repeat|allow)=.+)$/;
   const mode = words[0] === 'routes' ? 'routes' : flags.includes('--final') ? 'final' : 'inner';
   const fast = flags.includes('--fast');
   if (
@@ -681,6 +891,10 @@ async function main(argv) {
     (words.length && !['routes', 'verify-game'].includes(words[0]))
   )
     return usage();
+  if (flags.includes('--stop')) {
+    if (argv.length > 1) return usage('--stop takes nothing else');
+    return await stopOwn(root);
+  }
   // a count that is not a whole number of 1 or more would play nothing and still say "passed"
   if (!/^[1-9]\d*$/.test(value('repeat', '3')))
     return usage(`--repeat takes a whole number of 1 or more, not "${value('repeat')}"`);
@@ -773,6 +987,11 @@ async function main(argv) {
   if (steps.some((step) => ART_BYTE_STEPS.includes(step.id)) && !artReady()) return 2;
   const folder = path.join(root, '.cache', 'stream-checks');
   const tree = treeHash(root);
+  fs.mkdirSync(folder, { recursive: true });
+  fs.writeFileSync(
+    pidFile(root),
+    `${JSON.stringify({ ...runnerRecord(), root, started: new Date().toISOString() })}\n`,
+  );
   const result = await runChain({
     steps,
     tree,
@@ -793,6 +1012,13 @@ async function main(argv) {
     mode: fast ? 'routes (FAST)' : mode,
     left,
   });
+  try {
+    // a second chain started in this worktree since then owns the record: leave it
+    if (JSON.parse(fs.readFileSync(pidFile(root), 'utf8')).pid === process.pid)
+      fs.rmSync(pidFile(root), { force: true });
+  } catch {
+    /* gone already */
+  }
   if (result.rows.some((row) => row.state === 'FAIL')) return 1;
   return result.complete ? 0 : 3;
 }
@@ -814,6 +1040,13 @@ module.exports = {
   FAST_TIMEOUT,
   hostedPins,
   main,
+  keepFailure,
+  keptFailures,
+  runnerRecord,
+  processTable,
+  descendants,
+  isOwnRunner,
+  stopOwn,
   globToRegExp,
   workflowPaths,
   hostedRuns,
