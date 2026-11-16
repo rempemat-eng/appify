@@ -14,6 +14,7 @@ import json
 import hashlib
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 from types import SimpleNamespace
@@ -207,20 +208,39 @@ class Water(unittest.TestCase):
     def test_broken_plunge_foam_passes(self):
         # rocks.plunge: broken clumps in 4 to 5 tones with the pool between them, within the foot
         from scripts.art.native import ctx, load_biome
-        ctx.configure(3.0, load_biome('woodland'), {})
-        from scripts.art.native import rocks as RK
-        from scripts.art.native.palette import C as CC, LUT
-        cv = np.full((120, 200), CC('water', 2), np.int32)
-        cv[:40, 70:132] = CC('water', 3)                  # the sheet's foot
-        foam = RK.plunge(cv, 70, 132, 40, seed=65)
-        rgb = LUT[cv]
-        a = np.dstack([rgb, np.full(cv.shape, 255, np.uint8)])
-        self.assertFalse(any(f.detector == 'detail.foam_flat' for f in water.check_foam(a, 74)))
-        ys, xs = np.nonzero(foam)
-        self.assertGreaterEqual(int(xs.min()), 70 - RK.PLUNGE_PAD)
-        self.assertLess(int(xs.max()), 132 + RK.PLUNGE_PAD)
-        self.assertLessEqual(int(ys.max()), 40 + 10)
-        self.assertGreaterEqual(len(np.unique(cv[foam])), 4, 'four or more tones in the foam')
+        # configure() mutates its dictionaries in place. Give this density-3 fixture
+        # private dictionaries and restore the caller's density/plan on every exit.
+        with patch.multiple(ctx, D=ctx.D, TT=ctx.TT, BIOME={}, PLAN={}, _configured=False):
+            ctx.configure(3.0, load_biome('woodland'), {})
+            from scripts.art.native import rocks as RK
+            from scripts.art.native.palette import C as CC, LUT
+            cv = np.full((120, 200), CC('water', 2), np.int32)
+            cv[:40, 70:132] = CC('water', 3)                  # the sheet's foot
+            foam = RK.plunge(cv, 70, 132, 40, seed=65)
+            rgb = LUT[cv]
+            a = np.dstack([rgb, np.full(cv.shape, 255, np.uint8)])
+            self.assertFalse(any(f.detector == 'detail.foam_flat' for f in water.check_foam(a, 74)))
+            ys, xs = np.nonzero(foam)
+            self.assertGreaterEqual(int(xs.min()), 70 - RK.PLUNGE_PAD)
+            self.assertLess(int(xs.max()), 132 + RK.PLUNGE_PAD)
+            self.assertLessEqual(int(ys.max()), 40 + 10)
+            self.assertGreaterEqual(len(np.unique(cv[foam])), 4, 'four or more tones in the foam')
+
+
+class NativeContextIsolation(unittest.TestCase):
+    def test_native_fixtures_and_scene_intake_can_run_in_either_order(self):
+        # These share one interpreter, as a combined review invocation does. A fresh
+        # child for each order also exercises both the unconfigured and kit contexts.
+        foam = 'scripts.review.test_review.Water.test_broken_plunge_foam_passes'
+        staged = ('scripts.review.test_undercroft_craft.StagedBoundaries.'
+                  'test_a_boundary_crosses_a_flag')
+        intake = ('scripts.review.test_kit_scene_intake.RealSource.'
+                  'test_freshness_digest_matches_authoritative_bake_function_for_all_zones')
+        for order in ((foam, staged, intake), (intake, staged, foam)):
+            with self.subTest(order=order):
+                result = subprocess.run([sys.executable, '-m', 'unittest', *order],
+                                        cwd=core.REPO, text=True, capture_output=True, timeout=60)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 class Screen(unittest.TestCase):
@@ -556,6 +576,38 @@ class DormantQuestWiring(unittest.TestCase):
         self.assertEqual(self.severities(fs, 'crows'), [('polish', 'camp:col_crows'), ('polish', 'talk:tam')])
         self.assertEqual(self.severities(fs, 'bothy'), [('polish', 'restore:bothy'), ('polish', 'talk:tam')])
         self.assertEqual(self.severities(fs, 'ibex'), [('polish', 'camp:ibex'), ('polish', 'talk:tam')])
+
+    def test_a_scene_less_zone_folder_keeps_missing_event_blockers(self):
+        folder = self.game / 'zones/unwritten'
+        folder.mkdir()
+        self.quest('enter_unwritten', 'enter:unwritten', steps=['talk:drover'])
+        self.quest('gated_unwritten', 'talk:elder', {'flags': ['zone_built:unwritten']},
+                   steps=['talk:drover'])
+        self.quest('after_unwritten', 'talk:elder', {'done': ['gated_unwritten']},
+                   steps=['talk:tam'])
+        for contents in ('empty', 'art only', 'scene-named directory'):
+            with self.subTest(contents=contents):
+                if contents == 'art only':
+                    (folder / 'art').mkdir()
+                    (folder / 'art/placeholder.png').write_bytes(b'not a scene')
+                elif contents == 'scene-named directory':
+                    (folder / 'unwritten.tscn').mkdir()
+                fs = self.wiring()
+                self.assertEqual(self.severities(fs, 'enter_unwritten'),
+                                 [('blocker', 'enter:unwritten'), ('blocker', 'talk:drover')])
+                self.assertEqual(self.severities(fs, 'gated_unwritten'), [('blocker', 'talk:drover')])
+                self.assertEqual(self.severities(fs, 'after_unwritten'), [('blocker', 'talk:tam')])
+
+    def test_a_written_scene_without_a_plan_is_still_waiting(self):
+        folder = self.game / 'zones/written'
+        folder.mkdir()
+        (folder / 'entry.tscn').write_text('[node name="Written" type="Node2D"]\n')
+        self.quest('enter_written', 'enter:written', steps=['talk:drover'])
+        self.quest('gated_written', 'talk:elder', {'flags': ['zone_built:written']}, steps=['talk:tam'])
+        fs = self.wiring()
+        self.assertEqual(self.severities(fs, 'enter_written'),
+                         [('polish', 'enter:written'), ('polish', 'talk:drover')])
+        self.assertEqual(self.severities(fs, 'gated_written'), [('polish', 'talk:tam')])
 
     def test_a_missing_quest_named_by_not_started_always_holds(self):
         self.quest('fresh', 'talk:elder', {'not_started': ['home_agian']}, steps=['talk:drover'])

@@ -17,11 +17,13 @@ import unittest
 
 CHECK = Path(__file__).resolve().parents[2] / "game/tools/check.sh"
 ROOT_KEYS = ("HOME", "XDG_DATA_HOME", "XDG_CONFIG_HOME", "XDG_CACHE_HOME", "TMPDIR")
+PHASES = ["version", "import", "main", "camp", "tests"]
 FAKE = r'''
 import hashlib, json, os, pathlib, stat, sys
 p = pathlib.Path(sys.argv[0]).resolve()
 a = sys.argv[1:]
-phase = "version" if "--version" in a else "import" if "--import" in a else "main" if "--quit-after" in a else "tests"
+phase = ("version" if "--version" in a else "import" if "--import" in a else
+         "main" if "--quit-after" in a else "camp" if "--camp" in a else "tests")
 keys = ("HOME", "XDG_DATA_HOME", "XDG_CONFIG_HOME", "XDG_CACHE_HOME", "TMPDIR")
 roots = {k: os.environ.get(k) for k in keys}
 record = {"phase": phase, "args": a, "executable": str(p),
@@ -121,7 +123,7 @@ class GodotCheck(unittest.TestCase):
     def test_copies_only_executable_before_version_and_preserves_portable_source(self):
         o = self.exercise()
         self.assertEqual(o["result"].returncode, 0, o["result"].stderr)
-        self.assertEqual([x["phase"] for x in o["calls"]], ["version", "import", "main", "tests"])
+        self.assertEqual([x["phase"] for x in o["calls"]], PHASES)
         self.assertEqual(o["before"], o["after"])
         for call in o["calls"]:
             self.assertNotEqual(call["executable"], o["binary"])
@@ -134,7 +136,7 @@ class GodotCheck(unittest.TestCase):
         o = self.exercise()
         for key in ROOT_KEYS:
             values = [c["roots"][key] for c in o["calls"]]
-            self.assertEqual(len(set(values)), 4, (key, values))
+            self.assertEqual(len(set(values)), len(PHASES), (key, values))
             for call in o["calls"]:
                 value = call["roots"][key]
                 self.assertTrue(value and Path(value).is_relative_to(o["temp"]), (key, value))
@@ -199,12 +201,13 @@ class GodotCheck(unittest.TestCase):
                     self.assertEqual(o["before"], o["after"])
                     self.assertEqual(o["leftovers"], [])
 
-    def test_original_import_main_and_gdunit_arguments_preserved(self):
+    def test_original_import_main_camp_and_gdunit_arguments_preserved(self):
         o = self.exercise()
-        version, imp, main, tests = [c["args"] for c in o["calls"]]
+        version, imp, main, camp, tests = [c["args"] for c in o["calls"]]
         self.assertEqual(version, ["--version"])
         self.assertEqual(imp, ["--headless", "--path", o["project"], "--import"])
         self.assertEqual(main, ["--headless", "--audio-driver", "Dummy", "--path", o["project"], "--quit-after", "300", "--", "--fresh"])
+        self.assertEqual(camp, ["--headless", "--audio-driver", "Dummy", "--path", o["project"], "--", "--fresh", "--camp", "--quit"])
         self.assertEqual(tests, ["--headless", "--audio-driver", "Dummy", "--path", o["project"], "-s", "res://addons/gdUnit4/bin/GdUnitCmdTool.gd", "--ignoreHeadlessMode", "-a", "res://test", "-rd", "reports", "-c"])
 
     def test_frame_override_is_preserved(self):
@@ -213,16 +216,16 @@ class GodotCheck(unittest.TestCase):
         self.assertEqual(main[main.index("--quit-after") + 1], "19")
 
     def test_each_phase_nonzero_exit_fails_without_suppressing_later_checks(self):
-        for phase in ("import", "main", "tests"):
+        for phase in ("import", "main", "camp", "tests"):
             with self.subTest(phase=phase):
                 o = self.exercise(phase + "_exit")
                 self.assertEqual(o["result"].returncode, 1)
                 self.assertIn("FAIL", o["result"].stdout)
-                self.assertEqual(len(o["calls"]), 4)
+                self.assertEqual([c["phase"] for c in o["calls"]], PHASES)
                 self.assertEqual(o["leftovers"], [])
 
     def test_zero_exit_fatal_logs_fail_in_each_phase_and_cannot_open(self):
-        for mode in ("import_fatal", "main_fatal", "tests_fatal", "cannot_open"):
+        for mode in ("import_fatal", "main_fatal", "camp_fatal", "tests_fatal", "cannot_open"):
             with self.subTest(mode=mode):
                 o = self.exercise(mode)
                 self.assertEqual(o["result"].returncode, 1)
