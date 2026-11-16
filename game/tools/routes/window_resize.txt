@@ -1,0 +1,69 @@
+# The window resized, made fullscreen and back, as on Matt's Mac (16 Nov): "full screen bugs out ... the
+# camera doesnt follow the player". The phantom camera took the window's size for the camera's frame
+# after the first resize, so the camera stopped short of the zone's ends and the player walked out of the
+# picture. Here the picture stays centred in the window at every size, in both pixel scales, the player
+# stays in it at the woodland's four sides and through a door, and the mouse still aims where it points.
+# The runner's Xvfb screen is 1920 x 1200 (tools/playtest.sh), bigger than every window here, so the
+# warped pointer is never held at its edge. Commands: tools/play_driver.gd.
+
+step a 1440 x 900 window (a 16:10 laptop): the top of the woodland
+wait 1.0
+expect zone woodland
+window 1440 900
+expect fitted
+goto 405 150 30
+expect inview 24
+
+step a 1512 x 982 window: the east side, and the mouse aims where it points
+window 1512 982
+expect fitted
+goto 910 735 30
+expect inview 24
+aim 700 600
+expect aimat 700 600 12
+aim 910 900
+expect aimat 910 900 12
+
+step fullscreen: the south end
+fullscreen on
+expect fitted
+goto 505 1678 30
+expect inview 24
+
+step whole pixel scale, in a 1728 x 1117 window: the west side
+key Escape
+button Pixel scale
+expect setting pixel_scale whole
+key Escape
+expect paused no
+window 1728 1117
+expect fitted
+goto 130 1150 30
+expect inview 24
+aim 372 1150
+expect aimat 372 1150 12
+winshot 01_whole_west
+
+step a resize while walking, then through the door to Crossroads
+fullscreen on
+fullscreen off
+window 1470 956
+expect fitted
+goto 640 1392 20
+door 951 1356 crossroads
+expect zone crossroads
+expect fitted
+expect inview 24
+?goto 1860 940 30
+expect inview 24
+st
+winshot 02_crossroads_east
+
+step back to fill, at 960 x 540
+key Escape
+button Pixel scale
+expect setting pixel_scale fill
+key Escape
+window 960 540
+expect fitted
+expect inview 24
