@@ -87,6 +87,29 @@ func test_its_mark_stands_by_the_library_door_only_after_the_win() -> void:
 	assert_bool(_shown(zone, "Actors/If_bell_tower_site/BellTowerSite")).is_true()
 	assert_object(zone.get_node_or_null("Actors/BellTowerSite")).is_null()
 
+func test_the_win_tells_the_zone_at_once() -> void:
+	# Raids.win() reports its reward flags as Village.changed, so a Conditional or a restore mark waiting on
+	# first_night_won refreshes there and then, not on the next load (review of #499, round 1)
+	SaveGame.reset()
+	for q: String in SLICE:
+		SaveGame.data.quests[q] = {"state": "done", "step": Quests.defs[q].steps.size()}
+	SaveGame.set_flag("shard_home:woodland")
+	SaveGame.data.glint = 116
+	assert_bool(Raids.arrive("crossroads", "woodland")).is_true()
+	Raids.ring()
+	var told: Array[String] = []
+	var hear := func(id: String) -> void: told.append(id)
+	Village.changed.connect(hear)
+	var mark := Conditional.new()
+	mark.only_if = JSON.stringify({"flags": ["first_night_won"], "not_restored": ["bell_tower"]})
+	add_child(auto_free(mark))
+	assert_bool(mark.visible).is_false()
+	assert_int(Raids.win()).is_greater(0)
+	Village.changed.disconnect(hear)
+	assert_array(told).contains(["first_night_won"])
+	assert_str(Raids.state()).is_equal("won")
+	assert_bool(mark.visible).is_true()
+
 # --- not required -------------------------------------------------------------------------------------------
 func test_nothing_in_the_slice_waits_on_it() -> void:
 	for q: String in PLAYABLE:

@@ -96,6 +96,7 @@ defend 420 640 930 1056 1190
 expect raid won
 expect flag first_night_won
 expect glint 146
+expect shown Actors/If_bell_tower_site/BellTowerSite yes
 expect defences 0
 expect lantern gone
 expect dimmed no
