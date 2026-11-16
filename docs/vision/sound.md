@@ -91,7 +91,7 @@ The source harnesses cover asset shape, the engine's decisions and where Home an
 
 ## The Godot game (13 Nov)
 
-The three-zone slice (woodland, Crossroads, the Undercroft, the first night) has sound: 56 effect cues in 65 files and four ambience loops, 3.69 MB of WAV against a 4 MB budget. The palette rules are the ones above: generated from code, sine and triangle tones, gentle attacks, low-passed noise, C major pentatonic, every effect under 2 s and ending in silence, loudness in the files (effects peak between -18 and -28 dBFS, loops at -24), and sound as decoration only.
+The three-zone slice (woodland, Crossroads, the Undercroft, the first night) has sound: 57 effect cues in 66 files and four ambience loops, 3.70 MB of WAV against a 4 MB budget. The palette rules are the ones above: generated from code, sine and triangle tones, gentle attacks, low-passed noise, C major pentatonic, every effect under 2 s and ending in silence, loudness in the files (effects peak between -18 and -28 dBFS, loops at -24), and sound as decoration only.
 
 ### The generator
 
@@ -117,6 +117,7 @@ Tiers are explained under [Playback rules](#playback-rules-godot). "Hook" is whe
 | `hurt`, `downed`, `get_up` | moment | a low short "oof"; three slow falling notes; three rising | `Player.hurt` with hearts left or none; `Player.downed` (getting up at the zone's start) |
 | `tell_mossling`, `tell_rusher`, `tell_shooter`, `tell_shield`, `tell_elite` | moment | leaves shaking faster; two snorts; a croak that swells; stone dragged; a deeper double huff. All quiet, all shorter than the wind-up they announce | `actors/enemy.gd` wind-up; `enemies/slice_enemy.gd` at `committed`; `enemies/raid_creature.gd` before it batters |
 | `enemy_strike`, `enemy_spit` | moment | a lunge's whoosh; the toad's "pft" | the lunge; `slice_enemy.gd` at `released` |
+| `shot_wall` | moment | a small soft crack of husk and a few grains: a creature's shot breaking on a solid, quieter and duller than the arrow's tick (16 Nov) | `enemies/projectile.gd` and `bosses/thorn.gd`, meeting a solid |
 | `enemy_freed` | moment | a breath and two soft rising notes: freed, not killed | `enemy.gd` and `slice_enemy.gd` where `died` is emitted |
 | `boss_tell_charge`, `boss_tell_volley`, `boss_tell_slam` | moment | pawing scuffs over a rising growl; the shell rattling quicker; a swell that grows | `bosses/thornback.gd` `_start_windup` |
 | `boss_charge`, `boss_volley`, `boss_slam` | moment | the rush; five small breaths of air; one deep soft thump | `thornback.gd` `_release` |
