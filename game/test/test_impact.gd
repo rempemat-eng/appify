@@ -129,7 +129,7 @@ func test_the_star_has_four_drawings_and_the_stuck_arrow_rides_on_the_creature()
 
 func test_reduced_motion_holds_nothing_and_shows_one_still_drawing() -> void:
 	SaveGame.data.settings.reduced_motion = true
-	assert_bool(Impact.hit_stop(get_tree())).is_false()
+	assert_object(Impact.hit_stop(get_tree())).is_null()
 	assert_float(Engine.time_scale).is_equal(1.0)
 	var root := _stage()
 	var hit := Impact.spawn(root, Impact.Kind.HIT, Vector2(40, 50), 20.0, Vector2.RIGHT, true)
@@ -164,9 +164,13 @@ func test_reduced_motion_skips_the_hit_stop_of_an_arrow_that_counts() -> void:
 	assert_float(scales.min()).is_equal(1.0)
 
 func test_a_hit_that_counts_holds_the_world_for_a_moment_and_lets_it_go() -> void:
-	assert_bool(Impact.hit_stop(get_tree())).is_true()
+	var timer := Impact.hit_stop(get_tree())
+	assert_object(timer).is_not_null()
+	# the hold's length, without the wall clock (#509 follow-up): its timer counts exactly HIT_STOP
+	assert_float(Impact.HIT_STOP).is_equal(0.05)            # pinned: 3 frames at 60 (#515 audit)
+	assert_float(timer.time_left).is_equal_approx(Impact.HIT_STOP, 0.000001)
 	assert_float(Engine.time_scale).is_equal(Impact.HOLD_SCALE)
-	assert_bool(Impact.hit_stop(get_tree())).is_false()   # one hold at a time
+	assert_object(Impact.hit_stop(get_tree())).is_null()   # one hold at a time
 	var start := Time.get_ticks_msec()
 	while Engine.time_scale < 1.0 and Time.get_ticks_msec() - start < 1000:
 		await get_tree().process_frame
@@ -246,8 +250,10 @@ func test_a_timber_face_takes_an_arrow_from_the_south_and_drops_every_other() ->
 	# from the south, below the top: stuck, at the arrow's own height, the shaft in the y-sort, the puff over
 	var stuck := await _shoot_at_face(90.0, "timber", Vector2(180, 200), Vector2.UP)
 	assert_int(stuck.kind).is_equal(Impact.Kind.WALL)
-	assert_float(stuck.lift).is_equal(20.0)
-	assert_float(stuck.global_position.y).is_between(140.0 - 1.0, 140.0 + Arrow.RADIUS + Arrow.SPEED / 60.0)
+	# drawn where the arrow met the face, 20 up (the arrow's own height), but y-sorted FRONT south of the box,
+	# so the house (sorted by its feet at the box's edge) never covers it (#509 follow-up)
+	assert_float(stuck.global_position.y).is_equal(140.0 + Impact.FRONT)
+	assert_float(stuck.global_position.y - stuck.lift).is_between(140.0 - 20.0 - 1.0, 140.0 - 20.0 + Arrow.RADIUS + Arrow.SPEED / 60.0)
 	assert_str(stuck.face_material).is_equal("timber")
 	assert_bool(stuck.burst_on_ground()).is_false()
 	assert_int(stuck.z_index).is_equal(0)
@@ -274,7 +280,7 @@ func test_an_arrow_above_a_faces_top_drops_and_is_never_moved_down() -> void:
 	# the same wall, 33 up (its top less FACE_TOP): stuck at 33
 	var low := await _shoot_at_face(36.0, "timber", Vector2(180, 200), Vector2.UP, 33.0)
 	assert_int(low.kind).is_equal(Impact.Kind.WALL)
-	assert_float(low.lift).is_less_equal(33.0)
+	assert_float(140.0 - (low.global_position.y - low.lift)).is_less_equal(33.0)   # drawn at most 33 above the wall's foot
 	var over := await _shoot_at_face(36.0, "timber", Vector2(180, 200), Vector2.UP, 34.0)
 	assert_int(over.kind).is_equal(Impact.Kind.DROP)
 
@@ -290,14 +296,146 @@ func test_stone_never_takes_an_arrow_it_drops_with_grey_chips() -> void:
 	assert_float(plain._chip().a).is_equal(0.0)
 	# the faces the zones declare
 	var cross: Node = auto_free(load("res://zones/crossroads/crossroads.tscn").instantiate())
-	assert_dict(Impact.face_of(cross.get_node("Walls/Building_hut"))).is_equal({"height": 90.0, "material": "timber"})
+	var hut_face := Impact.face_of(cross.get_node("Walls/Building_hut"))
+	assert_float(float(hut_face.height)).is_equal(90.0)
+	assert_str(String(hut_face.material)).is_equal("timber")
 	assert_str(String(Impact.face_of(cross.get_node("Walls/Building_library")).material)).is_equal("stone")
 	assert_str(String(Impact.face_of(cross.get_node("Walls/Face_lane_face")).material)).is_equal("stone")
 	assert_float(float(Impact.face_of(cross.get_node("Walls/Face_terrace_bank_e")).height)).is_equal(0.0)
 	var vault: Node = auto_free(load("res://zones/undercroft/undercroft.tscn").instantiate())
 	for side in ["Walls/Wall_south", "Walls/Wall_corridor_s", "Walls/Wall_west_s", "Walls/Wall_east"]:
 		assert_float(float(Impact.face_of(vault.get_node(side)).height)).override_failure_message(side).is_equal(0.0)
-	assert_dict(Impact.face_of(vault.get_node("Walls/Wall_north_hall"))).is_equal({"height": 120.0, "material": "stone"})
+	var hall := Impact.face_of(vault.get_node("Walls/Wall_north_hall"))
+	assert_float(float(hall.height)).is_equal(120.0)
+	assert_str(String(hall.material)).is_equal("stone")
+
+## #509 follow-up: the timber houses stand on stone plinths (the north cottages' and the Ferns' rubble walls to
+## 63 texels, the hut's to 11), and their windows take no arrow. A timber wall above the plinth still does.
+func _shoot_at_house(at_x: float, lift: float, stone_below: float, windows: Array, timber: Array = [],
+		dir := Vector2.UP) -> Impact:
+	var root := _stage()
+	var at := Vector2(at_x, 200)
+	var archer := _archer(root, at)
+	var house := _faced(root, 110.0, "timber")             # box x 160-200, centre 180
+	house.set_meta("impact_stone_below", stone_below)
+	house.set_meta("impact_no_stick", windows)
+	house.set_meta("impact_timber", timber)
+	await _settle()
+	await _fly(_loose(root, at, archer, dir.normalized(), lift))
+	var fx := _impacts(root)
+	assert_int(fx.size()).is_equal(1)
+	var mark: Impact = fx[0]
+	root.remove_child(mark)
+	auto_free(mark)
+	root.free()
+	return mark
+
+func test_a_plinth_drops_the_arrow_with_stone_and_a_window_drops_it_plain() -> void:
+	var window := [Rect2(-12, 54, 10, 36)]                 # x 168-178 from the centre 180, lift 54-90
+	# into the plinth (lift 20, plinth to 63): stone dust and chips, never stuck
+	var plinth := await _shoot_at_house(190.0, 20.0, 63.0, window)
+	assert_int(plinth.kind).is_equal(Impact.Kind.DROP)
+	assert_str(plinth.face_material).is_equal("stone")
+	# at the plinth's top row (63): still stone
+	var top := await _shoot_at_house(190.0, 63.0, 63.0, window)
+	assert_int(top.kind).is_equal(Impact.Kind.DROP)
+	assert_str(top.face_material).is_equal("stone")
+	# above the plinth, beside the window (lift 66): timber, stuck
+	var timber := await _shoot_at_house(190.0, 66.0, 63.0, window)
+	assert_int(timber.kind).is_equal(Impact.Kind.WALL)
+	assert_str(timber.face_material).is_equal("timber")
+	assert_float(timber.global_position.y - timber.lift).is_between(140.0 - 66.0 - 1.0, 140.0 - 66.0 + Arrow.RADIUS + Arrow.SPEED / 60.0)
+	# into the window (x 172, lift 66): it drops, plain dust, no chips
+	var glass := await _shoot_at_house(172.0, 66.0, 63.0, window)
+	assert_int(glass.kind).is_equal(Impact.Kind.DROP)
+	assert_str(glass.face_material).is_equal("")
+	assert_float(glass._chip().a).is_equal(0.0)
+	# the same answers from face_hit itself, at the edges of the window
+	var house := StaticBody2D.new()
+	auto_free(house)
+	var shape := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(40, 80)
+	shape.shape = rect
+	shape.position = Vector2(180, 100)
+	house.add_child(shape)
+	add_child(house)
+	house.set_meta("impact_face", 110)
+	house.set_meta("impact_material", "timber")
+	house.set_meta("impact_stone_below", 63)
+	house.set_meta("impact_no_stick", window)
+	assert_str(Impact.face_hit(house, Vector2(168, 150), 66.0)).is_equal("window")
+	assert_str(Impact.face_hit(house, Vector2(178, 150), 66.0)).is_equal("stick")    # the window's right edge is open
+	assert_str(Impact.face_hit(house, Vector2(170, 150), 53.0)).is_equal("stone")
+	assert_str(Impact.face_hit(house, Vector2(190, 150), 64.0)).is_equal("stick")    # beside the window
+	assert_str(Impact.face_hit(house, Vector2(170, 150), 108.0)).is_equal("drop")    # above the top less FACE_TOP
+	assert_str(Impact.face_hit(house, Vector2(170, 50), 66.0)).is_equal("drop")      # from the north
+
+## #515 audit: a door is timber through the plinth band, and the window and door checks use where the arrow
+## met the face, not the point one step before.
+func test_a_door_in_the_plinth_band_is_timber() -> void:
+	var door := [Rect2(-20, 0, 15, 84)]                    # x 160-175 from the centre 180, lift 0-84
+	var window := [Rect2(5, 54, 10, 36)]                   # x 185-195
+	# a diagonal shot (north-east) into the door at lift 40, inside the plinth (63): it sticks, timber
+	var into_door := await _shoot_at_house(137.0, 40.0, 63.0, window, door, Vector2(0.5, -1))   # meets the face near x 167
+	assert_int(into_door.kind).is_equal(Impact.Kind.WALL)
+	assert_str(into_door.face_material).is_equal("timber")
+	# beside the door at the same height: the plinth, stone
+	var plinth := await _shoot_at_house(188.0, 40.0, 63.0, window, door)
+	assert_int(plinth.kind).is_equal(Impact.Kind.DROP)
+	assert_str(plinth.face_material).is_equal("stone")
+
+func test_the_face_is_read_where_the_arrow_met_it() -> void:
+	var house := StaticBody2D.new()
+	auto_free(house)
+	var shape := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(40, 80)
+	shape.shape = rect
+	shape.position = Vector2(180, 100)
+	house.add_child(shape)
+	add_child(house)
+	house.set_meta("impact_face", 110)
+	house.set_meta("impact_material", "timber")
+	house.set_meta("impact_stone_below", 63)
+	house.set_meta("impact_no_stick", [Rect2(5, 54, 10, 36)])
+	house.set_meta("impact_timber", [Rect2(-20, 0, 15, 84)])
+	# one step before it was at x 178 (beside the window); it met the face at x 188, in the window
+	assert_str(Impact.face_hit(house, Vector2(178, 150), 66.0, 188.0)).is_equal("window")
+	assert_str(Impact.face_hit(house, Vector2(178, 150), 66.0)).is_equal("stick")          # without the contact x
+	# it met the door's x (165) inside the plinth band: timber; one step before it was beside the door (178)
+	assert_str(Impact.face_hit(house, Vector2(178, 150), 40.0, 165.0)).is_equal("stick")
+	assert_str(Impact.face_hit(house, Vector2(178, 150), 40.0)).is_equal("stone")
+	# the door wins where it overlaps a window (the north cottages' purple door over its window's corner)
+	house.set_meta("impact_no_stick", [Rect2(-10, 54, 10, 36)])
+	house.set_meta("impact_timber", [Rect2(-12, 0, 15, 84)])
+	assert_str(Impact.face_hit(house, Vector2(178, 150), 60.0, 175.0)).is_equal("stick")
+
+func test_the_crossroads_houses_declare_their_plinths_and_windows() -> void:
+	var cross: Node = auto_free(load("res://zones/crossroads/crossroads.tscn").instantiate())
+	var hut := Impact.face_of(cross.get_node("Walls/Building_hut"))
+	assert_float(float(hut.stone_below)).is_equal(11.0)
+	assert_array(hut.no_stick).is_equal([Rect2(-89, 54, 33, 36), Rect2(55, 54, 33, 36)])
+	assert_array(hut.timber).is_empty()
+	var cottages := Impact.face_of(cross.get_node("Walls/Building_north_cottages"))
+	assert_float(float(cottages.stone_below)).is_equal(63.0)
+	assert_array(cottages.no_stick).is_equal([Rect2(-61, 52, 37, 40), Rect2(11, 52, 37, 40)])
+	assert_array(cottages.timber).is_equal([Rect2(-140, 0, 62, 84), Rect2(37, 0, 69, 84)])
+	var fern := Impact.face_of(cross.get_node("Walls/Building_fern_cottage"))
+	assert_float(float(fern.stone_below)).is_equal(63.0)
+	assert_array(fern.no_stick).is_equal([Rect2(13, 54, 33, 36)])
+	assert_array(fern.timber).is_equal([Rect2(-92, 0, 67, 85)])
+
+## #509 follow-up: the arrow's last ground point is taken after its start is settled. Against a wall the start
+## moves to the archer's feet, and the "one step before" point must be there, not at the bow's tip.
+func test_the_last_point_is_where_the_arrow_really_starts() -> void:
+	var root := _stage()
+	var archer := _archer(root, Vector2(100, 100))
+	_wall(root, 116, 60, 164, 140)
+	await _settle()
+	var arrow := _loose(root, Vector2(135, 100), archer)    # the tip is inside the wall: it starts at the feet
+	assert_vector(arrow.global_position).is_equal(Vector2(100, 100))
+	assert_vector(arrow._prev).is_equal(Vector2(100, 100))
 
 ## #509 round 1, F2: the dropped arrow is drawn in the y-sort at its ground point, so a house whose foot is
 ## further south (a roof over it) is drawn after it and covers it. Only the burst up on a thing is z 1.
@@ -388,26 +526,37 @@ func test_a_flight_that_ends_over_water_sinks_and_over_a_low_prop_leaves_nothing
 	assert_float(ring[0].lifetime()).is_equal(Impact.RING)
 
 ## #509 round 1, P3: the arrow's restore never ends a melee hold that began while it held.
+## The hold's timer counts real time, not the held world's: under the hold's 0.06 time scale, 20 ms of real
+## time take at least 10 ms off it (a timer that followed the scale would lose about 1.2 ms). Waiting longer
+## only takes more off, so the wall clock here is a lower bound on time passed, never a bound on the hold.
+func test_the_holds_timer_ignores_the_time_scale() -> void:
+	var timer := Impact.hit_stop(get_tree())
+	assert_object(timer).is_not_null()
+	var start := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - start < 20:
+		await get_tree().process_frame
+	assert_float(Impact.HIT_STOP - timer.time_left).is_greater_equal(0.010)
+
 func test_an_arrow_hold_does_not_cut_a_melee_hold_short() -> void:
 	# the restore itself, called as its timer would call it (no wall clock: deterministic)
-	assert_bool(Impact.hit_stop(get_tree())).is_true()
+	assert_object(Impact.hit_stop(get_tree())).is_not_null()
 	var arrow_hold := Impact.hold_token()
 	Engine.time_scale = 0.05                              # the melee's hold (actors/player.gd _hitstop) begins
 	Impact.release_hold(arrow_hold)
 	assert_float(Engine.time_scale).is_equal(0.05)        # still the melee's: the arrow's restore left it
 	Engine.time_scale = 1.0                               # the melee's own restore
 	# an older arrow hold never ends a newer one
-	assert_bool(Impact.hit_stop(get_tree())).is_true()
+	assert_object(Impact.hit_stop(get_tree())).is_not_null()
 	var older := Impact.hold_token()
 	Engine.time_scale = 1.0                               # cut short by someone else
-	assert_bool(Impact.hit_stop(get_tree())).is_true()
+	assert_object(Impact.hit_stop(get_tree())).is_not_null()
 	var newer := Impact.hold_token()
 	Impact.release_hold(older)
 	assert_float(Engine.time_scale).is_equal(Impact.HOLD_SCALE)
 	Impact.release_hold(newer)
 	assert_float(Engine.time_scale).is_equal(1.0)
 	# and through the real timer, the melee's hold is still there after the arrow's would have ended
-	assert_bool(Impact.hit_stop(get_tree())).is_true()
+	assert_object(Impact.hit_stop(get_tree())).is_not_null()
 	Engine.time_scale = 0.05
 	var start := Time.get_ticks_msec()
 	while Time.get_ticks_msec() - start < int(Impact.HIT_STOP * 1000.0) + 80:
