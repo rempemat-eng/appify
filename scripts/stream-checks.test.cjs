@@ -192,6 +192,22 @@ async function testFailedLogsAreKept(folder) {
     records.map((r) => path.basename(r.log)),
     ['route-main-1.fail-1.log', 'route-main-1.fail-2.log'],
   );
+  assert.ok(
+    lines.some((line) => /kept failures \(logs and route folders\): 4, /.test(line)),
+    lines.join('\n'),
+  );
+  // a rename that fails leaves the path as it was, so the record still names the log
+  const log = path.join(logs, 'stuck.log');
+  fs.writeFileSync(log, 'x');
+  const rename = fs.renameSync;
+  fs.renameSync = () => {
+    throw new Error('EBUSY');
+  };
+  try {
+    assert.deepEqual(keepFailure({ log }), { log, out: undefined });
+  } finally {
+    fs.renameSync = rename;
+  }
   // a path that does not exist (a step that never started) is left as it is
   assert.deepEqual(keepFailure({ log: path.join(logs, 'none.log') }), {
     log: path.join(logs, 'none.log'),
@@ -199,39 +215,90 @@ async function testFailedLogsAreKept(folder) {
   });
 }
 
-const quiet = () => {};
 /** #491: --stop ends only the chain this worktree recorded and what it started. */
-function testStopOnlyOwnTree(folder) {
+async function testStopOnlyOwnTree(folder) {
   const proc = path.join(folder, 'proc');
   const worktree = path.join(folder, 'tree');
-  const fake = (pid, ppid, argv) => {
-    fs.mkdirSync(path.join(proc, String(pid)), { recursive: true });
-    fs.writeFileSync(path.join(proc, String(pid), 'stat'), `${pid} (a name) with) S ${ppid} 1 1`);
-    fs.writeFileSync(path.join(proc, String(pid), 'cmdline'), `${argv.join('\0')}\0`);
+  const other = path.join(folder, 'tree2'); // contains the worktree path as a prefix
+  fs.mkdirSync(worktree, { recursive: true });
+  fs.mkdirSync(other, { recursive: true });
+  const fake = (pid, ppid, argv, { start = `${pid}00`, cwd = worktree, state = 'S' } = {}) => {
+    const dir = path.join(proc, String(pid));
+    fs.rmSync(dir, { recursive: true, force: true });
+    fs.mkdirSync(dir, { recursive: true });
+    const fields = [state, ppid, ...Array.from({ length: 17 }, () => 0), start, 0];
+    fs.writeFileSync(path.join(dir, 'stat'), `${pid} (a name) with) ${fields.join(' ')}`);
+    fs.writeFileSync(path.join(dir, 'cmdline'), `${argv.join('\0')}\0`);
+    fs.symlinkSync(cwd, path.join(dir, 'cwd'));
   };
-  const script = path.join(worktree, 'scripts', 'stream-checks.cjs');
-  fake(10, 1, ['node', script]); // this worktree's runner
-  fake(11, 10, ['flock', 'lock', 'bash']);
-  fake(12, 11, ['godot']);
-  fake(20, 1, ['node', '/elsewhere/scripts/stream-checks.cjs']); // another stream's runner
-  fake(21, 20, ['godot']);
+  const relative = ['node', 'scripts/stream-checks.cjs', '--final']; // as npm starts it
+  const build = () => {
+    fs.rmSync(proc, { recursive: true, force: true });
+    fake(10, 1, relative); // this worktree's runner
+    fake(11, 10, ['flock', 'lock', 'bash']);
+    fake(12, 11, ['godot']);
+    fake(20, 1, relative, { cwd: other }); // another stream's runner, same relative argv
+    fake(21, 20, ['godot'], { cwd: other });
+  };
+  build();
   assert.deepEqual(descendants(processTable(proc), 10), [12, 11]);
-  assert.ok(isOwnRunner(worktree, 10, proc));
-  assert.equal(isOwnRunner(worktree, 20, proc), false);
+  assert.equal(processTable(proc).find((row) => row.pid === 10).start, '1000');
+  assert.ok(isOwnRunner(worktree, { pid: 10, start: '1000' }, proc), 'relative argv, own cwd');
+  assert.equal(isOwnRunner(worktree, { pid: 20, start: '2000' }, proc), false, 'other cwd');
+  assert.equal(isOwnRunner(worktree, { pid: 10, start: '999' }, proc), false, 'recycled pid');
+  assert.equal(isOwnRunner(worktree, { pid: 10 }, proc), false, 'no start recorded');
+  fake(30, 1, ['vim', path.join(worktree, 'scripts', 'stream-checks.cjs')]);
+  assert.equal(isOwnRunner(worktree, { pid: 30, start: '3000' }, proc), false, 'an editor');
+  fake(31, 1, ['node', path.join(worktree, 'scripts', 'stream-checks.cjs')], { cwd: other });
+  assert.ok(isOwnRunner(worktree, { pid: 31, start: '3100' }, proc), 'absolute argv anywhere');
   const killed = [];
-  const kill = (pid) => killed.push(pid);
-  assert.equal(stopOwn(worktree, { proc, kill, log: quiet }), 1, 'no record: nothing stopped');
+  // a process exits on SIGTERM unless it is listed in `stubborn`, which exits only on SIGKILL
+  const killer = (stubborn) => (pid, name) => {
+    killed.push([pid, name]);
+    if (name === 'SIGKILL' || !stubborn.includes(pid))
+      fs.rmSync(path.join(proc, String(pid)), { recursive: true, force: true });
+  };
+  let clock = 0;
+  const timing = { sleep: async (ms) => void (clock += ms), now: () => clock };
+  const lines = [];
+  const say = (line) => lines.push(line);
   const record = path.join(worktree, '.cache', 'stream-checks', 'runner.pid');
+  assert.equal(await stopOwn(worktree, { proc, kill: killer([]), log: say }), 1);
+  assert.match(lines.at(-1), /no running chain recorded/);
   fs.mkdirSync(path.dirname(record), { recursive: true });
-  fs.writeFileSync(record, JSON.stringify({ pid: 20 }));
-  assert.equal(stopOwn(worktree, { proc, kill, log: quiet }), 1, 'a pid that is not ours');
+  fs.writeFileSync(record, JSON.stringify({ pid: 10, start: '999' }));
+  assert.equal(await stopOwn(worktree, { proc, kill: killer([]), log: say, ...timing }), 1);
+  assert.match(lines.at(-1), /recorded pid 10 is not this worktree's runner \(stale record/);
+  assert.equal(fs.existsSync(record), false, 'the stale record is removed');
   assert.deepEqual(killed, []);
-  fs.writeFileSync(record, JSON.stringify({ pid: 10 }));
-  assert.equal(stopOwn(worktree, { proc, kill, log: quiet }), 0);
-  assert.deepEqual(killed, [12, 11, 10], 'the step first, the runner last, nothing of pid 20');
+  fs.writeFileSync(record, JSON.stringify({ pid: 10, start: '1000' }));
+  lines.length = 0;
+  assert.equal(await stopOwn(worktree, { proc, kill: killer([]), log: say, ...timing }), 0);
+  assert.deepEqual(
+    killed,
+    [
+      [12, 'SIGTERM'],
+      [11, 'SIGTERM'],
+      [10, 'SIGTERM'],
+    ],
+    'the step first, the runner last, nothing of pid 20 or 21',
+  );
+  assert.match(lines.at(-1), /3 of 3 process\(es\) exited$/);
   assert.equal(fs.existsSync(record), false);
-  // the real table has this process under its parent
-  assert.ok(processTable().some((row) => row.pid === process.pid && row.ppid === process.ppid));
+  assert.ok(fs.existsSync(path.join(proc, '20')) && fs.existsSync(path.join(proc, '21')));
+  // a child that ignores SIGTERM gets SIGKILL after the grace time, and only it
+  build();
+  killed.length = 0;
+  lines.length = 0;
+  fs.writeFileSync(record, JSON.stringify({ pid: 10, start: '1000' }));
+  assert.equal(await stopOwn(worktree, { proc, kill: killer([12]), log: say, ...timing }), 0);
+  assert.deepEqual(killed.at(-1), [12, 'SIGKILL']);
+  assert.equal(killed.filter(([, name]) => name === 'SIGKILL').length, 1);
+  assert.ok(lines.some((line) => /still running after SIGTERM: 12 godot/.test(line)));
+  assert.ok(clock >= 10_000, 'it waited the grace time');
+  // the real table has this process under its parent, with a start
+  const me = processTable().find((row) => row.pid === process.pid);
+  assert.ok(me && me.ppid === process.ppid && /^\d+$/.test(me.start));
 }
 
 /** Audit B3: a rename must show the path it left as well as the one it made. */
@@ -804,7 +871,7 @@ async function main() {
     await testFastRunsAreLabelledAndKeptApart(folder);
     await testZeroBudgetStartsNothing(folder);
     await testFailedLogsAreKept(folder);
-    testStopOnlyOwnTree(folder);
+    await testStopOnlyOwnTree(folder);
   } finally {
     fs.rmSync(folder, { recursive: true, force: true });
   }

@@ -244,10 +244,43 @@ function keepFailure({ log, out }) {
   while (there(failName(log, n)) || there(failName(out, n))) n++;
   const keep = (file) => {
     if (!there(file)) return file;
-    fs.renameSync(file, failName(file, n));
-    return failName(file, n);
+    try {
+      fs.renameSync(file, failName(file, n));
+      return failName(file, n);
+    } catch {
+      return file; // the record keeps the path it has: a failure is never lost over a rename
+    }
   };
   return { log: keep(log), out: keep(out) };
+}
+/** The kept failure logs and folders under `folder` (two levels: <tree>/<step>.fail-<n>) and
+ * their size in bytes. */
+function keptFailures(folder) {
+  const size = (file) => {
+    try {
+      const stat = fs.statSync(file);
+      if (!stat.isDirectory()) return stat.size;
+      return fs.readdirSync(file).reduce((sum, name) => sum + size(path.join(file, name)), 0);
+    } catch {
+      return 0;
+    }
+  };
+  const kept = [];
+  const look = (dir, depth) => {
+    let names = [];
+    try {
+      names = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of names) {
+      const file = path.join(dir, entry.name);
+      if (/\.fail-\d+(\.log)?$/.test(entry.name)) kept.push(file);
+      else if (entry.isDirectory() && depth > 0) look(file, depth - 1);
+    }
+  };
+  look(folder, 1);
+  return { count: kept.length, bytes: kept.reduce((sum, file) => sum + size(file), 0) };
 }
 /** The record that lets a step be skipped on this tree and toolchain, or null. Only the NEWEST
  * finished record of the step counts, so a pass never outlives a later failure. For a route, a
@@ -398,6 +431,11 @@ async function runChain({
   else
     log(
       `stream-checks: ${mode} mode, tree ${tree} head ${head}: ${count('PASS')} passed (${reused} reused), ${count('FAIL')} failed, ${count('NOT RUN')} not run${earlier.length ? `, ${earlier.length} earlier failure${earlier.length === 1 ? '' : 's'} on this tree (listed above)` : ''}`,
+    );
+  const kept = keptFailures(path.dirname(resultsFile));
+  if (kept.count)
+    log(
+      `stream-checks: kept failures (logs and route folders): ${kept.count}, ${(kept.bytes / 1e6).toFixed(1)} MB under ${path.dirname(resultsFile)}`,
     );
   if (fastRows)
     log(
@@ -679,7 +717,9 @@ async function verifyGame({ root, changed, run = runProcess, log = console.log }
   return { ok: failed.length === 0, refused: false };
 }
 
-/** Every process on the machine as { pid, ppid } (Linux /proc; elsewhere an empty list). */
+/** Every process on the machine as { pid, ppid, start, state } (Linux /proc; elsewhere an empty
+ * list). `start` is field 22 of /proc/<pid>/stat, the clock tick it started at: with the pid it
+ * names one process, and a pid the system hands out again has another start. */
 function processTable(proc = '/proc') {
   const table = [];
   let names = [];
@@ -689,17 +729,29 @@ function processTable(proc = '/proc') {
     return table;
   }
   for (const name of names) {
-    try {
-      // the command name in brackets may hold spaces: the fields after the last ')' are fixed
-      const stat = fs.readFileSync(path.join(proc, name, 'stat'), 'utf8');
-      const ppid = Number(stat.slice(stat.lastIndexOf(')') + 2).split(' ')[1]);
-      table.push({ pid: Number(name), ppid });
-    } catch {
-      /* it ended while we looked */
-    }
+    const row = procStat(proc, Number(name));
+    if (row) table.push(row);
   }
   return table;
 }
+/** One process's stat line, or null when it has ended. */
+function procStat(proc, pid) {
+  try {
+    // the command name in brackets may hold spaces: the fields after the last ')' are fixed
+    const stat = fs.readFileSync(path.join(proc, String(pid), 'stat'), 'utf8');
+    const fields = stat.slice(stat.lastIndexOf(')') + 2).split(' '); // fields[0] is field 3
+    return { pid, state: fields[0], ppid: Number(fields[1]), start: fields[19] };
+  } catch {
+    return null;
+  }
+}
+const procArgv = (proc, pid) => {
+  try {
+    return fs.readFileSync(path.join(proc, String(pid), 'cmdline'), 'utf8').split('\0');
+  } catch {
+    return [];
+  }
+};
 /** The processes started from `pid`, each before the one that started it; never `pid` itself. */
 function descendants(table, pid) {
   const found = [];
@@ -716,41 +768,104 @@ function descendants(table, pid) {
 /** Where a running chain records its own pid: under this worktree's .cache, so a stop never has
  * to look for a runner by name (#491: a broad match killed another stream's runner). */
 const pidFile = (root) => path.join(root, '.cache', 'stream-checks', 'runner.pid');
-/** Is `pid` this worktree's runner? Its command line must name this worktree's script, so a pid
- * that the system gave to another process since is left alone. */
-function isOwnRunner(root, pid, proc = '/proc') {
+/** What the runner writes there: its pid, the start of that pid and its working directory. */
+function runnerRecord(pid = process.pid, proc = '/proc') {
+  return { pid, start: procStat(proc, pid)?.start ?? null, cwd: process.cwd() };
+}
+/** Is the recorded process this worktree's runner? The pid must have the recorded start (else the
+ * system gave it to another process since), be a node, and its script argument, resolved against
+ * its own working directory, must be this worktree's script. A relative `scripts/stream-checks.cjs`
+ * (as npm starts it) counts; an editor or `git log` with the path in its argv does not. */
+function isOwnRunner(root, record, proc = '/proc') {
+  const now = procStat(proc, record.pid);
+  if (!now || now.state === 'Z' || !record.start || now.start !== String(record.start))
+    return false;
+  const argv = procArgv(proc, record.pid);
+  let cwd;
   try {
-    const argv = fs.readFileSync(path.join(proc, String(pid), 'cmdline'), 'utf8').split('\0');
-    return argv.includes(path.join(root, 'scripts', 'stream-checks.cjs'));
+    cwd = fs.readlinkSync(path.join(proc, String(record.pid), 'cwd'));
   } catch {
     return false;
   }
+  return (
+    /^node(js)?$/.test(path.basename(argv[0] || '')) &&
+    Boolean(argv[1]) &&
+    path.resolve(cwd, argv[1]) === path.join(root, 'scripts', 'stream-checks.cjs')
+  );
 }
+const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 /** `npm run stream:checks -- --stop`: end this worktree's running chain and only the processes
- * it started (the step, its lock wait, its Godot and Xvfb). Nothing found by name is touched. */
-function stopOwn(root, { proc = '/proc', kill = process.kill, log = console.log } = {}) {
-  let pid = NaN;
+ * it started (the step, its lock wait, its Godot and Xvfb). Nothing found by name is touched.
+ * SIGTERM first; after up to `grace` ms, SIGKILL to the ones of that first list still alive. */
+async function stopOwn(
+  root,
+  {
+    proc = '/proc',
+    kill = process.kill,
+    log = console.log,
+    grace = 10_000,
+    sleep = pause,
+    now = Date.now,
+  } = {},
+) {
+  let record = null;
   try {
-    pid = Number(JSON.parse(fs.readFileSync(pidFile(root), 'utf8')).pid);
+    record = JSON.parse(fs.readFileSync(pidFile(root), 'utf8'));
   } catch {
     /* no record */
   }
-  if (!Number.isInteger(pid) || !isOwnRunner(root, pid, proc)) {
+  if (!record || !Number.isInteger(record.pid)) {
     log(`stream-checks: no running chain recorded for ${root}; nothing stopped`);
     return 1;
   }
-  const tree = [...descendants(processTable(proc), pid), pid];
-  for (const each of tree)
-    try {
-      kill(each, 'SIGTERM');
-    } catch {
-      /* already gone */
-    }
-  fs.rmSync(pidFile(root), { force: true });
+  if (!isOwnRunner(root, record, proc)) {
+    log(
+      `stream-checks: recorded pid ${record.pid} is not this worktree's runner (stale record, removed); nothing stopped`,
+    );
+    fs.rmSync(pidFile(root), { force: true });
+    return 1;
+  }
+  const table = processTable(proc);
+  const snapshot = [...descendants(table, record.pid), record.pid].map((pid) => ({
+    ...table.find((row) => row.pid === pid),
+    command: procArgv(proc, pid).filter(Boolean).join(' '),
+  }));
+  const signal = (rows, name) => {
+    for (const row of rows)
+      try {
+        kill(row.pid, name);
+      } catch {
+        /* already gone */
+      }
+  };
+  // a process of the snapshot is alive while its pid still has the start it had then
+  const alive = () =>
+    snapshot.filter((row) => {
+      const at = procStat(proc, row.pid);
+      return at && at.state !== 'Z' && at.start === row.start;
+    });
+  signal(snapshot, 'SIGTERM');
+  const until = now() + grace;
+  let left = alive();
+  while (left.length && now() < until) {
+    await sleep(250);
+    left = alive();
+  }
+  for (const row of left)
+    log(`stream-checks: still running after SIGTERM: ${row.pid} ${row.command}`);
+  if (left.length) {
+    signal(left, 'SIGKILL');
+    await sleep(500);
+    left = alive();
+  }
+  const gone = snapshot.filter((row) => !left.includes(row));
+  for (const row of gone) log(`stream-checks: exited ${row.pid} ${row.command}`);
+  for (const row of left) log(`stream-checks: did not exit ${row.pid} ${row.command}`);
+  if (!left.some((row) => row.pid === record.pid)) fs.rmSync(pidFile(root), { force: true });
   log(
-    `stream-checks: stopped the chain ${pid} of ${root} and ${tree.length - 1} process(es) it started`,
+    `stream-checks: stopped the chain ${record.pid} of ${root}: ${gone.length} of ${snapshot.length} process(es) exited${left.length ? `, ${left.length} did not` : ''}`,
   );
-  return 0;
+  return left.length ? 1 : 0;
 }
 
 function usage(why) {
@@ -778,7 +893,7 @@ async function main(argv) {
     return usage();
   if (flags.includes('--stop')) {
     if (argv.length > 1) return usage('--stop takes nothing else');
-    return stopOwn(root);
+    return await stopOwn(root);
   }
   // a count that is not a whole number of 1 or more would play nothing and still say "passed"
   if (!/^[1-9]\d*$/.test(value('repeat', '3')))
@@ -875,7 +990,7 @@ async function main(argv) {
   fs.mkdirSync(folder, { recursive: true });
   fs.writeFileSync(
     pidFile(root),
-    `${JSON.stringify({ pid: process.pid, root, started: new Date().toISOString() })}\n`,
+    `${JSON.stringify({ ...runnerRecord(), root, started: new Date().toISOString() })}\n`,
   );
   const result = await runChain({
     steps,
@@ -926,6 +1041,8 @@ module.exports = {
   hostedPins,
   main,
   keepFailure,
+  keptFailures,
+  runnerRecord,
   processTable,
   descendants,
   isOwnRunner,
