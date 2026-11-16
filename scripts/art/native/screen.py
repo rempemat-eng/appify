@@ -484,8 +484,14 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
                     xm_ = 2 * (pa_ + 2) - xm_                       # the path's texture mirrored out to the edge
                 elif xm_ > pb_ - 2:
                     xm_ = 2 * (pb_ - 2) - xm_
-                src_ = under[rim - 3 - ((y_ - sfoot) % P(8, 0)), xm_]
-                cv[y_, x_] = src_ if src_ >= 0 and is_fam(np.array(src_), 'path') else C(ec, 1)
+                sy_ = rim - 3 - ((y_ - sfoot) % P(8, 0))
+                src_ = under[sy_, xm_]
+                if not (src_ >= 0 and is_fam(np.array(src_), 'path')):
+                    # a tuft's blades over the upper path: the nearest path texel of the same row
+                    near_ = [under[sy_, xm_ + d_] for d_ in (1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6)
+                             if 0 <= xm_ + d_ < w and under[sy_, xm_ + d_] >= 0 and is_fam(np.array(under[sy_, xm_ + d_]), 'path')]
+                    src_ = near_[0] if near_ else C('path_warm', 3)
+                cv[y_, x_] = src_
             for y_ in range(sfoot + 1, waterline):
                 for x_ in (la_ - 1, lb_):
                     if (y_ + x_) % 7 != 0:
@@ -531,7 +537,12 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
         # risers; the cut is as wide as the bridge's abutments, so the path runs on in one line
         cx0, cx1 = (P(v_, 0) for v_ in st.get('cut', (st['x0'], st['x1'])))
         GD.timber_stair(cv, cx0, cx1, rim - 2, sfoot, st.get('n', 5), np.random.default_rng(tr.get('seed', 461) + 1),
-                        cheek=st.get('cheek', 10))
+                        cheek=st.get('cheek', 10), kerb_to=waterline if st.get('cut') else None,
+                        seed=tr.get('seed', 461))
+        if st.get('cut'):
+            # the stair's foot: a contact row of shade where the last riser meets the landing
+            for x_ in range(la_, lb_):
+                cv[sfoot, x_] = C('path_cool', 1) if (x_ * 7) % 5 else C('path_cool', 2)
         items = [it for it in items if not (sx0 - P(4, 0) <= it[2][0] <= sx1 + P(4, 0))]
     return items, waterline
 
@@ -875,7 +886,38 @@ def tree_shadow_hd(x, y, ex, W, H) -> np.ndarray:
     return m
 
 
-def lawn_dressing_hd(cv: np.ndarray, plan: dict, h: int, w: int) -> list:
+def unpainted_heap(plan: dict, h: int, w: int):
+    """The footprint (texels) of the heap rocks the ground no longer paints (`"ground": false`, the
+    two slabs beside the woodland's stair, Matt 16 Nov). The lawn's dressing keeps out of it as it
+    did while they stood, so its draws, and every tuft and flower it places, stay as they were."""
+    from . import rocks as RK
+    m = np.zeros((h, w), bool)
+    for b in plan.get('rock', {}).get('heap', []):
+        if b.get('ground') is not False or 'shape' not in b:
+            continue
+        dec, anc = RK.rock(b['size'][0], b['size'][1], b['seed'], flat=b['shape'] == 'slab',
+                           moss=0.6 if b.get('moss') else 0.0)
+        X, Y = int(round(b['at'][0] * D - anc[0])), int(round(b['at'][1] * D - anc[1]))
+        hh, ww = dec.shape
+        ys, xs = np.nonzero(dec >= 0)
+        ys, xs = ys + Y, xs + X
+        ok = (ys >= 0) & (ys < h) & (xs >= 0) & (xs < w)
+        m[ys[ok], xs[ok]] = True
+    return m
+
+
+def stair_box(plan: dict, h: int, w: int):
+    """The texels of a terrace stair in a cut and its landing, as a slice pair, or None."""
+    tr = plan.get('terrace') or {}
+    st = tr.get('steps') or {}
+    if not st.get('cut'):
+        return None
+    x0, x1 = P(st['cut'][0], 0) - 3, P(st['cut'][1], 0) + 3
+    y0, y1 = P(tr['y'], 0) - 4, P(tr['y'] + tr['face'], 0) + P(4, 0)
+    return (slice(max(0, y0), min(h, y1)), slice(max(0, x0), min(w, x1)))
+
+
+def lawn_dressing_hd(cv: np.ndarray, plan: dict, h: int, w: int, keep_out: np.ndarray | None = None) -> list:
     """The lawn's dressing at density 3 and up, the way Eastward dresses grass: few, clustered and
     varied, with calm lawn between. Clusters stand about one in two 20 world px cells; each holds
     2 to 5 of: a tuft (fine, broad or seeding, 0.5 to 1.6 of the kit's size, three greens), a group
@@ -886,6 +928,8 @@ def lawn_dressing_hd(cv: np.ndarray, plan: dict, h: int, w: int) -> list:
     from .terrain import noise as TN
     rng = np.random.default_rng(1907)
     lawn = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 < 6)
+    if keep_out is not None:
+        lawn &= ~keep_out
     lawn = ndi.binary_erosion(lawn, iterations=P(3))
     for (oid, kind, x, y, ow, oh) in plan['objects']:
         x0, x1 = P(x - 2, 0), P(x + ow + 2, 0)
@@ -1647,7 +1691,7 @@ def build() -> Zone:
                 x0, y0, x1, y1 = CO._bbox(a)
                 low.append((ty, img, ((x0 + x1) / 2, y1), (tx * D, ty * D), False))
     if hd:
-        low += lawn_dressing_hd(cv, plan, h, w)
+        low += lawn_dressing_hd(cv, plan, h, w, keep_out=unpainted_heap(plan, h, w))
     rng = np.random.default_rng(421)
     for (x, y, _k) in plan['dressing']['leaves']:
         limg = CO.fallen_leaf(D, rng)
@@ -1660,7 +1704,12 @@ def build() -> Zone:
         shade = np.zeros((h, w), bool)
         for m in casts:
             shade |= m
+        # the stair in its cut and its landing are built, not lawn: no blades or crumbs on them
+        sbox = stair_box(plan, h, w)
+        kept = cv[sbox].copy() if sbox is not None else None
         ground_detail_hd(cv, plan, trees, h, w, shade, soft=True)
+        if sbox is not None:
+            cv[sbox] = kept
     G = CO.ground_from_codes(cv, D)
     CO.cast_shadows(G, casts, tcasts, things + [(l[0], l[1], l[2], l[3]) for l in low if l[4]], D)
     ground = G.rgba()
