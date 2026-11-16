@@ -1,14 +1,14 @@
 {
  "id": "crossroads/fallen_bell_shadow",
  "file": "game/zones/crossroads/art/fallen_bell_shadow.png",
- "sha256": "86551e981eed0a9b62525aa3e446a7d49fc3f24b0146bf0c0bd60254d16bbb60",
+ "sha256": "71382f13789fb20dc6412d75ec5eed856711c86af013cfcbee604433bbcc4564",
  "kind": "fallen_bell_shadow",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  55,
-  13
+  44,
+  25
  ],
  "status": "pass",
  "counts": {

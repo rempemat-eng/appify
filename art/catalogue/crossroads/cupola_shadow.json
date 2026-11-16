@@ -1,14 +1,14 @@
 {
  "id": "crossroads/cupola_shadow",
  "file": "game/zones/crossroads/art/cupola_shadow.png",
- "sha256": "53ea0f46e969ac7d55214fecee22cf7743a42a02c9892a7de4563b949feb5b03",
+ "sha256": "24db0a3ce896f6c54452148d9d3c169577ac3732ba9fd624f755dff62414c2ea",
  "kind": "cupola_shadow",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  95,
-  61
+  93,
+  57
  ],
  "status": "pass",
  "counts": {

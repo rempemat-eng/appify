@@ -181,7 +181,7 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
    its mark stands before the library's door from then on (the Crossroads plan's `bell_tower_site`, since
    16 Nov). It is optional (Matt, 13 Nov, decision (d)): nothing in the slice waits on it, and the closing
    card does not. Its cupola is drawn (`scripts/art/native/belfry.py`): from the start the library's ridge
-   carries an empty cupola, its old headstock snapped, and the bell stands in the street below the door;
+   carries an empty cupola, its old headstock snapped, and the bell lies on its side in the street under the library's east window;
    paying hangs the bell in the cupola on a new frame and takes it out of the street, for good. The bell's
    look line says what it is, and once the night is won names the mark by the library door. Hale does not
    point to it: she says this was the one night and they will not come again for this light (Matt, 13 Nov:

@@ -904,6 +904,9 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                 objects.append(dict(id=cid, kind='cupola', png=add_pic(cid, crop.rgba()), foot=(foot[0], foot[1] + 3),
                                     anchor=(crop.ax, crop.ay), alpha=crop.alpha(), solid=None, cond=ccond, static=False,
                                     of=b['id']))
+            # (the two states share their outline: the storm's marks lie inside it, so one shadow serves both)
+            if not np.array_equal(pics[cup.get('empty', 'cupola_empty')].getchannel('A'), pics[cup.get('hung', 'cupola_hung')].getchannel('A')):
+                raise ValueError('the two cupolas must share their outline (belfry.cupola)')
             sid = cup.get('shadow', 'cupola_shadow')
             crop = on_roof(shadow, 2)
             objects.append(dict(id=sid, kind='cupola', png=add_pic(sid, crop.rgba()), foot=(foot[0], foot[1] + 2),
@@ -1036,6 +1039,26 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             fx_, fy_ = o['foot']
             wd_ = max(8, int((np.asarray(o['alpha']).any(0)).sum()))
             m = ((XX - fx_ - wd_ * 0.45) / (wd_ * 0.9)) ** 2 + ((YY - fy_ + 2) / (wd_ * 0.32)) ** 2 <= 1.0
+        elif hd and o['kind'] == 'bell':
+            # the bell on its side (eastward-edges 7.2): its cast east and down by the one sun from every
+            # texel at its height, the outer 2 texels one tone down and the core two, and a contact
+            # ellipse under the lip where it rests
+            # it lies on its side, so its footprint is its silhouette's lower half on the setts, and the
+            # cast is that footprint carried east and down for every texel of its height (about 2 R)
+            al = np.asarray(o['alpha'])
+            ys_, xs_ = np.nonzero(al)
+            low = al & (np.arange(al.shape[0])[:, None] >= (ys_.min() + ys_.max()) / 2.0)
+            X0, Y0 = int(o['foot'][0] - o['anchor'][0]), int(o['foot'][1] - o['anchor'][1])
+            m = np.zeros((H, W), bool)
+            ly, lx = np.nonzero(low)
+            for h_ in range(0, int(ys_.max() - ys_.min()) + 1):
+                gx_ = lx + X0 + int(round(kx * h_))
+                gy_ = ly + Y0 + 2 + int(round(ky * h_))
+                ok_ = (gx_ >= 0) & (gx_ < W) & (gy_ >= 0) & (gy_ < H)
+                m[gy_[ok_], gx_[ok_]] = True
+            m = ndi.binary_closing(m, iterations=2)
+            contact = CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
+            return m, ndi.binary_erosion(m, iterations=2), contact
         else:
             m = CO.shadow_mask(o['alpha'], o['anchor'], D, W, H, o['foot'], kx, ky)
             if hd and o.get('shrub'):
