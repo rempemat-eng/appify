@@ -108,11 +108,17 @@ class Scene:
             props['z_index'] = z
         self.node(name, 'Polygon2D', parent, props)
 
-    def solid(self, name, parent, r, low=False):
+    def solid(self, name, parent, r, low=False, face=None):
         """A solid rectangle (world px). `low` puts it on layers 1 and 5: it stops feet and lets shots over
-        (tools/gen_physics.py, docs/physics.md)."""
+        (tools/gen_physics.py, docs/physics.md). `face` is (height in texels, material) for a solid whose wall is
+        drawn above its box's south edge, measured from its picture: what a shot that meets it can show on it
+        (game/actors/impact.gd `sticks`: an arrow sticks only in timber or earth, below the face's top)."""
         x, y, w, h = r
-        self.node(name, 'StaticBody2D', parent, {'collision_layer': 17, 'collision_mask': 0} if low else {'collision_mask': 0})
+        props = {'collision_layer': 17, 'collision_mask': 0} if low else {'collision_mask': 0}
+        if face:
+            props['metadata/impact_face'] = str(int(face[0]))
+            props['metadata/impact_material'] = '"%s"' % face[1]
+        self.node(name, 'StaticBody2D', parent, props)
         self.node('Shape', 'CollisionShape2D', parent + '/' + name,
                   {'position': vec(t(x + w / 2), t(y + h / 2)), 'shape': 'SubResource("%s")' % self.rect_shape(t(w), t(h))})
 

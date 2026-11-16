@@ -284,6 +284,8 @@ shape = SubResource("s1")
 
 [node name="Face_lane_bank" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 36
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Face_lane_bank"]
 position = Vector2(225, 60)
@@ -291,6 +293,8 @@ shape = SubResource("s2")
 
 [node name="Face_lane_face" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 36
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Face_lane_face"]
 position = Vector2(225, 378)
@@ -298,6 +302,8 @@ shape = SubResource("s3")
 
 [node name="Face_terrace_face_w" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 36
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Face_terrace_face_w"]
 position = Vector2(675, 438)
@@ -305,6 +311,8 @@ shape = SubResource("s4")
 
 [node name="Face_terrace_face_e" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 36
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Face_terrace_face_e"]
 position = Vector2(1260, 438)
@@ -319,6 +327,8 @@ shape = SubResource("s6")
 
 [node name="Building_hut" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 90
+metadata/impact_material = "timber"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_hut"]
 position = Vector2(960, 132)
@@ -326,6 +336,8 @@ shape = SubResource("s7")
 
 [node name="Building_library" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 110
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_library"]
 position = Vector2(744, 540)
@@ -333,6 +345,8 @@ shape = SubResource("s8")
 
 [node name="Building_north_cottages" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 110
+metadata/impact_material = "timber"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_north_cottages"]
 position = Vector2(1176, 540)
@@ -340,6 +354,8 @@ shape = SubResource("s8")
 
 [node name="Building_bakery" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 120
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_bakery"]
 position = Vector2(444, 792)
@@ -347,6 +363,8 @@ shape = SubResource("s9")
 
 [node name="Building_herbalist" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 110
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_herbalist"]
 position = Vector2(444, 1080)
@@ -354,6 +372,8 @@ shape = SubResource("s9")
 
 [node name="Building_smithy" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 118
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_smithy"]
 position = Vector2(1500, 756)
@@ -361,6 +381,8 @@ shape = SubResource("s10")
 
 [node name="Building_fern_cottage" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 110
+metadata/impact_material = "timber"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_fern_cottage"]
 position = Vector2(1476, 1176)

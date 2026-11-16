@@ -3,6 +3,9 @@ extends Area2D
 ## One thorn of the Thornback's volley: drawn by the kit in eight directions (art/thorn.png), it flies
 ## straight at 70 world px a second (slower than a roll), hurts the player once, and is gone when it
 ## meets a wall, leaves the arena or has flown its lifetime, so a volley always ends.
+## Where it breaks on the player or a wall it leaves a splat in the thorn's colours (actors/impact.gd, 16 Nov;
+## a wall also gives the `shot_wall` cue; the splat is at the solid's foot unless it has a drawn face).
+## Drawing and sound only: no rule changes.
 
 const SPEED := 70.0 * 3.0
 const LIFETIME := 2.4
@@ -51,6 +54,14 @@ func _on_body(body: Node) -> void:
 	if body.is_in_group("player"):
 		if body.has_method("take_damage"):
 			body.take_damage(1, direction)
+		_splat()
 		finish()
 	elif not body.is_in_group("enemy"):
+		Sound.play(&"shot_wall")
+		var from := global_position - direction * SPEED / 60.0
+		_splat(12.0 if Impact.sticks(body, from, 12.0) else 0.0)   # at a solid's foot unless it meets a face
 		finish()
+
+func _splat(lift := 12.0) -> void:
+	if is_inside_tree():
+		Impact.spawn(get_parent(), Impact.Kind.SPLAT, global_position, lift, direction, false, null, Impact.THORN_TINT)
