@@ -467,7 +467,8 @@ def seed() -> list:
             owner = matches[0]
         if owner not in by_object:
             raise ValueError('missing attachment owner ' + owner)
-        part = {'damage': 'overlay', 'shadow': 'shadow', 'glow': 'effect', 'boards': 'procedural'}[obj['kind']]
+        # a cupola on a building's roof (its two states and its shadow there) is drawn over it, as its damage is
+        part = {'damage': 'overlay', 'cupola': 'overlay', 'shadow': 'shadow', 'glow': 'effect', 'boards': 'procedural'}[obj['kind']]
         by_object[owner]['audit']['sources'].append(_source('crossroads', obj, part))
         by_object[owner]['audit']['todo'].append('retain ' + part + ' ' + obj['id'] + ' from source scene with its own condition and offset; not a standalone random variant')
     for p in out:

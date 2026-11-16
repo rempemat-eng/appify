@@ -13,8 +13,9 @@ extends GdUnitTestSuite
 ##   - every line written for the three zones' people can show, apart from those listed with a reason.
 ##
 ## Raids (core/raids.gd) are modelled as one more thing in their zone: once a raid is earned it can be
-## defended and won (the purse, its flags), and the restore it offers gets its mark (world/raid_night.gd sets
-## it out at runtime, so it is added here from the raid's data). A lost night takes no Glint, quest or restore (the lantern is dark and
+## defended and won (the purse, its flags), and a restore it offers that no plan defines gets its mark
+## (world/raid_night.gd sets it out at runtime, so it is added here from the raid's data; the first night's
+## bell tower is the Crossroads plan's since 16 Nov, its mark in the scene). A lost night takes no Glint, quest or restore (the lantern is dark and
 ## its repairs show until a night is held, which the win undoes), so the model only plays the win. Announcing and postponing are
 ## the raid's own state machine, held by test/test_raids.gd.
 ##

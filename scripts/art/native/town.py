@@ -79,6 +79,7 @@ def raids_on(zone: str) -> list:
 # ------------------------------------------------------------------------------------------------
 # what a drawn zone is made from (check.py compares it with kit.json's `inputs`)
 INPUTS = ('village.py', 'houses.py', 'volume.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
+          'belfry.py',
           'terrain/sheets.py', 'masters/zones_props_oak.png', 'masters/zones_props_bush.png', 'screen.py')
 
 # Approved pictures of another zone that a plan's dressing may place as they are (`sprite`:
@@ -879,6 +880,38 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             objects.append(dict(id=b['id'] + '_damage', kind='damage', png=add_pic(b['id'] + '_damage', built.damage.rgba()),
                                 foot=(foot[0], foot[1] + 1), anchor=(built.damage.ax, built.damage.ay + 1),
                                 alpha=built.damage.alpha(), solid=None, cond=dcond, static=False, of=b['id']))
+        if look.get('cupola'):
+            # a cupola on the ridge in two states, empty until its restore and with its bell after (Matt,
+            # 13 Nov, decision (d): the bell tower's cupola drawn, so paying changes the square; belfry.py).
+            # Drawn in the building's frame over its damage overlay, the pictures stand on the building's
+            # foot three texels in front of it, so they sort with the building and over its overlay.
+            # Its cast shadow on the roof is a third picture, the same for both, one texel under them.
+            from scripts.art.native import belfry as BF
+            cup = look['cupola']
+            rid = cup['restore']
+
+            def on_roof(pic, lift):
+                ys_, xs_ = np.nonzero(pic.a >= 0)
+                cx0, cy0, cx1, cy1 = xs_.min(), ys_.min(), xs_.max() + 1, ys_.max() + 1
+                crop = V.Pic(cx1 - cx0, cy1 - cy0, built.base.ax - cx0, built.base.ay + BF.PAD - cy0 + lift)
+                crop.a = pic.a[cy0:cy1, cx0:cx1].copy()
+                return crop
+            for hung, cid, ccond in ((False, cup.get('empty', 'cupola_empty'), {'not_restored': [rid]}),
+                                     (True, cup.get('hung', 'cupola_hung'), {'restored': [rid]})):
+                pic, shadow, _g = BF.cupola(built.base.a, built.damage.a if built.damage is not None else None, built.info,
+                                            look['depth'], cup, hung, seed=sum(map(ord, b['id'])) + 7)
+                crop = on_roof(pic, 3)
+                objects.append(dict(id=cid, kind='cupola', png=add_pic(cid, crop.rgba()), foot=(foot[0], foot[1] + 3),
+                                    anchor=(crop.ax, crop.ay), alpha=crop.alpha(), solid=None, cond=ccond, static=False,
+                                    of=b['id']))
+            # (the two states share their outline: the storm's marks lie inside it, so one shadow serves both)
+            if not np.array_equal(pics[cup.get('empty', 'cupola_empty')].getchannel('A'), pics[cup.get('hung', 'cupola_hung')].getchannel('A')):
+                raise ValueError('the two cupolas must share their outline (belfry.cupola)')
+            sid = cup.get('shadow', 'cupola_shadow')
+            crop = on_roof(shadow, 2)
+            objects.append(dict(id=sid, kind='cupola', png=add_pic(sid, crop.rgba()), foot=(foot[0], foot[1] + 2),
+                                anchor=(crop.ax, crop.ay), alpha=crop.alpha(), solid=None, cond=None, static=False,
+                                of=b['id']))
 
     def inside_building(r):
         x, y, w, h = r
@@ -901,6 +934,11 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         host = inside_building(p['rect'])
         entry = dict(id=p['id'], kind=kind, cond=cond_of(p), solid=[x, y, w, h] if p.get('solid') else None,
                      static=not cond_of(p))
+        if p.get('after_lawn'):
+            # placed after the lawn was laid (the plan says why): the lawn's scatter is laid without it, so
+            # adding it moves nothing on the ground; its own shadow is a picture of its own (a prop that
+            # comes and goes) or, standing for good, is laid on the ground with the other static shadows
+            entry['after_lawn'] = True
         if kind == 'boards' and host is not None:
             entry.update(png=None)          # drawn in the building's damage overlay
             objects.append(entry)
@@ -1001,6 +1039,26 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             fx_, fy_ = o['foot']
             wd_ = max(8, int((np.asarray(o['alpha']).any(0)).sum()))
             m = ((XX - fx_ - wd_ * 0.45) / (wd_ * 0.9)) ** 2 + ((YY - fy_ + 2) / (wd_ * 0.32)) ** 2 <= 1.0
+        elif hd and o['kind'] == 'bell':
+            # the bell on its side (eastward-edges 7.2): its cast east and down by the one sun from every
+            # texel at its height, the outer 2 texels one tone down and the core two, and a contact
+            # ellipse under the lip where it rests
+            # it lies on its side, so its footprint is its silhouette's lower half on the setts, and the
+            # cast is that footprint carried east and down for 0.6 of its height
+            al = np.asarray(o['alpha'])
+            ys_, xs_ = np.nonzero(al)
+            low = al & (np.arange(al.shape[0])[:, None] >= (ys_.min() + ys_.max()) / 2.0)
+            X0, Y0 = int(o['foot'][0] - o['anchor'][0]), int(o['foot'][1] - o['anchor'][1])
+            m = np.zeros((H, W), bool)
+            ly, lx = np.nonzero(low)
+            for h_ in range(0, int(0.6 * (ys_.max() - ys_.min())) + 1):     # reaching about 0.6 of its height
+                gx_ = lx + X0 + int(round(kx * h_))
+                gy_ = ly + Y0 + 2 + int(round(ky * h_))
+                ok_ = (gx_ >= 0) & (gx_ < W) & (gy_ >= 0) & (gy_ < H)
+                m[gy_[ok_], gx_[ok_]] = True
+            m = ndi.binary_closing(m, iterations=2)
+            contact = CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
+            return m, ndi.binary_erosion(m, iterations=2), contact
         else:
             m = CO.shadow_mask(o['alpha'], o['anchor'], D, W, H, o['foot'], kx, ky)
             if hd and o.get('shrub'):
@@ -1010,7 +1068,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         contact = CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
         return m, ndi.binary_erosion(m, iterations=rim), contact
 
-    NOSHADE = ('glow', 'smoke', 'damage', 'debris', 'window_boards')
+    NOSHADE = ('glow', 'smoke', 'damage', 'debris', 'window_boards', 'cupola')
     if hd:
         shade = np.zeros((H, W), bool)
         foots = []
@@ -1037,7 +1095,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             ft = []
             near = np.zeros((H, W), bool)
             for o in objs:
-                if o.get('png') is None or o['kind'] in NOSHADE:
+                if o.get('png') is None or o['kind'] in NOSHADE or o.get('after_lawn'):
                     continue
                 if o.get('lawn_as') is not None:
                     img_, anc_, al_ = o['lawn_as']
