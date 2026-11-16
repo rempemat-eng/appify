@@ -197,6 +197,8 @@ shape = SubResource("s1")
 
 [node name="Wall_north_hall" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 120
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_north_hall"]
 position = Vector2(324, 84)
@@ -204,6 +206,8 @@ shape = SubResource("s2")
 
 [node name="Wall_sep1_n" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 120
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_sep1_n"]
 position = Vector2(624, 168)
@@ -211,6 +215,8 @@ shape = SubResource("s3")
 
 [node name="Wall_corridor_n" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 120
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_corridor_n"]
 position = Vector2(924, 156)
@@ -218,6 +224,8 @@ shape = SubResource("s4")
 
 [node name="Wall_sep2_n" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 120
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_sep2_n"]
 position = Vector2(1224, 168)
@@ -225,6 +233,8 @@ shape = SubResource("s3")
 
 [node name="Wall_north_seal" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 120
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_north_seal"]
 position = Vector2(1464, 84)
@@ -232,6 +242,8 @@ shape = SubResource("s5")
 
 [node name="Wall_sep3_n" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 120
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_sep3_n"]
 position = Vector2(1704, 168)
@@ -239,6 +251,8 @@ shape = SubResource("s3")
 
 [node name="Wall_north_chamber" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = 120
+metadata/impact_material = "stone"
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_north_chamber"]
 position = Vector2(1992, 84)

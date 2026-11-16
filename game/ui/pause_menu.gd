@@ -148,20 +148,20 @@ func _process(_delta: float) -> void:
 		# at the frame's end, once whatever stood aside for the pause (the raid's prepare screen) is back
 		_hand_back_focus.call_deferred()
 
-## On closing: the focus goes back to what had it when the pause began, if that is still there and shown;
-## otherwise to nothing, as before the pause (15 Nov, the audit of #494: Resume left no control focused,
-## so on the raid's prepare screen the d-pad and A did nothing more).
+## On closing: the focus goes back to a still-visible prior control. The real raid screen releases
+## focus on the pause itself, before this menu polls it; let that screen restore its own kept button,
+## or its first button when nothing was focused. Ordinary play still returns to no focus.
 func _hand_back_focus() -> void:
 	var kept := _return_to
 	_return_to = null
-	if not is_instance_valid(kept):
-		return
-	var back := kept as Control
-	if back == null or not back.is_inside_tree() or not back.is_visible_in_tree():
-		return
-	if back.focus_mode == Control.FOCUS_NONE or is_ancestor_of(back) or _beside_has(back):
-		return
-	back.grab_focus()
+	if is_instance_valid(kept):
+		var back := kept as Control
+		if back != null and back.is_inside_tree() and back.is_visible_in_tree() \
+				and back.focus_mode != Control.FOCUS_NONE and not is_ancestor_of(back) and not _beside_has(back):
+			back.grab_focus()
+	for screen: Node in get_tree().get_nodes_in_group("raid_screen"):
+		if screen is RaidScreen:
+			(screen as RaidScreen).restore_focus()
 
 ## True when `node` is in a panel beside this menu (the Sound panel).
 func _beside_has(node: Node) -> bool:

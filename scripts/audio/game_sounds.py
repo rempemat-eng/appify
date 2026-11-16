@@ -242,6 +242,16 @@ def enemy_spit(rng):
     return finish(out, -25)
 
 
+def shot_wall(rng):
+    # A creature's shot breaking on a solid (16 Nov: shots should visibly and audibly hit): a small soft
+    # crack of husk and a few grains falling, quieter and duller than the arrow's tick.
+    out = silence(0.16)
+    place(out, burst(rng, 0.05, 700, 2600, 0.001, 0.01), 0.0)
+    place(out, knock(N['G4'], 0.08, 0.012, wood=0.25), 0.0, gain=0.7)
+    place(out, burst(rng, 0.08, 1800, 4200, 0.004, 0.02), 0.03, gain=0.35)
+    return finish(band(out, None, 4200), -27)
+
+
 def enemy_freed(rng):
     # Freed, not killed: the shard lets go with a breath, and two soft notes rise after it.
     out = silence(0.95)
@@ -712,6 +722,7 @@ EFFECTS: dict[str, tuple] = {
     'tell_elite': (tell_elite, 'moment', 'the horned elite winding up'),
     'enemy_strike': (enemy_strike, 'moment', 'a creature lunging'),
     'enemy_spit': (enemy_spit, 'moment', 'the toad\'s shot leaving'),
+    'shot_wall': (shot_wall, 'moment', 'a creature\'s shot breaking on a solid'),
     'enemy_freed': (enemy_freed, 'moment', 'a creature freed'),
     'boss_tell_charge': (boss_tell_charge, 'moment', 'the Thornback pawing before a charge'),
     'boss_tell_volley': (boss_tell_volley, 'moment', 'the Thornback rattling before a volley'),

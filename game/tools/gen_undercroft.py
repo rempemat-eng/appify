@@ -116,7 +116,9 @@ def build(plan: dict, kit: dict) -> str:
                     ('EdgeW', [bx - edge, by, edge, bh]), ('EdgeE', [bx + bw, by, edge, bh])):
         s.solid(name, 'Walls', r)
     for w in plan['walls']:
-        s.solid('Wall_' + w['id'], 'Walls', w['rect'])
+        # the arched faces of the north walls (plan `face`, world px) are stone; the side walls, the south wall
+        # and the corridor's south cap show only a cap line, so they have no face (#509 round 2)
+        s.solid('Wall_' + w['id'], 'Walls', w['rect'], face=(w['face'] * 3, 'stone') if w.get('face') else None)
     def low(o):
         # the low rule (tools/gen_physics.py): rubble, roots and the urn stand under 64 texels, so an arrow
         # flies over them; the broken pillars, the lever and the sealed slab stop it
