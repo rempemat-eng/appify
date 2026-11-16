@@ -132,12 +132,15 @@ def render(zid: str, preview: str | None) -> None:
 # slope (terrace_bank_e) has no wall drawn, so it has no face. Only timber takes a stuck arrow.
 # The timber houses stand on stone (#509 follow-up, measured on 16 Nov from the pictures: the highest row of
 # grey stone above the foot): the hut's plinth to 11, the north cottages' and the Ferns' cottage's rubble walls
-# to 63 (rows above are plaster and timber). Their windows (the glass's box in the picture, 3 texels of frame
-# added; x from the foot, which is the box's centre for all three) take no arrow either.
+# to 63 (rows above are plaster and timber). Their windows (the glass with its frame; x from the foot, which is
+# the box's centre for all three) take no arrow, and their doors (door and frame, from the step to the lintel)
+# are timber through the plinth band. #515 audit (16 Nov): the auditor's spans, checked by drawing them on the
+# pictures; the hut's and the Ferns' windows were 6 to 10 texels too far right before.
+# house: (stone_below, windows, timber) with windows and timber as (x0, x1, lift0, lift1)
 TIMBER_PLINTHS = {
-    'hut': (11, [(-83, -41, 54, 90), (61, 103, 54, 90)]),
-    'north_cottages': (63, [(-61, -24, 52, 92), (11, 48, 52, 92)]),
-    'fern_cottage': (63, [(19, 61, 54, 90)]),
+    'hut': (11, [(-89, -56, 54, 90), (55, 88, 54, 90)], []),
+    'north_cottages': (63, [(-61, -24, 52, 92), (11, 48, 52, 92)], [(-140, -78, 0, 84), (37, 106, 0, 84)]),
+    'fern_cottage': (63, [(13, 46, 54, 90)], [(-92, -25, 0, 85)]),
 }
 DRAWN_FACES = {
     'lane_bank': (36, 'stone'), 'lane_face': (36, 'stone'),

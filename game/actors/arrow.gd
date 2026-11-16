@@ -146,7 +146,7 @@ func _on_body(body: Node) -> void:
 		# (Impact.sticks); otherwise nothing is drawn to stick in at its height, or the face is stone, and it
 		# falls to the solid's foot, knocked back off it (#509 rounds 1 and 2, F1, F1b, S1)
 		var face := Impact.face_of(body)
-		var hit := Impact.face_hit(body, _prev, height)
+		var hit := Impact.face_hit(body, _prev, height, global_position.x)
 		var fx := _leave(Impact.Kind.WALL if hit == "stick" else Impact.Kind.DROP)
 		if fx != null:
 			match hit:

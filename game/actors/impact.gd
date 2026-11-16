@@ -144,16 +144,18 @@ static func body_lift(body: Node, height: float) -> float:
 
 ## The drawn face of `body`: {"height": texels from its foot to the top of the face as drawn (0: none),
 ## "material": "timber", "earth" or "stone", "stone_below": the top of a stone plinth under a timber or earth
-## wall (0: none), "no_stick": the windows, Rect2s of (x from the box's centre, lift) where nothing sticks}.
-## Written by the zone generators as the metas `impact_face`, `impact_material`, `impact_stone_below` and
-## `impact_no_stick` (tools/gen_blockout.py `solid(face=...)`), or answered by a method `impact_face()`.
+## wall (0: none), "no_stick": the windows, Rect2s of (x from the box's centre, lift) where nothing sticks,
+## "timber": the doors, Rect2s of the same kind that are timber even inside the plinth band}. Written by the
+## zone generators as the metas `impact_face`, `impact_material`, `impact_stone_below`, `impact_no_stick` and
+## `impact_timber` (tools/gen_blockout.py `solid(face=...)`), or answered by a method `impact_face()`.
 static func face_of(body: Node) -> Dictionary:
 	if body == null or not is_instance_valid(body):
-		return {"height": 0.0, "material": "", "stone_below": 0.0, "no_stick": []}
+		return {"height": 0.0, "material": "", "stone_below": 0.0, "no_stick": [], "timber": []}
 	if body.has_method("impact_face"):
 		return body.call("impact_face")
 	return {"height": float(body.get_meta("impact_face", 0.0)), "material": String(body.get_meta("impact_material", "")),
-		"stone_below": float(body.get_meta("impact_stone_below", 0.0)), "no_stick": body.get_meta("impact_no_stick", [])}
+		"stone_below": float(body.get_meta("impact_stone_below", 0.0)), "no_stick": body.get_meta("impact_no_stick", []),
+		"timber": body.get_meta("impact_timber", [])}
 
 ## What a shot whose ground point was at `from` one step before it met `body`, flying `lift` texels up, does
 ## there: "stick" (in a timber or earth face, see below), "stone" (it met stone: a stone face, or the stone
@@ -161,8 +163,10 @@ static func face_of(body: Node) -> Dictionary:
 ## or "drop" (no face, another edge, or above the face's top). Only "stick" leaves the arrow stuck.
 ## It sticks only when it crossed the body's south edge (it was south of the box's bottom and within its
 ## width; no body declares a side face) and meets the face at least FACE_TOP below the face's drawn top
-## (#509 round 2, F1b); then the plinth and the windows decide (#509 follow-up, 16 Nov).
-static func face_hit(body: Node, from: Vector2, lift: float) -> String:
+## (#509 round 2, F1b); then where on the face it is decides (#509 follow-up, 16 Nov): a door is timber (it
+## sticks, even in the plinth band), a window takes nothing, the plinth is stone, the rest is the face's own.
+## `at_x` is where it met the face (global x); left out, the point one step before stands in for it.
+static func face_hit(body: Node, from: Vector2, lift: float, at_x: float = NAN) -> String:
 	var face := face_of(body)
 	var height := float(face.height)
 	if height <= 0.0:
@@ -171,12 +175,17 @@ static func face_hit(body: Node, from: Vector2, lift: float) -> String:
 	var south := box.size != Vector2.ZERO and from.y > box.end.y and from.x >= box.position.x and from.x <= box.end.x
 	if not south or lift > height - FACE_TOP:
 		return "drop"
-	if not STICKY.has(String(face.material)) or lift <= float(face.stone_below):
+	if not STICKY.has(String(face.material)):
 		return "stone"
-	var at := Vector2(from.x - box.get_center().x, lift)
-	for window: Variant in face.no_stick:
+	var at := Vector2((from.x if is_nan(at_x) else at_x) - box.get_center().x, lift)
+	for door: Variant in face.get("timber", []):
+		if door is Rect2 and (door as Rect2).has_point(at):
+			return "stick"
+	for window: Variant in face.get("no_stick", []):
 		if window is Rect2 and (window as Rect2).has_point(at):
 			return "window"
+	if lift <= float(face.get("stone_below", 0.0)):
+		return "stone"
 	return "stick"
 
 ## True when a shot sticks in `body` (`face_hit` says "stick").

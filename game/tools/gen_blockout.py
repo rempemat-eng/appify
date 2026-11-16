@@ -113,8 +113,9 @@ class Scene:
         (tools/gen_physics.py, docs/physics.md). `face` is (height in texels, material) for a solid whose wall is
         drawn above its box's south edge, measured from its picture: what a shot that meets it can show on it
         (game/actors/impact.gd `face_hit`: an arrow sticks only in timber or earth, below the face's top). A
-        timber wall may add (stone_below, windows): the top of its stone plinth in texels, and its windows as
-        (x0, x1, lift0, lift1) in texels from the box's centre, where nothing sticks."""
+        timber wall may add (stone_below, windows, timber): the top of its stone plinth in texels, its windows
+        as (x0, x1, lift0, lift1) in texels from the box's centre, where nothing sticks, and its doors, timber
+        through the plinth band, in the same form."""
         x, y, w, h = r
         props = {'collision_layer': 17, 'collision_mask': 0} if low else {'collision_mask': 0}
         if face:
@@ -125,6 +126,9 @@ class Scene:
             if len(face) > 3 and face[3]:
                 props['metadata/impact_no_stick'] = '[%s]' % ', '.join(
                     'Rect2(%d, %d, %d, %d)' % (x0, l0, x1 - x0, l1 - l0) for x0, x1, l0, l1 in face[3])
+            if len(face) > 4 and face[4]:
+                props['metadata/impact_timber'] = '[%s]' % ', '.join(
+                    'Rect2(%d, %d, %d, %d)' % (x0, l0, x1 - x0, l1 - l0) for x0, x1, l0, l1 in face[4])
         self.node(name, 'StaticBody2D', parent, props)
         self.node('Shape', 'CollisionShape2D', parent + '/' + name,
                   {'position': vec(t(x + w / 2), t(y + h / 2)), 'shape': 'SubResource("%s")' % self.rect_shape(t(w), t(h))})

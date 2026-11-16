@@ -167,6 +167,7 @@ func test_a_hit_that_counts_holds_the_world_for_a_moment_and_lets_it_go() -> voi
 	var timer := Impact.hit_stop(get_tree())
 	assert_object(timer).is_not_null()
 	# the hold's length, without the wall clock (#509 follow-up): its timer counts exactly HIT_STOP
+	assert_float(Impact.HIT_STOP).is_equal(0.05)            # pinned: 3 frames at 60 (#515 audit)
 	assert_float(timer.time_left).is_equal_approx(Impact.HIT_STOP, 0.000001)
 	assert_float(Engine.time_scale).is_equal(Impact.HOLD_SCALE)
 	assert_object(Impact.hit_stop(get_tree())).is_null()   # one hold at a time
@@ -310,15 +311,17 @@ func test_stone_never_takes_an_arrow_it_drops_with_grey_chips() -> void:
 
 ## #509 follow-up: the timber houses stand on stone plinths (the north cottages' and the Ferns' rubble walls to
 ## 63 texels, the hut's to 11), and their windows take no arrow. A timber wall above the plinth still does.
-func _shoot_at_house(at_x: float, lift: float, stone_below: float, windows: Array) -> Impact:
+func _shoot_at_house(at_x: float, lift: float, stone_below: float, windows: Array, timber: Array = [],
+		dir := Vector2.UP) -> Impact:
 	var root := _stage()
 	var at := Vector2(at_x, 200)
 	var archer := _archer(root, at)
 	var house := _faced(root, 110.0, "timber")             # box x 160-200, centre 180
 	house.set_meta("impact_stone_below", stone_below)
 	house.set_meta("impact_no_stick", windows)
+	house.set_meta("impact_timber", timber)
 	await _settle()
-	await _fly(_loose(root, at, archer, Vector2.UP, lift))
+	await _fly(_loose(root, at, archer, dir.normalized(), lift))
 	var fx := _impacts(root)
 	assert_int(fx.size()).is_equal(1)
 	var mark: Impact = fx[0]
@@ -368,17 +371,60 @@ func test_a_plinth_drops_the_arrow_with_stone_and_a_window_drops_it_plain() -> v
 	assert_str(Impact.face_hit(house, Vector2(170, 150), 108.0)).is_equal("drop")    # above the top less FACE_TOP
 	assert_str(Impact.face_hit(house, Vector2(170, 50), 66.0)).is_equal("drop")      # from the north
 
+## #515 audit: a door is timber through the plinth band, and the window and door checks use where the arrow
+## met the face, not the point one step before.
+func test_a_door_in_the_plinth_band_is_timber() -> void:
+	var door := [Rect2(-20, 0, 15, 84)]                    # x 160-175 from the centre 180, lift 0-84
+	var window := [Rect2(5, 54, 10, 36)]                   # x 185-195
+	# a diagonal shot (north-east) into the door at lift 40, inside the plinth (63): it sticks, timber
+	var into_door := await _shoot_at_house(137.0, 40.0, 63.0, window, door, Vector2(0.5, -1))   # meets the face near x 167
+	assert_int(into_door.kind).is_equal(Impact.Kind.WALL)
+	assert_str(into_door.face_material).is_equal("timber")
+	# beside the door at the same height: the plinth, stone
+	var plinth := await _shoot_at_house(188.0, 40.0, 63.0, window, door)
+	assert_int(plinth.kind).is_equal(Impact.Kind.DROP)
+	assert_str(plinth.face_material).is_equal("stone")
+
+func test_the_face_is_read_where_the_arrow_met_it() -> void:
+	var house := StaticBody2D.new()
+	auto_free(house)
+	var shape := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(40, 80)
+	shape.shape = rect
+	shape.position = Vector2(180, 100)
+	house.add_child(shape)
+	add_child(house)
+	house.set_meta("impact_face", 110)
+	house.set_meta("impact_material", "timber")
+	house.set_meta("impact_stone_below", 63)
+	house.set_meta("impact_no_stick", [Rect2(5, 54, 10, 36)])
+	house.set_meta("impact_timber", [Rect2(-20, 0, 15, 84)])
+	# one step before it was at x 178 (beside the window); it met the face at x 188, in the window
+	assert_str(Impact.face_hit(house, Vector2(178, 150), 66.0, 188.0)).is_equal("window")
+	assert_str(Impact.face_hit(house, Vector2(178, 150), 66.0)).is_equal("stick")          # without the contact x
+	# it met the door's x (165) inside the plinth band: timber; one step before it was beside the door (178)
+	assert_str(Impact.face_hit(house, Vector2(178, 150), 40.0, 165.0)).is_equal("stick")
+	assert_str(Impact.face_hit(house, Vector2(178, 150), 40.0)).is_equal("stone")
+	# the door wins where it overlaps a window (the north cottages' purple door over its window's corner)
+	house.set_meta("impact_no_stick", [Rect2(-10, 54, 10, 36)])
+	house.set_meta("impact_timber", [Rect2(-12, 0, 15, 84)])
+	assert_str(Impact.face_hit(house, Vector2(178, 150), 60.0, 175.0)).is_equal("stick")
+
 func test_the_crossroads_houses_declare_their_plinths_and_windows() -> void:
 	var cross: Node = auto_free(load("res://zones/crossroads/crossroads.tscn").instantiate())
 	var hut := Impact.face_of(cross.get_node("Walls/Building_hut"))
 	assert_float(float(hut.stone_below)).is_equal(11.0)
-	assert_array(hut.no_stick).is_equal([Rect2(-83, 54, 42, 36), Rect2(61, 54, 42, 36)])
+	assert_array(hut.no_stick).is_equal([Rect2(-89, 54, 33, 36), Rect2(55, 54, 33, 36)])
+	assert_array(hut.timber).is_empty()
 	var cottages := Impact.face_of(cross.get_node("Walls/Building_north_cottages"))
 	assert_float(float(cottages.stone_below)).is_equal(63.0)
-	assert_int(cottages.no_stick.size()).is_equal(2)
+	assert_array(cottages.no_stick).is_equal([Rect2(-61, 52, 37, 40), Rect2(11, 52, 37, 40)])
+	assert_array(cottages.timber).is_equal([Rect2(-140, 0, 62, 84), Rect2(37, 0, 69, 84)])
 	var fern := Impact.face_of(cross.get_node("Walls/Building_fern_cottage"))
 	assert_float(float(fern.stone_below)).is_equal(63.0)
-	assert_array(fern.no_stick).is_equal([Rect2(19, 54, 42, 36)])
+	assert_array(fern.no_stick).is_equal([Rect2(13, 54, 33, 36)])
+	assert_array(fern.timber).is_equal([Rect2(-92, 0, 67, 85)])
 
 ## #509 follow-up: the arrow's last ground point is taken after its start is settled. Against a wall the start
 ## moves to the archer's feet, and the "one step before" point must be there, not at the bow's tip.
