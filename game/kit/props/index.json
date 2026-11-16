@@ -5297,6 +5297,13 @@
   ],
   "snap": "cell",
   "story": {
+   "gating": {
+    "if": {
+     "not_flags": [
+      "shard_lantern_dark"
+     ]
+    }
+   },
    "owner": null
   },
   "variants": {
