@@ -1,0 +1,27 @@
+{
+ "id": "crossroads/cupola_shadow",
+ "file": "game/zones/crossroads/art/cupola_shadow.png",
+ "sha256": "53ea0f46e969ac7d55214fecee22cf7743a42a02c9892a7de4563b949feb5b03",
+ "kind": "cupola_shadow",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  95,
+  61
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-11-16",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

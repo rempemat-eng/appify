@@ -1,0 +1,27 @@
+{
+ "id": "crossroads/fallen_bell_shadow",
+ "file": "game/zones/crossroads/art/fallen_bell_shadow.png",
+ "sha256": "86551e981eed0a9b62525aa3e446a7d49fc3f24b0146bf0c0bd60254d16bbb60",
+ "kind": "fallen_bell_shadow",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  55,
+  13
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-11-16",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

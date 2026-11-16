@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "380b23e474b90faecbacf12b4eae531760997d31c2691dca21bae3b091477932",
+ "inputs": "80e6cc4a4159c49b8e8fe5ddfd16b06293ad59693883b244798a817ac88c761f",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -22,10 +22,14 @@
   "crater_smoke.png",
   "crates_30.png",
   "crates_32.png",
+  "cupola_empty.png",
+  "cupola_hung.png",
+  "cupola_shadow.png",
   "debris_a.png",
   "debris_b.png",
   "debris_c.png",
   "debris_d.png",
+  "fallen_bell.png",
   "fence_0.png",
   "fence_1.png",
   "fence_2.png",
@@ -131,6 +135,62 @@
    "offset": [
     -158,
     -318
+   ],
+   "cond": null,
+   "solid": null,
+   "of": "library"
+  },
+  {
+   "id": "cupola_empty",
+   "kind": "cupola",
+   "png": "cupola_empty.png",
+   "foot": [
+    744,
+    603
+   ],
+   "offset": [
+    -27,
+    -374
+   ],
+   "cond": {
+    "not_restored": [
+     "bell_tower"
+    ]
+   },
+   "solid": null,
+   "of": "library"
+  },
+  {
+   "id": "cupola_hung",
+   "kind": "cupola",
+   "png": "cupola_hung.png",
+   "foot": [
+    744,
+    603
+   ],
+   "offset": [
+    -27,
+    -374
+   ],
+   "cond": {
+    "restored": [
+     "bell_tower"
+    ]
+   },
+   "solid": null,
+   "of": "library"
+  },
+  {
+   "id": "cupola_shadow",
+   "kind": "cupola",
+   "png": "cupola_shadow.png",
+   "foot": [
+    744,
+    602
+   ],
+   "offset": [
+    -23,
+    -244
    ],
    "cond": null,
    "solid": null,
@@ -536,6 +596,30 @@
     214,
     26,
     16
+   ]
+  },
+  {
+   "id": "fallen_bell",
+   "kind": "bell",
+   "png": "fallen_bell.png",
+   "foot": [
+    828,
+    648
+   ],
+   "offset": [
+    -25,
+    -36
+   ],
+   "cond": {
+    "not_restored": [
+     "bell_tower"
+    ]
+   },
+   "solid": [
+    269,
+    208,
+    14,
+    8
    ]
   },
   {
@@ -1974,6 +2058,26 @@
    },
    "solid": null,
    "of": "square_rubble_a"
+  },
+  {
+   "id": "fallen_bell_shadow",
+   "kind": "shadow",
+   "png": "fallen_bell_shadow.png",
+   "foot": [
+    802,
+    644
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_restored": [
+     "bell_tower"
+    ]
+   },
+   "solid": null,
+   "of": "fallen_bell"
   },
   {
    "id": "fern_rubble_shadow",
