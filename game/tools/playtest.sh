@@ -46,7 +46,9 @@ if [ -z "${DISPLAY:-}" ]; then
     exit 2
   fi
   export DISPLAY=${PLAYTEST_DISPLAY:-:97}
-  Xvfb "$DISPLAY" -screen 0 960x540x24 -nolisten tcp >"$TMP/xvfb.log" 2>&1 &
+  # a 16:10 screen bigger than any window a route makes (routes/window_resize.txt goes up to 1728 x 1117 and
+  # fullscreen): a pointer warped past the screen's edge is held at it, and the mouse would aim wrong
+  Xvfb "$DISPLAY" -screen 0 1920x1200x24 -nolisten tcp >"$TMP/xvfb.log" 2>&1 &
   XVFB_PID=$!
   sleep 1
   if ! kill -0 "$XVFB_PID" 2>/dev/null; then
