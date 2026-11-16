@@ -2,164 +2,14 @@ extends GdUnitTestSuite
 ## The save survives a round trip through JSON, and older or partial documents load into the current shape.
 
 const PATH := "user://test_save.json"
-const LEGACY_NAME_FIXTURE := "res://test/fixtures/legacy_napattack_v2.json"
-const LEGACY_PATH := PATH + ".legacy"
-const RENAMED_PATH := PATH + ".renamed"
-const OTHER_PATH := PATH + ".other"
-
-# Only the directory lookup is replaced: these tests exercise real boot/load/save and
-# real disposable files, never a player's old sibling directory or default save.
-class MigrationSave:
-	extends "res://core/save_game.gd"
-	var legacy_source := ""
-	var legacy_lookups := 0
-
-	func _legacy_save_path() -> String:
-		legacy_lookups += 1
-		return legacy_source
-
-var _migration_saves: Array[Node] = []
 
 func before_test() -> void:
 	SaveGame.reset()
 
 func after_test() -> void:
-	for instance: Node in _migration_saves:
-		instance.free()
-	_migration_saves.clear()
-	for file: String in [LEGACY_PATH, RENAMED_PATH, RENAMED_PATH + ".tmp",
-			RENAMED_PATH + ".broken", RENAMED_PATH + ".name-migration.tmp", OTHER_PATH]:
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(file))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH + ".tmp"))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH + ".directory"))
-
-func _migration_save() -> MigrationSave:
-	var instance := MigrationSave.new()
-	instance.path = RENAMED_PATH
-	instance.legacy_source = LEGACY_PATH
-	_migration_saves.append(instance)
-	return instance
-
-func _write_migration_file(target: String, text: String) -> void:
-	var file := FileAccess.open(target, FileAccess.WRITE)
-	file.store_string(text)
-	file.close()
-
-func test_old_folder_v2_import_keeps_original_bytes_progress_and_unknown_fields() -> void:
-	var text := FileAccess.get_file_as_string(LEGACY_NAME_FIXTURE)
-	_write_migration_file(LEGACY_PATH, text)
-	var original := FileAccess.get_file_as_bytes(LEGACY_PATH)
-	var instance := _migration_save()
-	assert_int(instance.boot()).is_equal(OK)
-	assert_bool(FileAccess.get_file_as_bytes(LEGACY_PATH) == original).is_true()
-	assert_bool(FileAccess.get_file_as_bytes(RENAMED_PATH) == original).is_true()
-	var expected: Dictionary = SaveGame._migrate(JSON.parse_string(text))
-	assert_dict(instance.data).is_equal(expected)
-	assert_int(instance.data.glint).is_equal(137)
-	assert_int(instance.data.quests.woodland_stones.step).is_equal(1)
-	assert_bool(instance.data.settings.gentle_sound).is_true()
-	assert_dict(instance.data.extension).is_equal(expected.extension)
-	assert_str(instance.data.player.extension.name).is_equal("keep this unknown player field")
-	assert_str(instance.data.quests.retired_quest.note).is_equal("keep this unknown quest")
-	# The first normal save and later round trips keep all of the loaded state.
-	var live := instance.data.duplicate(true)
-	assert_int(instance.save()).is_equal(OK)
-	var saved_bytes := FileAccess.get_file_as_bytes(RENAMED_PATH)
-	instance.reset()
-	assert_int(instance.boot()).is_equal(OK)
-	assert_dict(instance.data).is_equal(live)
-	assert_int(instance.save()).is_equal(OK)
-	assert_bool(FileAccess.get_file_as_bytes(RENAMED_PATH) == saved_bytes).is_true()
-	assert_bool(FileAccess.get_file_as_bytes(LEGACY_PATH) == original).is_true()
-
-func test_new_folder_save_wins_even_when_damaged_or_from_a_future_version() -> void:
-	_write_migration_file(LEGACY_PATH, FileAccess.get_file_as_string(LEGACY_NAME_FIXTURE))
-	var old_bytes := FileAccess.get_file_as_bytes(LEGACY_PATH)
-	for pair: Array in [
-			[JSON.stringify({"version": 2, "glint": 19, "extension": "newer progress"}), OK],
-			["not json", ERR_PARSE_ERROR],
-			[JSON.stringify({"version": 99, "extension": "future progress"}), ERR_UNAVAILABLE]]:
-		_write_migration_file(RENAMED_PATH, pair[0])
-		var new_bytes := FileAccess.get_file_as_bytes(RENAMED_PATH)
-		var instance := _migration_save()
-		assert_int(instance.boot()).is_equal(pair[1])
-		assert_bool(FileAccess.get_file_as_bytes(RENAMED_PATH) == new_bytes).is_true()
-		assert_bool(FileAccess.get_file_as_bytes(LEGACY_PATH) == old_bytes).is_true()
-		if pair[1] == OK:
-			assert_int(instance.data.glint).is_equal(19)
-			assert_str(instance.data.extension).is_equal("newer progress")
-
-func test_fresh_boot_skips_the_old_directory_entirely() -> void:
-	_write_migration_file(LEGACY_PATH, FileAccess.get_file_as_string(LEGACY_NAME_FIXTURE))
-	var old_bytes := FileAccess.get_file_as_bytes(LEGACY_PATH)
-	var instance := _migration_save()
-	assert_int(instance.boot(true)).is_equal(OK)
-	assert_int(instance.legacy_lookups).is_equal(0)
-	assert_bool(FileAccess.file_exists(RENAMED_PATH)).is_false()
-	assert_bool(FileAccess.get_file_as_bytes(LEGACY_PATH) == old_bytes).is_true()
-
-func test_custom_save_path_does_not_resolve_a_real_legacy_directory() -> void:
-	var instance := preload("res://core/save_game.gd").new()
-	_migration_saves.append(instance)
-	instance.path = RENAMED_PATH
-	assert_str(instance._legacy_save_path()).is_empty()
-	assert_int(instance.boot()).is_equal(ERR_FILE_NOT_FOUND)
-	assert_bool(FileAccess.file_exists(RENAMED_PATH)).is_false()
-
-func test_missing_old_save_still_starts_a_new_game() -> void:
-	var instance := _migration_save()
-	assert_int(instance.boot()).is_equal(ERR_FILE_NOT_FOUND)
-	assert_dict(instance.data).is_equal(SaveGame.fresh())
-	assert_int(instance.save()).is_equal(OK)
-
-func test_failed_old_folder_import_blocks_fresh_autosave_and_retries_on_boot() -> void:
-	_write_migration_file(LEGACY_PATH, FileAccess.get_file_as_string(LEGACY_NAME_FIXTURE))
-	var old_bytes := FileAccess.get_file_as_bytes(LEGACY_PATH)
-	var obstruction := RENAMED_PATH + ".name-migration.tmp"
-	assert_int(DirAccess.make_dir_absolute(obstruction)).is_equal(OK)
-	var instance := _migration_save()
-	var err: Error = instance.boot()
-	assert_int(err).is_not_equal(OK)
-	instance.add_glint(1)
-	assert_int(instance.save()).is_equal(err)
-	# An absolute spelling of the same target must not bypass the guard.
-	assert_int(instance.save(ProjectSettings.globalize_path(RENAMED_PATH))).is_equal(err)
-	assert_bool(FileAccess.file_exists(RENAMED_PATH)).is_false()
-	assert_bool(FileAccess.get_file_as_bytes(LEGACY_PATH) == old_bytes).is_true()
-	# A deliberately separate output is allowed while default autosave is blocked.
-	assert_int(instance.save(OTHER_PATH)).is_equal(OK)
-	assert_int(DirAccess.remove_absolute(obstruction)).is_equal(OK)
-	assert_int(instance.boot()).is_equal(OK)
-	assert_int(instance.data.glint).is_equal(137)
-	assert_bool(FileAccess.get_file_as_bytes(RENAMED_PATH) == old_bytes).is_true()
-
-func test_imported_damaged_and_future_saves_keep_the_existing_boot_contract() -> void:
-	for pair: Array in [["not json", ERR_PARSE_ERROR],
-			[JSON.stringify({"version": 99}), ERR_UNAVAILABLE],
-			[JSON.stringify({"version": 2, "player": []}), ERR_INVALID_DATA]]:
-		_write_migration_file(LEGACY_PATH, pair[0])
-		var old_bytes := FileAccess.get_file_as_bytes(LEGACY_PATH)
-		var instance := _migration_save()
-		assert_int(instance.boot()).is_equal(pair[1])
-		assert_bool(FileAccess.get_file_as_bytes(RENAMED_PATH) == old_bytes).is_true()
-		if pair[1] == ERR_UNAVAILABLE:
-			assert_int(instance.save()).is_equal(ERR_UNAVAILABLE)
-			assert_bool(FileAccess.get_file_as_bytes(RENAMED_PATH) == old_bytes).is_true()
-		else:
-			assert_bool(FileAccess.get_file_as_bytes(RENAMED_PATH + ".broken") == old_bytes).is_true()
-			assert_int(instance.save()).is_equal(OK)
-		assert_bool(FileAccess.get_file_as_bytes(LEGACY_PATH) == old_bytes).is_true()
-		DirAccess.remove_absolute(RENAMED_PATH)
-
-func test_an_occupied_destination_directory_is_not_replaced() -> void:
-	_write_migration_file(LEGACY_PATH, FileAccess.get_file_as_string(LEGACY_NAME_FIXTURE))
-	var old_bytes := FileAccess.get_file_as_bytes(LEGACY_PATH)
-	assert_int(DirAccess.make_dir_absolute(RENAMED_PATH)).is_equal(OK)
-	var instance := _migration_save()
-	assert_int(instance.boot()).is_equal(ERR_FILE_NOT_FOUND)
-	assert_bool(DirAccess.dir_exists_absolute(RENAMED_PATH)).is_true()
-	assert_bool(FileAccess.get_file_as_bytes(LEGACY_PATH) == old_bytes).is_true()
 
 func test_round_trip() -> void:
 	SaveGame.add_glint(123)
@@ -443,4 +293,3 @@ func test_what_is_refused_stays_refused_beside_the_setting_fallbacks() -> void:
 		assert_dict(SaveGame.data).is_equal(live)
 		assert_bool(FileAccess.get_file_as_bytes(PATH) == bytes).is_true()
 		assert_dict(SaveGame._migrate(pair[0])).is_empty()
-

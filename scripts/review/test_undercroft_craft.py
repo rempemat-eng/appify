@@ -13,7 +13,6 @@ failing fixture), a shade floor far under Eastward 06's value (G-21), dark 1 px 
 import json
 import os
 import unittest
-from unittest.mock import patch
 
 import numpy as np
 from PIL import Image
@@ -118,6 +117,9 @@ class StagedBoundaries(unittest.TestCase):
     light crosses the flags; round 4's flag-by-flag steps made blocks of lit paving."""
 
     def setUp(self):
+        from scripts.art.native import ctx
+        if not ctx._configured:
+            ctx.configure(3.0, {}, {})
         from scripts.art.native import undercroft as U
         self.U = U
         H, W = 80, 160
@@ -158,19 +160,10 @@ class RealFloorTint(unittest.TestCase):
     def setUpClass(cls):
         import tempfile
         from scripts.art.native import ctx
-        # The density-3 floor fixture owns its context for this class only.
-        # Fresh dictionaries also keep configure() from mutating a caller's plan.
-        context = patch.multiple(ctx, D=ctx.D, TT=ctx.TT, BIOME={}, PLAN={}, _configured=False)
-        context.start()
-        cls.addClassCleanup(context.stop)
         plan_path = os.path.join(ROOT, 'game', 'data', 'plans', 'undercroft.json')
         plan = json.load(open(plan_path))
         ctx.configure(3.0, {}, plan)
-        from scripts.art.native import undercroft as U, village as V
-        # village caches density when imported; respect and restore an earlier import.
-        density = patch.multiple(V, D=3.0, HD=True)
-        density.start()
-        cls.addClassCleanup(density.stop)
+        from scripts.art.native import undercroft as U
         plan['_inputs'] = U.input_hash(plan_path, 3.0)
         cls.f = {}
         with tempfile.TemporaryDirectory() as d:
