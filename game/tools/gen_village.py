@@ -130,6 +130,18 @@ def render(zid: str, preview: str | None) -> None:
 # Measured on 16 Nov 2026 (#509): the dry-stone walls in ground.png (lane bank rows 78-113, the lane and
 # terrace walls 420-455: 36 each); the buildings from their pictures, foot to eave (to about 5 texels). The hay
 # slope (terrace_bank_e) has no wall drawn, so it has no face. Only timber takes a stuck arrow.
+# The timber houses stand on stone (#509 follow-up, measured on 16 Nov from the pictures: the highest row of
+# grey stone above the foot): the hut's plinth to 11, the north cottages' and the Ferns' cottage's rubble walls
+# to 63 (rows above are plaster and timber). Their windows (the glass with its frame; x from the foot, which is
+# the box's centre for all three) take no arrow, and their doors (door and frame, from the step to the lintel)
+# are timber through the plinth band. #515 audit (16 Nov): the auditor's spans, checked by drawing them on the
+# pictures; the hut's and the Ferns' windows were 6 to 10 texels too far right before.
+# house: (stone_below, windows, timber) with windows and timber as (x0, x1, lift0, lift1)
+TIMBER_PLINTHS = {
+    'hut': (11, [(-89, -56, 54, 90), (55, 88, 54, 90)], []),
+    'north_cottages': (63, [(-61, -24, 52, 92), (11, 48, 52, 92)], [(-140, -78, 0, 84), (37, 106, 0, 84)]),
+    'fern_cottage': (63, [(13, 46, 54, 90)], [(-92, -25, 0, 85)]),
+}
 DRAWN_FACES = {
     'lane_bank': (36, 'stone'), 'lane_face': (36, 'stone'),
     'terrace_face_w': (36, 'stone'), 'terrace_face_e': (36, 'stone'),
@@ -164,7 +176,10 @@ def build(plan: dict, kit: dict) -> str:
     for f in plan.get('faces', []):
         s.solid('Face_' + f['id'], 'Walls', f['rect'], face=DRAWN_FACES.get(f['id']))
     for b in plan.get('buildings', []):
-        s.solid('Building_' + b['id'], 'Walls', b['rect'], face=DRAWN_FACES.get(b['id']))
+        face = DRAWN_FACES.get(b['id'])
+        if face and b['id'] in TIMBER_PLINTHS:
+            face = face + TIMBER_PLINTHS[b['id']]
+        s.solid('Building_' + b['id'], 'Walls', b['rect'], face=face)
     boxes = solids(plan, kit)
     for o in kit['objects']:
         if o['id'] in boxes and not o.get('cond'):
