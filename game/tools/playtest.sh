@@ -46,7 +46,9 @@ if [ -z "${DISPLAY:-}" ]; then
     exit 2
   fi
   export DISPLAY=${PLAYTEST_DISPLAY:-:97}
-  Xvfb "$DISPLAY" -screen 0 960x540x24 -nolisten tcp >"$TMP/xvfb.log" 2>&1 &
+  # a 16:10 screen bigger than any window a route makes (routes/window_resize.txt goes up to 1728 x 1117 and
+  # fullscreen): a pointer warped past the screen's edge is held at it, and the mouse would aim wrong
+  Xvfb "$DISPLAY" -screen 0 1920x1200x24 -nolisten tcp >"$TMP/xvfb.log" 2>&1 &
   XVFB_PID=$!
   sleep 1
   if ! kill -0 "$XVFB_PID" 2>/dev/null; then
@@ -86,20 +88,8 @@ for ROUTE in "${ROUTES[@]}"; do
   fi
   ROUTE=$(cd "$(dirname "$ROUTE")" && pwd)/$(basename "$ROUTE")
   DIR="$OUT/$NAME"
-  if [ -e "$DIR" ]; then
-    # Keep prior route evidence before a later attempt writes result/log/pictures.
-    PREVIOUS=1
-    while [ -e "$DIR.previous-$PREVIOUS" ]; do
-      PREVIOUS=$((PREVIOUS + 1))
-    done
-    if ! mv -- "$DIR" "$DIR.previous-$PREVIOUS"; then
-      echo "FAIL $NAME: cannot preserve previous reports at $DIR" >&2
-      FAILED=1
-      continue
-    fi
-    echo "playtest: kept previous reports at $DIR.previous-$PREVIOUS"
-  fi
-  mkdir -p "$DIR" || { FAILED=1; continue; }
+  rm -rf "$DIR"
+  mkdir -p "$DIR"
   # one profile for the whole route: a restart loads the save the session before it wrote
   PROFILE="$TMP/profile-$NAME"
   mkdir -p "$PROFILE"/{home,data,config,cache}

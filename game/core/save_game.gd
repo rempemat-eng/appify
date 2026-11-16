@@ -29,11 +29,6 @@ var path := DEFAULT_PATH
 ## ERR_INVALID_DATA (a damaged file, kept aside), ERR_UNAVAILABLE (a newer game's save, left alone).
 var boot_error: Error = OK
 
-## A failed old-folder import must not be hidden by a fresh autosave in the new folder.
-## Explicit saves to other paths remain available; boot retries the import next time.
-var _legacy_import_target := ""
-var _legacy_import_error: Error = OK
-
 ## Where the game resumes while the player is in a lab zone (Zones.go_to sets it on entering one and
 ## clears it on leaving): a save made meanwhile names this zone and spawn, never the lab's.
 var resume: Dictionary = {}
@@ -48,70 +43,13 @@ func _ready() -> void:
 ## the game is left alone, and `save()` goes on refusing to overwrite it (the game says so: game.gd).
 func boot(fresh_start := false) -> Error:
 	boot_error = OK
-	_legacy_import_target = ""
-	_legacy_import_error = OK
 	if fresh_start:
 		return OK
-	var legacy := _legacy_save_path()
-	if legacy != "":
-		boot_error = _import_legacy_save(legacy, path)
-		if boot_error != OK:
-			return boot_error
 	boot_error = load_save()
 	if boot_error == ERR_PARSE_ERROR or boot_error == ERR_INVALID_DATA:
 		var file := ProjectSettings.globalize_path(path)
 		DirAccess.copy_absolute(file, file + ".broken")
 	return boot_error
-
-## Both names use Godot's custom user directory. Derive their shared desktop parent from
-## the OS path (not user://, whose trailing slash would select the wrong parent).
-## Explicit/custom save paths and --fresh never search another directory for progress.
-func _legacy_save_path() -> String:
-	if path != DEFAULT_PATH:
-		return ""
-	return OS.get_user_data_dir().get_base_dir().path_join("napattack/save_0.json")
-
-func _import_legacy_save(source: String, target: String) -> Error:
-	_legacy_import_target = ProjectSettings.globalize_path(target)
-	_legacy_import_error = _copy_legacy_save(source, target)
-	return _legacy_import_error
-
-## Copy the original bytes, never a reconstructed document: unknown fields and formatting
-## survive. An existing destination (even damaged, newer, or a directory) always wins.
-func _copy_legacy_save(source: String, target: String) -> Error:
-	if FileAccess.file_exists(target) or DirAccess.dir_exists_absolute(target):
-		return OK
-	if not FileAccess.file_exists(source):
-		return OK
-	var input := FileAccess.open(source, FileAccess.READ)
-	if input == null:
-		return FileAccess.get_open_error()
-	var length := input.get_length()
-	var bytes := input.get_buffer(length)
-	var err := input.get_error()
-	input.close()
-	if err != OK and err != ERR_FILE_EOF:
-		return err
-	if bytes.size() != length:
-		return ERR_FILE_CANT_READ
-	# The existing loader owns validation and damaged/future-save handling after copying.
-	var tmp := target + ".name-migration.tmp"
-	var output := FileAccess.open(tmp, FileAccess.WRITE)
-	if output == null:
-		return FileAccess.get_open_error()
-	output.store_buffer(bytes)
-	output.flush()
-	err = output.get_error()
-	output.close()
-	if err == OK:
-		# Do not replace a destination observed while importing.
-		if FileAccess.file_exists(target) or DirAccess.dir_exists_absolute(target):
-			DirAccess.remove_absolute(tmp)
-			return OK
-		err = DirAccess.rename_absolute(tmp, target)
-	if err != OK:
-		DirAccess.remove_absolute(tmp)
-	return err
 
 static func fresh() -> Dictionary:
 	return {
@@ -165,8 +103,6 @@ func save(to: String = "") -> Error:
 		document.zone = String(resume.get("zone", document.zone))
 		document.spawn = String(resume.get("spawn", document.spawn))
 	var target := to if to != "" else path
-	if _legacy_import_error != OK and ProjectSettings.globalize_path(target) == _legacy_import_target:
-		return _legacy_import_error
 	# A failed load must not let the next autosave overwrite a newer game's document.
 	err = _target_error(target)
 	if err != OK:
@@ -364,4 +300,3 @@ func _whole_number(value: Variant) -> bool:
 		return value >= -MAX_EXACT_INTEGER and value <= MAX_EXACT_INTEGER
 	return typeof(value) == TYPE_FLOAT and is_finite(value) and value == floor(value) \
 		and value >= -MAX_EXACT_INTEGER and value <= MAX_EXACT_INTEGER
-
