@@ -4589,15 +4589,15 @@
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
-   -21.0,
+   -15.0,
    -24.0,
-   42,
+   30,
    24
   ],
   "deck": null,
   "foot": [
-   19,
-   35
+   18,
+   32
   ],
   "footprint": [
    [
@@ -4644,8 +4644,8 @@
   "variants": {
    "fallen_bell": {
     "foot": [
-     19,
-     35
+     18,
+     32
     ],
     "png": "res://zones/crossroads/art/fallen_bell.png"
    }
