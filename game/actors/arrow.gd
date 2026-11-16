@@ -5,6 +5,10 @@ extends Area2D
 ## hits bodies like everything else); the arrow itself is drawn `height` texels above it. It stops at
 ## solids (layer 1) and at enemies (layer 3), and flies over low solids (layers 1 and 5): docs/physics.md.
 ## Drawn in the cast's colours (bow wood shaft, steel head, pale fletching) with a dark outline.
+## Where it stops it leaves an Impact (actors/impact.gd, 16 Nov): a star and the arrow stuck in a creature it
+## hurt (and a hit-stop), steel streaks and the arrow bouncing off one it glanced off, dust and the arrow stuck
+## in a solid, and the arrow falling to the ground at the end of its flight. The arrow itself still goes the
+## moment it stops, as before: the effect is drawing only and changes no rule.
 
 const SPEED := 140.0 * Player.DENSITY     ## world px a second
 const LIFETIME := 0.9
@@ -13,12 +17,17 @@ const RADIUS := 4.0                       ## the arrow's body on the ground, in 
 const WALLS := 1                          ## layer 1: every solid (docs/physics.md)
 const ENEMIES := 4                        ## layer 3
 const LOW := 16                           ## layer 5: a solid that stops feet and that a shot flies over
+const INK := Color("#2a1c1a")
+const WOOD := Color("#ba7432")
+const HEAD := Color("#d6dae0")
+const FLETCH := Color("#e4e0da")
 
 signal struck(target: Node)
 
 var dir := Vector2.RIGHT
 var height := 0.0
 var _t := 0.0
+var _left := false
 
 ## Places the arrow at the bow's tip. `archer` is who shot it; left out, it is the player among the arrow's
 ## own siblings that stands nearest the tip (the player adds its arrow to its own parent), so no tree-wide
@@ -102,6 +111,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_t += delta
 	if _t >= LIFETIME:
+		_leave(Impact.Kind.DROP)
 		queue_free()
 		return
 	global_position += dir * SPEED * delta
@@ -115,16 +125,39 @@ func _on_body(body: Node) -> void:
 		# struck, so the camera does not shake for it as for a hit
 		var counted: Variant = body.take_hit(1, dir, KNOCKBACK)
 		if counted == null or bool(counted):
+			if _leave(Impact.Kind.HIT, body as Node2D):
+				Impact.hit_stop(get_tree())
 			struck.emit(body)
+		else:
+			_leave(Impact.Kind.CLINK, null, body as Node2D)
 	else:
 		Sound.play(&"arrow_wall")        # it stopped at a solid
+		_leave(Impact.Kind.WALL)
 	queue_free()
 
+## Leaves the mark of where it stopped, once (two bodies met in one step still count as before, but draw one
+## mark). Returns whether it left one.
+## `on` is the creature the stuck arrow rides on; `met` the creature it met (for the height of the mark).
+func _leave(what: Impact.Kind, on: Node2D = null, met: Node2D = null) -> bool:
+	if _left or not is_inside_tree():
+		return false
+	_left = true
+	var lift := Impact.body_lift(met if met != null else on, height)
+	return Impact.spawn(get_parent(), what, global_position, lift, dir, true, on) != null
+
 func _draw() -> void:
-	var tip := Vector2(0, -height).round()
-	var tail := (tip - dir * 18.0).round()
-	var ink := Color("#2a1c1a")
-	draw_line(tail, tip, ink, 3.0)
-	draw_line(tail + dir * 2.0, tip - dir * 3.0, Color("#ba7432"), 1.0)
-	draw_line(tip - dir * 3.0, tip, Color("#d6dae0"), 1.0)
-	draw_line(tail, tail + dir * 3.0, Color("#e4e0da"), 1.0)
+	draw_arrow(self, Vector2(0, -height), dir, true)
+
+## The arrow drawn on `ci` with its tip at `tip` (local texels), flying along `along`. Without its head it is
+## the arrow stuck in something: the shaft ends where the head went in (actors/impact.gd).
+static func draw_arrow(ci: CanvasItem, tip: Vector2, along: Vector2, head: bool, alpha := 1.0) -> void:
+	if alpha <= 0.0:
+		return
+	var a := tip.round()
+	var tail := (a - along * 18.0).round()
+	var end := a if head else (a - along * 3.0).round()
+	ci.draw_line(tail, end, Color(INK, alpha), 3.0)
+	ci.draw_line(tail + along * 2.0, a - along * 3.0, Color(WOOD, alpha), 1.0)
+	if head:
+		ci.draw_line(a - along * 3.0, a, Color(HEAD, alpha), 1.0)
+	ci.draw_line(tail, tail + along * 3.0, Color(FLETCH, alpha), 1.0)
