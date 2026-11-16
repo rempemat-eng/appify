@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 4,
+ "version": 5,
  "variants": [
   {
    "id": "library",
@@ -345,6 +345,32 @@
   "sources": [
    {
     "zone": "crossroads",
+    "object": "cupola_empty",
+    "part": "overlay",
+    "condition": {
+     "not_restored": [
+      "bell_tower"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "cupola_hung",
+    "part": "overlay",
+    "condition": {
+     "restored": [
+      "bell_tower"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "cupola_shadow",
+    "part": "overlay",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
     "object": "library",
     "part": "body",
     "condition": null
@@ -361,6 +387,9 @@
    "door_cells mark the authored doorway, not a working interior/scene transition",
    "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain overlay cupola_empty from source scene with its own condition and offset; not a standalone random variant",
+   "retain overlay cupola_hung from source scene with its own condition and offset; not a standalone random variant",
+   "retain overlay cupola_shadow from source scene with its own condition and offset; not a standalone random variant",
    "retain overlay library_damage from source scene with its own condition and offset; not a standalone random variant",
    "review size-guide class and Eastward comparison before the library gate"
   ]

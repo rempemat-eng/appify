@@ -4585,6 +4585,64 @@
   },
   "z_sort": "foot"
  },
+ "crossroads_fallen_bell": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -21.0,
+   -24.0,
+   42,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   25,
+   36
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Fallen bell",
+  "painted": false,
+  "requires": [],
+  "role": null,
+  "shadow": null,
+  "size_cells": [
+   3,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "gating": {
+    "if": {
+     "not_restored": [
+      "bell_tower"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "fallen_bell": {
+    "foot": [
+     25,
+     36
+    ],
+    "png": "res://zones/crossroads/art/fallen_bell.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "crossroads_fence": {
   "approval": "retired",
   "blocks_move": false,

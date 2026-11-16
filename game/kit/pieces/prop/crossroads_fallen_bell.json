@@ -1,0 +1,113 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_fallen_bell",
+ "name": "Fallen bell",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "fallen_bell",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/fallen_bell.png",
+   "foot": [
+    25,
+    36
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   49,
+   37
+  ],
+  "size_cells": [
+   3,
+   2
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "rect": [
+    -7.0,
+    -8.0,
+    14,
+    8
+   ],
+   "shape": "rect"
+  },
+  "foot": [
+   25,
+   36
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {},
+ "rendering": {},
+ "function": {},
+ "story": {
+  "owner": null,
+  "gating": {
+   "if": {
+    "not_restored": [
+     "bell_tower"
+    ]
+   }
+  }
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "fallen_bell",
+    "part": "body",
+    "condition": {
+     "not_restored": [
+      "bell_tower"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "fallen_bell_shadow",
+    "part": "shadow",
+    "condition": {
+     "not_restored": [
+      "bell_tower"
+     ]
+    }
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain shadow fallen_bell_shadow from source scene with its own condition and offset; not a standalone random variant",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}
