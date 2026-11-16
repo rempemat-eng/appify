@@ -300,6 +300,37 @@ func _drawn_feet(s: Sprite2D) -> float:
 	var used := s.texture.get_image().get_used_rect()
 	return s.global_position.y + s.offset.y + used.end.y - (s.texture.get_height() / 2.0 if s.centered else 0.0)
 
+## What is wrong with one building's roof overlays (`overlays`: sprite name -> its y-sort point): each must
+## sort strictly after its building (`owner_sort_y`), so the roof never hides it, and within 2 px of the
+## building's drawn feet (`owner_feet`), the 2 px every other picture gets from its own feet; and the
+## shadow on the roof (a name ending "Shadow") sorts before every overlay drawn over it.
+static func _roof_problems(owner_sort_y: float, owner_feet: float, overlays: Dictionary) -> Array[String]:
+	var out: Array[String] = []
+	for name: String in overlays:
+		var y := float(overlays[name])
+		if y <= owner_sort_y:
+			out.append("%s sorts at %.1f, not after its building (%.1f): the roof would hide it" % [name, y, owner_sort_y])
+		if absf(y - owner_feet) > 2.0:
+			out.append("%s sorts %.1f px from its building's drawn feet" % [name, y - owner_feet])
+	for name: String in overlays:
+		if not name.ends_with("Shadow"):
+			continue
+		for other: String in overlays:
+			if not other.ends_with("Shadow") and float(overlays[name]) >= float(overlays[other]):
+				out.append("%s sorts at %.1f, not before %s (%.1f)" % [name, float(overlays[name]), other, float(overlays[other])])
+	return out
+
+func test_the_roof_overlay_rule_refuses_a_shadow_behind_the_roof() -> void:
+	# as gen_village places them: the library sorts at 600, its drawn feet at 602, the shadow at 602, the cupolas 603
+	var good := {"CupolaShadow": 602.0, "CupolaEmpty": 603.0, "CupolaHung": 603.0}
+	assert_array(_roof_problems(600.0, 602.0, good)).is_empty()
+	var behind := {"CupolaShadow": 599.0, "CupolaEmpty": 603.0, "CupolaHung": 603.0}
+	assert_array(_roof_problems(600.0, 602.0, behind)).is_not_empty()      # the mutation: under the roof
+	var over := {"CupolaShadow": 603.0, "CupolaEmpty": 603.0, "CupolaHung": 603.0}
+	assert_array(_roof_problems(600.0, 602.0, over)).is_not_empty()        # the shadow not under the cupola
+	var far := {"CupolaShadow": 602.0, "CupolaEmpty": 605.0, "CupolaHung": 603.0}
+	assert_array(_roof_problems(600.0, 602.0, far)).is_not_empty()         # 3 px off the building's feet
+
 func test_every_sorted_picture_sorts_by_its_drawn_feet() -> void:
 	for id in ZONES:
 		var zone := _enter(id)
@@ -309,6 +340,7 @@ func test_every_sorted_picture_sorts_by_its_drawn_feet() -> void:
 		for n in _all(zone):
 			if n is Sprite2D:
 				sprites[String(n.name)] = n
+		var roof_seen := {}                 # owner building name -> {overlay name: its y-sort point}
 		for n in _all(zone):
 			var s := n as Sprite2D
 			if s == null or s.texture == null or s is LoopFx or s.hframes > 1 or _z(zone, s) != 0:
@@ -321,19 +353,24 @@ func test_every_sorted_picture_sorts_by_its_drawn_feet() -> void:
 			if String(s.name).ends_with("Damage") or s.get_parent().name == "ThornbackAtRest":
 				continue                    # an overlay sorts one texel in front of its building; the boss asleep is an actor
 			if roof.has(String(s.name)):
-				# a roof overlay is exempt from its own feet only because it sorts with its building: held here
-				var owner := sprites.get(roof[String(s.name)]) as Sprite2D
-				assert_object(owner).override_failure_message("%s: no sprite for its building %s" % [_where(s), roof[String(s.name)]]).is_not_null()
-				if owner != null:
-					var bfeet := _drawn_feet(owner)
-					assert_float(absf(item.global_position.y - bfeet)).override_failure_message(
-						"%s: sorts %d px from its building's drawn feet" % [_where(s), item.global_position.y - bfeet]).is_less_equal(3.0)
+				# a roof overlay is exempt from its own feet only because it sorts with its building: held below
+				var own: String = roof[String(s.name)]
+				if not roof_seen.has(own):
+					roof_seen[own] = {}
+				roof_seen[own][String(s.name)] = item.global_position.y
 				checked += 1
 				continue
 			var feet := _drawn_feet(s)
 			assert_float(absf(item.global_position.y - feet)).override_failure_message(
 				"%s: its y-sort point is %d px from its drawn feet" % [_where(s), item.global_position.y - feet]).is_less_equal(2.0)
 			checked += 1
+		for own: String in roof_seen:
+			var owner := sprites.get(own) as Sprite2D
+			assert_object(owner).override_failure_message("%s: no sprite for the building %s" % [id, own]).is_not_null()
+			if owner == null:
+				continue
+			var problems := _roof_problems(_sort_item(zone, owner).global_position.y, _drawn_feet(owner), roof_seen[own])
+			assert_array(problems).override_failure_message("%s: %s" % [id, "; ".join(problems)]).is_empty()
 		assert_int(checked).override_failure_message("%s: no sorted pictures were checked" % id).is_greater(5)
 
 func test_flat_things_never_draw_over_people() -> void:
