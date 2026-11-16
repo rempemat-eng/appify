@@ -208,6 +208,20 @@ def _transform(props: dict) -> np.ndarray:
     return np.array([[c * sx, -s * sy, x], [s * sx, c * sy, y], [0, 0, 1]], float)
 
 
+def _hidden_logic_layer(n: dict, p: dict | None) -> bool:
+    """A TerrainGround's logical Cells/Tiers TileMapLayer saved fully transparent, as the world editor
+    writes it (addons/world_editor/operations.gd) and as terrain_ground.gd sets it again in _ready
+    (show_cells off, which _kit_ground requires). That self_modulate draws nothing and reaches no
+    child, so the composite is unchanged; any other value or node is still refused."""
+    if n.get('type') != 'TileMapLayer' or n.get('name') not in ('Cells', 'Tiers') or p is None:
+        return False
+    if p['node']['props'].get('script') != ('ExtResource', 'res://world/terrain/terrain_ground.gd'):
+        return False
+    m = re.fullmatch(r'Color\(\s*([-+\d.eE]+)\s*,\s*([-+\d.eE]+)\s*,\s*([-+\d.eE]+)\s*,\s*([-+\d.eE]+)\s*\)',
+                     str(n['props'].get('self_modulate', '')))
+    return bool(m) and tuple(float(v) for v in m.groups()) == (1.0, 1.0, 1.0, 0.0)
+
+
 def _kit_nodes(tscn: dict) -> list[dict]:
     flat, out, state = _expanded(tscn), [], {}
     for draw_order, (key, n) in enumerate(flat.items()):
@@ -216,7 +230,8 @@ def _kit_nodes(tscn: dict) -> list[dict]:
             raise ValueError('missing scene parent at ' + key)
         p = state.get(parent) if key != '.' else None
         props = n['props']
-        if any(k in props for k in ('material', 'modulate', 'self_modulate')):
+        hidden_logic = _hidden_logic_layer(n, p)
+        if any(k in props for k in ('material', 'modulate', 'self_modulate') if not (hidden_logic and k == 'self_modulate')):
             raise ValueError('unsupported inherited material or modulation at ' + key)
         mat = (p['matrix'] if p else np.eye(3)) @ _transform(props)
         pos = tuple(mat[:2, 2])
@@ -971,7 +986,17 @@ def check_rows(z: Zone, H=GAME_H) -> list[Finding]:
 def check_wiring(zone_ids=None) -> list[Finding]:
     """Doors, spawns, quests, dialogue and restore sites across every zone."""
     zones = json.load(open(os.path.join(GAME, 'data', 'zones.json')))
-    loaded = {zid: load_zone(zid) for zid in zones}
+    # One unreadable zone must not abort the review of another. A zone under review is still refused
+    # (its intake error is raised); any other zone that cannot be read is left out of the cross-zone
+    # data, named in a finding, and a door into it is a blocker because its spawn cannot be verified.
+    loaded, unreadable = {}, {}
+    for zid in zones:
+        try:
+            loaded[zid] = load_zone(zid)
+        except SceneIntakeError as err:
+            if zone_ids is None or zid in zone_ids:
+                raise
+            unreadable[zid] = err
     dialogue = {}
     for p in glob.glob(os.path.join(GAME, 'data', 'dialogue', '*.json')):
         dialogue.update(json.load(open(p)))
@@ -992,6 +1017,11 @@ def check_wiring(zone_ids=None) -> list[Finding]:
                                   f'{zid}: door {d["name"]} leads to "{d["zone"]}", which is not in data/zones.json (the door '
                                   'is refused at runtime)', 'add the zone, or mark the door as waiting for its act in the '
                                   'plan and show a closed gate', subject=d['name']))
+            elif d['zone'] in unreadable:
+                fs.append(Finding('logic.wiring', 'blocker', box,
+                                  f'{zid}: door {d["name"]} leads to {d["zone"]}, which cannot be read, so spawn '
+                                  f'"{d["spawn"]}" cannot be verified ({unreadable[d["zone"]]})',
+                                  f'make {d["zone"]} pass scene intake (review it on its own)', subject=d['name']))
             elif d['spawn'] not in loaded[d['zone']].spawns:
                 fs.append(Finding('logic.wiring', 'blocker', box,
                                   f'{zid}: door {d["name"]} sends the player to spawn "{d["spawn"]}" in {d["zone"]}, which '
@@ -1021,9 +1051,15 @@ def check_wiring(zone_ids=None) -> list[Finding]:
                 ok = any(arg in json.dumps(z.plan or {}) for z in loaded.values())
             if not ok:
                 fs.append(Finding('logic.wiring', 'blocker', (0, 0, 1, 1),
-                                  f'quest {q["id"]}: event "{ev}" can never be sent (no {kind} "{arg}" in any zone)',
-                                  'place the speaker, camp, zone or restore site, or fix the event name',
+                                  f'quest {q["id"]}: event "{ev}" can never be sent (no {kind} "{arg}" in any zone'
+                                  + (f' that can be read; unreadable: {", ".join(sorted(unreadable))}' if unreadable else '')
+                                  + ')', 'place the speaker, camp, zone or restore site, or fix the event name',
                                   subject=q['id']))
+    for zid, err in sorted(unreadable.items()):
+        fs.append(Finding('logic.wiring', 'polish', (0, 0, 1, 1),
+                          f'cross-zone wiring left out {zid}, which cannot be read ({err}); its doors, speakers, camps '
+                          'and restore sites were not counted', f'review {zid} on its own: it is refused until its '
+                          'scene intake passes', subject=zid))
     return fs
 
 
