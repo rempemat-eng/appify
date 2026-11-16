@@ -178,9 +178,14 @@ it in the save and `world/raid_night.gd` plays it (docs/godot.md, "Raids"). Ever
    walked in, about 20 s from the street.
 5. **Win.** A purse of 30 Glint is paid once and `first_night_won` is set. The hurdles and the lantern's
    lights clear away. The bell tower is offered as a restore (`bell_tower`, 50 Glint, act 1's id and price):
-   its mark stands before the library's door from then on. Its picture (the
-   cupola) comes with stage 1, so paying it changes no picture yet. Hale no longer points to it: she says
-   this was the one night and they will not come again for this light (Matt, 13 Nov: a one-off).
+   its mark stands before the library's door from then on (the Crossroads plan's `bell_tower_site`, since
+   16 Nov). It is optional (Matt, 13 Nov, decision (d)): nothing in the slice waits on it, and the closing
+   card does not. Its cupola is drawn (`scripts/art/native/belfry.py`): from the start the library's ridge
+   carries an empty cupola, its old headstock snapped, and the bell stands in the street below the door;
+   paying hangs the bell in the cupola on a new frame and takes it out of the street, for good. The bell's
+   look line says what it is, and once the night is won names the mark by the library door. Hale does not
+   point to it: she says this was the one night and they will not come again for this light (Matt, 13 Nov:
+   a one-off).
    The build's closing card ("The valley holds", "Here the story rests, for now") waits for the win as
    well as for *Home again* and *The torn roof* (15 Nov; it used to show with the two quests alone,
    before the night had been played): it follows the night's own card when the roof was done first, and
@@ -243,7 +248,7 @@ still describe the game as it plays.
   visibly changes the square.
 - **Claude A's reading, not yet confirmed by Matt** (items 4 and 6): the first night stays in the slice;
   raids return only as story sieges once more shards are home; the bell tower is the slice's one
-  optional Glint purchase (today its mark can be paid and changes no picture).
+  optional Glint purchase (its mark can be paid, and since 16 Nov paying hangs the bell in its drawn cupola).
 - Still open in item 6: where the pads go (the plan's, or the raid's own), and the purse of 30.
 
 1. The forge first (reasons in beat 5), with the apothecary as act 1's first restore.
@@ -259,5 +264,5 @@ still describe the game as it plays.
    The plan's first-night pads stand in the open square (`pad_halt_gate`, where a hurdle can be walked
    round) and on the harbour road (`pad_harbour_gate`, which no wave walks); move the plan's pads to
    match, or the raid's. The raid's lane also leaves the plan's last leg, which runs through the well.
-   The purse is 30 Glint, and the bell tower is offered at act 1's price of 50, payable at once though
-   its cupola is not drawn yet.
+   The purse is 30 Glint, and the bell tower is offered at act 1's price of 50, payable at once; since 16 Nov
+   its cupola is drawn, empty until it is paid and with the bell hung after.
