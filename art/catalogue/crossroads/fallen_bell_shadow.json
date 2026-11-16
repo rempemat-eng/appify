@@ -1,0 +1,28 @@
+{
+ "id": "crossroads/fallen_bell_shadow",
+ "file": "game/zones/crossroads/art/fallen_bell_shadow.png",
+ "sha256": "c2b68f88acf4ad4fbe0fca4310922e992c88d7e8f39244b549c588d4dd7e584f",
+ "kind": "fallen_bell_shadow",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  35,
+  20
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-11-16",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pass",
+  "date": "2026-11-16",
+  "note": "round 3 at 293549d0, sha c2b68f88acf4ad4fbe0fca4310922e992c88d7e8f39244b549c588d4dd7e584f. About 8 px east and 6 px below the bell's box, two tones over the setts; the detectors found nothing."
+ }
+}

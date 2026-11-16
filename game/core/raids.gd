@@ -224,7 +224,11 @@ func wave_started(index: int) -> void:
 		rec().wave = index
 		wave_begun = true
 
-## The lantern held through the last wave: the purse, the reward's flags and the offered restore.
+## The lantern held through the last wave: the purse, the reward's flags and the offered restore. Each
+## reward flag is told to the zone as Village.changed (as world/pressure_plate.gd and seal_lever.gd tell
+## theirs), so the Conditionals and restore marks that wait on it (the bell tower's mark waits on
+## first_night_won) show at once, not on the next load. Sound plays only for a restored site and game.gd's
+## autosave keeps the won state; nothing else listens.
 func win() -> int:
 	if not running():
 		return 0
@@ -237,6 +241,8 @@ func win() -> int:
 	_set_dark(def, false)              # a night held: the lantern is lit again, and stays lit
 	rec().repairs = false              # and the square is mended
 	_to_state("won")
+	for f: String in def.get("reward", {}).get("flags", []):
+		Village.changed.emit(f)
 	finished.emit(true)
 	return purse
 
@@ -349,10 +355,11 @@ func lane(def: Dictionary = {}) -> PackedVector2Array:
 				out.append(Vector2(float(p[0]), float(p[1])))
 	return out
 
-## The restore a won raid offers (the first night: the bell tower for stage 1), in Village.sites while the
-## raid is won in this save and gone again otherwise (a load, a new game). A plan that defines the same
-## restore keeps its own entry. Not offered before the win: the story model (test/story/test_story_model.gd)
-## asks every site in Village.sites to be payable from every state.
+## The restore a won raid offers, in Village.sites while the raid is won in this save and gone again
+## otherwise (a load, a new game). A plan that defines the same restore keeps its own entry: the first
+## night's bell tower is the Crossroads plan's since 16 Nov, so this fallback no longer applies to it.
+## Not offered before the win: the story model (test/story/test_story_model.gd) asks every site in
+## Village.sites to be payable from every state.
 func offer_restores() -> void:
 	for id: String in defs:
 		var offer: Dictionary = defs[id].get("reward", {}).get("offers", {})
@@ -368,6 +375,15 @@ func offer_restores() -> void:
 		site.plan = String(defs[id].get("zone", ""))
 		site.offered_by = id
 		Village.sites[offer.id] = site
+
+## True when a raid's reward offers the restore `restore_id` (the first night's bell tower). Its
+## mark shows the "!" while it is offered and unpaid, though no quest of the slice waits on it
+## (world/restore_site.gd).
+func offers(restore_id: String) -> bool:
+	for id: String in defs:
+		if String(defs[id].get("reward", {}).get("offers", {}).get("id", "")) == restore_id:
+			return true
+	return false
 
 ## The HUD's tracker line while the night runs ("" otherwise).
 func tracker_text() -> String:

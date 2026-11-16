@@ -6,7 +6,8 @@ extends Node2D
 ## shard lantern its health (world/raid_lantern.gd), sends the waves along the lane from the halt road
 ## (enemies/raid_creature.gd), and reports the outcome to Raids. When the night ends it clears the hurdles
 ## and the bar away and says how it went (a card); a night lost by going down says so on getting up. Once
-## the raid is won it sets out the restore mark of the restore it offers (the bell tower) until it is paid.
+## the raid is won it sets out the restore mark of a restore it offers that no plan defines, until it is paid
+## (none since 16 Nov: the bell tower's mark is the Crossroads plan's, bell_tower_site).
 ##
 ## The stake (Matt, 13 Nov: "Shard dims until held"): while Raids.lantern_dark holds (a night was lost and
 ## none held since) the lit lantern stands dark: the pane RaidLantern darkens for a blow, laid over the
@@ -433,8 +434,9 @@ func _call_from_the_anvil() -> void:
 	actors().add_child(anvil_call)
 
 # --- the restore a won raid offers --------------------------------------------------------------
-## The mark of the offered restore (the bell tower before the library), while the raid is won, the offer is
-## Raids' own (no plan site) and it is not restored yet. The mark is a RestoreSite like the plan's.
+## The mark of the offered restore, while the raid is won, the offer is Raids' own (no plan site), it has a
+## `mark` and it is not restored yet. The mark is a RestoreSite like the plan's. The first night's offer (the
+## bell tower) has no `mark` since 16 Nov: the Crossroads plan defines the restore and its site.
 func _set_out_offer() -> void:
 	var offer: Dictionary = def.get("reward", {}).get("offers", {})
 	var want := not offer.is_empty() and offer.has("mark") and Raids.won(String(def.get("id", ""))) \

@@ -1272,7 +1272,7 @@ class SeedCompleteness(unittest.TestCase):
             kit = self.seed._read('game/zones/' + zone + '/kit.json')
             expected.update((zone, o[0] if isinstance(o, list) else o['id']) for o in kit['objects'])
         self.assertEqual(set(self.index), expected | {('woodland', 'StoneSign')})
-        self.assertEqual(len(expected), 184)       # + crossroads handcart_shadow (#498: the handcart hides while the lantern is dark)
+        self.assertEqual(len(expected), 189)       # + the bell tower: cupola_empty, cupola_hung, cupola_shadow, fallen_bell, fallen_bell_shadow
         self.assertEqual(len(self.by_id), len(self.pieces))
 
     def test_attachment_ids_are_on_their_owners_with_exact_conditions(self):
@@ -1312,7 +1312,7 @@ class SeedCompleteness(unittest.TestCase):
     def test_per_variant_anchors_match_source_offsets(self):
         kit = self.seed._read('game/zones/crossroads/kit.json')
         for obj in kit['objects']:
-            if not obj.get('png') or obj['kind'] in ('shadow', 'damage', 'glow', 'smoke'):
+            if not obj.get('png') or obj['kind'] in ('shadow', 'damage', 'cupola', 'glow', 'smoke'):
                 continue
             p = self.by_id[self.index['crossroads', obj['id']]]
             if 'variants' in p['audit'].get('overrides', []):

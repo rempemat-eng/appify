@@ -81,8 +81,9 @@ FLAT = {'beds', 'beds_dug', 'debris'}
 # things people read whose only solid was the 5 px post of their talk area, 50 px narrower than what is drawn
 THING_BASE = {'notice_board', 'waystone'}
 # kinds drawn as part of something else, which sort where the kit put them: a building's damage overlay one
-# texel in front of its building, the forge's fire in its mouth, a cast shadow and smoke on their own layers
-SORTS_WITH_OWNER = {'building', 'damage', 'glow', 'shadow', 'smoke'}
+# texel in front of its building, a cupola on its roof two texels in front (it stands on the ridge, far above
+# its own drawn feet), the forge's fire in its mouth, a cast shadow and smoke on their own layers
+SORTS_WITH_OWNER = {'building', 'damage', 'cupola', 'glow', 'shadow', 'smoke'}
 
 
 def solids(plan: dict, kit: dict) -> dict:

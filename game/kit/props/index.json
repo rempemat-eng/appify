@@ -4585,6 +4585,86 @@
   },
   "z_sort": "foot"
  },
+ "crossroads_fallen_bell": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": [
+   -15.0,
+   -24.0,
+   30,
+   24
+  ],
+  "deck": null,
+  "foot": [
+   18,
+   32
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
+  "function": {
+   "interact": {
+    "triggers": [
+     {
+      "ref": "res://data/dialogue/crossroads.json#/fallen_bell",
+      "type": "dialogue"
+     }
+    ],
+    "verb": "look"
+   }
+  },
+  "kind": "prop",
+  "name": "Fallen bell",
+  "painted": false,
+  "requires": [],
+  "role": "clutter",
+  "shadow": null,
+  "size_cells": [
+   2,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "dialogue": [
+    "res://data/dialogue/crossroads.json#/fallen_bell"
+   ],
+   "gating": {
+    "if": {
+     "not_restored": [
+      "bell_tower"
+     ]
+    }
+   },
+   "owner": null
+  },
+  "variants": {
+   "fallen_bell": {
+    "foot": [
+     18,
+     32
+    ],
+    "png": "res://zones/crossroads/art/fallen_bell.png"
+   }
+  },
+  "z_sort": "foot"
+ },
  "crossroads_fence": {
   "approval": "retired",
   "blocks_move": false,
