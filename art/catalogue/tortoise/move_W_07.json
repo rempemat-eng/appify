@@ -48,10 +48,11 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-11-10",
+  "note": "Fails the detail-auditor checklist (10 Nov, docs/reviews/2026-11-10-woodland-camp-creatures.md). C1 shard lit from the right in this west facing (shard left minus right -70 to -120 L against +100 in S, N and E: a mirrored shard): redraw the shard for W with the pale facet and glint on its left and the dark facet on its right | K3 stride does not match the speed: planted feet travel 37.1 px/s, the manifest says 26.1 (freed walk slides 11 px/s, 6 px a cycle) and the camp moves it at 102 px/s (36 px a cycle): set walk_speed to 37.1 and have the look play this clip at velocity / walk_speed (and give the shield role a slower approach)"
  }
 }

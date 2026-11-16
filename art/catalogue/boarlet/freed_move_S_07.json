@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 0
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
@@ -34,11 +34,25 @@
   "passed": true,
   "group": "prop"
  },
- "findings": [],
- "reviewed": "2026-10-25",
+ "findings": [
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    67,
+    101,
+    93,
+    138
+   ],
+   "message": "boarlet/freed_move_S_07: 48% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 41% to 48%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+  }
+ ],
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Passes the detail-auditor checklist (10 Nov, docs/reviews/2026-11-10-woodland-camp-creatures.md): closed family-tone outline, lit back, mid flank and dark belly, upper-left light, consistent volume across the clip, at or above Eastward shot 17 animals a patch. May be placed only together with the rest of its creature, which has failing clips."
  }
 }

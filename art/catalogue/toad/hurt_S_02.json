@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 1
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
@@ -46,12 +46,25 @@
    ],
    "message": "toad/hurt_S_02: detail bar 0.68 of Eastward's foliage band (26.0 tones, 43.0 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    60,
+    95,
+    101,
+    138
+   ],
+   "message": "toad/hurt_S_02: 41% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 40% to 42%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-11-10",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-10",
+  "note": "Passes the detail-auditor checklist (10 Nov, docs/reviews/2026-11-10-woodland-camp-creatures.md): closed family-tone outline, lit back, mid flank and dark belly, upper-left light, consistent volume across the clip, at or above Eastward shot 17 animals a patch. May be placed only together with the rest of its creature, which has failing clips."
  }
 }
