@@ -111,6 +111,8 @@ TABLE = {
                         [OFF_ROUTE, R('not_near', 'water', 6, 'never beside a river that is easier to draw from')], 'fixed',
                         'Central to the square. Props sweep (3 Nov): requires homes within 8 cells, forbids a river within 6.'),
     'crossroads_well_choked': ('water', 'centrepiece', [], [OFF_ROUTE], 'fine', 'The storm-broken well (story stage).'),
+    'crossroads_fallen_bell': ('aftermath', 'clutter', [], [OFF_ROUTE, OFF_WATER], 'fine',
+                               'The library\'s bell where the storm threw it, below its door, until the bell tower is restored (its condition).'),
     # ---- light and guidance --------------------------------------------------------------------
     'crossroads_kit_lantern': ('light', 'light', [R('at_edge', 'route', 1)], [OFF_ROUTE, R('not_near', 'centrepiece', 1, 'never on a well')],
                                'fixed', 'Along streets, at junctions and gates. Props sweep (3 Nov): never on a well.'),

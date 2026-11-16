@@ -4609,13 +4609,22 @@
     -1
    ]
   ],
-  "forbids": [],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   },
+   {
+    "rel": "on",
+    "what": "water"
+   }
+  ],
   "function": {},
   "kind": "prop",
   "name": "Fallen bell",
   "painted": false,
   "requires": [],
-  "role": null,
+  "role": "clutter",
   "shadow": null,
   "size_cells": [
    3,
