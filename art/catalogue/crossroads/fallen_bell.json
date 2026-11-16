@@ -51,7 +51,8 @@
  "reviewed": "2026-11-16",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-16",
+  "note": "round 3 at 293549d0, sha 9678a122cf331337d720d7da0b4b714a702449db0f0947c7a811a241473c5817. Reads as a bell on its side, mouth open: axis about 50 deg, rim about 17x24, core 9x15, clapper, noise 25.7 %. Detector detail.bar 0.655 rejected as a measure: it uses 2 patches on a 36x32 sprite, and mine is 0.84-0.87 across 70 positions. Polish for Matt's eye: no bands across the body (lit plane #daad54, 71 px, one tone; the hung bell has bands); the inner wall is one flat ring (#350f0a, 106 px) with no lit far wall (dark is physically right for a mouth facing away from the light); one saturated verdigris patch, not two greyed runs."
  }
 }

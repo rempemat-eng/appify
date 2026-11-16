@@ -63,7 +63,8 @@
  "reviewed": "2026-11-16",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-16",
+  "note": "round 3 at 293549d0, sha 5655f6baa559777cc4d1ae7ed9a7be13e65e121db9cfe94a68f1157f3781844e. Dome mean L 59.3, 10.3 % at L80+, detail bar 0.888 over 29 full-coverage patch positions; base noise 40.9 %; vane reads as an arrow with a flag; dent, missing and lifted slates and the headstock break read at 3x. Polish for Matt's eye: the nest (x13-20,y91-96) does not read at 3x; the ledge is three equal 16x3 tone blocks (y102-104) with no joints. Detector detail.bar 0.88 and cluster_noise 40 % (polish) accepted."
  }
 }

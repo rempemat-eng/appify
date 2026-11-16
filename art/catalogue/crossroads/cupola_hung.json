@@ -63,7 +63,8 @@
  "reviewed": "2026-11-16",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-11-16",
+  "note": "round 3 at 293549d0, sha 1368d6103d01c0c9c06e394329ed955ddecc5d680e5e6326b2969a50e94e292f. Dome mean L 59.7, 10.7 % at L80+, detail bar 0.884 over 29 full-coverage positions; base noise 40.5 % (detector cluster_noise 46 % over the whole picture, polish, accepted: the base is within the bar); the hung bell has a waist band, a lip flare and a dark mouth line. Polish: the ledge is three equal 16x3 tone blocks with no joints."
  }
 }
