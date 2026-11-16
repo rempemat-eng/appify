@@ -35,6 +35,9 @@ extends Node
 ##   aim x y, click, roll    the mouse at a world point, a left click, Space
 ##   wait <secs>
 ##   shot <name>             save <out>/<name>.png (the window, 960 x 540)
+##   winshot <name>          save <out>/<name>.png at the window's own size (bars and all)
+##   window <w> <h>          make the window windowed at w x h pixels, as a player dragging its corner
+##   fullscreen <on|off>     the window's fullscreen mode (as the OS's fullscreen button)
 ##   st, en, info            log the state, the enemies, everything in the zone
 ##   expect <what> ...       fail unless it holds:
 ##       zone <id> | quest <id> <none|active|done> [step id] | flag <f> | noflag <f> | focus <Node|none>
@@ -49,6 +52,10 @@ extends Node
 ##       battering (a raider is battering a hurdle) | wave <n> (the night's wave under way, from 1)
 ##       dimmed <yes|no> (the shard lantern's glass stands dark in the zone: a night lost, none held since)
 ##       anvilcall (the sparks of Hale's three blows are at her anvil now)
+##       inview <margin> (the player's feet are at least <margin> texels inside the 960 x 540 picture)
+##       aimat x y <deg> (the player's aim points at the world point x y, within <deg> degrees, from where
+##       the player aims from)
+##       fitted (the picture is centred in the window at the pixel screen's scale, wholly inside it)
 ##   restart                 close the window as a player would; the runner starts the game again from the
 ##                           save and the route carries on at the next line
 ##   end                     pass (the end of the file passes too)
@@ -358,6 +365,25 @@ func run(c: String) -> String:
 		"shot":
 			await shot(a[1])
 			out("SHOT %s  %s" % [a[1], status()])
+		"winshot":
+			await RenderingServer.frame_post_draw
+			get_tree().root.get_texture().get_image().save_png(out_dir.path_join(a[1] + ".png"))
+			out("WINSHOT %s %s  %s" % [a[1], get_window().size, status()])
+		"window", "fullscreen":
+			if a[0] == "window":
+				get_window().mode = Window.MODE_WINDOWED
+				get_window().size = Vector2i(int(a[1]), int(a[2]))
+			else:
+				get_window().mode = Window.MODE_FULLSCREEN if a[1] == "on" else Window.MODE_WINDOWED
+			for i in 6:
+				await get_tree().process_frame
+			await _sleep(0.3)
+			var main := get_tree().current_scene
+			var cam := p.get_viewport().get_camera_2d()
+			out("WINDOW %s mode=%d scale=%s picture at %s camera=%s pcam_screen=%s  %s" % [get_window().size,
+				get_window().mode, main.get("scale_k"), main.screen.position if main.get("screen") != null else "-",
+				cam.get_screen_center_position().round() if cam != null else "-",
+				get_tree().root.get_node("PhantomCameraManager").get("screen_size"), status()])
 		"goto":
 			return await goto(Vector2(float(a[1]), float(a[2])), float(a[3]) if a.size() > 3 else 12.0)
 		"door":
@@ -491,6 +517,24 @@ func expect(a: PackedStringArray) -> String:
 		"said":
 			var all := "\n".join(_said).to_lower()
 			return "" if all.contains(rest.to_lower()) else "the last lines were: %s" % (" | ".join(_said) if _said.size() > 0 else "(nothing)")
+		"inview":
+			var feet := p.get_global_transform_with_canvas().origin
+			var room := Rect2(Vector2.ZERO, Vector2(p.get_viewport().size)).grow(-float(a[2]))
+			return "" if room.has_point(feet) else "the player is at %s on the %s picture" % [feet.round(), p.get_viewport().size]
+		"aimat":
+			# from where the player aims from: 8 world px above the feet (actors/player.gd, _update_aim)
+			var to := Vector2(float(a[2]), float(a[3])) - (p.global_position + Vector2(0, -8 * Player.DENSITY))
+			var off := absf(rad_to_deg(p.aim.angle_to(to)))
+			return "" if off <= float(a[4]) else "the aim %s is %.0f degrees off %s" % [p.aim, off, to.normalized()]
+		"fitted":
+			var main := get_tree().current_scene
+			var win := Vector2(get_window().size)
+			var k: float = main.scale_k
+			var art: Vector2 = main.screen.size
+			var picture := Rect2(main.screen.position, art * k)
+			var centred := ((win - art * k) / 2.0).floor()
+			if picture.position != centred or not Rect2(Vector2.ZERO, win).encloses(picture):
+				return "the picture is %s in a %s window (centred would be %s)" % [picture, win, centred]
 		"paused":
 			return "" if get_tree().paused == (a[2] == "yes") else "paused is %s" % get_tree().paused
 		"setting":
