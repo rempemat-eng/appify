@@ -1,7 +1,7 @@
 {
  "id": "crossroads/cupola_empty",
  "file": "game/zones/crossroads/art/cupola_empty.png",
- "sha256": "006be795ef41442eed0794533861a2ec141559aa80ac401514143f278e28f84f",
+ "sha256": "5655f6baa559777cc4d1ae7ed9a7be13e65e121db9cfe94a68f1157f3781844e",
  "kind": "cupola_empty",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 16,
-   "tones": 28.4375,
-   "shapes": 41.0
+   "tones": 28.5625,
+   "shapes": 44.3125
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.814,
-  "tones_ratio": 1.053,
-  "shapes_ratio": 0.814,
+  "ratio": 0.88,
+  "tones_ratio": 1.058,
+  "shapes_ratio": 0.88,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     54,
     138
    ],
-   "message": "crossroads/cupola_empty: detail bar 0.81 of Eastward's prop band (28.4 tones, 41.0 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/cupola_empty: detail bar 0.88 of Eastward's prop band (28.6 tones, 44.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -56,7 +56,7 @@
     54,
     138
    ],
-   "message": "crossroads/cupola_empty: 42% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 40% to 42%, for information: the verdict is on this grid)",
+   "message": "crossroads/cupola_empty: 40% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 40% to 48%, for information: the verdict is on this grid)",
    "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
   }
  ],

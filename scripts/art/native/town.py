@@ -1044,14 +1044,14 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             # texel at its height, the outer 2 texels one tone down and the core two, and a contact
             # ellipse under the lip where it rests
             # it lies on its side, so its footprint is its silhouette's lower half on the setts, and the
-            # cast is that footprint carried east and down for every texel of its height (about 2 R)
+            # cast is that footprint carried east and down for 0.6 of its height
             al = np.asarray(o['alpha'])
             ys_, xs_ = np.nonzero(al)
             low = al & (np.arange(al.shape[0])[:, None] >= (ys_.min() + ys_.max()) / 2.0)
             X0, Y0 = int(o['foot'][0] - o['anchor'][0]), int(o['foot'][1] - o['anchor'][1])
             m = np.zeros((H, W), bool)
             ly, lx = np.nonzero(low)
-            for h_ in range(0, int(ys_.max() - ys_.min()) + 1):
+            for h_ in range(0, int(0.6 * (ys_.max() - ys_.min())) + 1):     # reaching about 0.6 of its height
                 gx_ = lx + X0 + int(round(kx * h_))
                 gy_ = ly + Y0 + 2 + int(round(ky * h_))
                 ok_ = (gx_ >= 0) & (gx_ < W) & (gy_ >= 0) & (gy_ < H)

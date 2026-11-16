@@ -17,24 +17,28 @@ building over its damage overlay):
 
 The two cupolas share their outline and every texel outside the arch except the storm's marks on the
 empty one, which lie inside that outline (town.build checks the outlines match): four slates gone from
-the base's west half over dark battens, one slipped; the flashing's low west corner lifted; a spandrel
-board gone west of the arch; a dent in the dome's lit side. Paying hangs the bell and mends those. The
+the base's west half over dark battens, one slipped; the flashing's low west corner lifted as a flap;
+a dent in the dome's lit side. Paying hangs the bell and mends those. The
 cupola itself: a base of hung slate astride the ridge (courses 4 texels deep, slates 5 to 7 wide with
-staggered joints, each course's dark underline, the library roof's slate ramp, one clump of moss), its
-lead flashing down the two slopes with a lit lip and a lead ledge on top; an open belfry of painted
+staggered joints, the head of each lit on its west, its butt turning under over the course's underline, the library roof's slate ramp, one clump of moss), its
+lead flashing down the two slopes (a lit lip on the west arm only, the east arm deeper over a slate
+drip line) and a lead ledge on top; an open belfry of painted
 upright boards (weathered along the grain, nailed to a frieze board) between two bare oak corner posts
 (grain, pegs, a capital and a plinth block each), a round arch with its voussoirs and keystone, a sill
 rail; the far wall in the shade, the floor near the sill in some light; a moulded cornice in lengths over
-dentils; a low lead dome on ten rolls, each a meridian to the boss with a lit west edge and a dark east
-one, the sheets between in clean bands (lit west, core shadow right of centre, a reflected east rim), one
-lap with three runs of white bloom under it; a brass ball and a rod with short compass arms under an
-arrow vane: its head pointing west, a swallowtail flag at its east end. Lead is the pale blue-white ramp
-(LEAD), apart from the slate. Lit from the upper left, every part with its thickness.
+dentils; a low lead dome on twelve rolls, each a meridian to the boss, lit on its west edge on the lit
+half and dark on its east, the sheets between in the lead's middle tones (2 lit, 1 turning, 0 shade) with
+the core shadow right of centre in the slate's deep blue and a reflected east rim, every other sheet
+weathered to the slate's ramp at about the same lightness, two laps with iron clips where they cross the
+rolls, three bloom runs under the lower lap and one small glint high on the west; a brass ball, and on
+the rod an arrow vane pivoted about 40 % from its head: a sharp head pointing west and a swallowtail
+flag at its east end, the bigger mass. Lead is the snow_cool ramp held to its middle tones (LEAD).
+Lit from the upper left, every part with its thickness.
 
 `bell_fallen(w, h, seed)`: the same bell, from the same profile (bell_profile: canons, a 13 wide shoulder,
 the waist, the flare to a 24 wide lip, all at 1:1), on its side in the street where it came down, its
-axis 25 degrees off the horizontal, the crown and the headstock's stub to the north-west, the mouth to
-the south-east.
+axis 50 degrees off the horizontal, the crown and the headstock's stub to the north-west, the mouth to
+the south-south-east.
 
 Sizes (world px, `q` makes texels; docs/vision/size-guide.md: a bell turret stands 32 to 64 over a
 chapel's ridge, a landmark; this is a library's small cupola): the base 16 wide, 5 high at the ridge;
@@ -165,7 +169,7 @@ BRONZE = ('timber_warm', 'brass', 'brass')
 BANDS = (8, 15)      # the two cast bands, rows of the body from the crown (the waist, and over the soundbow)
 
 
-def cupola(base: np.ndarray, damage, info: dict, depth_world: float, spec: dict, hung: bool, seed: int):
+def cupola(base: np.ndarray, damage, info: dict, depth_world: float, spec: dict, hung: bool, seed: int, debug=None):
     """The cupola on the building whose picture codes are `base` (and its damage overlay's, `damage`,
     or None), and its cast shadow on the roof: two Pics the width of the building's picture and PAD
     texels taller, their rows offset by PAD (row PAD is the building's row 0), anchor (0, 0), and the
@@ -173,8 +177,8 @@ def cupola(base: np.ndarray, damage, info: dict, depth_world: float, spec: dict,
     library's, with its damage overlay over them) a tone down, two in its core.
 
     The two states share their outline and every texel outside the arch except the storm's marks on the
-    empty one (slates gone from the base, a lifted corner of the flashing, a missing spandrel board, a
-    dent in the dome), which all lie inside that outline: so one shadow serves both, and paying swaps
+    empty one (slates gone from the base, a lifted corner of the flashing, a dent in the dome), which
+    all lie inside that outline: so one shadow serves both, and paying swaps
     what hangs in the arch and mends the marks. Each part draws from its own random stream, so the
     outside does not change with what hangs inside."""
     G = geometry(info, depth_world, spec)
@@ -201,36 +205,47 @@ def cupola(base: np.ndarray, damage, info: dict, depth_world: float, spec: dict,
     x0, x1 = int(cx - hw) - 1, int(cx + hw) + 2
     for ci, cy in enumerate(range(y0, int(G['yfb0'] + sl * hw) + 2, 4)):
         xs = x0 - int(rng.integers(0, 6))
+        n_ = 0
         while xs < x1:
             w_ = int(rng.integers(5, 8))
-            ts = 3 + int(rng.choice([0, 0, 0, -1])) if xs < cx + hw * 0.4 else 2 + int(rng.choice([0, 0, -1]))
-            if xs + w_ < cx - hw * 0.5:
-                ts = min(4, ts + 1)
-            sib = 'slate_cool' if rng.random() < 0.25 else 'slate'
-            sel = bm & (Xi >= xs) & (Xi < xs + w_) & (Yi >= cy) & (Yi < cy + 4)
+            mid = xs + w_ / 2.0
+            ts = 3 if mid < cx + hw * 0.35 else 2                  # lit to the west, turning away to the east
+            sib = 'slate_warm' if (n_ + ci) % 3 == 2 else 'slate'  # every third a sibling at the same lightness
+            sel = bm & (Xi >= xs) & (Xi < xs + w_) & (Yi >= cy) & (Yi < cy + 3)
             t[sel] = ts
             fam[sel] = sib
-            j = bm & (Xi == xs) & (Yi >= cy) & (Yi < cy + 3)       # the joint at its west edge
-            t[j] = 1
+            t[sel & (Yi == cy + 2)] = ts - 1                      # its butt turning under, over the underline
+            head = sel & (Yi == cy) & (Xi < xs + 3) & (Xi > xs)  # its lit head: the west 2 texels of its top row
+            t[head] = ts + 1
+            j_ = bm & (Xi == xs) & (Yi >= cy) & (Yi < cy + 3)      # the joint at its west edge
+            t[j_] = 1
+            fam[j_] = 'slate'
             xs += w_
-        t[bm & (Yi == cy + 3)] = 1                                 # the course's dark underline
-        t[bm & (Yi == cy) & (t > 1)] += 1                          # each slate's lit head under the course above
-    for f_ in ('slate', 'slate_cool'):
+            n_ += 1
+        ul = bm & (Yi == cy + 3)                                   # the course's underline
+        t[ul] = 1
+        fam[ul] = 'slate_cool'
+    for f_ in ('slate', 'slate_warm', 'slate_cool'):
         m_ = bm & (fam == f_)
         paint(a, m_, f_, np.clip(t, 0, 5))
     # moss: one clump over the flashing at the low west corner
     mx_, my_ = int(cx - hw + 3), int(G['yfb0'] + sl * (hw - 3)) - 3
     moss = bm & (np.abs(Xi - mx_) <= 1) & (Yi >= my_) & (Yi < my_ + 2)
     paint(a, moss, ('leaf_cool', 'leaf', 'leaf'), np.where(Yi == my_, 3, 2))
-    # the lead flashing down both slopes under it: a lit lip, its body, its drip in shade
+    # the lead flashing down both slopes under it: its body in shade, a lit lip on the west arm only,
+    # the east arm a tone deeper, a slate drip line under it
     fl = (dxa <= hw + 1) & (Y >= yfb - q(1.0)) & (Y < yfb + 1)
-    tfl = 3.0 - 0.8 * (X > cx + hw * 0.3) - 1.4 * (Y >= yfb)
-    tfl = np.where(Yi == np.floor(yfb - q(1.0)).astype(int), 5, tfl)   # the lip turned over the slates, lit
-    paint(a, fl, LEAD, tfl)
-    # its top: a lead ledge, the top plane in the light, its front arris in shade
+    lip = Yi == np.floor(yfb - q(1.0)).astype(int)
+    a[fl] = code(LEAD, 1)
+    a[fl & (X > cx)] = code(LEAD, 0)
+    a[fl & lip & (X < cx - 1)] = code(LEAD, 3)
+    a[fl & (Y >= yfb)] = code('slate_cool', 1)
+    # its top: a lead ledge, the top plane, its front edge in shade
     ledge = (dxa <= hw) & (Y >= G['ybb']) & (Y < G['yft'])
-    paint(a, ledge, LEAD, 4.0 - 1.0 * (X > cx + hw * 0.5) + 0.6 * (Y < G['ybb'] + 1))
-    a[(dxa <= hw) & (Yi == int(G['yft']))] = code(LEAD, 1)
+    a[ledge] = code(LEAD, 2)
+    a[ledge & (X > cx + hw * 0.35)] = code(LEAD, 1)                    # its east end turning from the light
+    a[ledge & (X < cx - hw * 0.35)] = code(LEAD, 3)                    # its west end in the light (three planes)
+    a[(dxa <= hw) & (Yi == int(G['yft']))] = code(LEAD, 0)
 
     # --- the belfry: two corner posts, a round arch between them, a sill rail ----------------------
     rng = rs(2)
@@ -369,19 +384,18 @@ def cupola(base: np.ndarray, damage, info: dict, depth_world: float, spec: dict,
         hang |= bell | canon
     else:
         rng = rs(5)
-        # pigeons have moved in: a nest in the west corner of the bare floor, a dark cup in twigs
-        nx0, ny0 = cx - r + q(1.2), ybb - G['sill'] - q(2.2)
-        ncx, ncy = nx0 + q(1.6), ny0 + q(0.7)
-        nest = inner & (((X - ncx) / q(1.8)) ** 2 + ((Y - ncy) / q(0.9)) ** 2 <= 1)
-        paint(a, nest, ('earth', 'sand_cool', 'sand'), np.where(Y < ncy - 1, 3, 2))
-        cup = inner & (((X - ncx - 1) / q(0.9)) ** 2 + ((Y - ncy + 0.5) / q(0.45)) ** 2 <= 1)
-        a[cup] = code('soot', 1)
-        for (tx, ty, dx_, c_) in ((ncx - 5, ncy - 1, 1, ('timber', 2)), (ncx + 2, ncy + 1, 1, ('sand', 4)),
-                                  (ncx - 3, ncy + 2, 1, ('sand', 4)), (ncx + 4, ncy - 2, -1, ('timber', 2))):
-            for j in range(4):                                            # twig strokes across it
-                yy, xx = int(ty + j * 0.5) + PAD, int(tx + j * dx_)
-                if 0 <= yy < a.shape[0] and 0 <= xx < a.shape[1] and nest[yy, xx] and not cup[yy, xx]:
-                    a[yy, xx] = code(*c_)
+        # pigeons have moved in: a nest of twigs 7 x 4 in the west corner of the bare floor, its twigs in
+        # three tones of timber, three lit ends sticking out at odd angles, a dark cup on top
+        nx0, ny0 = int(cx - r + q(1.0)), int(ybb - G['sill'] - q(1.8))
+        nest = inner & (Xi >= nx0) & (Xi < nx0 + 7) & (Yi >= ny0) & (Yi < ny0 + 4)
+        nest &= ~(((Xi == nx0) | (Xi == nx0 + 6)) & (Yi == ny0))             # rounded top corners
+        tw = np.array([2, 3, 3, 1])[(Xi * 2 + Yi * 3) % 4]                   # twigs laid across in three tones
+        a[nest] = (V.FI['timber'] * 8 + tw)[nest]
+        for (ex, ey) in ((nx0 - 1, ny0 + 1), (nx0 + 7, ny0 + 2), (nx0 + 5, ny0 - 1)):
+            if 0 <= ey + PAD < a.shape[0] and inner[ey + PAD, ex]:
+                a[ey + PAD, ex] = code('timber_warm', 4)
+                nest[ey + PAD, ex] = True
+        a[(Yi == ny0) & (Xi >= nx0 + 2) & (Xi < nx0 + 5) & inner] = code('soot', 0)
         hang |= nest
         # the old headstock, snapped: its west half still in the arch's west side, hanging down to the
         # east, its splintered end lit against the floor darkened round it; a strap dangling from it
@@ -397,12 +411,19 @@ def cupola(base: np.ndarray, damage, info: dict, depth_world: float, spec: dict,
         acr = (-(X - x0b) * uy + (Y - y0b) * ux) / L_
         tt = 3.0 + 1.3 * (acr < -q(0.4)) - 1.2 * (acr > q(0.45)) - 0.5 * (along_ > L_ * 0.6)
         paint(a, hb, ('timber_cool', 'timber', 'timber_warm'), tt)
-        for dd, sp in ((0.0, 1.0), (2.0, -1.0)):
-            sx_ = x1b + 1 + dd * 0.4
-            sy_ = y1b - 1 + sp
-            sm = inner & (np.abs(Y - sy_ - (X - sx_) * 0.55) < 0.8) & (X >= sx_ - 1) & (X < sx_ + q(0.7) + dd * 0.4)
-            a[sm] = code('plaster_warm', 4)
-        a[hb & (along_ > L_ - q(0.7))] = code('plaster_warm', 3)                        # the raw break
+        # the break: three jagged fibres sticking out along the grain, lit, a dark split between them
+        brk = hb & (along_ > L_ - 2.0)
+        a[brk] = code('timber', 1)
+        ex, ey = x1b, y1b
+        for k2, (off_, ln) in enumerate(((-1.4, 3), (0.0, 2), (1.3, 4))):
+            for j2 in range(ln):
+                xx = int(round(ex + ux / L_ * j2 - uy / L_ * off_))
+                yy = int(round(ey + uy / L_ * j2 + ux / L_ * off_)) + PAD
+                if 0 <= yy < a.shape[0] and inner[yy, xx]:
+                    a[yy, xx] = code('timber_warm', 4)
+                    hb[yy, xx] = True
+        split = hb & (np.abs(acr) < 0.6) & (along_ > L_ - q(1.6))
+        a[split] = code('soot', 1)
         sx0 = x0b + (x1b - x0b) * 0.62
         sy0 = y0b + (y1b - y0b) * 0.62 + 1
         st = inner & (X >= sx0) & (X < sx0 + 2) & (Y >= sy0) & (Y < sy0 + q(3.4))
@@ -457,7 +478,7 @@ def cupola(base: np.ndarray, damage, info: dict, depth_world: float, spec: dict,
     sel = order[first]
     dome = np.zeros(a.shape, bool)
     dome.flat[pix[sel]] = True
-    NROLL = 10
+    NROLL = 12
     phi = np.arctan2(sd_[sel], sx_[sel])
     rho = np.sqrt(sx_[sel] ** 2 + sd_[sel] ** 2)
     dphi = (phi / (2 * math.pi / NROLL) + 0.5) % 1.0 - 0.5
@@ -465,62 +486,95 @@ def cupola(base: np.ndarray, damage, info: dict, depth_world: float, spec: dict,
     rollm.flat[pix[sel]] = (np.abs(dphi) * (2 * math.pi / NROLL) * rho < 1.3) & (rho > q(0.8))
     hzm = np.zeros(a.shape)
     hzm.flat[pix[sel]] = sz[sel] / max(1.0, Hd)
-    # the sheets in clean bands across the dome: west 4, then 3, the core shadow right of centre at 1,
-    # a reflected rim of 2 on the east edge
+    # the sheets in clean bands across the dome, in the lead's middle tones: lit 2 on the west half,
+    # turning 1, shade 0, the core shadow right of centre in the slate's deep blue, a reflected east rim
     uu = (X - cx) / R
-    td = np.where(uu < -0.5, 4.0, np.where(uu < 0.2, 3.0, np.where(uu < 0.4, 2.0, 1.0)))
+    td = np.where(uu < -0.05, 2.0, np.where(uu < 0.3, 1.0, np.where(uu < 0.62, -1.0, 0.0)))
     east_rim = dome & ~np.roll(dome, -1, axis=1)
-    td = np.where(east_rim & (uu > 0.3), 2.0, td)
-    td = np.where(hzm > 0.82, np.minimum(4.0, td + 1), td)                 # the crown under the boss, up to the light
-    lap = dome & (np.abs(hzm - 0.45) < 0.035) & ~rollm
-    td = np.where(lap, np.maximum(1.0, td - 1), td)                        # one lap round it
-    paint(a, dome & ~rollm, LEAD, td)
-    # the rolls: each a meridian to the boss, two texels lit on its west, one dark on its east
-    lit2 = rollm & ~np.roll(rollm, 1, axis=1) | (rollm & ~np.roll(rollm, 2, axis=1))
-    a[rollm] = code(LEAD, 3)
-    a[lit2] = code(LEAD, 4)
+    td = np.where(east_rim & (uu > 0.3), 1.0, td)
+    lap = dome & ((np.abs(hzm - 0.3) < 0.035) | (np.abs(hzm - 0.62) < 0.035)) & ~rollm
+    td = np.where(lap & (td >= 1), td - 1, td)                              # two laps round it, a tone down
+    sheet = dome & ~rollm
+    a[sheet & (td >= 0)] = (V.FI[LEAD] * 8 + np.clip(td, 0, 5).astype(int))[sheet & (td >= 0)]
+    a[sheet & (td < 0)] = code('slate_cool', 2)
+    # every other sheet weathered apart: the slate's ramp at about the lead's lightness
+    panel = np.zeros(a.shape, int)
+    panel.flat[pix[sel]] = np.floor((phi + math.pi) / (2 * math.pi / NROLL)).astype(int)
+    alt = sheet & (panel % 2 == 1) & (a // 8 == V.FI[LEAD]) & (a % 8 <= 2)
+    a[alt] = V.FI['slate'] * 8 + 3 + a[alt] % 8
+    # the rolls: each a meridian to the boss, the sheet's tone, its west 2 texels lit (3) on the lit half
+    # only, a dark texel east of it
+    a[rollm] = (V.FI[LEAD] * 8 + np.clip(td + (uu >= 0), 0, 5).astype(int))[rollm]   # proud of the sheet in the shade
+    a[rollm & (td < 0)] = code(LEAD, 0)
+    lit2 = rollm & (~np.roll(rollm, 1, axis=1) | ~np.roll(rollm, 2, axis=1)) & (uu < 0)
+    a[lit2] = code(LEAD, 3)
     darke = dome & ~rollm & np.roll(rollm, 1, axis=1)
-    a[darke] = code(LEAD, 1)
-    # bloom: three short white runs under the lap, on the lit sheets
-    ys_, xs_ = np.nonzero(lap & (uu < 0.1) & ~rollm)
+    a[darke & (uu < 0.3)] = code(LEAD, 0)
+    a[darke & (uu >= 0.3)] = code('slate_cool', 1)
+    # where each lap crosses a roll, the lead dressed over it: a clip of iron, lit on the west
+    tuck = rollm & (np.roll(lap, 1, axis=1) | np.roll(lap, -1, axis=1))
+    a[tuck & (uu < 0)] = code('iron', 4)
+    a[tuck & (uu >= 0)] = code('iron', 2)
+    # bloom: three runs under the lap on the lit sheets, 2 wide and 4 to 6 long
+    ys_, xs_ = np.nonzero(lap & (uu < -0.1) & ~rollm & ~np.roll(rollm, -1, axis=1))
     if ys_.size:
-        for i in rng.choice(ys_.size, size=min(3, ys_.size), replace=False):
-            L_ = int(rng.integers(3, 6))
+        picks = rng.choice(ys_.size, size=min(3, ys_.size), replace=False)
+        for i in picks:
+            L_ = int(rng.integers(4, 7))
             for j in range(1, L_ + 1):
-                yy, xx = ys_[i] + j, xs_[i]
-                if yy < a.shape[0] and dome[yy, xx] and not rollm[yy, xx]:
-                    a[yy, xx] = code(LEAD, 5)
-    # the dome's foot: a lead roll round it, lit on its west
+                for dx2 in (0, 1):
+                    yy, xx = ys_[i] + j, xs_[i] + dx2
+                    if yy < a.shape[0] and dome[yy, xx] and not rollm[yy, xx]:
+                        a[yy, xx] = code(LEAD, 3)
+    # a glint high on the top-left: four texels
+    gys, gxs = np.nonzero(sheet & (uu < -0.35) & (uu > -0.65) & (hzm > 0.7))
+    if gys.size:
+        g0 = np.argmin(gys * 1000 + gxs)
+        a[gys[g0]:gys[g0] + 2, gxs[g0]:gxs[g0] + 2] = code(LEAD, 4)
+    # the dome's foot: a lead roll round it, lit 2 on the west, 0 on the east
     footr = (dxa <= R) & (np.abs(Y - (yc0 + k * np.sqrt(np.clip(R * R - (X - cx) ** 2, 0, None)))) < q(0.6)) & (Y > yc0)
-    paint(a, footr & ~opening, LEAD, 3.4 - 1.8 * (X > cx + R * 0.3) + 0.8 * (X < cx - R * 0.5))
+    a[footr & ~opening] = code(LEAD, 1)
+    a[footr & ~opening & (X < cx - R * 0.3)] = code(LEAD, 2)
+    a[footr & ~opening & (X > cx + R * 0.3)] = code(LEAD, 0)
     yap = yc0 - Hd
     cs = cm & (Y >= ybt - corn) & (Y < ybt - corn + q(0.8)) & ~dome
     a[cs] = np.where(a[cs] % 8 > 1, a[cs] - 2, a[cs])
 
-    # --- the finial: a lead boss, a brass ball, an iron rod, compass arms and the vane --------------
+    # --- the finial: a lead boss, a brass ball, an iron rod and the vane ----------------------------
     br = q(1.2)
     by = yap - q(1.0)
     bm_ = ((X - cx) / br) ** 2 + ((Y - by) / br) ** 2 <= 1
     nxb, nyb = (X - cx) / br, (Y - by) / br
     paint(a, bm_, ('brass', 'brass', 'brass_warm'), 2.8 + 2.4 * lam(nxb, nyb * 0.6, np.sqrt(np.clip(1 - nxb * nxb - nyb * nyb, 0, 1))))
     boss = (dxa < q(1.0)) & (Y >= yap - q(0.3)) & (Y < yap + q(0.8))
-    paint(a, boss, LEAD, np.where(X < cx, 4, 2))
-    vy = int(by - br - q(4.6))                                       # the vane's shaft, two rows
+    a[boss] = code(LEAD, 1)
+    a[boss & (X < cx)] = code(LEAD, 2)
+    bg = boss & (X < cx - 1)                                          # its glint: two texels
+    bgy, bgx = np.nonzero(bg)
+    if bgy.size:
+        a[bgy.min(), bgx.min():bgx.min() + 2] = code(LEAD, 4)
+    # the vane: an arrow on the rod, pivoted about 40 % from its head so the tail is the bigger mass:
+    # a sharp head 5 long and 5 tall pointing west, a one-texel shaft, a swallowtail flag 9 wide and 7
+    # tall with a V notch 3 deep at its east end; top edges lit, the body mid, the undersides dark
+    vy = int(by - br - q(4.6))                                       # the shaft's row
     rod = (Xi >= int(cx) - 1) & (Xi < int(cx) + 1) & (Yi >= vy) & (Y < by - br + 1)
     paint(a, rod, 'iron', np.where(Xi < int(cx), 3.6, 1.8))
-    # compass arms, short, below the vane: a bar east and west with a knob at each end
-    ay_ = int(by - br) - 4
-    arms = (Yi == ay_) & (dxa <= 3)
-    paint(a, arms, 'iron', np.where(X < cx, 4, 2))
-    # the arrow: its shaft, a head 4 long pointing west, a swallowtail flag at the east end
-    sx0_, sx1_ = int(cx) - 6, int(cx) + 5
-    shaft = (Yi >= vy) & (Yi < vy + 2) & (Xi >= sx0_) & (Xi < sx1_)
-    paint(a, shaft, 'iron', np.where(Yi == vy, 4, 1))
-    head = _tri(X, Y, (sx0_ - 5, vy + 1), (sx0_ + 0.5, vy - 2.5), (sx0_ + 0.5, vy + 4.5))
-    paint(a, head, 'iron', np.where(Y < vy + 1, 4, np.where(Y < vy + 2, 3, 1)))
-    tail = (Xi >= sx1_) & (Xi < sx1_ + 5) & (Yi >= vy - 1) & (Yi < vy + 3)
-    tail &= ~_tri(X, Y, (sx1_ + 5.5, vy - 1), (sx1_ + 5.5, vy + 3), (sx1_ + 2.5, vy + 1))   # the swallowtail's notch
-    paint(a, tail, 'iron', np.where(Yi < vy, 4, np.where(Yi < vy + 2, 3, 1)))
+    tip = int(cx) - 9
+    hx1 = tip + 5
+    tx0 = int(cx) + 4
+    shaft = (Yi == vy) & (Xi >= hx1) & (Xi < tx0)
+    a[shaft] = code('iron', 3)
+    head = np.zeros(a.shape, bool)
+    for i_ in range(5):                                              # the head: columns widening from the tip
+        hh = min(2, (i_ + 1) // 2)
+        head |= (Xi == tip + i_) & (Yi >= vy - hh) & (Yi <= vy + hh)
+    paint(a, head, 'iron', np.where(Yi < vy, 4, np.where(Yi == vy, 3, 1)))
+    tail = (Xi >= tx0) & (Xi < tx0 + 9) & (Yi >= vy - 3) & (Yi <= vy + 3)
+    notch = (Xi >= tx0 + 6) & (np.abs(Yi - vy) <= (Xi - (tx0 + 6)))   # the V, 3 deep at the east end
+    tail &= ~notch
+    tt_ = np.where(Yi == vy - 3, 4, np.where(Yi == vy + 3, 1, 3))
+    tt_ = np.where(tail & (Yi > vy) & (np.abs(Yi - vy) == (Xi - (tx0 + 6)) + 1), 1, tt_)   # the notch's lower lip dark
+    paint(a, tail, 'iron', tt_)
 
     # --- the storm's marks on the empty cupola, inside the shared outline ------------------------
     if not hung:
@@ -536,28 +590,37 @@ def cupola(base: np.ndarray, damage, info: dict, depth_world: float, spec: dict,
         # a slipped slate hanging askew under one hole
         sl_ = bm & (Xi >= int(cx - hw + 12)) & (Xi < int(cx - hw + 17)) & (Yi >= int(G['yft'] + 11)) & (Yi < int(G['yft'] + 13))
         paint(a, sl_, 'slate', np.where(Yi == int(G['yft'] + 11), 4, 2))
-        # the flashing's low west corner lifted: its lip raised, the dark gap under it
-        lw = (X >= cx - hw - 1) & (X < cx - hw + 5)
-        lift = fl & lw & (Y < yfb - q(1.0) + 1)
-        a[np.roll(lift, -1, axis=0) & bm] = code(LEAD, 5)
-        a[lift] = code('soot', 1)
-        # one spandrel board gone, west of the arch: the dark behind it and a nail left in the frame
-        bx = int(cx - hwb + pw + 1)
-        gone = boards & (Xi >= bx) & (Xi < bx + int(bj)) & (Y >= fz1) & (Y < yspr) & ~ring
-        a[gone] = code('soot', 1)
-        a[gone & (Xi == bx)] = code('soot', 0)
-        ys_, xs_ = np.nonzero(gone)
-        if ys_.size:
-            a[ys_.min(), xs_.min() + 2:xs_.min() + 4] = code('iron', 3)
-        # a dent in the dome's lit side: its shade on the upper west, a lit lip on the lower east
-        dx_, dy_ = int(cx - R * 0.45), int(yc0 - Hd * 0.35) + PAD
-        if dome[dy_, dx_]:
-            a[dy_, dx_:dx_ + 3] = code(LEAD, 2)
-            a[dy_ + 1, dx_ + 1:dx_ + 4] = code(LEAD, 5)
+        # the flashing's low west corner lifted: a flap 4 x 3 bent up off the slates, its top the lead's
+        # body with the lit lip, its underside a tone down, the dark gap under it
+        fx0 = int(cx - hw)
+        fy_ = int(math.floor(G['yfb0'] + sl * (hw - 2) - q(1.0))) - 3     # the flap's top row
+        for dy2, c_ in ((0, (LEAD, 3)), (1, (LEAD, 1)), (2, (LEAD, 0)), (3, ('slate_cool', 0))):
+            yy = fy_ + dy2 + PAD
+            for xx in range(fx0, fx0 + 4):
+                if 0 <= yy < a.shape[0] and a[yy, xx] >= 0:
+                    a[yy, xx] = code(*c_)
+        # a dent in the dome's lit west half, 5 x 4: a dark crescent on its upper-left inner wall two
+        # tones down, a lit rim on its lower right, the roll crossing it kinked a texel east
+        dcx, dcy = cx - R * 0.42, yc0 - Hd * 0.45 + PAD
+        ell = ((X - dcx) / 3.1) ** 2 + ((Yp - dcy) / 2.6) ** 2 <= 1
+        ell &= dome
+        roll_in = ell & rollm
+        kink = np.roll(roll_in, 1, axis=1) & ell
+        a[roll_in & ~kink] = (V.FI[LEAD] * 8 + np.clip(td, 0, 5).astype(int))[roll_in & ~kink]
+        a[kink] = code(LEAD, 3)
+        cres = ell & (((X - dcx) + (Yp - dcy)) < -1.2)
+        a[cres] = code('slate_cool', 1)                                  # two tones under the sheet
+        rimd = dome & ~ell & (np.roll(ell, 1, axis=1) | np.roll(ell, 1, axis=0)) & ((X - dcx) + (Yp - dcy) > 1.0)
+        a[rimd] = code(LEAD, 3)
 
     p = Pic(Wb, Hb + PAD, 0, 0)
     p.a = a
     finish(p)
+    if debug is not None:
+        # the parts' masks in this canvas, for measuring them (the review's own sheets work on the picture)
+        debug.update(dome=dome | footr | boss, base=bm | fl | ledge, head=head, tail=tail)
+        if not hung:
+            debug.update(dent=ell, flap_top=fy_, nest=nest)
 
     # --- its shadow on the roof: east and down, onto what the library and its damage draw there ----
     body = p.a >= 0
@@ -594,141 +657,162 @@ def cupola(base: np.ndarray, damage, info: dict, depth_world: float, spec: dict,
 
 
 def bell_fallen(w, h, seed, hd=False):
-    """The bell where it came down, on its side in the street below the library's east window: the
-    same bell as the hung one, from the one profile at 1:1 (bell_profile), its axis 25 degrees off the
+    """The bell where it came down, on its side in the street under the library's east window: the same
+    bell as the hung one, from the one profile at 1:1 (bell_profile), its axis 50 degrees off the
     horizontal, the crown and the snapped stub of its headstock to the north-west, the mouth turned to
-    the south-east. Its skin is lit in the hung bell's clean bands by its form; the two cast bands and
-    the soundbow's lit roll go round it; the mouth is a dark ellipse with the lip's rim lit, the inner
-    wall lit on its far side and dark on its near side, and the clapper's ball lying in it. Green runs
-    down from the cast bands on the shaded side. Foot: the middle of where it lies on the setts."""
+    the south-south-east. Its tones run in bands round its circumference, as on the hung bell: a
+    highlight band along the lit upper-west flank from crown to lip, then the lit, body and turning
+    tones, the core shadow along its underside with a texel of reflected light over where it rests. The
+    two cast bands go round it as curved lines, a dark texel with a lit one under it. The mouth is an
+    ellipse: dark inside, the far inner wall a lit band at its top, the clapper's ball low in it, the
+    lip's rim lit on its upper and west arc. Two short runs of greyed green under the bands on the
+    shaded side. Foot: the middle of its lowest row."""
     rng = np.random.default_rng(seed)
     rows, half, cr = bell_profile()
     body_rows = rows - cr
-    L_ = float(body_rows)                                           # crown to lip along the axis, texels
+    L_ = float(body_rows)
     hp = half[cr:]
     Rl = float(hp[-1])
-    W, H = 90, 80
-    ax, ay = 44, 62
+    W, H = 90, 90
+    ax, ay = 40, 66
     p = Pic(W, H, ax, ay)
     a = p.a
     Y, X = grid(a)
-    ang = math.radians(25.0)                                        # the axis, crown north-west to mouth south-east
-    dx_, dy_ = math.cos(ang), math.sin(ang)                         # on the ground: east, south
+    Xi, Yi = np.floor(X).astype(int), np.floor(Y).astype(int)
+    ang = math.radians(50.0)
+    dx_, dy_ = math.cos(ang), math.sin(ang)                         # the axis on the ground: east, south
     px_, py_ = -dy_, dx_                                            # across it on the ground
-    e0, n0 = ax - L_ * 0.5 * dx_, ay - 2.0 - L_ * 0.5 * dy_         # the crown's centre on the ground
+    e0, n0 = ax - L_ * 0.5 * dx_, ay - 4.0 - L_ * 0.5 * dy_
 
-    def prof(s):
-        return np.interp(s, np.arange(body_rows), hp)
-    ss = np.arange(0.0, L_, 0.25)
-    th = np.arange(0, 2 * math.pi, 0.02)
+    def prof(s_):
+        return np.interp(s_, np.arange(body_rows), hp)
+    ss = np.arange(0.0, L_, 0.2)
+    th = np.arange(0, 2 * math.pi, 0.015)
     S, T = np.meshgrid(ss, th)
     rho = prof(S)
-    drho = (prof(np.clip(S + 0.5, 0, L_ - 1)) - prof(np.clip(S - 0.5, 0, L_ - 1)))
-    za = prof(S * 0) + (Rl - prof(S * 0)) * (S / L_)                # the axis's height: shoulder and lip on the setts
+    za = prof(S * 0) + (Rl - prof(S * 0)) * (S / L_)
     cr_, sr_ = np.cos(T), np.sin(T)
-
-    def project(E, N, Z):
-        return np.floor(E).astype(int), np.floor(N - Z).astype(int)
-    # the skin, outside
     E = e0 + S * dx_ + rho * cr_ * px_
     N = n0 + S * dy_ + rho * cr_ * py_
     Z = za + rho * sr_
-    ne, nn_, nz = cr_ * px_ - drho * dx_, cr_ * py_ - drho * dy_, sr_
-    nl = np.sqrt(ne ** 2 + nn_ ** 2 + nz ** 2)
-    li = lam(ne / nl, nn_ / nl, nz / nl)
-    # the light on the form in clean steps, as the hung bell's bands: highlight, lit, body, turning, shade
-    tone = np.select([li > 0.74, li > 0.52, li > 0.3, li > 0.06, li > -0.2], [5.0, 4.0, 3.0, 2.0, 1.0], 0.0)
-    for band in (BANDS[0], BANDS[1]):                               # two cast bands, each a pair of lines
-        tone = np.where(np.abs(S - band) < 0.55, np.maximum(0.0, tone - 2), tone)
-        tone = np.where(np.abs(S - band - 2) < 0.55, np.maximum(0.0, tone - 1), tone)
-        tone = np.where(np.abs(S - band - 1) < 0.55, np.minimum(4.0, tone + 1), tone)
-    tone = np.where(np.abs(S - (body_rows - 1.5)) < 0.8, np.minimum(4.0, tone + 1), tone)   # the soundbow's roll
-    tone = np.where(np.abs(S - 1.0) < 0.6, np.minimum(4.0, tone + 1), tone)               # the crown plate's edge
-    # a line of raised letters round the waist, between the bands: each a lit block with its shade under it
-    lt = (S > BANDS[0] + 3.4) & (S < BANDS[0] + 5.0) & ((np.floor(T / 0.16) % 3) != 2) & (li > 0.0)
-    tone = np.where(lt, np.minimum(5.0, tone + 1), tone)
-    tone = np.where((S >= BANDS[0] + 5.0) & (S < BANDS[0] + 5.8) & ((np.floor(T / 0.16) % 3) != 2) & (li > 0.0),
-                    np.maximum(0.0, tone - 1), tone)
-    kind = np.zeros(S.shape, int)
-    # the inner wall, seen through the mouth: lit on its far side, dark on its near
-    Si = S[:, ::2]
-    Ti = T[:, ::2]
-    rin = prof(Si) - 1.5
-    inside = Si > L_ * 0.45
-    Ei = (e0 + Si * dx_ + rin * np.cos(Ti) * px_)[inside]
-    Ni = (n0 + Si * dy_ + rin * np.cos(Ti) * py_)[inside]
-    Zi = (za[:, ::2] + rin * np.sin(Ti))[inside]
-    li_in = lam(-(np.cos(Ti) * px_)[inside], -(np.cos(Ti) * py_)[inside], -np.sin(Ti)[inside])
-    tin = np.where(li_in > 0.3, 2.0, np.where(li_in > -0.1, 1.0, 0.0))
-    # the clapper's ball, lying in the low side of the mouth
-    cs_ = L_ * 0.78
-    cb = np.array([e0 + cs_ * dx_ + (prof(cs_) - 4.0) * 0.0, n0 + cs_ * dy_, 3.0])
-    cth, cph = np.meshgrid(np.arange(0, math.pi, 0.1), np.arange(0, 2 * math.pi, 0.1))
-    Ec = cb[0] + 2.5 * np.sin(cth) * np.cos(cph)
-    Nc = cb[1] + 2.5 * np.sin(cth) * np.sin(cph)
-    Zc = cb[2] + 2.5 * np.cos(cth)
-    lic = lam(np.sin(cth) * np.cos(cph), np.sin(cth) * np.sin(cph), np.cos(cth))
-    tcl = np.where(lic > 0.4, 3.0, np.where(lic > 0.0, 2.0, 1.0))
-    allE = np.concatenate([E.ravel(), Ei, Ec.ravel()])
-    allN = np.concatenate([N.ravel(), Ni, Nc.ravel()])
-    allZ = np.concatenate([Z.ravel(), Zi, Zc.ravel()])
-    allT = np.concatenate([tone.ravel(), tin, tcl.ravel()])
-    allK = np.concatenate([kind.ravel(), np.ones(Ei.size, int), np.full(Ec.size, 2)])
-    allS = np.concatenate([S.ravel(), Si[inside], np.full(Ec.size, cs_)])
-    allSR = np.concatenate([sr_.ravel(), np.zeros(Ei.size), np.zeros(Ec.size)])
-    sx, sy = project(allE, allN, allZ)
+    # the light by the angle round the axis only, so the bands run from crown to lip
+    li = lam(cr_ * px_, cr_ * py_, sr_)
+    tone = np.select([li > 0.85, li > 0.78, li > 0.68, li > 0.45], [5.0, 4.0, 3.0, 2.0], 1.0)
+    tone = np.where((sr_ < -0.82) & (Z < 2.5), 2.0, tone)            # reflected light over where it rests
+    ring = np.zeros(S.shape, bool)
+    for band in BANDS:
+        ring |= np.abs(S - band) < 0.45
+    # the founder's letters round the shoulder between the crown and the waist band, raised: each a lit
+    # block a tone up with its shade a tone down under it, on the side towards the light
+    let = (S > 3.2) & (S < 5.2) & ((np.floor(T / 0.2) % 3) != 2) & (li > 0.3)
+    tone = np.where(let, np.minimum(5.0, tone + 1), tone)
+    tone = np.where((S >= 5.2) & (S < 6.0) & ((np.floor(T / 0.2) % 3) != 2) & (li > 0.3), np.maximum(1.0, tone - 1), tone)
+    sx = np.floor(E).astype(int)
+    sy = np.floor(N - Z).astype(int)
     ok = (sx >= 0) & (sx < W) & (sy >= 0) & (sy < H)
-    sx, sy, allN, allZ, allT, allK, allS, allSR = sx[ok], sy[ok], allN[ok], allZ[ok], allT[ok], allK[ok], allS[ok], allSR[ok]
+    sx, sy, N_, Z_, tone_, ring_, S_ = sx[ok], sy[ok], N[ok], Z[ok], tone[ok], ring[ok], S[ok]
     pix = sy * W + sx
-    near = allN + allZ                                              # towards the viewer (south and up)
+    near = N_ + Z_
     order = np.lexsort((-near, pix))
     first = np.ones(order.size, bool)
     first[1:] = pix[order][1:] != pix[order][:-1]
     sel = order[first]
-    kmap = np.full(a.shape, -1)
-    kmap.flat[pix[sel]] = allK[sel]
+    body = np.zeros(a.shape, bool)
+    body.flat[pix[sel]] = True
     tmap = np.zeros(a.shape)
-    tmap.flat[pix[sel]] = allT[sel]
-    smap = np.zeros(a.shape)
-    smap.flat[pix[sel]] = allS[sel]
-    srmap = np.zeros(a.shape)
-    srmap.flat[pix[sel]] = allSR[sel]
-    body = kmap == 0
-    inner = kmap == 1
-    clap = kmap == 2
+    tmap.flat[pix[sel]] = tone_[sel]
+    rmap = np.zeros(a.shape, bool)
+    rmap.flat[pix[sel]] = ring_[sel]
     paint(a, body, BRONZE, tmap, lo=0, hi=5)
-    a[inner & (tmap < 0.5)] = code('soot', 0)                      # the inner wall: near side dark,
-    a[inner & (tmap >= 0.5) & (tmap < 1.5)] = code('timber_warm', 1)  # the far side catching the light
-    a[inner & (tmap >= 1.5)] = code('brass', 1)
-    paint(a, clap, 'iron', tmap)
-    # the lip's rim, lit where it faces up and to the west
-    rim = body & (smap > L_ - 1.2) & (srmap > 0.3)
-    a[rim] = code('brass', 3)
-    # green run from the cast bands on the shaded side: two or three runs, a texel wide, 3 to 6 long
-    ys_, xs_ = np.nonzero(body & (tmap <= 1.5) & (np.abs(smap - BANDS[1]) < 0.7))
-    ys2, xs2 = np.nonzero(body & (tmap <= 1.5) & (np.abs(smap - BANDS[0]) < 0.7))
-    pts = list(zip(ys_, xs_))[::5][:2] + list(zip(ys2, xs2))[::7][:1]
-    for (yy, xx) in pts:
-        for j in range(int(rng.integers(3, 7))):
-            if yy + j < H and body[yy + j, xx]:
-                a[yy + j, xx] = code('leaf_cool', 3 if j == 0 else 2)
-    # the canons at the crown, and the stub of the old headstock still strapped to them, snapped,
-    # its splintered end lit, pointing north-west
+    # the cast bands: a dark texel, a lit one under it
+    a[rmap] = code('timber_warm', 1)
+    below = np.roll(rmap, 1, axis=0) & body & ~rmap
+    a[below] = np.where(a[below] // 8 == V.FI['brass'], np.minimum(a[below] + 1, V.FI['brass'] * 8 + 5), code('brass', 2))
+    # the mouth: the lip's circle projected, filled dark; the far inner wall lit at its top; the
+    # clapper low in it; the rim lit on its upper and west arc
+    # the lip's circle is an ellipse on screen: centre C, axes U (across, on the ground) and V (up)
+    Rm = Rl - 0.5
+    Cx, Cy = e0 + L_ * dx_, n0 + L_ * dy_ - Rl
+    Ux, Uy, Vx, Vy = Rm * px_, Rm * py_, 0.0, -Rm
+    det = Ux * Vy - Vx * Uy
+    qx, qy = X - Cx, Y - Cy
+    cc = (qx * Vy - Vx * qy) / det
+    sc = (Ux * qy - qx * Uy) / det
+    mouth = cc * cc + sc * sc <= 1.0
+    rim = mouth & ~ndi.binary_erosion(mouth)
+    inside = mouth & ~rim
+    # inside, in rings by depth: the far inner wall at the top a lit band, the near wall dark, the wall
+    # going down into the bell a tone deeper, the hollow soot
+    rr_ = np.sqrt(cc * cc + sc * sc)
+    a[inside] = code('soot', 0)
+    a[inside & (rr_ > 0.55)] = code('timber_warm', 0)
+    ys_, xs_ = np.nonzero(inside)
+    mcx, mcy = xs_.mean(), ys_.mean()
+    top_ = ys_.min()
+    farw = inside & (rr_ > 0.62) & (Y < mcy) & (Y < top_ + 4.5)
+    a[farw] = code('timber_warm', 1)
+    a[farw & (Y < top_ + 2.5)] = code('brass', 1)
+    a[farw & (Y < top_ + 1.5) & (X < mcx)] = code('brass', 2)          # the far wall's lip, catching the most
+    # the near wall: dark, a thread of light reflected along it just inside the rim
+    nearw = inside & (rr_ > 0.86) & (Y > mcy + 2)
+    a[nearw] = code('timber_warm', 1)
+    clx, cly = mcx + 1.0, ys_.max() - 2.5
+    clap = inside & (((X - clx) / 2.3) ** 2 + ((Y - cly) / 2.1) ** 2 <= 1)
+    a[clap] = code('iron', 2)
+    a[clap & (X < clx) & (Y < cly)] = code('iron', 3)
+    rim_lit = rim & ((Y < mcy) | (X < mcx - 1))
+    a[rim] = code('brass', 2)
+    a[rim_lit] = code('brass', 3)
+    # greyed green: two runs under the bands, two texels wide, on the shaded underside only
+    shade = body & ~mouth & (tmap <= 2) & ~rmap
+    n_runs = 0
+    for band in BANDS:
+        cand = np.nonzero(below & shade & ~np.roll(rmap, 2, axis=0))
+        if cand[0].size == 0 or n_runs >= 2:
+            continue
+        k2 = int(rng.integers(0, cand[0].size))
+        yy, xx = cand[0][k2], cand[1][k2]
+        for j in range(int(rng.integers(3, 5))):
+            for d2 in (0, 1):
+                if yy + j < H and shade[yy + j, xx + d2]:
+                    a[yy + j, xx + d2] = code('leaf_cool', 1)
+        n_runs += 1
+    # the canons at the crown and the stub of the old headstock strapped to them, pointing north-west,
+    # its break jagged fibres with a dark split
     ce, cn = e0 - 1.5 * dx_, n0 - 1.5 * dy_
     cz = prof(0) * 0.9
     cx0, cy0 = ce, cn - cz
-    can = (((X - cx0) / 2.6) ** 2 + ((Y - cy0) / 2.2) ** 2 <= 1) & ~body
+    can = (((X - cx0) / 2.4) ** 2 + ((Y - cy0) / 2.0) ** 2 <= 1) & ~body
     paint(a, can, 'iron', np.where(X < cx0, 3.4, 1.8))
-    x1b, y1b = cx0 - 11.0 * dx_, cy0 - 11.0 * dy_ - 2.0
-    stub = bar(a, cx0 - 1, cy0, x1b, y1b, 2.0, 'timber', 3) & ~body
+    x1b, y1b = cx0 - 9.0 * math.cos(math.radians(20)), cy0 - 9.0 * math.sin(math.radians(20))
+    stub = bar(a, cx0 - 1, cy0, x1b, y1b, 1.8, 'timber', 3) & ~body
     ux_, uy_ = x1b - cx0, y1b - cy0
     Ls = math.hypot(ux_, uy_)
     al = ((X - cx0) * ux_ + (Y - cy0) * uy_) / Ls
     ac = (-(X - cx0) * uy_ + (Y - cy0) * ux_) / Ls
-    paint(a, stub, ('timber_cool', 'timber', 'timber_warm'), 3.0 + 1.2 * (ac < -0.8) - 1.3 * (ac > 0.8))
-    a[stub & (al > Ls - 1.6)] = code('plaster_warm', 4)                                # the raw break
-    strap = stub & (np.abs(al - Ls * 0.35) < 1.0)
+    paint(a, stub, ('timber_cool', 'timber', 'timber_warm'), 3.0 + 1.2 * (ac < -0.7) - 1.3 * (ac > 0.7))
+    a[stub & (al > Ls - 1.5)] = code('timber', 1)
+    for off_, ln in ((-1.2, 3), (0.3, 2), (1.4, 3)):
+        for j2 in range(ln):
+            xx = int(round(x1b + ux_ / Ls * j2 - uy_ / Ls * off_))
+            yy = int(round(y1b + uy_ / Ls * j2 + ux_ / Ls * off_))
+            if 0 <= yy < H and 0 <= xx < W:
+                a[yy, xx] = code('timber_warm', 4)
+    a[stub & (np.abs(ac) < 0.5) & (al > Ls - 2.5)] = code('soot', 1)
+    # its grain: two dark lines along it, broken
+    for off_ in (-0.6, 0.7):
+        gr = stub & (np.abs(ac - off_) < 0.45) & (al > 1.5) & (al < Ls - 2.5) & (((al * 1.7).astype(int) % 4) != 3)
+        a[gr] = code('timber', 1 if off_ > 0 else 2)
+    strap = stub & (np.abs(al - Ls * 0.4) < 1.0)
     a[strap] = np.where(ac[strap] < 0, code('iron', 4), code('iron', 2))
+    # the bolt through strap and stub, its head lit on the upper left
+    bys, bxs = np.nonzero(strap)
+    if bys.size:
+        by_, bx_ = int(bys.mean()), int(bxs.mean())
+        a[by_:by_ + 2, bx_:bx_ + 2] = code('iron', 1)
+        a[by_, bx_] = code('iron', 5)
+    # the canons' loop: the hole through it dark
+    a[(((X - cx0) / 1.0) ** 2 + ((Y - cy0) / 0.8) ** 2 <= 1) & can] = code('soot', 0)
     finish(p)
     ys_, xs_ = np.nonzero(p.a >= 0)
     x0, y0, x1, y1 = xs_.min(), ys_.min(), xs_.max() + 1, ys_.max() + 1

@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "ebe26760a2e89317193ffad9e1691fc8f91fe6935e56634bb2f2e934f650956e",
+ "inputs": "eb2274ad719f51a101c5671b64e652d3b6fba413aa9a99b8f5c1ff4fdf116712",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -607,8 +607,8 @@
     648
    ],
    "offset": [
-    -19,
-    -35
+    -18,
+    -32
    ],
    "cond": {
     "not_restored": [
@@ -616,9 +616,9 @@
     ]
    },
    "solid": [
-    269,
+    271,
     208,
-    14,
+    10,
     8
    ]
   },
@@ -2065,7 +2065,7 @@
    "png": "fallen_bell_shadow.png",
    "foot": [
     818,
-    632
+    634
    ],
    "offset": [
     0,

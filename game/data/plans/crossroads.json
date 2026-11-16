@@ -632,9 +632,9 @@
       "id": "fallen_bell",
       "kind": "bell",
       "rect": [
-        269,
+        271,
         208,
-        14,
+        10,
         8
       ],
       "solid": true,
@@ -645,7 +645,7 @@
         ]
       },
       "why": "the library's bell where the storm threw it, on its side in the street below its cupola (the cupola's own line in a1_valley.json: \"The bell lies in the street below it\"), until the bell tower is restored and it is hung again",
-      "why_place": "east of the library's door apron (232-264 x 200-216) and west of the gate stair's foot (296-344), its foot (276, 216) on the soft grid: the door and the stair stay clear, and it lies on its side under the library's east window, where it came down",
+      "why_place": "east of the library's door apron (232-264 x 200-216) and west of the gate stair's foot (296-344), its foot (276, 216) on the soft grid: the door and the stair stay clear, and it lies on its side under the library's east window, where it came down. Its solid covers its two ground contacts, the shoulder and the lip (271-281 x 208-216)",
       "after_lawn": true,
       "why_after_lawn": "the bell was placed on 16 Nov, after the square's lawn and setts were laid and approved (the ground record): its scatter is laid without it (town.build), so the ground picture does not change; it lies on the setts, where the scatter draws nothing"
     },
