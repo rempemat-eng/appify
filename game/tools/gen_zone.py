@@ -208,8 +208,10 @@ def write_scene(zone: str, out: str) -> dict:
         for name, x0, y0, w, h in shapes:
             sid = f'r{len(subs)}'
             subs.append(f'[sub_resource type="RectangleShape2D" id="{sid}"]\nsize = Vector2({num(w)}, {num(h)})')
+            # the low terrain is water (low.txt): a flight that ends over it sinks (game/actors/impact.gd)
+            water = '\nmetadata/impact_water = true' if body == 'LowWalls' and name.startswith('l') else ''
             nodes.append(f'[node name="{name}" type="CollisionShape2D" parent="{body}"]\n'
-                         f'position = Vector2({num(x0 + w / 2)}, {num(y0 + h / 2)})\nshape = SubResource("{sid}")')
+                         f'position = Vector2({num(x0 + w / 2)}, {num(y0 + h / 2)})\nshape = SubResource("{sid}"){water}')
     nodes.append('[node name="Stands" type="Node2D" parent="."]')
     for name, (sx, sy) in sorted(stands.items()):
         nodes.append(f'[node name="{name}" type="Marker2D" parent="Stands"]\nposition = Vector2({num(sx * D)}, {num(sy * D)})')
