@@ -4619,7 +4619,17 @@
     "what": "water"
    }
   ],
-  "function": {},
+  "function": {
+   "interact": {
+    "triggers": [
+     {
+      "ref": "res://data/dialogue/crossroads.json#/fallen_bell",
+      "type": "dialogue"
+     }
+    ],
+    "verb": "look"
+   }
+  },
   "kind": "prop",
   "name": "Fallen bell",
   "painted": false,
@@ -4632,6 +4642,9 @@
   ],
   "snap": "cell",
   "story": {
+   "dialogue": [
+    "res://data/dialogue/crossroads.json#/fallen_bell"
+   ],
    "gating": {
     "if": {
      "not_restored": [

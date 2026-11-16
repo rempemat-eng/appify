@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 3,
+ "version": 4,
  "variants": [
   {
    "id": "fallen_bell",
@@ -57,6 +57,22 @@
     0,
     -1
    ]
+  ],
+  "interaction_points": [
+   {
+    "id": "fallen_bell",
+    "at": [
+     0.0,
+     0.0
+    ],
+    "verb": "Look",
+    "if": {
+     "not_restored": [
+      "bell_tower"
+     ]
+    },
+    "radius": 30.0
+   }
   ]
  },
  "placement": {
@@ -74,7 +90,17 @@
   ]
  },
  "rendering": {},
- "function": {},
+ "function": {
+  "interact": {
+   "verb": "look",
+   "triggers": [
+    {
+     "type": "dialogue",
+     "ref": "res://data/dialogue/crossroads.json#/fallen_bell"
+    }
+   ]
+  }
+ },
  "story": {
   "owner": null,
   "gating": {
@@ -83,7 +109,10 @@
      "bell_tower"
     ]
    }
-  }
+  },
+  "dialogue": [
+   "res://data/dialogue/crossroads.json#/fallen_bell"
+  ]
  },
  "gameplay": {
   "blocks_move": true,
