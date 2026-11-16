@@ -60,9 +60,9 @@ const OCHRE := Color("#ca9933")
 const STEEL := Color("#d6dae0")
 const SPARK := Color("#f4f1e8")
 const SLATE := Color("#8e91a1")
-## WALL and DROP: path 5, 4, 3 (dust) and timber 4 (splinters); SINK: water 5 and 4 (the ring)
+## WALL and DROP: path 5, 4, 3 (dust) and timber 4 (splinters); SINK: a pale crest (sand_warm 5, as the
+## star's light) over water 5, so the ring reads on the stream
 const FOAM := Color("#92b8c5")
-const RIPPLE := Color("#6ba2c2")
 const DUST_LIT := Color("#d6b187")
 const DUST := Color("#c39771")
 const DUST_DARK := Color("#a87c60")
@@ -465,4 +465,4 @@ func _draw_ring() -> void:
 	for i in 16:
 		var ang := TAU * i / 16.0
 		var p := (c + Vector2(cos(ang) * rx, sin(ang) * ry)).round()
-		_ci.draw_rect(Rect2(p, Vector2(2, 1)), Color(FOAM if ang > PI else RIPPLE, a))
+		_ci.draw_rect(Rect2(p, Vector2(2, 1)), Color(WHITE if ang > PI else FOAM, a))
