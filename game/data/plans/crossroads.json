@@ -89,6 +89,19 @@
         ]
       },
       "why": "act 1's village quest The torn roof (docs/story/act1.md: 40 Glint, the cost its mark's lines quote); the herbalist's reopens as the apothecary. Its mark shows, and can be paid, once Morel has asked (world/restore_site.gd reads this `if`): paid earlier, its 40 Glint could leave the forge or the Ferns' door out of reach"
+    },
+    {
+      "id": "bell_tower",
+      "name": "The library's bell tower",
+      "cost": {
+        "glint": 50
+      },
+      "if": {
+        "flags": [
+          "first_night_won"
+        ]
+      },
+      "why": "the library's bell cupola (game-design.md 7.2; act 1's restore id and the 50 Glint its mark's lines quote, docs/story/act1.md). Optional (Matt, 13 Nov, decision (d): the bell tower is optional, and its cupola is drawn so that paying visibly changes the square): no quest of the slice waits on it and the closing card does not. Offered from the first night's win (game/data/raids/first_night.json, `reward.offers`), as before; held here since 16 Nov so its mark is the plan's, as every restore's, and core/raids.gd's fallback for a plan without it no longer applies. Paying shows the bell hung in the cupola (`cupola_hung`) in place of the empty one, and takes the bell out of the street. Act 1's The wolf moon (a1_the_wolf_moon.json) waits on restore:bell_tower for its first step, and its `done_if` counts a tower paid for in the slice"
     }
   ],
   "tiers": [
@@ -616,6 +629,27 @@
       "colour": "#5b5249"
     },
     {
+      "id": "fallen_bell",
+      "kind": "bell",
+      "rect": [
+        271,
+        208,
+        10,
+        8
+      ],
+      "solid": true,
+      "colour": "#a07030",
+      "if": {
+        "not_restored": [
+          "bell_tower"
+        ]
+      },
+      "why": "the library's bell where the storm threw it, on its side in the street below its cupola (the cupola's own line in a1_valley.json: \"The bell lies in the street below it\"), until the bell tower is restored and it is hung again",
+      "why_place": "east of the library's door apron (232-264 x 200-216) and west of the gate stair's foot (296-344), its foot (276, 216) on the soft grid: the door and the stair stay clear, and it lies on its side under the library's east window, where it came down. Its solid covers its two ground contacts, the shoulder and the lip (271-281 x 208-216)",
+      "after_lawn": true,
+      "why_after_lawn": "the bell was placed on 16 Nov, after the square's lawn and setts were laid and approved (the ground record): its scatter is laid without it (town.build), so the ground picture does not change; it lies on the setts, where the scatter draws nothing"
+    },
+    {
       "id": "fern_boards",
       "kind": "boards",
       "rect": [
@@ -848,6 +882,22 @@
       "why": "west of the library's door, its foot a cell off the wall, so the door and the way to it stand clear (13 Nov: at 236, 224 it stood in front of the door, where the bell tower's mark also goes)"
     },
     {
+      "id": "fallen_bell",
+      "speaker": "fallen_bell",
+      "verb": "Look",
+      "at": [
+        276,
+        216
+      ],
+      "colour": "#00000000",
+      "if": {
+        "not_restored": [
+          "bell_tower"
+        ]
+      },
+      "why": "the bell's look line (data/dialogue/crossroads.json, fallen_bell): the light pointer to the bell tower (Matt, 13 Nov, decision (d)); once the night is won it names the mark by the library door. No reward, cost or chore beyond the restore's own 50 Glint"
+    },
+    {
       "id": "waystone",
       "speaker": "waystone",
       "verb": "Touch",
@@ -924,6 +974,23 @@
         ]
       },
       "why": "in front of the herbalist's door (172, 384)"
+    },
+    {
+      "id": "bell_tower_site",
+      "restore": "bell_tower",
+      "at": [
+        248,
+        214
+      ],
+      "if": {
+        "flags": [
+          "first_night_won"
+        ],
+        "not_restored": [
+          "bell_tower"
+        ]
+      },
+      "why": "in front of the library's door (248, 200), where the raid's mark stood (world/raid_night.gd set it out until 16 Nov); shown once the first night is won, gone once the bell is hung"
     }
   ],
   "spawns": [
@@ -1207,7 +1274,15 @@
         ],
         "win_w": 14,
         "win_h": 15,
-        "win_top": 34
+        "win_top": 34,
+        "cupola": {
+          "restore": "bell_tower",
+          "w": 16,
+          "at": 0.55,
+          "empty": "cupola_empty",
+          "hung": "cupola_hung",
+          "why": "the bell cupola on the ridge (scripts/art/native/belfry.py): `w` world px wide at its base, standing `at` of the way back along the ridge from the front gable; `empty` shows until `restore`, `hung` after it (Matt, 13 Nov, decision (d))"
+        }
       },
       "north_cottages": {
         "kind": "terrace",

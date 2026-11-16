@@ -66,9 +66,7 @@
       "cost": { "glint": 50 },
       "if": { "flags": ["first_night_won"] },
       "stage": 1,
-      "mark": [248, 214],
-      "why_mark": "a restore mark in front of the library's door (248, 200), set out by world/raid_night.gd once the raid is won and the bell tower not yet restored; the plan holds no site for it yet",
-      "why": "the bell tower (game-design.md 7.2, the library's cupola; act 1's restore id bell_tower at the 50 Glint its mark's lines quote, docs/story/act1.md) is offered for stage 1. core/raids.gd adds it to Village.sites only while no plan defines bell_tower; its picture arrives with stage 1's art; its mark is set out by world/raid_night.gd (`mark`). Hale no longer speaks of it (Matt, 13 Nov: she says the night was a one-off; data/dialogue/raids.json)"
+      "why": "the bell tower (game-design.md 7.2, the library's cupola; act 1's restore id bell_tower at the 50 Glint its mark's lines quote, docs/story/act1.md) is offered from the win, and it is optional (Matt, 13 Nov, decision (d)). Since 16 Nov data/plans/crossroads.json defines it (`restores`, with this condition and price, and `restore_sites` bell_tower_site for its mark before the library's door), so core/raids.gd's fallback (adding it to Village.sites while no plan defines it) and world/raid_night.gd's runtime mark (only for an offer with a `mark`) no longer apply; test_raids.gd holds that the two prices agree. Its picture is the plan's: the library's cupola, empty until it is paid and with the bell hung after (scripts/art/native/belfry.py), and the bell in the street until then. Hale does not speak of it (Matt, 13 Nov: she says the night was a one-off; data/dialogue/raids.json)"
     }
   }
 }

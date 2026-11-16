@@ -1,0 +1,70 @@
+{
+ "id": "crossroads/cupola_empty",
+ "file": "game/zones/crossroads/art/cupola_empty.png",
+ "sha256": "5655f6baa559777cc4d1ae7ed9a7be13e65e121db9cfe94a68f1157f3781844e",
+ "kind": "cupola_empty",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  54,
+  138
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 16,
+   "tones": 28.5625,
+   "shapes": 44.3125
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.88,
+  "tones_ratio": 1.058,
+  "shapes_ratio": 0.88,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    54,
+    138
+   ],
+   "message": "crossroads/cupola_empty: detail bar 0.88 of Eastward's prop band (28.6 tones, 44.3 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.cluster_noise",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    54,
+    138
+   ],
+   "message": "crossroads/cupola_empty: 40% of its 2 x 2 blocks step more than 10 L off their neighbourhood (Eastward's props median 29 %, the style anchors 28 to 30 %): random value grain, not material (the grid's four phases give 40% to 48%, for information: the verdict is on this grid)",
+   "fix": "drop the grain to sibling swaps at the same tone; step a tone on at most 10 % of cells, tied to the form (+1 only on lit planes, -1 only in shade); earn the detail with parts, joints, wear and story details (house-style.md 4)"
+  }
+ ],
+ "reviewed": "2026-11-16",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pass",
+  "date": "2026-11-16",
+  "note": "round 3 at 293549d0, sha 5655f6baa559777cc4d1ae7ed9a7be13e65e121db9cfe94a68f1157f3781844e. Dome mean L 59.3, 10.3 % at L80+, detail bar 0.888 over 29 full-coverage patch positions; base noise 40.9 %; vane reads as an arrow with a flag; dent, missing and lifted slates and the headstock break read at 3x. Polish for Matt's eye: the nest (x13-20,y91-96) does not read at 3x; the ledge is three equal 16x3 tone blocks (y102-104) with no joints. Detector detail.bar 0.88 and cluster_noise 40 % (polish) accepted."
+ }
+}

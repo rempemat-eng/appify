@@ -104,14 +104,15 @@ func test_a_win_pays_the_purse_once_and_offers_the_bell_tower() -> void:
 	assert_bool(Raids.won("first_night")).is_true()
 	assert_int(Raids.win()).is_equal(0)                                # never twice
 	assert_int(int(SaveGame.data.glint)).is_equal(116 + purse)
-	# the bell tower is offered as a restore, at act 1's price, from the win on
+	# the bell tower is offered as a restore, at act 1's price, from the win on (the Crossroads plan's
+	# restore since 16 Nov: test_bell_tower.gd)
 	assert_bool(Village.sites.has("bell_tower")).is_true()
 	assert_int(Village.cost("bell_tower")).is_equal(50)
 	assert_bool(Village.can_restore("bell_tower")).is_true()
 	SaveGame.set_flag("first_night_won", false)
-	assert_bool(Village.can_restore("bell_tower")).is_false()
+	assert_bool(Village.can_restore("bell_tower")).is_false()       # never payable before the win
 	Raids.offer_restores()
-	assert_bool(Village.sites.has("bell_tower")).is_false()        # never offered before the win
+	assert_bool(Village.can_restore("bell_tower")).is_false()
 	SaveGame.set_flag("first_night_won")
 	Raids.offer_restores()
 	assert_bool(Raids.arrive("crossroads", "woodland")).is_false()     # it does not come again
@@ -705,18 +706,24 @@ func test_a_won_night_clears_away_and_sets_out_the_bell_towers_mark() -> void:
 	await get_tree().process_frame
 	assert_int(get_tree().get_nodes_in_group("raid_defence").size()).is_equal(0)
 	assert_object(night.lantern).is_null()
-	var site := Zones.current.get_node_or_null("Actors/BellTowerSite") as RestoreSite
+	# the plan's mark before the library's door shows from the win (no mark set out by the night itself)
+	assert_object(Zones.current.get_node_or_null("Actors/BellTowerSite")).is_null()
+	var site := Zones.current.get_node_or_null("Actors/If_bell_tower_site/BellTowerSite") as RestoreSite
 	assert_object(site).is_not_null()
+	if site == null:
+		return
 	assert_str(site.restore_id).is_equal("bell_tower")
-	assert_bool(site.visible).is_true()
+	assert_bool(site.is_visible_in_tree()).is_true()
 	# paid at the mark, as every restore: 50 Glint
 	var before := int(SaveGame.data.glint)
 	await site.interact()
 	assert_bool(Village.is_restored("bell_tower")).is_true()
 	assert_int(int(SaveGame.data.glint)).is_equal(before - 50)
-	# not set out again once restored
+	assert_bool(site.is_visible_in_tree()).is_false()
+	# not shown again once restored
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()
-	assert_object(Zones.current.get_node_or_null("Actors/BellTowerSite")).is_null()
+	var again := Zones.current.get_node_or_null("Actors/If_bell_tower_site/BellTowerSite") as RestoreSite
+	assert_bool(again.is_visible_in_tree()).is_false()
 
 func test_an_unknown_raid_state_in_a_save_starts_afresh() -> void:
 	var doc := {"raid": {"id": "first_night", "state": "bogus", "postponed": 1}}
