@@ -2104,7 +2104,13 @@
           8
         ],
         "id": "handcart",
-        "why": "a handcart left when the village ran to the halt farm"
+        "why": "a handcart left when the village ran to the halt farm",
+        "if": {
+          "not_flags": [
+            "shard_lantern_dark"
+          ]
+        },
+        "why_if": "gone while the shard lantern is dark: the raiders tipped it over and it lies wrecked south of the lane (data/raids/first_night.json `cart_on_its_side`), shown for exactly as long (core/raids.gd sets and clears the flag with the raid's `repairs`); world/raid_repair.gd refreshes the zone's conditions when a repair comes or goes"
       },
       {
         "kind": "bench",

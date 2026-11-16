@@ -5117,6 +5117,456 @@ def p_cart_hd(w, h, seed, hd=False):
     return finish(p, keep=nail_lights(a))
 
 
+# ------------------------------------------------------------------------------------------------
+# the brief repairs after a lost raid night (game/data/raids/first_night.json `repairs`, Matt, 13 Nov:
+# "the square looks worse until a night is held"). town.build draws them from the raid's data; the game
+# shows them with world/raid_repair.gd while the save's raid record keeps `repairs`.
+# ------------------------------------------------------------------------------------------------
+FORE = 0.45          # a level ring seen from the game's view: its depth on the ground times this on screen
+                     # (the well's drum: 20 wide on a ground ellipse 9.2 deep, town.PROP_SOLIDS)
+
+
+def _wheel_flat(a, wc, R, gap=None, broken=()):
+    """The handcart's wheel (p_cart_hd's: an iron tyre, the felloe in six jointed segments, six spokes, an
+    iron-banded hub) lying flat on the setts, hub up: an ellipse R texels across and FORE as deep, the
+    tyre's thickness a band under its front half (lit at the west, in shade to the east), the spokes lit
+    on their upper-west edges with a dark texel on the other, the hub standing up as a short drum with a
+    lit cap. `gap` (two angles, radians, y down) is a smashed stretch of felloe and tyre, its ends
+    splintered, the tyre's torn end bent up; `broken` the spokes snapped short. Returns its mask."""
+    Y, X = grid(a)
+    rx, ry = float(R), R * FORE
+    dx, dy = X - wc[0], Y - wc[1]
+    rn = np.sqrt((dx / rx) ** 2 + (dy / ry) ** 2)
+    ang = np.arctan2(dy / ry, dx / rx)
+    lost = np.zeros(a.shape, bool) if gap is None else ((ang >= gap[0]) & (ang <= gap[1]))
+    t_w, f_w = q(1.0) / rx, q(1.7) / rx
+    tyre = (rn <= 1.0) & (rn > 1.0 - t_w) & ~lost
+    fel = (rn <= 1.0 - t_w) & (rn > 1.0 - f_w) & ~lost
+    # the tyre's outer face: a band under the front half, the iron's thickness
+    band = np.zeros(a.shape, bool)
+    for k in range(1, q(1.0) + 1):
+        band |= ((dx / rx) ** 2 + ((dy - k) / ry) ** 2) <= 1.0
+    band &= (rn > 1.0) & (dy > -ry * 0.2)
+    if gap is not None:
+        band &= ~((np.arctan2(dy / ry, dx / rx) >= gap[0] - 0.08) & (np.arctan2(dy / ry, dx / rx) <= gap[1] + 0.08))
+    u = np.clip(dx / rx, -1, 1)
+    _codes(a, band, 'iron', np.where(u < -0.3, 3, np.where(u < 0.4, 2, 1)))
+    lit = (dx / rx + dy / ry) < 0
+    a[tyre] = code('iron', 3)
+    a[tyre & lit] = code('iron', 4)
+    a[tyre & ((dx / rx + dy / ry) > 0.8)] = code('iron', 2)
+    for k in range(10):                                                   # the tyre's rivets
+        ra = k * math.pi / 5 + 0.15
+        if gap is not None and gap[0] - 0.1 <= ra - 2 * math.pi * (ra > math.pi) <= gap[1] + 0.1:
+            continue
+        rx_, ry_ = int(wc[0] + math.cos(ra) * rx * (1 - t_w / 2)), int(wc[1] + math.sin(ra) * ry * (1 - t_w / 2))
+        if 0 <= ry_ < a.shape[0] and 0 <= rx_ < a.shape[1] - 1 and tyre[ry_, rx_]:
+            a[ry_, rx_] = code('iron', 5 if lit[ry_, rx_] else 4)
+            a[ry_, rx_ + 1] = code('iron', 1)
+    _codes(a, fel, 'timber', np.where(lit, 4, 3))
+    segf = (np.floor((ang + math.pi) / (math.pi / 3)).astype(int) % 2) == 0   # alternate segments a sibling
+    a[fel & segf & lit] = code('timber_warm', 4)
+    a[fel & segf & ~lit] = code('timber_warm', 3)
+    a[fel & ((dx / rx + dy / ry) > 0.8)] = code('timber', 2)
+    for k in range(6):                                                    # the felloe's joints
+        aj = k * math.pi / 3 + math.pi / 6
+        a[fel & (np.abs(((ang - aj + math.pi) % (2 * math.pi)) - math.pi) < 0.06)] = code('timber_cool', 1)
+    out = tyre | fel | band
+    if gap is not None:
+        for ga in gap:                                                    # the felloe's broken ends
+            ex, ey = wc[0] + math.cos(ga) * rx * 0.88, wc[1] + math.sin(ga) * ry * 0.88
+            sp = seg_mask(a.shape, ex, ey, ex + math.cos(ga + 1.6) * 3, ey + math.sin(ga + 1.6) * 2 - 1, 0.7) & (a < 0)
+            _codes(a, sp, 'timber_warm', 5)
+            out |= sp
+        tx, ty = wc[0] + math.cos(gap[1]) * rx, wc[1] + math.sin(gap[1]) * ry
+        bent = seg_mask(a.shape, tx, ty, tx + q(2.8), ty - q(1.6), 0.9) & (a < 0)
+        _codes(a, bent, 'iron', 3)
+        a[bent & edges(bent)[2]] = code('iron', 1)
+        out |= bent
+    inner = rn <= 1.0 - f_w
+    for k in range(6):
+        aa = k * math.pi / 3 + 0.3
+        reach = 0.45 if k in broken else 1.0 - f_w + 0.05
+        ex, ey = wc[0] + math.cos(aa) * rx * reach, wc[1] + math.sin(aa) * ry * reach
+        # one texel wide, lit, with a cool texel on its shaded (south-east) side
+        n_ = max(2, int(math.hypot(ex - wc[0], ey - wc[1]) * 1.5))
+        spm = np.zeros(a.shape, bool)
+        for t in np.linspace(0.0, 1.0, n_):
+            px_, py_ = int(wc[0] + (ex - wc[0]) * t), int(wc[1] + (ey - wc[1]) * t)
+            if 0 <= py_ < a.shape[0] and 0 <= px_ < a.shape[1]:
+                spm[py_, px_] = True
+        spm &= (inner | (rn <= reach + 0.05))
+        steep = abs(ey - wc[1]) > abs(ex - wc[0])
+        cool = (VO_shift(spm, 0, 1) if steep else VO_shift(spm, 1, 0)) & ~spm & inner
+        _codes(a, spm, 'timber_warm', 4)
+        _codes(a, cool, 'timber_cool', 1)
+        spm = spm | cool
+        if k in broken:
+            a[spm & (np.hypot(X - ex, Y - ey) < 1.5)] = code('timber_warm', 5)
+        out |= spm
+    # the hub standing up: its side a short drum, its lit cap, an iron band and the axle's bore
+    hrx, hry, hh = q(1.8), q(1.8) * FORE + 0.5, q(1.2)
+    side = np.zeros(a.shape, bool)
+    for k in range(0, hh + 1):
+        side |= ((dx / hrx) ** 2 + ((dy + k) / hry) ** 2) <= 1.0
+    cap = ((dx / hrx) ** 2 + ((dy + hh) / hry) ** 2) <= 1.0
+    side &= ~cap
+    _codes(a, side, 'timber', np.where(dx < -1, 3, np.where(dx < 2, 2, 1)))
+    a[side & (np.abs(dy + hh * 0.4) < 0.6)] = code('iron', 2)
+    _codes(a, cap, 'timber_warm', np.where(dx + dy + hh < 0, 5, 4))
+    a[cap & (((dx / 1.6) ** 2 + ((dy + hh) / 1.0) ** 2) <= 1.0)] = code('iron', 1)
+    _wheel_flat.open = inner & (a < 0)                    # the setts seen between the spokes (kept open)
+    return out | side | cap
+
+
+def p_cart_wreck_hd(w, h, seed, hd=False):
+    """The handcart the raiders wrecked (first_night.json `cart_on_its_side`), the square's handcart
+    (p_cart_hd: the same sawn boards, six-spoke iron-tyred wheel and shafts) tipped back onto its tail:
+    the bed rises from the setts at its east end to the west at TILT degrees, its shafts raised into the
+    air beyond it, the two of them with a crossbar between their tips and the grips worn pale; its near
+    wheel knocked off its axle and lying flat on the setts in front, hub up, a felloe segment smashed
+    out, the tyre torn and bent up, a spoke snapped; the bare axle end in front of the bed's floor with a
+    lit cap. The side boards in two courses with butt joints, grain in clusters, iron L-brackets at the
+    corners; over the near side board's top the far one's inside and lit rim, so the bed reads open.
+    One board is stove in: a diagonal ragged break into the dark, lit splinter tips above it and its
+    shaded lip below. The load slid out of the tail: a burst sack, its torn mouth dark and the grain
+    fanning out over the setts in three tones, and three turnips of different sizes, one on its side.
+    w x h world px is its solid on the setts. `contacts` on the picture lists the rows under the loose
+    things where town.build lays a contact shade."""
+    rng = np.random.default_rng(seed)
+    p = _pic(w, h, up=22, side=16)
+    p.a = np.full((p.H + q(3.0), p.W), -1, np.int32)                    # room under the foot for the wheel
+    a, cx, yb = p.a, p.ax, p.ay
+    Y, X = grid(a)
+    th_ = math.radians(TILT)
+    c_, s_ = math.cos(th_), math.sin(th_)
+    e0x, e0y = cx + q(9.5), yb - 1                                      # the tail's foot, on the setts
+    U = (X - e0x) * -c_ + (Y - e0y) * -s_                               # along the bed, from the tail west
+    V = (X - e0x) * s_ + (Y - e0y) * -c_                                # up the bed's side
+    Lb, Hb, rim = q(21.0), q(6.6), q(1.8)
+    Ls = int(Lb * 0.66)                                                 # the shafts beyond the bed
+    contacts = []
+
+    # --- the far shaft (behind), then the near one: under the floor and out past the bed ------------
+    sh_t = q(1.6)
+    for far in (True, False):
+        off = (1, -q(1.8)) if far else (0, 0)
+        Uo = (X - off[0] - e0x) * -c_ + (Y - off[1] - e0y) * -s_
+        Vo = (X - off[0] - e0x) * s_ + (Y - off[1] - e0y) * -c_
+        m = (Uo >= Lb * 0.12) & (Uo < Lb + Ls) & (Vo >= -sh_t) & (Vo < 0)
+        base = 2 if far else 3
+        _codes(a, m, 'timber', base)
+        a[m & (Vo >= -1.2)] = code('timber_warm', base + 2)                 # its top face, lifted a tone (C7)
+        a[m & (Vo >= -2.2) & (Vo < -1.2)] = code('timber_warm', base + 1)
+        a[m & (Vo < -sh_t + 1.1)] = code('timber_cool', base - 2)           # its underside
+        grip = m & (Uo >= Lb + Ls - q(3.0))
+        a[grip & (Vo >= -sh_t + 1.1) & (Vo < -1.2)] = code('timber_warm', base + 1 if far else 4)   # worn pale
+        a[m & (Uo >= Lb + Ls - 1.5)] = code('timber_warm', base + 1)        # the sawn tip
+        for _ in range(5 if not far else 2):                                 # grain along it, a knot
+            gu = rng.uniform(Lb * 0.9, Lb + Ls - q(3.5))
+            ln = rng.uniform(4, 8)
+            a[m & (np.abs(Vo + sh_t / 2.0) < 0.55) & (Uo >= gu) & (Uo < gu + ln)] = code('timber', base - 1)
+        for _ in range(8 if not far else 3):                                 # wear dabs along the shaft
+            wu = rng.uniform(Lb * 0.9, Lb + Ls - 3)
+            dab = m & (np.abs(Vo + rng.uniform(1.5, sh_t - 1.5)) < 0.5) & (Uo >= wu) & (Uo < wu + 2)
+            a[dab] = np.maximum((a[dab] // 8) * 8, a[dab] - 1)
+        ku = rng.uniform(Lb + 4, Lb + Ls - q(4.0))
+        a[m & ((Uo - ku) ** 2 + (Vo + sh_t / 2.0) ** 2 < 1.4)] = code('timber_cool', max(0, base - 2))
+        # the grip bound with cord: bands across it, the cord lit where it turns over the top
+        for bnd in range(4):
+            bu2 = Lb + Ls - q(1.0) - bnd * 3
+            cm = m & (Uo >= bu2 - 1) & (Uo < bu2)
+            a[cm] = code('sand', 2)
+            a[cm & (Vo >= -1.6)] = code('sand_warm', 4)
+        # the iron ferrule a hand's breadth from the grip
+        fu = Lb + Ls - q(3.4)
+        a[m & (Uo >= fu) & (Uo < fu + 2)] = code('iron', 3 if not far else 2)
+        a[m & (Uo >= fu) & (Uo < fu + 2) & (Vo >= -1.2)] = code('iron', 4 if not far else 3)
+    # the crossbar between the tips, seen end-on as it runs back from the near shaft to the far one
+    tipx, tipy = e0x - (Lb + Ls - q(1.6)) * c_, e0y - (Lb + Ls - q(1.6)) * s_
+    cb = seg_mask(a.shape, tipx - 1, tipy - 1, tipx, tipy - q(1.8) - 1, 1.4)
+    _codes(a, cb, 'timber', 3)
+    a[cb & edges(cb)[1]] = code('timber_warm', 4)
+    a[cb & edges(cb)[3]] = code('timber_cool', 1)
+    for py_ in (int(tipy - 1), int(tipy - q(1.8))):                      # the pegs through the tips, end grain lit
+        if 0 <= py_ < a.shape[0]:
+            a[py_, int(tipx) - 1] = code('timber_warm', 5)
+            a[py_, int(tipx)] = code('timber', 1)
+
+    # --- the bed's side: two courses of boards, butt joints, grain in clusters -----------------------
+    face = (U >= 0) & (U < Lb) & (V >= 0) & (V < Hb)
+    half = Hb / 2.0
+    for k, (v0, v1, bt, fams) in enumerate(((half, Hb, 4, ('timber_warm', 'timber')), (0, half, 3, ('timber', 'timber_cool')))):
+        course = face & (V >= v0) & (V < v1)
+        cuts = [0]
+        while cuts[-1] < Lb:
+            cuts.append(cuts[-1] + int(rng.integers(q(7.0), q(12.0))))
+        cuts[-1] = Lb
+        for j, (ua, ub) in enumerate(zip(cuts, cuts[1:])):
+            bd = course & (U >= ua) & (U < ub)
+            fam = fams[j % 2]
+            _codes(a, bd, fam, bt)
+            a[bd & (V >= v1 - 1.1)] = code(fam, min(5, bt + 1))             # its top arris
+            a[bd & (V < v0 + 1.0)] = code(fam, bt - 2)                      # the gap under it
+            a[bd & (U < ua + 1.0)] = code(fam, min(5, bt + 1))              # the sawn end, lit
+            a[bd & (U >= ub - 1.0)] = code(fam, bt - 2)                     # the joint
+            for _ in range(2):                                              # two grain lines, a lit lip on each
+                gu = rng.uniform(ua + 2, max(ua + 3, ub - 9))
+                gv = rng.uniform(v0 + 2.2, v1 - 2)
+                ln = rng.uniform(4, 8)
+                a[bd & (np.abs(V - gv) < 0.55) & (U >= gu) & (U < gu + ln)] = code(fam, bt - 1)
+                a[bd & (np.abs(V - gv - 1.0) < 0.5) & (U >= gu + 1) & (U < gu + ln - 1)] = code(fam, min(5, bt + 1))
+            if rng.random() < 0.5:                                          # a knot
+                ku, kv = rng.uniform(ua + 3, max(ua + 4, ub - 3)), (v0 + v1) / 2
+                a[bd & ((U - ku) ** 2 + (V - kv) ** 2 < 1.6)] = code(fam, bt - 2)
+            if ub < Lb:                                                     # a nail by the butt joint
+                nu, nv = ub - 2.5, (v0 + v1) / 2
+                nx_ = int(round(e0x - nu * c_ + nv * s_))
+                ny_ = int(round(e0y - nu * s_ - nv * c_))
+                a[ny_:ny_ + 2, nx_:nx_ + 2] = np.where(bd[ny_:ny_ + 2, nx_:nx_ + 2], code('iron', 1), a[ny_:ny_ + 2, nx_:nx_ + 2])
+                if bd[ny_, nx_]:
+                    a[ny_, nx_] = code('iron', 4)
+    # two battens nailed up across both courses, proud of them: a lit west edge, a shaded east one,
+    # their shade on the boards east of them, a nail top and bottom
+    for bu in (Lb * 0.26, Lb * 0.8):
+        bm = face & (U >= bu) & (U < bu + q(1.4))
+        _codes(a, bm, 'timber', 3)
+        a[bm & (U < bu + 1.0)] = code('timber_warm', 4)
+        a[bm & (U >= bu + q(1.4) - 1.0)] = code('timber_cool', 1)
+        a[bm & (V >= Hb - 1.1)] = code('timber_warm', 5)
+        _step_down(a, face & (U >= bu + q(1.4)) & (U < bu + q(1.4) + 1.2) & ~bm, 1)
+        for nv in (2.5, Hb - 3.5):
+            nu = bu + q(0.7)
+            nx_ = int(round(e0x - nu * c_ + nv * s_))
+            ny_ = int(round(e0y - nu * s_ - nv * c_))
+            a[ny_, nx_] = code('iron', 4)
+            a[ny_ + 1, nx_] = code('iron', 1)
+    a[face & (V >= Hb - 1.1)] = code('timber_warm', 5)                      # the near board's top, in the light
+    # over it: the far side board's inside, in shade, and its lit rim
+    inside = (U >= 0.8) & (U < Lb - 0.8) & (V >= Hb) & (V < Hb + rim)
+    _codes(a, inside, 'timber_cool', np.where(V < Hb + 2, 1, 2))
+    rimm = (U >= 0) & (U < Lb) & (V >= Hb + rim) & (V < Hb + rim + 1.4)
+    _codes(a, rimm, 'timber_warm', 4)
+    for ju in np.arange(9.0, Lb - 4, 13.0):                              # the far board's butt joints
+        a[(rimm | inside) & (U >= ju) & (U < ju + 1.0)] = code('timber_cool', 1)
+        a[rimm & (U >= ju + 1.0) & (U < ju + 2.0)] = code('timber_warm', 5)
+    # the far board's inside: its seam and the heads of the nails driven through from outside, and the
+    # rim's nail heads, a lit texel over a dark one every few texels
+    a[inside & (np.abs(V - Hb - rim / 2.0) < 0.5) & ((np.floor(U).astype(int) % 9) < 6)] = code('timber_cool', 0)
+    for nu in np.arange(4.0, Lb - 3, 7.0):
+        for (nv, top_, bot_) in ((Hb + rim + 0.5, ('iron', 4), ('iron', 2)), (Hb + 1.2, ('iron', 2), ('iron', 0))):
+            nx_ = int(round(e0x - nu * c_ + nv * s_))
+            ny_ = int(round(e0y - nu * s_ - nv * c_))
+            a[ny_, nx_] = code(*top_)
+            a[ny_, nx_ + 1] = code(*bot_)
+    # the tail's end board, turned down to the setts
+    tail = (U >= -1.6) & (U < 0) & (V >= 0) & (V < Hb + rim + 1.4)
+    _codes(a, tail, 'timber_cool', 2)
+    # iron L-brackets at the four corners of the side, one nail in each
+    for (uc, du) in ((0, 1), (Lb - 1, -1)):
+        for (vc, dv) in ((0, 1), (Hb - 1, -1)):
+            leg_u = (np.abs(V - (vc + 0.5 * dv)) < 0.9) & ((U - uc) * du >= 0) & ((U - uc) * du < 3)
+            leg_v = (np.abs(U - (uc + 0.5 * du)) < 0.9) & ((V - vc) * dv >= 0) & ((V - vc) * dv < 3)
+            br = (leg_u | leg_v) & face
+            a[br] = code('iron', 2)
+            a[br & ((dv < 0) | (du > 0))] = code('iron', 3)
+            ny_ = int(round(e0y - (uc + 2 * du) * s_ - (vc + 2 * dv) * c_))
+            nx_ = int(round(e0x - (uc + 2 * du) * c_ + (vc + 2 * dv) * s_))
+            if face[ny_, nx_] and not br[ny_, nx_]:
+                a[ny_, nx_] = code('iron', 1)
+
+    # --- the stove-in board: a ragged split up the side, 1 texel wide at its ends and 4 at its middle;
+    # its lips torn into splinter teeth reaching into the dark, the upper lip lit in 2-texel clusters,
+    # the inside the far board's shaded timber, not a void
+    u0, ul = Lb * 0.48, q(6.4)
+    f_ = np.clip((U - u0) / ul, 0, 1)
+    width = 1.0 + 3.4 * np.sin(np.pi * f_)                               # the 1-4-1 taper
+    mid = 1.5 + (U - u0) * 1.15                                          # climbing the side
+    jag = np.where((np.floor(U).astype(int) % 3) == 0, 1.0, 0.0) - np.where((np.floor(U).astype(int) % 4) == 1, 0.8, 0.0)
+    brk = face & (U >= u0) & (U < u0 + ul) & (np.abs(V - mid) < width / 2.0 + 0.3) & (V > 1) & (V < Hb - 2)
+    teeth_up = brk & (V > mid + width / 2.0 - 0.9) & (jag > 0.5) & (width > 2.5)    # splinter teeth down into it
+    teeth_lo = brk & (V < mid - width / 2.0 + 0.6) & ((np.floor(U).astype(int) % 4) == 1) & (width > 2.5)
+    hole = brk & ~teeth_up & ~teeth_lo
+    _codes(a, hole, 'timber_cool', np.where(V < mid, 0, 1))
+    a[teeth_up] = code('timber_warm', 4)
+    a[teeth_lo] = code('timber', 2)
+    up_lip = VO_shift(brk, -1, 0) & ~brk & face
+    a[up_lip & ((np.floor(U).astype(int) // 2) % 2 == 0)] = code('timber_warm', 5)   # lit in 2-texel clusters
+    a[up_lip & ((np.floor(U).astype(int) // 2) % 2 == 1)] = code('timber_warm', 4)
+    a[VO_shift(brk, 1, 0) & ~brk & face] = code('timber_cool', 1)       # the lower lip, in shade
+
+    # --- the bare axle end in front of the floor, its cap lit ---------------------------------------
+    au, av = Lb * 0.5, -q(1.0)
+    axx, axy = e0x - au * c_ + av * s_, e0y - au * s_ - av * c_
+    ax_m = ((X - axx) ** 2 + (Y - axy) ** 2) <= 3.2 ** 2
+    _codes(a, ax_m, 'iron', 2)
+    a[ax_m & ((X - axx) + (Y - axy) < -1.5)] = code('iron', 4)
+    a[ax_m & ((X - axx) ** 2 + (Y - axy) ** 2 <= 1.3)] = code('iron', 5)
+    a[ax_m & ((X - axx) + (Y - axy) > 2.6)] = code('iron', 1)
+
+    # --- the knocked-off wheel, flat on the setts in front (3 texels of air under the axle end) ---------
+    R = q(6.2)
+    wc = (cx - q(5.4), yb - q(1.1))
+    _wheel_flat(a, wc, R, gap=(-2.6, -1.9), broken=(1,))
+    wheel_open = _wheel_flat.open
+    contacts.append((int(wc[0] - R * 0.7), int(wc[0] + R * 0.8), int(wc[1] + R * FORE + q(1.0)) + 1))
+
+    # --- the load slid out of the tail: the burst sack, the grain, three turnips ------------------------
+    scx, scy, rx, ry = cx + q(12.6), yb - q(1.5), q(4.2), q(2.2)
+    nx_, ny_ = (X - scx) / rx, (Y - scy) / ry
+    d = nx_ * nx_ + ny_ * ny_
+    sm = d <= 1
+    # the intact handcart's sack (p_cart_hd): its ramp and weave, a core shadow low on the east,
+    # folds as dark creases running to the mouth, the mouth frayed
+    weave = (((X.astype(int) // 2) + (Y.astype(int) // 2)) % 2 == 0) & (Y.astype(int) % 2 == 0)
+    st = 2.0 + 1.8 * lam(nx_, ny_ * 0.8, np.sqrt(np.clip(1 - d, 0, 1)))
+    st = np.where((nx_ + ny_ > 0.55) & (d > 0.25), st - 0.9, st)          # the core shadow, lower right
+    for (k0, k1, w_) in ((0.25, 0.45, 0.09), (-0.2, -0.3, 0.08), (0.05, 0.9, 0.07)):
+        st = np.where((np.abs(nx_ + k0 - ny_ * k1) < w_) & (nx_ < 0.55), st - 1.2, st)   # the creases
+    stc = np.clip(np.round(st), 0, 4).astype(int)
+    sfam = np.where(stc >= 3, FI['sand_warm'], np.where(stc <= 1, FI['sand_cool'], FI['sand']))
+    sfam = np.where(weave & (sfam == FI['sand_warm']), FI['sand'], np.where(weave & (sfam == FI['sand']), FI['sand_cool'], sfam))
+    a[sm] = (sfam * 8 + stc)[sm]
+    mouth = sm & (nx_ > 0.6) & (np.abs(ny_) < 0.6)                       # the torn mouth, dark inside
+    a[mouth] = code('sand_cool', 0)
+    a[mouth & (nx_ > 0.85) & (ny_ > 0.05)] = code('sand_warm', 3)        # grain at the lip
+    lip = sm & (np.abs(nx_ - 0.6) < 0.1) & (np.abs(ny_) < 0.66)
+    a[lip] = code('sand_warm', 4)
+    # frayed threads standing off the mouth, every other row
+    for fy_ in range(int(scy - ry * 0.6), int(scy + ry * 0.6) + 1, 2):
+        fx_ = int(scx + rx * np.sqrt(max(0.0, 1 - ((fy_ - scy) / ry) ** 2)))
+        if 0 <= fy_ < a.shape[0] and fx_ + 2 < a.shape[1] and a[fy_, fx_ + 1] < 0:
+            a[fy_, fx_ + 1] = code('sand', 3)
+    contacts.append((int(scx - rx), int(scx + rx), int(scy + ry) + 1))
+    # three turnips: a pale root, its purple shoulder, a tuft; lit at the upper left; one on its side
+    for (tx, ty, sz, lying) in ((cx - q(15.2), yb - q(0.4), 1.9, False), (cx + q(4.4), yb + q(0.6), 1.4, True),
+                                 (cx + q(18.6), yb + q(0.5), 1.2, False)):
+        rx_, ry_ = q(sz), q(sz * 0.78)
+        if lying:
+            rx_, ry_ = q(sz * 0.9), q(sz * 0.7)
+        nx2, ny2 = (X - tx) / rx_, (Y - ty) / ry_
+        d2 = nx2 * nx2 + ny2 * ny2
+        tm = d2 <= 1.0
+        lt = lam(nx2, ny2, np.sqrt(np.clip(1 - d2, 0, 1)))
+        tt = np.clip(np.round(2.6 + 2.6 * lt), 1, 5)
+        shoulder = tm & ((nx2 < -0.05) if lying else (ny2 < 0.05 - 0.25 * nx2))
+        _codes(a, shoulder, 'berry', tt)
+        _codes(a, tm & ~shoulder, 'plaster_warm', np.clip(tt + 1, 2, 5))
+        a[tm & ~shoulder & (d2 > 0.6) & (nx2 + ny2 > 0.6)] = code('plaster_warm', 2)
+        hl = tm & (np.abs(nx2 + 0.4) < 0.22) & (np.abs(ny2 + 0.4) < 0.25)
+        a[hl] = code('plaster_warm', 5) if not lying else a[hl]
+        if lying:                                                       # its leaves out to the west
+            for (ly, t_, f_) in ((ty - 2, 4, 'leaf_warm'), (ty, 3, 'leaf'), (ty + 1, 2, 'leaf_cool')):
+                lf = (np.floor(Y) == ly) & (X >= tx - rx_ - 4) & (X < tx - rx_ + 1) & ~tm
+                a[lf] = code(f_, t_)
+        else:
+            # a tuft of fanned leaves from the crown: each a short blade at its own angle, lit on the west
+            fans = (((-2.2, -4.2), (-0.6, -5.0), (1.2, -4.6), (2.8, -3.2)) if sz > 1.5 else
+                    ((-2.0, -3.4), (0.2, -4.4), (2.2, -3.0)))
+            top_y = ty - ry_ + 0.5
+            for j, (fx, fy) in enumerate(fans):
+                bl = seg_mask(a.shape, tx, top_y, tx + fx, top_y + fy, 0.6) & ~tm
+                f_, t_ = (('leaf_warm', 4), ('leaf', 3), ('leaf', 3), ('leaf_cool', 2))[min(j, 3) if len(fans) == 4 else (0, 1, 3)[j]]
+                a[bl] = code(f_, t_)
+        contacts.append((int(tx - rx_), int(tx + rx_), int(ty + ry_) + 1))
+    contacts.append((int(e0x - q(2.0)), int(e0x + q(3.6)), int(yb)))       # under the tail
+
+    keep = nail_lights(a)
+    finish(p, keep=keep)
+    a[wheel_open] = -1                                    # no outline inside the felloe: the setts show
+    # (after the outline: it lies on the setts) the grain fanning out east of the mouth: two-texel grains in three tones, densest at the mouth
+    for i in range(64):
+        r_ = rng.uniform(0, 1) ** 0.7
+        gx = int(scx + rx + 1 + r_ * q(3.6))
+        gy = int(scy + rng.uniform(-1.0, 1.0) * (1 + r_ * q(1.4)))
+        t_ = ('sand_warm', 4) if r_ < 0.35 else (('sand', 3) if r_ < 0.7 else ('sand_cool', 2))
+        if 0 <= gy < a.shape[0] - 1 and 0 <= gx < a.shape[1] - 2 and (a[gy, gx:gx + 2] < 0).all():
+            a[gy, gx:gx + 2] = code(*t_)
+    p.contacts = contacts
+    return p
+
+
+TILT = 34.0          # degrees the wrecked cart's bed rises from its tail (p_cart_wreck_hd)
+
+
+def p_window_boards_hd(base, box, seed):
+    """Rough planks nailed across a window after a lost raid night (first_night.json `boards_on_a_window`),
+    drawn in the frame of the building's own picture (`base`, its codes) over its window `box` (the
+    opening, houses.building info['openings']): three sawn planks laid straight, each a texel or two off
+    the last and of its own length, running past the reveal onto the wall either side. Each plank is
+    modelled by its arrises (the top lit, the lower dark), its sawn west end showing end grain (a lit
+    end, a ring mark), its east end turned from the light, grain in short clusters and a knot; one has a
+    split running in from its east end. Two forged nails at each end, one high and one low, each with a
+    texel of shade to its south-east. Each plank throws its shade east and down onto the stones and the
+    glass (the wall's own codes a tone or two down). Between the planks the window shows. A Pic the size
+    of `base`, foot (0, 0) (town.build crops it and sets its foot)."""
+    rng = np.random.default_rng(seed)
+    pa = np.full(base.shape, -1, np.int32)
+    Y, X = grid(pa)
+    x0, y0, x1, y1 = box
+    over = q(2.8)                                                  # past the reveal, onto the wall
+    th = [q(v) for v in (2.5, 2.3, 2.5)]
+    room = (y1 - y0) - q(1.4)                                      # down to the sill
+    gapw = max(3, int((room - sum(th)) / 2))
+    yy = y0 + 1
+    nails = []
+    for k in range(3):
+        L_ = (x1 - x0) + 2 * over - int(rng.integers(0, q(1.6)))
+        sx = x0 - over + int(rng.integers(-q(1.0), q(0.8) + 1))
+        t_ = th[k]
+        fam = ('timber_warm', 'timber', 'timber_warm')[k]
+        base_t = (4, 3, 3)[k]
+        m = (X >= sx) & (X < sx + L_) & (Y >= yy) & (Y < yy + t_)
+        _codes(pa, m, fam, base_t)
+        a_ = m & (np.floor(Y) == yy)
+        pa[a_] = code(fam, min(5, base_t + 1))                          # the top arris in the light
+        pa[m & (np.floor(Y) == yy + t_ - 1)] = code(fam, base_t - 2)    # the lower arris in shade
+        # grain: two or three clusters along the board, a tone down, and a knot
+        for _ in range(int(rng.integers(2, 4))):
+            gx = int(rng.integers(sx + 4, sx + L_ - 10))
+            gy = int(rng.integers(yy + 2, yy + t_ - 2))
+            n_ = int(rng.integers(3, 7))
+            pa[m & (np.floor(Y) == gy) & (X >= gx) & (X < gx + n_)] = code(fam, base_t - 1)
+            pa[m & (np.floor(Y) == gy) & (np.floor(X) == gx + n_)] = code(fam, base_t - 1)
+            if gy - 1 > yy:                                             # its lit lip above it
+                pa[m & (np.floor(Y) == gy - 1) & (X >= gx + 1) & (X < gx + n_ - 1)] = code(fam, min(5, base_t + 1))
+        for _ in range(2):                                              # a scuff and a saw mark across it
+            sx2 = int(rng.integers(sx + 6, sx + L_ - 6))
+            pa[m & (np.floor(X) == sx2) & (Y > yy + 1) & (Y < yy + t_ - 2)] = code(fam, base_t - 1)
+        kx_ = int(rng.integers(sx + L_ // 3, sx + 2 * L_ // 3))
+        ky_ = yy + t_ // 2 - 1
+        pa[m & (X >= kx_) & (X < kx_ + 2) & (Y >= ky_) & (Y < ky_ + 2)] = code(fam, base_t - 2)
+        pa[m & (np.floor(X) == kx_ - 1) & (np.floor(Y) == ky_ - 1)] = code(fam, min(5, base_t + 1))
+        # the sawn west end: end grain, a lit end and a ring mark; the east end turned from the light
+        pa[m & (np.floor(X) == sx)] = code(fam, min(5, base_t + 2))
+        pa[m & (np.floor(X) == sx + 1) & (Y > yy) & (Y < yy + t_ - 1)] = code(fam, base_t)
+        pa[m & (np.floor(X) == sx + 1) & (np.floor(Y) == yy + t_ // 2)] = code(fam, base_t - 2)
+        pa[m & (np.floor(X) == sx + L_ - 1)] = code(fam, base_t - 2)
+        if k == 1:                                                      # a split in from the east end
+            pa[m & (np.floor(Y) == yy + t_ // 2) & (X >= sx + L_ - q(2.4)) & (X < sx + L_ - 1)] = code(fam, base_t - 2)
+        dx_n = (q(0.9), q(2.0), L_ - q(1.6), L_ - q(2.7))
+        for j, dxn in enumerate(dx_n):
+            hi = j % 2 == 0
+            nails.append((sx + dxn, yy + (1 if hi else t_ - 4), fam, base_t))
+        yy += t_ + gapw + (1 if k == 0 else 0)
+    for (nx, ny, fam, bt) in nails:
+        nail_head(pa, nx, ny, rust=0)
+        if pa[ny + 2, nx + 2] >= 0:
+            pa[ny + 2, nx + 2] = code(fam, bt - 1)                      # its shade, a texel south-east
+    p = Pic(base.shape[1], base.shape[0], 0, 0)
+    p.a = pa
+    finish(p, keep=nail_lights(pa))
+    body = p.a >= 0
+    # the planks' shade on the wall and the glass: core two tones down, its edge one
+    near = VO_shift(body, 2, 2) & ~body & (base >= 0)
+    far = (VO_shift(body, 3, 3) | VO_shift(body, 4, 2)) & ~body & ~near & (base >= 0)
+    for m_, k_ in ((near, 2), (far, 1)):
+        p.a[m_] = np.maximum((base[m_] // 8) * 8, base[m_] - k_)
+    # no lone texel where the shade's edge cuts the wall's own marks (the nails' lit texels stay)
+    tidy(p.a, passes=2, keep=nail_lights(p.a))
+    return p
+
+
 def _bundles_x(x0, x1, rng):
     out, x = [], int(x0)
     while x < x1:
@@ -5500,6 +5950,7 @@ def p_shard_lantern(w, h, seed, lit=False):
 PROPS_HD = {
     'barrel': p_barrel_hd,
     'cart': p_cart_hd,
+    'cart_wreck': p_cart_wreck_hd,
     'anvil': p_anvil_hd,
     'beds': lambda w, h, s: p_beds_hd(w, h, s, scorched=True),
     'beds_dug': lambda w, h, s: p_beds_hd(w, h, s, scorched=False),

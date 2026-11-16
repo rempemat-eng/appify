@@ -64,6 +64,18 @@ def stage_states(plan) -> dict:
     return out
 
 
+def raids_on(zone: str) -> list:
+    """[(path, raid)] for each raid in game/data/raids/ on this zone that has drawn repairs (a repair with
+    a `picture`): the brief repairs after a lost night are drawn with the zone (build(), `repairs`)."""
+    import glob
+    out = []
+    for f in sorted(glob.glob(os.path.join(ROOT, 'game', 'data', 'raids', '*.json'))):
+        r = json.load(open(f))
+        if r.get('zone') == zone and any(x.get('picture') for x in r.get('repairs', [])):
+            out.append((f, r))
+    return out
+
+
 # ------------------------------------------------------------------------------------------------
 # what a drawn zone is made from (check.py compares it with kit.json's `inputs`)
 INPUTS = ('village.py', 'houses.py', 'volume.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
@@ -96,6 +108,10 @@ def input_hash(plan_path: str, density: float) -> str:
     for f in files:
         h.update(os.path.relpath(f, ROOT).encode() + b'\0')
         h.update(open(f, 'rb').read())
+    for f, r in raids_on(plan['id']):
+        # only what the drawing reads from a raid: its repairs (its waves and words are not the zone's art)
+        h.update(os.path.relpath(f, ROOT).encode() + b'#repairs\0')
+        h.update(json.dumps(r.get('repairs', []), sort_keys=True).encode())
     return h.hexdigest()
 
 
@@ -276,6 +292,11 @@ LAWN_AS_BEFORE = ('cart',)
 # ellipse 5 deep, its posts to 44 and its roof slab 44 to 50; the anvil's stump 14 wide and 9 tall, its
 # waist, and its face 20 long with the horn to the west at 16 to 21.
 PROP_SOLIDS = {
+    # the wrecked handcart (village.p_cart_wreck_hd): its bed tipped back on its tail at 34 degrees (the
+    # tail on the setts at x +9.5, rising to the west), the shafts raised beyond it, the wheel flat in front
+    'cart_wreck': [('box', 3.0, 12.0, -8.0, 0.0, 0.0, 9.0), ('box', -5.0, 3.0, -8.0, 0.0, 5.0, 15.0),
+                   ('box', -12.0, -5.0, -8.0, 0.0, 10.0, 20.0), ('box', -19.0, -12.0, -3.0, 0.0, 15.0, 22.0),
+                   ('cyl', -5.4, -1.1, 6.2, 2.8, 0.0, 1.4)],
     'well': [('cyl', 0.0, -4.6, 10.0, 4.6, 0.0, 9.0), ('box', -9.0, -7.0, -5.5, -3.5, 9.0, 44.0),
              ('box', 7.0, 9.0, -5.5, -3.5, 9.0, 44.0), ('box', -12.5, 12.5, -8.0, -1.0, 44.0, 50.0)],
     'well_choked': [('cyl', 0.0, -4.6, 10.0, 4.6, 0.0, 8.0), ('cyl', 0.5, -4.6, 7.5, 3.4, 8.0, 12.0)],
@@ -840,6 +861,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         return item.get('if')
 
     looks = art.get('looks', {})
+    built_of = {}
     for b in plan.get('buildings', []):
         look = dict(looks.get(b['id'], {}))
         x, y, w, h = b['rect']
@@ -847,6 +869,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         look.setdefault('depth', h)
         built = V.building(look, seed=look.get('seed', sum(map(ord, b['id']))), hd=PROP_HD)
         foot = (q(x + w / 2), q(y + h))
+        built_of[b['id']] = (built, foot)
         objects.append(dict(id=b['id'], kind='building', png=add_pic(b['id'], built.base.rgba()),
                             foot=foot, anchor=(built.base.ax, built.base.ay), alpha=built.base.alpha(),
                             solid=[x, y, w, h], cond=None, static=True, cast=built.info.get('cast'),
@@ -987,7 +1010,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         contact = CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
         return m, ndi.binary_erosion(m, iterations=rim), contact
 
-    NOSHADE = ('glow', 'smoke', 'damage', 'debris')
+    NOSHADE = ('glow', 'smoke', 'damage', 'debris', 'window_boards')
     if hd:
         shade = np.zeros((H, W), bool)
         foots = []
@@ -1073,12 +1096,65 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             deep = VO.cast_at(*o['cast'], o['foot'], W, H) > 2
             cv[deep] = step(cv[deep], -1)
     lone_fix(cv, keep=(cv % 8 >= 6) | drawn | keep_marks)        # (the blade marks are diagonal: they stay)
+    # the brief repairs after a lost raid night (game/data/raids/<raid>.json `repairs` with a `picture`):
+    # drawn here so they sit on this ground and on its buildings, after the lawn and the static shadows
+    # (they move nothing that was laid before them), and written to kit.json's `repairs`, not `objects`:
+    # world/raid_night.gd shows them (world/raid_repair.gd) while the save's raid keeps `repairs`
+    repair_ids = set()
+    for _f, raid in raids_on(plan['id']):
+        for sp in raid.get('repairs', []):
+            if not sp.get('picture'):
+                continue
+            name = os.path.splitext(os.path.basename(sp['picture']))[0]
+            if sp['picture'] != f"res://zones/{plan['id']}/art/{name}.png":
+                raise ValueError(f"{sp['id']}: its picture must be in this zone's art ({sp['picture']})")
+            at = sp['at']
+            foot = (q(at[0]), q(sp.get('foot', at[1])))
+            seed = sum(map(ord, sp['id']))
+            if sp['kind'] == 'boards':
+                # nailed over a window of the building `over`: drawn in that building's own frame
+                built, bfoot = built_of[sp['over']]
+                bp = built.base
+                bx0_, by0_ = bfoot[0] - bp.ax, bfoot[1] - bp.ay           # the building picture's top-left
+                ax_, ay_ = q(at[0]) - bx0_, q(at[1]) - by0_
+                box = [o_ for o_ in built.info['openings'] if o_[0] <= ax_ < o_[2] and o_[1] <= ay_ < o_[3]]
+                if not box:
+                    raise ValueError(f"{sp['id']}: {at} is on no opening of {sp['over']}")
+                pic = V.p_window_boards_hd(bp.a, box[0], seed)
+                ys_, xs_ = np.nonzero(pic.a >= 0)
+                cx0, cy0, cx1, cy1 = xs_.min(), ys_.min(), xs_.max() + 1, ys_.max() + 1
+                crop = V.Pic(cx1 - cx0, cy1 - cy0, foot[0] - (bx0_ + cx0), foot[1] - (by0_ + cy0))
+                crop.a = pic.a[cy0:cy1, cx0:cx1].copy()
+                pic, kind = crop, 'window_boards'
+            elif sp['kind'] == 'cart':
+                w_, h_ = sp['solid'][2], sp['solid'][3]
+                pic, kind = V.prop('cart_wreck', w_, h_, seed=seed, hd=PROP_HD), 'cart_wreck'
+            else:
+                raise ValueError(f"{sp['id']}: no drawing for a repair of kind {sp['kind']!r}")
+            # trimmed to what is drawn, its foot kept
+            pic_full = pic
+            ys_, xs_ = np.nonzero(pic.a >= 0)
+            cx0, cy0, cx1, cy1 = xs_.min(), ys_.min(), xs_.max() + 1, ys_.max() + 1
+            trim = V.Pic(cx1 - cx0, cy1 - cy0, pic.ax - cx0, pic.ay - cy0)
+            trim.a = pic.a[cy0:cy1, cx0:cx1].copy()
+            pic = trim
+            # the contact shades the painter asks for under its loose things (rows in its own texels)
+            contacts = [(x0_ - cx0, x1_ - cx0, y_ - cy0) for (x0_, x1_, y_) in getattr(pic_full, 'contacts', [])]
+            objects.append(dict(id=name, kind=kind, png=add_pic(name, pic.rgba()), foot=foot, anchor=(pic.ax, pic.ay),
+                                alpha=pic.alpha(), cond=None, solid=sp.get('solid'), static=False, repair=sp['id'],
+                                contacts=contacts))
+            repair_ids.add(name)
+
     # an object that comes and goes carries its cast and contact shadow in a picture of its own: the
     # ground under it stepped down, laid just above the ground in the same condition
     for o in list(objects):
         if o.get('static') or o.get('png') is None or o['kind'] in NOSHADE:
             continue
         m, core, contact = shade_masks(o)
+        for (x0_, x1_, y_) in o.get('contacts', []):
+            # a loose thing's own contact shade: two rows under it, on the ground
+            X0_, Y0_ = int(o['foot'][0] - o['anchor'][0]), int(o['foot'][1] - o['anchor'][1])
+            contact[max(0, Y0_ + y_):max(0, Y0_ + y_ + 2), max(0, X0_ + x0_):max(0, X0_ + x1_)] = True
         sm = m | contact
         if not sm.any():
             continue
@@ -1126,7 +1202,23 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     doc = dict(zone=plan['id'], density=D, size=[W, H], inputs=plan.get('_inputs'),
                kit_drawn=sorted({o['png'] + '.png' for o in objects if o.get('png') and o['kind'] not in KIT_SPRITES + ('shadow',)}),
                objects=[])
-    for o in objects:
+    placed = [o for o in objects if o['id'] not in repair_ids and o.get('of') not in repair_ids]
+    if repair_ids:
+        # each repair's picture and its shadow's, placed from the repair's foot (texels): `offset` is the
+        # picture's top-left from the foot, as for an object; `stands` how far it stands above its foot
+        doc['repairs'] = []
+        for o in objects:
+            if o['id'] not in repair_ids:
+                continue
+            ys_ = np.nonzero(o['alpha'].any(1))[0]
+            e = dict(id=o['repair'], kind=o['kind'], png=o['png'] + '.png', foot=[int(o['foot'][0]), int(o['foot'][1])],
+                     offset=[-int(o['anchor'][0]), -int(o['anchor'][1])], stands=int(o['anchor'][1]) - int(ys_.min()),
+                     solid=o.get('solid'))
+            for s_ in objects:
+                if s_['kind'] == 'shadow' and s_.get('of') == o['id']:
+                    e['shadow'] = dict(png=s_['png'] + '.png', offset=[int(s_['foot'][0]) - e['foot'][0], int(s_['foot'][1]) - e['foot'][1]])
+            doc['repairs'].append(e)
+    for o in placed:
         e = dict(id=o['id'], kind=o['kind'], png=(o['png'] + '.png') if o.get('png') else None,
                  foot=[int(o['foot'][0]), int(o['foot'][1])] if o.get('png') else None,
                  offset=[-int(o['anchor'][0]), -int(o['anchor'][1]) - int(o.get('lift', 0))] if o.get('png') else None,
@@ -1143,7 +1235,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         os.makedirs(preview, exist_ok=True)
         for sid, state in stage_states(plan).items():
             img = ground.convert('RGBA')
-            for o in sorted([o for o in objects if o.get('png')], key=lambda o: (o['kind'] != 'shadow', o['foot'][1], o['kind'] == 'damage')):
+            for o in sorted([o for o in placed if o.get('png')], key=lambda o: (o['kind'] != 'shadow', o['foot'][1], o['kind'] == 'damage')):
                 if not holds(o.get('cond'), state):
                     continue
                 pic = pics[o['png']]

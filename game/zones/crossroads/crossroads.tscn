@@ -110,7 +110,8 @@
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_lit_shadow.png" id="t100"]
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_scorched_shadow.png" id="t101"]
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_dug_shadow.png" id="t102"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_puddles.png" id="t103"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/handcart_shadow.png" id="t103"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_puddles.png" id="t104"]
 [ext_resource type="Script" path="res://world/villager.gd" id="villager"]
 [ext_resource type="Script" path="res://world/loop_fx.gd" id="loopfx"]
 [ext_resource type="Script" path="res://world/rest_spot.gd" id="rest"]
@@ -676,13 +677,6 @@ collision_mask = 0
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_boulder_52"]
 position = Vector2(1056, 1287)
 shape = SubResource("s30")
-
-[node name="Solid_handcart" type="StaticBody2D" parent="Walls"]
-collision_mask = 0
-
-[node name="Shape" type="CollisionShape2D" parent="Walls/Solid_handcart"]
-position = Vector2(708, 780)
-shape = SubResource("s19")
 
 [node name="Solid_bench_58" type="StaticBody2D" parent="Walls"]
 collision_layer = 17
@@ -1406,11 +1400,22 @@ centered = false
 offset = Vector2(-42, -41)
 z_index = -8
 
-[node name="Handcart" type="Sprite2D" parent="Props"]
+[node name="If_handcart" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_flags\":[\"shard_lantern_dark\"]}"
+
+[node name="Handcart" type="Sprite2D" parent="Props/If_handcart"]
 position = Vector2(708, 792)
 texture = ExtResource("t89")
 centered = false
 offset = Vector2(-57, -80)
+
+[node name="HandcartBody" type="StaticBody2D" parent="Props/If_handcart"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Props/If_handcart/HandcartBody"]
+position = Vector2(708, 780)
+shape = SubResource("s19")
 
 [node name="Bench58" type="Sprite2D" parent="Props"]
 position = Vector2(864, 1104)
@@ -1540,13 +1545,24 @@ centered = false
 offset = Vector2(0, 0)
 z_index = -9
 
+[node name="If_handcart_shadow" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_flags\":[\"shard_lantern_dark\"]}"
+
+[node name="HandcartShadow" type="Sprite2D" parent="Props/If_handcart_shadow"]
+position = Vector2(653, 788)
+texture = ExtResource("t103")
+centered = false
+offset = Vector2(0, 0)
+z_index = -9
+
 [node name="If_square_puddles" type="Node2D" parent="Props"]
 script = ExtResource("cond")
 only_if = "{\"not_restored\":[\"forge\"]}"
 
 [node name="SquarePuddles" type="Sprite2D" parent="Props/If_square_puddles"]
 position = Vector2(799, 738)
-texture = ExtResource("t103")
+texture = ExtResource("t104")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9

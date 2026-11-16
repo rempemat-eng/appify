@@ -433,6 +433,30 @@ class Gate(unittest.TestCase):
     def test_no_record_refused(self):
         self.assertIn('no review record', self.refused()[0])
 
+    def test_runtime_repair_pictures_face_the_gate(self):
+        # the brief repairs after a lost night are loaded by world/raid_repair.gd, not placed by the scene:
+        # the gate reads them from kit.json `repairs` (picture and shadow) and refuses them unreviewed
+        root = tempfile.mkdtemp()
+        old_game = gate.GAME
+        try:
+            art = os.path.join(root, 'zones', 'z', 'art')
+            os.makedirs(art)
+            for n in ('wreck', 'wreck_shadow', 'placed'):
+                Path(os.path.join(art, n + '.png')).write_bytes(b'png ' + n.encode())
+            Path(os.path.join(root, 'zones', 'z', 'kit.json')).write_text(json.dumps({'repairs': [
+                {'id': 'cart', 'png': 'wreck.png', 'shadow': {'png': 'wreck_shadow.png', 'offset': [0, 0]}}]}))
+            gate.GAME = root
+            self.assertEqual(gate.runtime_names('z'), ['wreck', 'wreck_shadow'])
+            bad = gate.refusals('z', text='[ext_resource path="res://zones/z/art/placed.png"]')
+            self.assertEqual(sorted(b.split(':')[0] for b in bad), ['z/placed', 'z/wreck', 'z/wreck_shadow'])
+            self.assertTrue(all('no review record' in b for b in bad))
+        finally:
+            gate.GAME = old_game
+            import shutil
+            shutil.rmtree(root, ignore_errors=True)
+        # and Crossroads' own repairs are among what its gate reads
+        self.assertTrue({'repair_cart', 'repair_cart_shadow', 'repair_boards'} <= set(gate.runtime_names('crossroads')))
+
     def test_pass_places(self):
         self.put(reviewer={'agent': 'detail-auditor', 'verdict': 'pass'})
         self.assertEqual(self.refused(), [])

@@ -51,8 +51,12 @@
   ],
   "waves_placeholder": true,
   "repairs": [
-    { "id": "boards_on_a_window", "kind": "boards", "at": [525, 256], "size": [14, 14], "foot": 281, "why": "over the smithy's front window (smithy.png, right of the forge mouth); `foot` sorts it in front of the building" },
-    { "id": "cart_on_its_side", "kind": "cart", "at": [236, 338], "size": [24, 10], "foot": 342, "why": "south of the halt road's lane where it comes onto the square (the lane passes 15 px north of it), off the walkway. Only drawn: it has no solid" }
+    { "id": "boards_on_a_window", "kind": "boards", "at": [525, 256], "size": [14, 14], "foot": 281, "over": "smithy",
+      "picture": "res://zones/crossroads/art/repair_boards.png",
+      "why": "rough planks nailed over the smithy's front window (smithy.png, right of the forge mouth) after the lost night. `at` is a point on the window: scripts/art/native/town.py finds the opening of the building `over` under it and draws the planks in that building's own frame, so they sit on its frame exactly (village.p_window_boards_hd). `foot` sorts it in front of the building. No solid: it is on the wall" },
+    { "id": "cart_on_its_side", "kind": "cart", "at": [236, 340], "size": [24, 8], "foot": 344, "solid": [216, 336, 32, 8],
+      "picture": "res://zones/crossroads/art/repair_cart.png",
+      "why": "the square's handcart, wrecked by the raiders and tipped back on its tail, its wheel knocked off (village.p_cart_wreck_hd), south of the halt road's lane where it comes onto the square, where the storm rubble `square_rubble_a` stood (220-250 x 340-358, solid until the shard came home). `solid` is its bed on the setts (world px; world/raid_repair.gd puts it on the walls' layer, and on the low layer only when its picture stands under tools/gen_physics.py's LOW_RISE: the picture is 75 texels tall and stands 65 above its foot, at or over LOW_RISE 64, so it stops shots too; test_raids.gd holds that): it runs 32 wide (216-248) so the wheel lying flat at its west foot is inside it too; the lane passes 11.5 px north of its north-east corner (248, 336) and 25 px from its north-west one (216, 336), Morel's spot (200, 352) is 17.9 px from it (her talk area stays in reach from 290 or more cells, test_reach.gd and test_raids.gd), the herbalist's (to x 184) 32 px west and the bench under the well (276-300 x 362-368) 28 px east; its foot (236, 344) is on the soft grid (x on a half cell, y on a cell line). test_raids.gd holds that every route still walks with it" }
   ],
   "reward": {
     "flags": ["first_night_won"],

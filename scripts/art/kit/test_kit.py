@@ -1272,7 +1272,7 @@ class SeedCompleteness(unittest.TestCase):
             kit = self.seed._read('game/zones/' + zone + '/kit.json')
             expected.update((zone, o[0] if isinstance(o, list) else o['id']) for o in kit['objects'])
         self.assertEqual(set(self.index), expected | {('woodland', 'StoneSign')})
-        self.assertEqual(len(expected), 183)
+        self.assertEqual(len(expected), 184)       # + crossroads handcart_shadow (#498: the handcart hides while the lantern is dark)
         self.assertEqual(len(self.by_id), len(self.pieces))
 
     def test_attachment_ids_are_on_their_owners_with_exact_conditions(self):

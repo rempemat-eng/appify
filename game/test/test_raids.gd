@@ -355,6 +355,8 @@ func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_a_night
 	assert_bool(night.is_over()).is_true()
 	assert_int(_creatures(night).size()).is_equal(0)                  # they go back down the road
 	assert_int(get_tree().get_nodes_in_group("raid_repair").size()).is_equal(2)
+	await get_tree().process_frame
+	assert_bool(_handcart_shown()).is_false()                                       # its wreck lies on the square instead
 	assert_int(get_tree().get_nodes_in_group("raid_defence").size()).is_equal(0)   # the hurdles go with the night
 	assert_object(night.lantern).is_null()                                          # and the lantern's lights
 	assert_int(int(SaveGame.data.glint)).is_equal(116)
@@ -367,12 +369,15 @@ func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_a_night
 	assert_bool(Zones.go_to("crossroads", "woodland")).is_true()
 	await get_tree().process_frame
 	assert_int(Zones.current.get_node("RaidNight").repairs.size()).is_equal(2)
+	assert_bool(_handcart_shown()).is_false()
 	assert_bool(bool(Raids.rec().repairs)).is_true()
 	assert_str(Raids.state()).is_equal("announced")
-	# only drawn: a repair has no body, so it blocks no path, door or lane on the second night
+	# the boards on the wall have no body; the overturned cart's bed is solid where the data says
+	# (test_with_the_repairs_showing_the_lane_and_every_walk_stay_open holds that nothing is shut by it)
 	for r: Node2D in Zones.current.get_node("RaidNight").repairs:
-		assert_array(r.find_children("*", "CollisionObject2D", true, false)).is_empty()
+		var bodies := r.find_children("*", "CollisionObject2D", true, false)
 		assert_bool(r is CollisionObject2D).is_false()
+		assert_int(bodies.size()).is_equal(1 if (r as RaidRepair).spec.has("solid") else 0)
 	# a night held mends them, at once and for good
 	night = Zones.current.get_node("RaidNight") as RaidNight
 	assert_bool(Raids.ring()).is_true()
@@ -382,9 +387,12 @@ func test_the_lantern_falls_the_night_is_lost_and_the_repairs_show_until_a_night
 	assert_bool(bool(Raids.rec().repairs)).is_false()
 	await get_tree().process_frame
 	assert_int(get_tree().get_nodes_in_group("raid_repair").filter(func(n: Node) -> bool: return not n.is_queued_for_deletion()).size()).is_equal(0)
+	await get_tree().process_frame
+	assert_bool(_handcart_shown()).is_true()                                        # the handcart is back with the mending
 	assert_bool(Zones.go_to("crossroads", "start")).is_true()
 	await get_tree().process_frame
 	assert_int(Zones.current.get_node("RaidNight").repairs.size()).is_equal(0)
+	assert_bool(_handcart_shown()).is_true()
 
 func test_walking_out_mid_night_leaves_it_pending() -> void:
 	var night := _into_town()
@@ -832,6 +840,99 @@ func test_a_creatures_body_fits_along_the_whole_lane() -> void:
 	assert_float(end.y * 3.0).is_greater(plinth.end.y)
 	assert_float(end.x).is_greater(307.0)
 	assert_float(end.x * 3.0).is_less(plinth.position.x)
+
+## The square's upright handcart (its picture, its shadow and its body, in the zone's Conditionals): hidden for
+## exactly as long as its wreck, the repair `cart_on_its_side`, shows.
+func _handcart_shown() -> bool:
+	var cart := Zones.current.get_node("Props/If_handcart") as Conditional
+	var shade := Zones.current.get_node("Props/If_handcart_shadow") as Conditional
+	assert_bool(cart.visible).is_equal(shade.visible)
+	assert_object(cart.find_child("*Body*", true, false)).is_not_null()
+	return cart.visible and cart.process_mode != Node.PROCESS_MODE_DISABLED
+
+## The drawn repairs after a lost night (world/raid_repair.gd, the pictures from scripts/art/native/town.py):
+## each shows its picture where kit.json puts it; the boards on the smithy's wall have no body; the
+## wrecked cart's bed is a solid on the walls' layer (it stands above LOW_RISE, so by the zone's own rule it
+## stops shots as well as feet), its rectangle the data's `solid`. With them showing a creature's whole body still fits along the lane, and every talk
+## area, open door and spawn of the square can still be walked to from `start` (test_reach.gd's bar).
+func test_with_the_repairs_showing_the_lane_and_every_walk_stay_open() -> void:
+	_after_home_again()
+	SaveGame.set_flag("shard_lantern_dark")
+	SaveGame.data.raid = {"id": "first_night", "state": "lost", "postponed": 0, "wave": 0, "layout": {}, "repairs": true}
+	_attach()
+	assert_bool(Zones.go_to("crossroads", "start")).is_true()
+	await get_tree().process_frame
+	var night := Zones.current.get_node("RaidNight") as RaidNight
+	night.set_physics_process(false)
+	assert_int(night.repairs.size()).is_equal(2)
+	await get_tree().process_frame
+	assert_bool(_handcart_shown()).is_false()
+	for r: Node2D in night.repairs:
+		var spec: Dictionary = (r as RaidRepair).spec
+		var pic := r.get_node("Picture") as Sprite2D
+		assert_str(pic.texture.resource_path).is_equal(String(spec.picture))
+		var bodies := r.find_children("*", "StaticBody2D", true, false)
+		if not spec.has("solid"):
+			assert_array(bodies).is_empty()
+			assert_object(r.get_node_or_null("Shadow")).is_null()
+			continue
+		assert_object(r.get_node_or_null("Shadow")).is_not_null()
+		assert_int(bodies.size()).is_equal(1)
+		var body := bodies[0] as StaticBody2D
+		# the wreck's raised bed and shafts stand above LOW_RISE (tools/gen_physics.py): its bed stops shots too
+		var stands := int(RaidRepair.kit_entry(String(spec.picture), String(spec.id)).stands)
+		assert_int(stands).is_greater_equal(RaidRepair.LOW_RISE)
+		assert_int(body.collision_layer).is_equal(1)
+		var cs := body.get_child(0) as CollisionShape2D
+		var half := (cs.shape as RectangleShape2D).size / 2.0
+		var solid: Array = spec.solid
+		assert_vector((cs.global_position - half) / 3.0).is_equal_approx(Vector2(solid[0], solid[1]), Vector2(0.01, 0.01))
+		assert_vector(half * 2.0 / 3.0).is_equal_approx(Vector2(solid[2], solid[3]), Vector2(0.01, 0.01))
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	# the lane, a creature's whole body along it
+	var space := night.get_world_2d().direct_space_state
+	var q := PhysicsShapeQueryParameters2D.new()
+	var round_body := CircleShape2D.new()
+	round_body.radius = 12.0
+	q.shape = round_body
+	q.collision_mask = 1
+	var blocked := []
+	var s := RaidNight.SPAWN_IN * 3.0
+	while s <= night.length():
+		q.transform = Transform2D(0.0, night.point_at(s))
+		for hit: Dictionary in space.intersect_shape(q, 4):
+			blocked.append("%s at %s" % [(hit.collider as Node).name, (night.point_at(s) / 3.0).round()])
+		s += 3.0
+	assert_array(blocked).is_empty()
+	# every walk: the spawns, the open doors and the talk areas from `start`
+	const WalkGrid := preload("res://tools/walk_grid.gd")
+	var zone: Zone = Zones.current
+	var grid := WalkGrid.new(zone.get_world_2d(), zone.bounds, 0.0)
+	var cells: Dictionary = grid.reachable(zone.spawn_position("start"))
+	var problems := []
+	for n: Node in zone.find_children("*", "", true, false):
+		if not (n is Marker2D or n is Area2D) or not n.can_process() or not (n as CanvasItem).is_visible_in_tree():
+			continue
+		if n is Marker2D and n.get_parent().name == "Spawns":
+			if not cells.has(grid.nearest_free((n as Node2D).global_position, 12.0)):
+				problems.append("%s: the spawn is walled off from `start`" % n.name)
+		elif (n is Door and (n as Door).is_open()) or n is Interactable:
+			var area := n as Area2D
+			var shape := area.get_node("Shape") as CollisionShape2D
+			var radius := (area as Interactable).reach() if area is Interactable else 0.0
+			var count := 0
+			for c: Vector2i in cells:
+				var at: Vector2 = WalkGrid.point_of(c) + WalkGrid.BODY_OFFSET
+				if area is Interactable:
+					count += int(at.distance_to(area.global_position) < radius + WalkGrid.BODY_RADIUS - 1.0)
+				elif shape.shape is RectangleShape2D:
+					var h := (shape.shape as RectangleShape2D).size / 2.0 + Vector2.ONE * (WalkGrid.BODY_RADIUS - 1.0)
+					var d := (at - shape.global_position).abs()
+					count += int(d.x < h.x and d.y < h.y)
+			if count < (150 if area is Interactable else 1):
+				problems.append("%s: in reach from %d walkable cells" % [n.name, count])
+	assert_array(problems).is_empty()
 
 # --- Matt's decisions of 13 Nov: the stake, the anvil, a one-off ---------------------------------
 ## What a loss must leave alone: the Glint, the quests, the restores and every flag but the stake's own.

@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 2,
+ "version": 3,
  "variants": [
   {
    "id": "handcart",
@@ -92,7 +92,14 @@
  },
  "function": {},
  "story": {
-  "owner": null
+  "owner": null,
+  "gating": {
+   "if": {
+    "not_flags": [
+     "shard_lantern_dark"
+    ]
+   }
+  }
  },
  "gameplay": {
   "blocks_move": true,
@@ -107,13 +114,28 @@
     "zone": "crossroads",
     "object": "handcart",
     "part": "body",
-    "condition": null
+    "condition": {
+     "not_flags": [
+      "shard_lantern_dark"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "handcart_shadow",
+    "part": "shadow",
+    "condition": {
+     "not_flags": [
+      "shard_lantern_dark"
+     ]
+    }
    }
   ],
   "todo": [
    "composition role and clearance",
    "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain shadow handcart_shadow from source scene with its own condition and offset; not a standalone random variant",
    "review size-guide class and Eastward comparison before the library gate"
   ]
  }

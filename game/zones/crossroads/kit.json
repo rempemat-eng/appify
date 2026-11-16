@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "8fb8d93531b5bae3ede46b3e5b07bc13c7783dc3272d848d4edc65a8c8bd88ab",
+ "inputs": "380b23e474b90faecbacf12b4eae531760997d31c2691dca21bae3b091477932",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -57,6 +57,8 @@
   "north_cottages.png",
   "north_cottages_damage.png",
   "notice_board.png",
+  "repair_boards.png",
+  "repair_cart.png",
   "sacks_12.png",
   "smithy.png",
   "smithy_damage.png",
@@ -1801,7 +1803,11 @@
     -57,
     -80
    ],
-   "cond": null,
+   "cond": {
+    "not_flags": [
+     "shard_lantern_dark"
+    ]
+   },
    "solid": [
     225.0,
     256,
@@ -2070,6 +2076,26 @@
    "of": "beds_dug"
   },
   {
+   "id": "handcart_shadow",
+   "kind": "shadow",
+   "png": "handcart_shadow.png",
+   "foot": [
+    653,
+    788
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_lantern_dark"
+    ]
+   },
+   "solid": null,
+   "of": "handcart"
+  },
+  {
    "id": "square_puddles",
    "kind": "shadow",
    "png": "square_puddles.png",
@@ -2087,6 +2113,50 @@
     ]
    },
    "solid": null
+  }
+ ],
+ "repairs": [
+  {
+   "id": "boards_on_a_window",
+   "kind": "window_boards",
+   "png": "repair_boards.png",
+   "foot": [
+    1575,
+    843
+   ],
+   "offset": [
+    -23,
+    -92
+   ],
+   "stands": 92,
+   "solid": null
+  },
+  {
+   "id": "cart_on_its_side",
+   "kind": "cart_wreck",
+   "png": "repair_cart.png",
+   "foot": [
+    708,
+    1032
+   ],
+   "offset": [
+    -62,
+    -65
+   ],
+   "stands": 65,
+   "solid": [
+    216,
+    336,
+    32,
+    8
+   ],
+   "shadow": {
+    "png": "repair_cart_shadow.png",
+    "offset": [
+     -52,
+     -24
+    ]
+   }
   }
  ]
 }
