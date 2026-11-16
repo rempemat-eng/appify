@@ -21,6 +21,7 @@ fills them and what happens where they meet, measured on the Eastward references
                                      tufts, the under-lip shade, a face of rounded clods (earth) or
                                      boulders (rock) lit at their upper left, roots, a dark foot
                                      with pebbles, weeds over it, a soft cast shadow on the ground
+    log_steps(cv, ...)               steps cut into a ledge: sawn log treads, earth cheeks
     timber_stair(cv, ...)            a timber stair in a cut: stone cheeks, stringers, treads over risers
     water(cv, m, seed)               still or running water: the north bank's earth face under a
                                      grass lip, a 1 px light waterline, depth bands under the
@@ -889,6 +890,56 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind
                                    moss='top' if rng.random() < 0.5 else None)
         items.append((img, anc, (x + int(rng.integers(-4, 5)), y + int(rng.integers(2, 6)))))
     return face | side, items, lp
+
+
+def log_steps(cv: np.ndarray, x0: int, x1: int, y_top: int, y_foot: int, n: int, rng, wood: str = 'timber',
+              earth: str = 'earth') -> None:
+    """Steps cut into a ledge's face, as in Matt's 26 Oct screenshot: `n` sawn log treads from the
+    rim down to the foot, the head flush with the top. Each log's top is lit with a pale front
+    edge and grain, darker towards its back; its sawn ends show as lit rings at the cheeks; the
+    riser under it is the earth in deep shade. Earth cheeks either side carry the face's clods
+    down beside the flight, the west lit, the east in shade."""
+    H, W = cv.shape
+    e0, ew, ec = _earth(earth)
+    cheek = 7
+    pitch = (y_foot - y_top) / n
+    reg = np.zeros((H, W), bool)
+    reg[y_top:y_foot, x0:x0 + cheek] = True
+    clods(cv, reg, rng, earth, size=(6, 10), ratio=0.85, gap_t=1, seed=7)
+    reg2 = np.zeros((H, W), bool)
+    reg2[y_top:y_foot, x1 - cheek:x1] = True
+    clods(cv, reg2, rng, earth, size=(6, 10), ratio=0.85, gap_t=1, seed=8)
+    shift(cv, reg2, -1)
+    a, b = x0 + cheek, x1 - cheek
+    for k in range(n):
+        ya = int(round(y_top + k * pitch))
+        yb = int(round(y_top + (k + 1) * pitch))
+        tread = max(5, int(round(pitch * 0.66)))
+        cv[ya:yb, a:b] = C(ec, 0)                                       # the riser in shade
+        cv[ya + tread:yb, a:b] = C(ec, 0)
+        if yb - (ya + tread) > 2:
+            cv[ya + tread + 1:yb, a:b] = C(e0, 1)
+        for j in range(tread):
+            y = ya + j
+            tt = 2 if j == 0 else (3 if j < tread * 0.45 else (4 if j < tread - 1 else 5))
+            cv[y, a:b] = C(wood, tt)
+        cv[ya + tread - 1, a:b] = C(wood + '_warm' if wood + '_warm' in FI else wood, 4)
+        cv[ya + tread, a:b] = C(wood, 1)                               # the log's round underside
+        # grain and knots, lighter blotches where it is worn
+        for gx in range(a + 2, b - 3, 5):
+            gy = ya + int(rng.integers(1, max(2, tread - 2)))
+            L = int(rng.integers(3, 9))
+            cv[gy, gx:min(b - 2, gx + L)] = C(wood, 2)
+            if rng.random() < 0.3:
+                cv[gy - 1, gx + 1:min(b - 2, gx + 3)] = C(wood, 4)
+        # the sawn ends: rings, lit on the west end
+        for (ex, lit) in ((a, True), (b - 3, False)):
+            for j in range(tread + 1):
+                for q in range(3):
+                    put(cv, ya + j, ex + q, C('timber_warm' if lit else wood, (4 if q == 1 and 0 < j < tread else 3) if lit else 2))
+            put(cv, ya + tread // 2, ex + 1, C(wood, 2 if lit else 1))
+    # earth spilled on the lowest tread and the path's start
+    cv[y_foot - 1, a:b] = np.where(rng.random(b - a) < 0.3, C(e0, 3), cv[y_foot - 1, a:b])
 
 
 def timber_stair(cv: np.ndarray, x0: int, x1: int, y_top: int, y_foot: int, n: int, rng, wood: str = 'timber',
