@@ -1021,9 +1021,63 @@ def _game_text(cache: dict, with_dialogue: bool) -> str:
     return cache[key]
 
 
-def _mentioned(word: str, text) -> bool:
-    """`word` as a whole id in `text` (None: some file could not be read, so it may be anywhere)."""
-    return text is None or re.search(r'(?<![\w])' + re.escape(word) + r'(?![\w])', text) is not None
+def _content(cache: dict) -> dict:
+    """The camps, restore sites and zones that exist as structured data anywhere in game/, registered
+    or not (content that is written and waiting for its zone):
+
+      camp      camp_id values in any scene under zones/ and kit/, "camp"/"camp_id" keys in plans
+                (data/plans) and kit zone plans (kit/zones), data/camps.json's camps and room ids;
+      restore   restore_id / site_id values in those scenes, "restore"/"restore_id"/"site_id" keys and
+                `restores[].id` in those plans, and every raid's reward offers.id (data/raids);
+      zone      a game/zones/<id>/ folder, kit/zones/<id>.json or data/plans/<id>.json.
+
+    Prose and comments do not count. A file that cannot be read adds nothing (undecided: startable)."""
+    if 'content' in cache:
+        return cache['content']
+    out = dict(camp=set(), restore=set(), zone=set())
+    for root in (os.path.join(GAME, 'zones'), os.path.join(GAME, 'kit')):
+        for path in glob.glob(os.path.join(root, '**', '*.tscn'), recursive=True):
+            try:
+                with open(path, encoding='utf-8', errors='replace') as h:
+                    text = h.read()
+            except OSError:
+                continue
+            out['camp'] |= set(re.findall(r'^camp_id\s*=\s*"([^"]+)"', text, re.M))
+            out['restore'] |= set(re.findall(r'^(?:restore_id|site_id)\s*=\s*"([^"]+)"', text, re.M))
+
+    def keys(o, plan_restores=False):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if isinstance(v, str) and k in ('camp', 'camp_id'):
+                    out['camp'].add(v)
+                elif isinstance(v, str) and k in ('restore', 'restore_id', 'site_id'):
+                    out['restore'].add(v)
+                elif k == 'restores' and isinstance(v, list):
+                    out['restore'] |= {r['id'] for r in v if isinstance(r, dict) and isinstance(r.get('id'), str)}
+                keys(v)
+        elif isinstance(o, list):
+            for x in o:
+                keys(x)
+
+    plans = glob.glob(os.path.join(GAME, 'data', 'plans', '*.json')) + glob.glob(os.path.join(GAME, 'kit', 'zones', '*.json'))
+    for path in plans:
+        keys(_json_or(path, None))
+        out['zone'].add(os.path.basename(path)[:-5])
+    camps = _json_or(os.path.join(GAME, 'data', 'camps.json'), {})
+    for cid, entry in (camps.items() if isinstance(camps, dict) else []):
+        if isinstance(entry, dict):
+            out['camp'].add(cid)
+            out['camp'] |= {r['id'] for r in entry.get('rooms', []) if isinstance(r, dict) and isinstance(r.get('id'), str)}
+    for path in glob.glob(os.path.join(GAME, 'data', 'raids', '*.json')):
+        raid = _json_or(path, {})
+        offer = (raid.get('reward') or {}).get('offers') if isinstance(raid, dict) else None
+        if isinstance(offer, dict) and isinstance(offer.get('id'), str):
+            out['restore'].add(offer['id'])
+    zdir = os.path.join(GAME, 'zones')
+    if os.path.isdir(zdir):
+        out['zone'] |= {d for d in os.listdir(zdir) if os.path.isdir(os.path.join(zdir, d))}
+    cache['content'] = out
+    return out
 
 
 def _flag_set_outside_quests(flag: str, cache: dict) -> bool:
@@ -1037,7 +1091,7 @@ def _flag_set_outside_quests(flag: str, cache: dict) -> bool:
 
 
 def quest_refs(q: dict) -> list:
-    """(where, quest id) for every quest a quest's conditions name (start `if`, step `if`/`done_if`)."""
+    """(where, quest id, key) for every quest a quest's conditions name (start `if`, step `if`/`done_if`)."""
     conds = [('start', (q.get('start') or {}).get('if'))]
     for st in q.get('steps', []):
         conds += [(f'step {st.get("id", "?")}', st.get('if')), (f'step {st.get("id", "?")}', st.get('done_if'))]
@@ -1046,10 +1100,10 @@ def quest_refs(q: dict) -> list:
         if not isinstance(cond, dict):
             continue
         for k in QUEST_REFS + ('not_started',):
-            out += [(where, r) for r in cond.get(k, []) if isinstance(r, str)]
+            out += [(where, r, k) for r in cond.get(k, []) if isinstance(r, str)]
         for k in ('step', 'past', 'not_past'):
             if isinstance(cond.get(k), list) and cond[k]:
-                out.append((where, cond[k][0]))
+                out.append((where, cond[k][0], k))
     return out
 
 
@@ -1091,11 +1145,11 @@ def dormant_quests(quests: dict, src: EventSources, cache: dict | None = None) -
     `on` event arrives and its start `if` holds (check(), quests.gd:149-186). So it is dormant when
 
       - its start event can never be sent (EventSources.sends) and what it waits for is real content:
-        a talk to a speaker with a dialogue entry, or a camp, restore site or zone whose id appears
-        somewhere under game/ outside the quest files and tests. A name found nowhere is a typo, and
-        the quest stays startable (its events stay blockers);
+        a talk to a speaker with a dialogue entry, or a camp, restore site or zone that exists as
+        structured data in some zone's files, registered or not (_content). Any other name is a typo,
+        and the quest stays startable (its events stay blockers);
       - its start condition asks for "zone_built:<zone>", the zone is not in data/zones.json
-        (has_flag, quests.gd:145-150) and the zone appears somewhere under game/ (not a typo);
+        (has_flag, quests.gd:145-150) and the zone has a folder or plan (_content; not a typo);
       - its start condition needs another quest done, active or started (done/active/started, and the
         quest named by step/past) and that quest is dormant (a quest that does not exist is a fault of
         its own, quest_refs, never a reason);
@@ -1109,7 +1163,7 @@ def dormant_quests(quests: dict, src: EventSources, cache: dict | None = None) -
     def waiting(kind, arg):
         if kind == 'talk':
             return arg in src.dialogue
-        return _mentioned(arg, _game_text(cache, with_dialogue=True))
+        return arg in _content(cache)['zone' if kind in ('enter', 'zone') else kind]
 
     setters = {}
     for qid, q in quests.items():
@@ -1270,11 +1324,13 @@ def check_wiring(zone_ids=None) -> list[Finding]:
     # stuck, so they are advice; in a quest that can start they stay blockers.
     dormant = dormant_quests(quests, src)
     for qid, q in quests.items():
-        for where, ref in quest_refs(q):
+        for where, ref, key in quest_refs(q):
             if ref not in quests:
+                # state() of an unknown id is "none" (quests.gd:90-91): not_started / not_past always hold
+                holds = ('always holds' if key in ('not_started', 'not_past') else 'can never hold')
                 fs.append(Finding('logic.wiring', 'fault', PLACEHOLDER_BOX,
-                                  f'quest {qid}: its {where} condition names quest "{ref}", which does not exist '
-                                  '(the condition can never hold as written)', 'fix the quest id', subject=qid))
+                                  f'quest {qid}: its {where} condition names quest "{ref}" ({key}), which does not '
+                                  f'exist, so the condition {holds} as written', 'fix the quest id', subject=qid))
         events = [q.get('start', {}).get('on')] + [s.get('on') for s in q.get('steps', [])]
         seen = set()
         for ev in events:

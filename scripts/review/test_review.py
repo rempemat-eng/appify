@@ -517,6 +517,52 @@ class DormantQuestWiring(unittest.TestCase):
         self.assertEqual(self.severities(fs, 'typo_camp'), [('blocker', 'camp:nowhere_camp'), ('blocker', 'talk:drover')])
         self.assertEqual(self.severities(fs, 'typo_zone'), [('blocker', 'talk:drover')])
 
+    def test_a_plain_word_in_prose_is_not_content_that_is_waiting(self):
+        # the auditor's probes: ids that appear only as words in comments and prose, never as data
+        (self.game / 'world').mkdir()
+        (self.game / 'world/camp.gd').write_text('## an old camp under the moon; restore the cottage\n'
+                                                 '## (frost, lab) restore = "cottage"\n')
+        (self.game / 'data/plans/home.json').write_text(json.dumps(
+            {'id': 'home', 'why': 'an old camp by the moon, a restore of the cottage, frost on the lab'}))
+        self.quest('home_again', 'talk:elder')
+        probes = {'p_old': ('camp:old', None), 'p_moon': ('camp:moon', None), 'p_restore': ('camp:restore', None),
+                  'p_cottage': ('restore:cottage', None), 'p_frost': ('enter:frost', None),
+                  'p_lab': ('talk:elder', 'zone_built:lab')}
+        for qid, (on, gate) in probes.items():
+            cond = {'done': ['home_again']}
+            if gate:
+                cond['flags'] = [gate]
+            self.quest(qid, on, cond, steps=['talk:drover'])
+        fs = self.wiring()
+        for qid, (on, gate) in probes.items():
+            with self.subTest(probe=qid):
+                want = ([] if gate else [('blocker', on)]) + [('blocker', 'talk:drover')]
+                self.assertEqual(self.severities(fs, qid), want)
+
+    def test_structured_content_in_unregistered_zones_is_waiting(self):
+        # a zone folder (unregistered), a camp_id and a restore_id in its scene, a plan's camp key
+        (self.game / 'zones/frostline').mkdir()
+        (self.game / 'zones/frostline/frostline.tscn').write_text('[node name="Crows" type="Node2D"]\n'
+                                                                 'camp_id = "col_crows"\nrestore_id = "bothy"\n')
+        (self.game / 'data/plans/frostline.json').unlink()
+        self.write('data/plans/fells.json', {'id': 'fells', 'actors': [{'camp': 'ibex'}]})
+        self.quest('north', 'talk:elder', {'flags': ['zone_built:frostline']}, steps=['talk:tam'])
+        self.quest('crows', 'camp:col_crows', steps=['talk:tam'])
+        self.quest('bothy', 'restore:bothy', steps=['talk:tam'])
+        self.quest('ibex', 'camp:ibex', steps=['talk:tam'])
+        fs = self.wiring()
+        self.assertEqual(self.severities(fs, 'north'), [('polish', 'talk:tam')])
+        self.assertIn('frostline is not in data/zones.json', [f for f in fs if f.subject == 'north'][0].message)
+        self.assertEqual(self.severities(fs, 'crows'), [('polish', 'camp:col_crows'), ('polish', 'talk:tam')])
+        self.assertEqual(self.severities(fs, 'bothy'), [('polish', 'restore:bothy'), ('polish', 'talk:tam')])
+        self.assertEqual(self.severities(fs, 'ibex'), [('polish', 'camp:ibex'), ('polish', 'talk:tam')])
+
+    def test_a_missing_quest_named_by_not_started_always_holds(self):
+        self.quest('fresh', 'talk:elder', {'not_started': ['home_agian']}, steps=['talk:drover'])
+        fault = [f for f in self.wiring() if f.subject == 'fresh' and f.severity == 'fault']
+        self.assertEqual(len(fault), 1)
+        self.assertIn('always holds', fault[0].message)
+
     def test_a_missing_quest_reference_is_a_fault_not_a_reason(self):
         self.quest('home_again', 'talk:elder')
         self.quest('next', 'talk:elder', {'done': ['home_agian']}, steps=['talk:drover'])
