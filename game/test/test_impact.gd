@@ -38,10 +38,10 @@ func _wall(root: Node2D, x0: float, y0: float, x1: float, y1: float) -> StaticBo
 	root.add_child(body)
 	return body
 
-func _loose(root: Node2D, at: Vector2, archer: Node2D, dir := Vector2.RIGHT) -> Arrow:
+func _loose(root: Node2D, at: Vector2, archer: Node2D, dir := Vector2.RIGHT, lift := 20.0) -> Arrow:
 	var arrow := Arrow.new()
 	root.add_child(arrow)
-	arrow.setup(at, 20.0, dir, archer)
+	arrow.setup(at, lift, dir, archer)
 	return arrow
 
 func _settle() -> void:
@@ -216,41 +216,86 @@ func test_a_prop_with_only_a_foot_box_drops_the_arrow_at_its_foot() -> void:
 	assert_int(fx[0].z_index).is_equal(0)
 	assert_float(_run_out(fx[0])).is_less_equal(Impact.FALL + Impact.STUCK + Impact.FADE + 1.0 / 60.0 + 0.0001)
 
-## A solid that says it has a drawn face (a house, a terrace face: the generators' `impact_face`) takes the
-## arrow stuck in its face; met from its north side, the same face drops the arrow behind it.
-func test_a_solid_with_a_face_takes_the_arrow_stuck_and_drops_it_from_behind() -> void:
-	var root := _stage()
-	var archer := _archer(root, Vector2(100, 100))
+## A solid's drawn face (the generators' `impact_face` height in texels and `impact_material`) takes an arrow
+## stuck only when it crossed the box's south edge below the face's top and the face is timber or earth
+## (#509 round 2, F1b and S1). Any other edge, a hit above the face's top, or stone: the arrow drops, never moved.
+func _faced(root: Node2D, height: float, material: String) -> StaticBody2D:
 	var house := _wall(root, 160, 60, 200, 140)
-	house.set_meta("impact_face", true)
+	house.set_meta("impact_face", height)
+	house.set_meta("impact_material", material)
+	return house
+
+## Shoots one arrow at a faced box from `at` along `dir` at `lift`; returns the mark it left.
+func _shoot_at_face(height: float, material: String, at: Vector2, dir: Vector2, lift := 20.0) -> Impact:
+	var root := _stage()
+	var archer := _archer(root, at)
+	_faced(root, height, material)
 	await _settle()
-	var last := await _fly(_loose(root, Vector2(126, 100), archer))
+	await _fly(_loose(root, at, archer, dir.normalized(), lift))
 	var fx := _impacts(root)
 	assert_int(fx.size()).is_equal(1)
-	assert_int(fx[0].kind).is_equal(Impact.Kind.WALL)
-	assert_bool(fx[0].shaft).is_true()
-	assert_float(fx[0].lift).is_equal(20.0)                 # on the face, at the arrow's height
-	assert_float(fx[0].global_position.distance_to(last)).is_less_equal(Arrow.SPEED / 60.0 + 1.0)
-	assert_float(fx[0].global_position.x).is_between(160.0 - Arrow.RADIUS - Arrow.SPEED / 60.0, 160.0 + Arrow.RADIUS + 1.0)
-	assert_bool(fx[0].burst_on_ground()).is_false()          # the puff on the face is drawn over (Burst, z 1)
-	assert_int(fx[0].z_index).is_equal(0)                    # the stuck shaft y-sorts at its ground point
-	assert_int((fx[0].get_node("Burst") as Node2D).z_index).is_equal(1)
-	assert_float(_run_out(fx[0])).is_less_equal(Impact.STUCK + Impact.FADE + 1.0 / 60.0 + 0.0001)
-	# from the north (flying south into its back): it never sticks, it drops behind the house
-	var back := _stage()
-	var archer2 := _archer(back, Vector2(180, -20))
-	var house2 := _wall(back, 160, 60, 200, 140)
-	house2.set_meta("impact_face", true)
-	await _settle()
-	await _fly(_loose(back, Vector2(180, 10), archer2, Vector2.DOWN))
-	var behind := _impacts(back)
-	assert_int(behind.size()).is_equal(1)
-	assert_int(behind[0].kind).is_equal(Impact.Kind.DROP)
-	assert_vector(behind[0].drift).is_equal(Vector2(0, -4))  # knocked back north, further behind
-	assert_float(behind[0].global_position.y).is_less(60.0 + Arrow.RADIUS + 1.0)
-	assert_bool(Impact.has_face(house2, Vector2.DOWN)).is_false()
-	assert_bool(Impact.has_face(house2, Vector2.UP)).is_true()
-	assert_bool(Impact.has_face(house2, Vector2.LEFT)).is_true()
+	var mark: Impact = fx[0]
+	root.remove_child(mark)                              # kept for the asserts; the stage and its solids go
+	auto_free(mark)
+	root.free()
+	return mark
+
+func test_a_timber_face_takes_an_arrow_from_the_south_and_drops_every_other() -> void:
+	# from the south, below the top: stuck, at the arrow's own height, the shaft in the y-sort, the puff over
+	var stuck := await _shoot_at_face(90.0, "timber", Vector2(180, 200), Vector2.UP)
+	assert_int(stuck.kind).is_equal(Impact.Kind.WALL)
+	assert_float(stuck.lift).is_equal(20.0)
+	assert_float(stuck.global_position.y).is_between(140.0 - 1.0, 140.0 + Arrow.RADIUS + Arrow.SPEED / 60.0)
+	assert_str(stuck.face_material).is_equal("timber")
+	assert_bool(stuck.burst_on_ground()).is_false()
+	assert_int(stuck.z_index).is_equal(0)
+	assert_int((stuck.get_node("Burst") as Node2D).z_index).is_equal(1)
+	assert_float(_run_out(stuck)).is_less_equal(Impact.STUCK + Impact.FADE + 1.0 / 60.0 + 0.0001)
+	# a shallow shot east-south-east across the north edge (the audit's dir (0.95, 0.31)): it drops
+	var shallow := await _shoot_at_face(90.0, "timber", Vector2(130, 40), Vector2(0.95, 0.31))
+	assert_int(shallow.kind).is_equal(Impact.Kind.DROP)
+	assert_float(shallow.global_position.y).is_less_equal(60.0 + 1.0)
+	# straight in from the north: it drops behind, knocked back north
+	var behind := await _shoot_at_face(90.0, "timber", Vector2(180, 10), Vector2.DOWN)
+	assert_int(behind.kind).is_equal(Impact.Kind.DROP)
+	assert_vector(behind.drift).is_equal(Vector2(0, -4))
+	# a side edge no body declares (the west edge, flying east): it drops
+	var side := await _shoot_at_face(90.0, "timber", Vector2(100, 100), Vector2.RIGHT)
+	assert_int(side.kind).is_equal(Impact.Kind.DROP)
+	assert_vector(side.drift).is_equal(Vector2(-4, 0))
+
+func test_an_arrow_above_a_faces_top_drops_and_is_never_moved_down() -> void:
+	# a north shot flies 61 to 67 texels up (docs/physics.md); a 36 texel wall: it drops
+	var high := await _shoot_at_face(36.0, "timber", Vector2(180, 200), Vector2.UP, 61.0)
+	assert_int(high.kind).is_equal(Impact.Kind.DROP)
+	assert_float(high.lift).is_equal(61.0)                 # it falls from where it was, not from the wall top
+	# the same wall, 33 up (its top less FACE_TOP): stuck at 33
+	var low := await _shoot_at_face(36.0, "timber", Vector2(180, 200), Vector2.UP, 33.0)
+	assert_int(low.kind).is_equal(Impact.Kind.WALL)
+	assert_float(low.lift).is_less_equal(33.0)
+	var over := await _shoot_at_face(36.0, "timber", Vector2(180, 200), Vector2.UP, 34.0)
+	assert_int(over.kind).is_equal(Impact.Kind.DROP)
+
+func test_stone_never_takes_an_arrow_it_drops_with_grey_chips() -> void:
+	var stone := await _shoot_at_face(110.0, "stone", Vector2(180, 200), Vector2.UP)
+	assert_int(stone.kind).is_equal(Impact.Kind.DROP)
+	assert_str(stone.face_material).is_equal("stone")
+	assert_vector(Vector2(stone._chip().r, stone._chip().g)).is_equal(Vector2(Impact.STONE_CHIP.r, Impact.STONE_CHIP.g))
+	assert_bool(stone.burst_on_ground()).is_true()           # chips and grey dust at the foot, in the y-sort
+	# no face at all (a prop with a foot box): plain dust, no chips
+	var plain := Impact.new()
+	auto_free(plain)
+	assert_float(plain._chip().a).is_equal(0.0)
+	# the faces the zones declare
+	var cross: Node = auto_free(load("res://zones/crossroads/crossroads.tscn").instantiate())
+	assert_dict(Impact.face_of(cross.get_node("Walls/Building_hut"))).is_equal({"height": 90.0, "material": "timber"})
+	assert_str(String(Impact.face_of(cross.get_node("Walls/Building_library")).material)).is_equal("stone")
+	assert_str(String(Impact.face_of(cross.get_node("Walls/Face_lane_face")).material)).is_equal("stone")
+	assert_float(float(Impact.face_of(cross.get_node("Walls/Face_terrace_bank_e")).height)).is_equal(0.0)
+	var vault: Node = auto_free(load("res://zones/undercroft/undercroft.tscn").instantiate())
+	for side in ["Walls/Wall_south", "Walls/Wall_corridor_s", "Walls/Wall_west_s", "Walls/Wall_east"]:
+		assert_float(float(Impact.face_of(vault.get_node(side)).height)).override_failure_message(side).is_equal(0.0)
+	assert_dict(Impact.face_of(vault.get_node("Walls/Wall_north_hall"))).is_equal({"height": 120.0, "material": "stone"})
 
 ## #509 round 1, F2: the dropped arrow is drawn in the y-sort at its ground point, so a house whose foot is
 ## further south (a roof over it) is drawn after it and covers it. Only the burst up on a thing is z 1.
@@ -335,6 +380,10 @@ func test_a_flight_that_ends_over_water_sinks_and_over_a_low_prop_leaves_nothing
 	var ring := _impacts(pond)
 	assert_int(ring.size()).is_equal(1)
 	assert_int(ring[0].kind).is_equal(Impact.Kind.SINK)
+	# #509 round 2, S2: a shot's ring has no arrow to fall first; it starts at once where the shot ended
+	assert_bool(ring[0].shaft).is_false()
+	assert_vector(ring[0].drift).is_equal(Vector2.ZERO)
+	assert_float(ring[0].lifetime()).is_equal(Impact.RING)
 
 ## #509 round 1, P3: the arrow's restore never ends a melee hold that began while it held.
 func test_an_arrow_hold_does_not_cut_a_melee_hold_short() -> void:

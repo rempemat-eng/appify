@@ -4,7 +4,7 @@ extends Node2D
 ## flies over low solids (a bench, a stump, water: Arrow.is_low, docs/physics.md), so cover works both ways.
 ## Where it breaks it leaves a splat in the seed's colours (actors/impact.gd, 16 Nov): on the player at the
 ## seed's own height (whose own hurt flash and cue follow), on a solid (with the `shot_wall` cue; at the solid's
-## foot unless it has a drawn face, Impact.has_face) and on the ground where it falls at the end of its flight
+## foot unless it meets a face it can show on, Impact.sticks) and on the ground where it falls at the end of its flight
 ## (a ring over water, nothing over another low solid). Drawing and sound only: no rule changes.
 const LIFT := 6.0          # the seed is drawn this far above the shot's ground point (creature_look.gd)
 const SPEED := 80.0 * 3.0  # less than the player's 100 world px/s dodge
@@ -35,8 +35,8 @@ func _physics_process(delta: float) -> void:
 			body.take_damage(damage, direction)
 		else:
 			Sound.play(&"shot_wall")
-			if not Impact.has_face(body as Node, direction):
-				lift = 0.0
+			if not Impact.sticks(body as Node, global_position, LIFT):
+				lift = 0.0                   # at the solid's foot unless it meets a face it can show on
 		Impact.spawn(get_parent(), Impact.Kind.SPLAT, hit.position, lift, direction, false, null, Impact.SEED_TINT)
 		finish()
 		return

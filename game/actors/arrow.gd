@@ -29,6 +29,7 @@ var dir := Vector2.RIGHT
 var height := 0.0
 var _t := 0.0
 var _left := false
+var _prev := Vector2.ZERO        ## its ground point one step before, to tell which edge of a solid it crossed
 
 ## Places the arrow at the bow's tip. `archer` is who shot it; left out, it is the player among the arrow's
 ## own siblings that stands nearest the tip (the player adds its arrow to its own parent), so no tree-wide
@@ -37,6 +38,7 @@ func setup(at_ground: Vector2, lift: float, direction: Vector2, archer: Node2D =
 	global_position = at_ground
 	height = lift
 	dir = direction.normalized()
+	_prev = global_position
 	_start_clear_of_walls(archer if archer != null else _archer_beside(at_ground))
 
 func _archer_beside(tip: Vector2) -> Node2D:
@@ -121,6 +123,7 @@ func _physics_process(delta: float) -> void:
 				_leave(Impact.Kind.DROP)
 		queue_free()
 		return
+	_prev = global_position
 	global_position += dir * SPEED * delta
 	queue_redraw()
 
@@ -139,13 +142,15 @@ func _on_body(body: Node) -> void:
 			_leave(Impact.Kind.CLINK, null, body as Node2D)
 	else:
 		Sound.play(&"arrow_wall")        # it stopped at a solid
-		if Impact.has_face(body, dir):
-			_leave(Impact.Kind.WALL)     # a drawn face at its height (a house, a terrace face): it sticks
-		else:
-			# a tree, a rock, a prop with only a foot box, or a face met from behind: nothing is drawn at the
-			# arrow's height there, so it falls to the solid's foot, knocked back off it (#509 round 1, F1)
-			var fx := _leave(Impact.Kind.DROP)
-			if fx != null:
+		# it sticks only in a timber or earth face it met across the south edge, below the face's top
+		# (Impact.sticks); otherwise nothing is drawn to stick in at its height, or the face is stone, and it
+		# falls to the solid's foot, knocked back off it (#509 rounds 1 and 2, F1, F1b, S1)
+		var face := Impact.face_of(body)
+		var fx := _leave(Impact.Kind.WALL if Impact.sticks(body, _prev, height) else Impact.Kind.DROP)
+		if fx != null:
+			if float(face.height) > 0.0:
+				fx.face_material = String(face.material)
+			if fx.kind == Impact.Kind.DROP:
 				fx.drift = (-dir * 4.0).round()
 	queue_free()
 

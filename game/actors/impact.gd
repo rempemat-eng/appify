@@ -12,11 +12,14 @@ extends Node2D
 ##   CLINK  an arrow that glanced off (enemies/glance.gd, whose spark and word show over the creature): thin
 ##          cool steel streaks thrown back the way the arrow came, and the arrow bouncing back and falling.
 ##          Never warm and never a star, so a glance never reads as a hit. No hit-stop.
-##   WALL   an arrow stopped by a solid with a drawn face at its height (`has_face`: a building, a terrace or
-##          lane face, a vault wall), met from the south or the side: dust and two chips, the arrow stuck in it.
-##   DROP   an arrow that falls to the ground: at the end of its flight (carried a little on), or off a solid
-##          with no face at its height (a tree, a rock, a prop with only a foot box) or met from its north side
-##          (knocked back off it, so a house hides it): it falls, lies there and fades, with dust at its feet.
+##   WALL   an arrow stuck in a solid (`sticks`): only one that crossed the solid's south edge, below the top
+##          of its drawn face (`impact_face`, texels), when the face is timber or earth (`impact_material`):
+##          the timber houses. Dust and two chips, the arrow stuck in it.
+##   DROP   an arrow that falls to the ground: at the end of its flight (carried a little on), or off any other
+##          solid (a tree, a rock, a prop with only a foot box, a face met on another edge or above its top,
+##          knocked back off it, so a house hides it): it falls, lies there and fades, with dust at its feet.
+##          On stone (`impact_material` "stone": walls, the library, the vault) the dust is stone grey and
+##          chips fly: the arrow never sticks in stone (#509 round 2, S1).
 ##   SINK   an arrow whose flight ends over water: it falls in, leaves a small ring and is gone. No dust.
 ##   SPLAT  a creature's shot (the toad's seed, the Thornback's thorn) breaking on the player or on a solid:
 ##          droplets in the shooter's own colours (`tint`, light and dark), on the ground unless the solid has
@@ -48,7 +51,8 @@ const HIT_STOP := 0.05   ## real seconds the world holds when an arrow counts (3
 ## restore puts the scale back only while it is still this value and its own hold is the newest, so it never
 ## ends a melee hold that began during it (#509 round 1, P3).
 const HOLD_SCALE := 0.06
-const FACE_FROM := 0.35  ## an arrow flying further south than this (dir.y) meets a face from behind: no sticking
+const FACE_TOP := 3.0   ## an arrow sticks only this far or more below the top of the drawn face
+const STICKY := ["timber", "earth"]   ## the materials an arrow sticks in; stone sends it down with chips
 
 const INK := Color("#2a1c1a")
 ## HIT: sand_warm 5, brass_warm 5, 4 and 3 (light to shade)
@@ -67,6 +71,11 @@ const DUST_LIT := Color("#d6b187")
 const DUST := Color("#c39771")
 const DUST_DARK := Color("#a87c60")
 const SPLINTER := Color("#a87c52")
+## stone 5, 4, 3 (dust off a stone face) and stone 2 (its chips)
+const STONE_LIT := Color("#c5b8a4")
+const STONE := Color("#aba194")
+const STONE_DARK := Color("#8e8782")
+const STONE_CHIP := Color("#70676a")
 ## SPLAT tints of the two shots: the toad's seed (its pale flesh, grass 5, over its husk) and the Thornback's
 ## thorn (sand 3 over its plum), from the shots' own pictures.
 const SEED_TINT: Array[Color] = [Color("#cfcf84"), Color("#4a3c2c")]
@@ -85,6 +94,7 @@ var reduced := false
 var _offset := Vector2.ZERO
 var _t := 0.0
 var drift := Vector2.ZERO         ## DROP: how far the falling arrow is carried (on, or back off a solid)
+var face_material := ""              ## the face it met: "timber", "earth", "stone" or "" (none: plain dust)
 var _rode := true                 ## false once the creature it rode on is gone or freed
 var _burst: Node2D                ## draws the burst over its neighbours (z_index 1) when it is up on a thing
 var _ci: CanvasItem               ## the canvas the cell helpers draw on
@@ -102,7 +112,7 @@ static func spawn(host: Node, what: Kind, at: Vector2, height: float, along: Vec
 	fx.dir = along.normalized() if along.length() > 0.01 else Vector2.RIGHT
 	fx.shaft = with_shaft
 	fx.follow = on
-	fx.drift = (fx.dir * 6.0).round()
+	fx.drift = (fx.dir * 6.0).round() if with_shaft else Vector2.ZERO   # a shot's ring is where it ended
 	if colours.size() == 2:
 		fx.tint = colours
 	host.add_child(fx)
@@ -131,16 +141,38 @@ static func body_lift(body: Node, height: float) -> float:
 				return clampf(tall * 0.5, 0.0, height)
 	return height
 
-## True when an arrow meeting `body` while flying along `along` sticks in a drawn face: the body says
-## `impact_face` (a meta the zone generators write on buildings, faces and vault walls, tools/gen_blockout.py
-## `solid(face=True)`, or a method of that name), and the arrow does not come at it from its north side.
-## Everything else has only a foot box under its picture (trees, rocks, props): the arrow drops.
-static func has_face(body: Node, along: Vector2) -> bool:
-	if body == null or not is_instance_valid(body) or along.y > FACE_FROM:
-		return false
+## The drawn face of `body`: {"height": texels from its foot to the top of the face as drawn (0: none),
+## "material": "timber", "earth" or "stone"}. Written by the zone generators as the metas `impact_face` and
+## `impact_material` (tools/gen_blockout.py `solid(face=...)`), or answered by a method `impact_face()`.
+static func face_of(body: Node) -> Dictionary:
+	if body == null or not is_instance_valid(body):
+		return {"height": 0.0, "material": ""}
 	if body.has_method("impact_face"):
-		return bool(body.call("impact_face"))
-	return bool(body.get_meta("impact_face", false))
+		return body.call("impact_face")
+	return {"height": float(body.get_meta("impact_face", 0.0)), "material": String(body.get_meta("impact_material", ""))}
+
+## True when a shot whose ground point was at `from` one step before it met `body`, flying `lift` texels up,
+## sticks in it (#509 round 2, F1b): the body has a timber or earth face, the shot crossed the body's south edge
+## (it was south of the box's bottom and within its width; no body declares a side face), and it meets the
+## face at least FACE_TOP below the face's drawn top. Anything else, the shot falls (it is never moved down).
+static func sticks(body: Node, from: Vector2, lift: float) -> bool:
+	var face := face_of(body)
+	if float(face.height) <= 0.0 or not STICKY.has(String(face.material)) or lift > float(face.height) - FACE_TOP:
+		return false
+	var box := box_of(body)
+	return box.size != Vector2.ZERO and from.y > box.end.y and from.x >= box.position.x and from.x <= box.end.x
+
+## The global rectangle of a body's first rectangle shape (unrotated), or an empty Rect2.
+static func box_of(body: Node) -> Rect2:
+	if not body is CollisionObject2D:
+		return Rect2()
+	var co := body as CollisionObject2D
+	for owner_id in co.get_shape_owners():
+		var cs := co.shape_owner_get_owner(owner_id) as CollisionShape2D
+		if cs != null and cs.shape is RectangleShape2D:
+			var size := (cs.shape as RectangleShape2D).size * cs.global_scale.abs()
+			return Rect2(cs.global_position - size * 0.5, size)
+	return Rect2()
 
 ## What lies under a flight's end at `at` (global texels): "water" (low terrain the zone generator marks
 ## `impact_water`, tools/gen_zone.py), "low" (any other low solid: a bench, a stump, a bush, a drop) or
@@ -166,7 +198,7 @@ static func ground_at(space: PhysicsDirectSpaceState2D, at: Vector2) -> String:
 static func lifetime_of(what: Kind, still: bool, with_shaft := true) -> float:
 	var burst := STILL if still else FRAME * FRAMES
 	if not with_shaft:
-		return burst
+		return (STILL if still else RING) if what == Kind.SINK else burst   # a shot's ring, from its start
 	match what:
 		Kind.HIT, Kind.WALL:
 			return maxf(burst, STUCK if still else STUCK + FADE)
@@ -261,9 +293,9 @@ func _draw_burst(o: Vector2) -> void:
 		Kind.CLINK:
 			_draw_streaks(o, f)
 		Kind.WALL:
-			_draw_dust(o, f, 3, true)
+			_draw_dust(o, f, 3, _chip())
 		Kind.DROP:
-			_draw_dust(drift, f, 2, false)
+			_draw_dust(drift, f, 3 if face_material == "stone" else 2, _chip())
 		Kind.SPLAT:
 			_draw_splat(o, f)
 
@@ -382,7 +414,17 @@ func _draw_streaks(o: Vector2, f: int) -> void:
 	_cells(pts, 1, cols)
 
 ## A puff of dust from the contact, rising and spreading; with `splinters`, two chips of wood flying off.
-func _draw_dust(o: Vector2, f: int, clumps: int, splinters: bool) -> void:
+## The chips a face throws: timber splinters, grey stone; none for earth, or off a solid with no face.
+func _chip() -> Color:
+	match face_material:
+		"timber":
+			return SPLINTER
+		"stone":
+			return STONE_CHIP
+	return Color(0, 0, 0, 0)
+
+func _draw_dust(o: Vector2, f: int, clumps: int, chip: Color) -> void:
+	var splinters := chip.a > 0.0
 	var side := dir.orthogonal().normalized()
 	var radius: Array[float] = [3.0, 4.0, 4.0, 3.0]
 	var rise: Array[float] = [0.0, 2.0, 4.0, 6.0]
@@ -401,8 +443,8 @@ func _draw_dust(o: Vector2, f: int, clumps: int, splinters: bool) -> void:
 			var at := o + away * (4.0 + 4.0 * f)
 			pts.append(at)
 			pts.append(at + (away.orthogonal() if f == 1 else away).round())
-			cols.append(SPLINTER)
-			cols.append(SPLINTER)
+			cols.append(chip)
+			cols.append(chip)
 		_cells(pts, 1, cols)
 
 ## A round clump of dust, its upper left lit and its lower right in shade, no outline (dust is soft).
@@ -413,11 +455,12 @@ func _disc(c: Vector2, r: float, a: float) -> void:
 			var v := Vector2(x, y)
 			if v.length() > r + 0.25:
 				continue
-			var col := DUST
+			var stone := face_material == "stone"
+			var col := STONE if stone else DUST
 			if x + y <= -n:
-				col = DUST_LIT
+				col = STONE_LIT if stone else DUST_LIT
 			elif x + y >= n:
-				col = DUST_DARK
+				col = STONE_DARK if stone else DUST_DARK
 			col.a = a
 			_ci.draw_rect(Rect2(c + v, Vector2.ONE), col)
 
@@ -454,10 +497,10 @@ func _draw_splat(o: Vector2, f: int) -> void:
 
 ## SINK: the ring where the arrow went into the water, two texels thick, widening (still under reduced motion).
 func _draw_ring() -> void:
-	var t := _t if reduced else _t - FALL
+	var t := _t if reduced or not shaft else _t - FALL
 	if t < 0.0:
 		return
-	var k := 0.5 if reduced else clampf(t / RING, 0.0, 1.0)
+	var k := 0.5 if reduced else clampf(t / RING, 0.0, 1.0)   # a shot's ring (no arrow) starts at once
 	var rx := roundf(3.0 + 5.0 * k)
 	var ry := roundf(rx * 0.5)
 	var c := (drift).round()

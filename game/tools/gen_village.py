@@ -125,6 +125,19 @@ def render(zid: str, preview: str | None) -> None:
     subprocess.run(cmd, cwd=ROOT, check=True)
 
 
+# What is drawn above each face's and building's box, for what a shot shows when it meets it
+# (game/actors/impact.gd `sticks`): (height in texels from the foot to the top of the wall, material).
+# Measured on 16 Nov 2026 (#509): the dry-stone walls in ground.png (lane bank rows 78-113, the lane and
+# terrace walls 420-455: 36 each); the buildings from their pictures, foot to eave (to about 5 texels). The hay
+# slope (terrace_bank_e) has no wall drawn, so it has no face. Only timber takes a stuck arrow.
+DRAWN_FACES = {
+    'lane_bank': (36, 'stone'), 'lane_face': (36, 'stone'),
+    'terrace_face_w': (36, 'stone'), 'terrace_face_e': (36, 'stone'),
+    'hut': (90, 'timber'), 'north_cottages': (110, 'timber'), 'fern_cottage': (110, 'timber'),
+    'library': (110, 'stone'), 'bakery': (120, 'stone'), 'herbalist': (110, 'stone'), 'smithy': (118, 'stone'),
+}
+
+
 def build(plan: dict, kit: dict) -> str:
     s = GB.Scene()
     zid = plan['id']
@@ -149,9 +162,9 @@ def build(plan: dict, kit: dict) -> str:
                     ('EdgeW', [bx - edge, by, edge, bh]), ('EdgeE', [bx + bw, by, edge, bh])):
         s.solid(name, 'Walls', r)
     for f in plan.get('faces', []):
-        s.solid('Face_' + f['id'], 'Walls', f['rect'], face=True)
+        s.solid('Face_' + f['id'], 'Walls', f['rect'], face=DRAWN_FACES.get(f['id']))
     for b in plan.get('buildings', []):
-        s.solid('Building_' + b['id'], 'Walls', b['rect'], face=True)
+        s.solid('Building_' + b['id'], 'Walls', b['rect'], face=DRAWN_FACES.get(b['id']))
     boxes = solids(plan, kit)
     for o in kit['objects']:
         if o['id'] in boxes and not o.get('cond'):

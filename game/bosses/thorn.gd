@@ -58,7 +58,8 @@ func _on_body(body: Node) -> void:
 		finish()
 	elif not body.is_in_group("enemy"):
 		Sound.play(&"shot_wall")
-		_splat(12.0 if Impact.has_face(body, direction) else 0.0)   # at a solid's foot unless it has a face
+		var from := global_position - direction * SPEED / 60.0
+		_splat(12.0 if Impact.sticks(body, from, 12.0) else 0.0)   # at a solid's foot unless it meets a face
 		finish()
 
 func _splat(lift := 12.0) -> void:
