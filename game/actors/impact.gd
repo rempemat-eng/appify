@@ -218,10 +218,18 @@ static func hit_stop(tree: SceneTree) -> bool:
 	Engine.time_scale = HOLD_SCALE
 	_hold_token += 1
 	var mine := _hold_token
-	tree.create_timer(HIT_STOP, true, false, true).timeout.connect(func() -> void:
-		if mine == _hold_token and Engine.time_scale == HOLD_SCALE:
-			Engine.time_scale = 1.0)
+	tree.create_timer(HIT_STOP, true, false, true).timeout.connect(func() -> void: release_hold(mine))
 	return true
+
+## The newest arrow hold's token (0 before any).
+static func hold_token() -> int:
+	return _hold_token
+
+## Ends the arrow hold `token`: the scale goes back to 1 only while that hold is the newest and the scale is
+## still the arrow's own (never a melee hold, never a newer arrow hold).
+static func release_hold(token: int) -> void:
+	if token == _hold_token and Engine.time_scale == HOLD_SCALE:
+		Engine.time_scale = 1.0
 
 func _ready() -> void:
 	reduced = bool(SaveGame.setting("reduced_motion", false))
