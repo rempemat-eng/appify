@@ -12,20 +12,28 @@ extends Node2D
 ##   CLINK  an arrow that glanced off (enemies/glance.gd, whose spark and word show over the creature): thin
 ##          cool steel streaks thrown back the way the arrow came, and the arrow bouncing back and falling.
 ##          Never warm and never a star, so a glance never reads as a hit. No hit-stop.
-##   WALL   an arrow stopped by a solid: a puff of dust and two splinters, the arrow stuck in the face.
-##   DROP   an arrow at the end of its flight: it falls to the ground, lies there and fades, with a small puff.
+##   WALL   an arrow stopped by a solid with a drawn face at its height (`has_face`: a building, a terrace or
+##          lane face, a vault wall), met from the south or the side: dust and two chips, the arrow stuck in it.
+##   DROP   an arrow that falls to the ground: at the end of its flight (carried a little on), or off a solid
+##          with no face at its height (a tree, a rock, a prop with only a foot box) or met from its north side
+##          (knocked back off it, so a house hides it): it falls, lies there and fades, with dust at its feet.
+##   SINK   an arrow whose flight ends over water: it falls in, leaves a small ring and is gone. No dust.
 ##   SPLAT  a creature's shot (the toad's seed, the Thornback's thorn) breaking on the player or on a solid:
-##          droplets in the shooter's own colours (`tint`, light and dark).
+##          droplets in the shooter's own colours (`tint`, light and dark), on the ground unless the solid has
+##          a face.
 ##
-## The node stands on the ground under the contact (as the arrow does) and draws the contact `lift` texels
-## above it, over its neighbours (z_index 1, like the other short marks: world/camp_settle.gd). It is a child
-## of the shot's own parent, so it goes with its zone, and it stops with the tree when the game is paused.
+## The node stands on the ground under the contact (as the arrow does) and y-sorts there with everything
+## else: a stuck or dropped arrow, ground dust and a ring are drawn by it, so a roof, a crown or a creature in
+## front covers them (#509 round 1, F2). Only a burst up on what was hit (the star, the steel streaks, the
+## puff on a face, a splat on the player) is drawn by its child `Burst` at z_index 1, over its neighbours for
+## its 0.2 s, like the other short marks (world/camp_settle.gd). It is a child of the shot's own parent, so it
+## goes with its zone, and it stops with the tree when the game is paused.
 ##
 ## Reduced motion: no hit-stop and nothing moves. The burst is one still drawing for STILL seconds, an arrow
 ## stays where it stopped for STUCK and goes without a fade, a dropped arrow is on the ground at once, and a
 ## glancing arrow does not bounce (it goes with its spark).
 
-enum Kind { HIT, CLINK, WALL, DROP, SPLAT }
+enum Kind { HIT, CLINK, WALL, DROP, SINK, SPLAT }
 
 const FRAME := 0.05      ## seconds each drawing of a burst shows
 const FRAMES := 4
@@ -34,8 +42,13 @@ const STUCK := 0.32      ## an arrow stays where it stopped this long
 const FADE := 0.18       ## then fades over this long
 const FALL := 0.12       ## an arrow at the end of its flight falls to the ground in this long
 const BOUNCE := 0.26     ## a glancing arrow bounces back and falls in this long
+const RING := 0.2       ## SINK: the ring on the water shows this long after the arrow falls in
 const HIT_STOP := 0.05   ## real seconds the world holds when an arrow counts (3 frames at 60)
-const HOLD_SCALE := 0.05 ## the engine's time scale while it holds (as the melee's hit-stop: actors/player.gd)
+## The engine's time scale while an arrow holds. Not the melee's 0.05 (actors/player.gd `_hitstop`): the arrow's
+## restore puts the scale back only while it is still this value and its own hold is the newest, so it never
+## ends a melee hold that began during it (#509 round 1, P3).
+const HOLD_SCALE := 0.06
+const FACE_FROM := 0.35  ## an arrow flying further south than this (dir.y) meets a face from behind: no sticking
 
 const INK := Color("#2a1c1a")
 ## HIT: sand_warm 5, brass_warm 5, 4 and 3 (light to shade)
@@ -47,7 +60,9 @@ const OCHRE := Color("#ca9933")
 const STEEL := Color("#d6dae0")
 const SPARK := Color("#f4f1e8")
 const SLATE := Color("#8e91a1")
-## WALL and DROP: path 5, 4, 3 (dust) and timber 4 (splinters)
+## WALL and DROP: path 5, 4, 3 (dust) and timber 4 (splinters); SINK: water 5 and 4 (the ring)
+const FOAM := Color("#92b8c5")
+const RIPPLE := Color("#6ba2c2")
 const DUST_LIT := Color("#d6b187")
 const DUST := Color("#c39771")
 const DUST_DARK := Color("#a87c60")
@@ -69,7 +84,12 @@ var tint: Array[Color] = [GOLD, OCHRE]
 var reduced := false
 var _offset := Vector2.ZERO
 var _t := 0.0
+var drift := Vector2.ZERO         ## DROP: how far the falling arrow is carried (on, or back off a solid)
 var _rode := true                 ## false once the creature it rode on is gone or freed
+var _burst: Node2D                ## draws the burst over its neighbours (z_index 1) when it is up on a thing
+var _ci: CanvasItem               ## the canvas the cell helpers draw on
+
+static var _hold_token := 0       ## the newest arrow hold; an older hold's restore leaves the scale alone
 
 ## The effect for a shot that stopped: added to `host` (the shot's parent) with its ground point at `at`.
 static func spawn(host: Node, what: Kind, at: Vector2, height: float, along: Vector2, with_shaft := false,
@@ -82,6 +102,7 @@ static func spawn(host: Node, what: Kind, at: Vector2, height: float, along: Vec
 	fx.dir = along.normalized() if along.length() > 0.01 else Vector2.RIGHT
 	fx.shaft = with_shaft
 	fx.follow = on
+	fx.drift = (fx.dir * 6.0).round()
 	if colours.size() == 2:
 		fx.tint = colours
 	host.add_child(fx)
@@ -110,6 +131,37 @@ static func body_lift(body: Node, height: float) -> float:
 				return clampf(tall * 0.5, 0.0, height)
 	return height
 
+## True when an arrow meeting `body` while flying along `along` sticks in a drawn face: the body says
+## `impact_face` (a meta the zone generators write on buildings, faces and vault walls, tools/gen_blockout.py
+## `solid(face=True)`, or a method of that name), and the arrow does not come at it from its north side.
+## Everything else has only a foot box under its picture (trees, rocks, props): the arrow drops.
+static func has_face(body: Node, along: Vector2) -> bool:
+	if body == null or not is_instance_valid(body) or along.y > FACE_FROM:
+		return false
+	if body.has_method("impact_face"):
+		return bool(body.call("impact_face"))
+	return bool(body.get_meta("impact_face", false))
+
+## What lies under a flight's end at `at` (global texels): "water" (low terrain the zone generator marks
+## `impact_water`, tools/gen_zone.py), "low" (any other low solid: a bench, a stump, a bush, a drop) or
+## "ground". Asked in the physics step, never in a contact callback.
+static func ground_at(space: PhysicsDirectSpaceState2D, at: Vector2) -> String:
+	var q := PhysicsPointQueryParameters2D.new()
+	q.position = at
+	q.collision_mask = Arrow.LOW
+	var what := "ground"
+	for hit in space.intersect_point(q, 8):
+		var body := hit.collider as CollisionObject2D
+		if body == null or not Arrow.is_low(body):
+			continue
+		if body.get_meta("impact_water", false):
+			return "water"
+		var owner_node: Variant = body.shape_owner_get_owner(body.shape_find_owner(int(hit.shape)))
+		if owner_node is Node and (owner_node as Node).get_meta("impact_water", false):
+			return "water"
+		what = "low"
+	return what
+
 ## Seconds the effect lives before it frees itself.
 static func lifetime_of(what: Kind, still: bool, with_shaft := true) -> float:
 	var burst := STILL if still else FRAME * FRAMES
@@ -120,6 +172,8 @@ static func lifetime_of(what: Kind, still: bool, with_shaft := true) -> float:
 			return maxf(burst, STUCK if still else STUCK + FADE)
 		Kind.DROP:
 			return maxf(burst, STUCK if still else FALL + STUCK + FADE)
+		Kind.SINK:
+			return STILL if still else FALL + RING
 		Kind.CLINK:
 			return burst if still else maxf(burst, BOUNCE + FADE)
 	return burst
@@ -130,14 +184,25 @@ static func hit_stop(tree: SceneTree) -> bool:
 	if tree == null or SaveGame.setting("reduced_motion", false) or Engine.time_scale < 1.0:
 		return false
 	Engine.time_scale = HOLD_SCALE
+	_hold_token += 1
+	var mine := _hold_token
 	tree.create_timer(HIT_STOP, true, false, true).timeout.connect(func() -> void:
-		if is_equal_approx(Engine.time_scale, HOLD_SCALE):
+		if mine == _hold_token and Engine.time_scale == HOLD_SCALE:
 			Engine.time_scale = 1.0)
 	return true
 
 func _ready() -> void:
-	z_index = 1
 	reduced = bool(SaveGame.setting("reduced_motion", false))
+	_burst = Node2D.new()
+	_burst.name = "Burst"
+	_burst.z_index = 1
+	add_child(_burst)
+	_burst.draw.connect(_draw_burst_on_top)
+
+## True when the burst is on the ground (dust where an arrow lies, a ring, a splat at a solid's foot): it is
+## then drawn in the y-sort with the arrow, not over everything.
+func burst_on_ground() -> bool:
+	return kind == Kind.DROP or kind == Kind.SINK or lift <= 0.0
 
 func lifetime() -> float:
 	return lifetime_of(kind, reduced, shaft)
@@ -154,6 +219,7 @@ func _process(delta: float) -> void:
 			_rode = false
 			follow = null
 	queue_redraw()
+	_burst.queue_redraw()
 
 ## True for a creature that has been freed (its own fade and leaving take over: no arrow rides on it).
 static func _gone(n: Node) -> bool:
@@ -170,9 +236,22 @@ func burst_frame() -> int:
 	return f if f < FRAMES else -1
 
 func _draw() -> void:
+	_ci = self
 	var o := Vector2(0, -lift).round()
 	if shaft:
 		_draw_shaft(o)
+	if kind == Kind.SINK:
+		_draw_ring()
+	elif burst_on_ground():
+		_draw_burst(o)
+
+func _draw_burst_on_top() -> void:
+	if burst_on_ground():
+		return
+	_ci = _burst
+	_draw_burst(Vector2(0, -lift).round())
+
+func _draw_burst(o: Vector2) -> void:
 	var f := burst_frame()
 	if f < 0:
 		return
@@ -184,7 +263,7 @@ func _draw() -> void:
 		Kind.WALL:
 			_draw_dust(o, f, 3, true)
 		Kind.DROP:
-			_draw_dust(Vector2.ZERO + _drop_ahead(), f, 2, false)
+			_draw_dust(drift, f, 2, false)
 		Kind.SPLAT:
 			_draw_splat(o, f)
 
@@ -193,9 +272,6 @@ func _shaft_alpha(from: float) -> float:
 	if reduced:
 		return 1.0 if _t < STUCK else 0.0
 	return clampf(1.0 - (_t - from) / FADE, 0.0, 1.0)
-
-func _drop_ahead() -> Vector2:
-	return (dir * 6.0).round()
 
 func _draw_shaft(o: Vector2) -> void:
 	match kind:
@@ -206,8 +282,14 @@ func _draw_shaft(o: Vector2) -> void:
 			Arrow.draw_arrow(self, o, dir, false, _shaft_alpha(STUCK))
 		Kind.DROP:
 			var k := 1.0 if reduced else clampf(_t / FALL, 0.0, 1.0)
-			var at := Vector2(0, -lift * (1.0 - k * k)).round() + (_drop_ahead() * k).round()
+			var at := Vector2(0, -lift * (1.0 - k * k)).round() + (drift * k).round()
 			Arrow.draw_arrow(self, at, dir, true, _shaft_alpha(FALL + STUCK))
+		Kind.SINK:
+			if reduced or _t >= FALL:
+				return
+			var k := clampf(_t / FALL, 0.0, 1.0)
+			var at := Vector2(0, -lift * (1.0 - k * k)).round() + (drift * k).round()
+			Arrow.draw_arrow(self, at, dir, true, 1.0 - k * 0.5)
 		Kind.CLINK:
 			if reduced:
 				return
@@ -224,9 +306,9 @@ func _cells(points: Array, size: int, colours: Array, ink := true) -> void:
 	var half := Vector2(size, size) * 0.5
 	if ink:
 		for p in points:
-			draw_rect(Rect2((p - half).round() - Vector2.ONE, Vector2(size + 2, size + 2)), INK)
+			_ci.draw_rect(Rect2((p - half).round() - Vector2.ONE, Vector2(size + 2, size + 2)), INK)
 	for i in points.size():
-		draw_rect(Rect2((points[i] - half).round(), Vector2(size, size)), colours[mini(i, colours.size() - 1)])
+		_ci.draw_rect(Rect2((points[i] - half).round(), Vector2(size, size)), colours[mini(i, colours.size() - 1)])
 
 ## Lit from the upper left: a point up and to the left of the contact takes the light colour.
 static func _lit(v: Vector2, light: Color, shade: Color) -> Color:
@@ -242,7 +324,8 @@ func _draw_star(o: Vector2, f: int) -> void:
 				pts.append(o + v * 5.0)
 				cols.append(_lit(v, WHITE, GOLD))
 			_cells(pts, 2, cols)
-			_cells([o], 5, [WHITE])
+			_cells([o], 5, [GOLD])
+			_cells([o], 1, [WHITE], false)
 		1:
 			for v in CARDINAL:
 				for r: float in [4.0, 6.0, 8.0, 10.0]:
@@ -252,7 +335,8 @@ func _draw_star(o: Vector2, f: int) -> void:
 				pts.append(o + v.normalized() * 5.0)
 				cols.append(_lit(v, GOLD, AMBER))
 			_cells(pts, 2, cols)
-			_cells([o], 3, [WHITE])
+			_cells([o], 3, [GOLD])
+			_cells([o], 1, [WHITE], false)
 		2:
 			for v in CARDINAL:
 				for r: float in [10.0, 12.0]:
@@ -335,7 +419,7 @@ func _disc(c: Vector2, r: float, a: float) -> void:
 			elif x + y >= n:
 				col = DUST_DARK
 			col.a = a
-			draw_rect(Rect2(c + v, Vector2.ONE), col)
+			_ci.draw_rect(Rect2(c + v, Vector2.ONE), col)
 
 ## The shot breaking: a blob in its colours, then droplets flying out and falling.
 func _draw_splat(o: Vector2, f: int) -> void:
@@ -346,14 +430,14 @@ func _draw_splat(o: Vector2, f: int) -> void:
 	match f:
 		0:
 			var blob := Rect2(o.round() - Vector2(3, 2), Vector2(7, 5))
-			draw_rect(blob.grow(1.0), INK)
-			draw_rect(blob, light)
-			draw_rect(Rect2(blob.position + Vector2(0, 4), Vector2(7, 1)), dark)
+			_ci.draw_rect(blob.grow(1.0), INK)
+			_ci.draw_rect(blob, light)
+			_ci.draw_rect(Rect2(blob.position + Vector2(0, 4), Vector2(7, 1)), dark)
 		1:
 			for i in 6:
 				var v := Vector2.RIGHT.rotated(TAU * i / 6.0 + 0.3)
 				pts.append(o + v * 7.0)
-				cols.append(_lit(v, light, dark))
+				cols.append(light)
 			_cells(pts, 3, cols)
 		2:
 			for i in 6:
@@ -367,3 +451,18 @@ func _draw_splat(o: Vector2, f: int) -> void:
 				pts.append(o + v * 12.0 + Vector2(0, 3))
 				cols.append(dark)
 			_cells(pts, 1, cols)
+
+## SINK: the ring where the arrow went into the water, two texels thick, widening (still under reduced motion).
+func _draw_ring() -> void:
+	var t := _t if reduced else _t - FALL
+	if t < 0.0:
+		return
+	var k := 0.5 if reduced else clampf(t / RING, 0.0, 1.0)
+	var rx := roundf(3.0 + 5.0 * k)
+	var ry := roundf(rx * 0.5)
+	var c := (drift).round()
+	var a := 1.0 if reduced else 1.0 - k * 0.6
+	for i in 16:
+		var ang := TAU * i / 16.0
+		var p := (c + Vector2(cos(ang) * rx, sin(ang) * ry)).round()
+		_ci.draw_rect(Rect2(p, Vector2(2, 1)), Color(FOAM if ang > PI else RIPPLE, a))

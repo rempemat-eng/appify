@@ -197,6 +197,7 @@ shape = SubResource("s1")
 
 [node name="Wall_north_hall" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_north_hall"]
 position = Vector2(324, 84)
@@ -204,6 +205,7 @@ shape = SubResource("s2")
 
 [node name="Wall_sep1_n" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_sep1_n"]
 position = Vector2(624, 168)
@@ -211,6 +213,7 @@ shape = SubResource("s3")
 
 [node name="Wall_corridor_n" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_corridor_n"]
 position = Vector2(924, 156)
@@ -218,6 +221,7 @@ shape = SubResource("s4")
 
 [node name="Wall_sep2_n" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_sep2_n"]
 position = Vector2(1224, 168)
@@ -225,6 +229,7 @@ shape = SubResource("s3")
 
 [node name="Wall_north_seal" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_north_seal"]
 position = Vector2(1464, 84)
@@ -232,6 +237,7 @@ shape = SubResource("s5")
 
 [node name="Wall_sep3_n" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_sep3_n"]
 position = Vector2(1704, 168)
@@ -239,6 +245,7 @@ shape = SubResource("s3")
 
 [node name="Wall_north_chamber" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_north_chamber"]
 position = Vector2(1992, 84)
@@ -246,6 +253,7 @@ shape = SubResource("s6")
 
 [node name="Wall_west_n" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_west_n"]
 position = Vector2(24, 180)
@@ -253,6 +261,7 @@ shape = SubResource("s7")
 
 [node name="Wall_west_s" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_west_s"]
 position = Vector2(24, 552)
@@ -260,6 +269,7 @@ shape = SubResource("s8")
 
 [node name="Wall_east" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_east"]
 position = Vector2(2280, 324)
@@ -267,6 +277,7 @@ shape = SubResource("s9")
 
 [node name="Wall_south" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_south"]
 position = Vector2(1152, 624)
@@ -274,6 +285,7 @@ shape = SubResource("s10")
 
 [node name="Wall_sep1_s" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_sep1_s"]
 position = Vector2(624, 540)
@@ -281,6 +293,7 @@ shape = SubResource("s11")
 
 [node name="Wall_corridor_s" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_corridor_s"]
 position = Vector2(924, 552)
@@ -288,6 +301,7 @@ shape = SubResource("s12")
 
 [node name="Wall_sep2_s" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_sep2_s"]
 position = Vector2(1224, 540)
@@ -295,6 +309,7 @@ shape = SubResource("s11")
 
 [node name="Wall_sep3_s" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
+metadata/impact_face = true
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Wall_sep3_s"]
 position = Vector2(1704, 540)

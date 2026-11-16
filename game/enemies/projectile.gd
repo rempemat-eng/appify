@@ -2,9 +2,10 @@ class_name SliceEnemyShot
 extends Node2D
 ## Slow, finite shot; physics ray prevents tunnelling and stops at solid cover. Like the player's arrow it
 ## flies over low solids (a bench, a stump, water: Arrow.is_low, docs/physics.md), so cover works both ways.
-## Where it breaks it leaves a splat in the seed's colours (actors/impact.gd, 16 Nov): on the player (whose
-## own hurt flash and cue follow), on a solid (with the `shot_wall` cue) and, smaller, where it falls at the end
-## of its flight. Drawing and sound only: no rule changes.
+## Where it breaks it leaves a splat in the seed's colours (actors/impact.gd, 16 Nov): on the player at the
+## seed's own height (whose own hurt flash and cue follow), on a solid (with the `shot_wall` cue; at the solid's
+## foot unless it has a drawn face, Impact.has_face) and on the ground where it falls at the end of its flight
+## (a ring over water, nothing over another low solid). Drawing and sound only: no rule changes.
 const LIFT := 6.0          # the seed is drawn this far above the shot's ground point (creature_look.gd)
 const SPEED := 80.0 * 3.0  # less than the player's 100 world px/s dodge
 var direction := Vector2.RIGHT
@@ -29,17 +30,24 @@ func _physics_process(delta: float) -> void:
 		hit = {}
 	if not hit.is_empty():
 		var body: Object = hit.collider
+		var lift := LIFT
 		if body.has_method("take_damage"):
 			body.take_damage(damage, direction)
 		else:
 			Sound.play(&"shot_wall")
-		Impact.spawn(get_parent(), Impact.Kind.SPLAT, hit.position, LIFT, direction, false, null, Impact.SEED_TINT)
+			if not Impact.has_face(body as Node, direction):
+				lift = 0.0
+		Impact.spawn(get_parent(), Impact.Kind.SPLAT, hit.position, lift, direction, false, null, Impact.SEED_TINT)
 		finish()
 		return
 	global_position = next
 	lifetime -= delta
 	if lifetime <= 0.0:
-		Impact.spawn(get_parent(), Impact.Kind.SPLAT, global_position, 0.0, direction, false, null, Impact.SEED_TINT)
+		match Impact.ground_at(get_world_2d().direct_space_state, global_position):
+			"water":
+				Impact.spawn(get_parent(), Impact.Kind.SINK, global_position, 0.0, direction, false, null, Impact.SEED_TINT)
+			"ground":
+				Impact.spawn(get_parent(), Impact.Kind.SPLAT, global_position, 0.0, direction, false, null, Impact.SEED_TINT)
 		finish()
 
 func finish() -> void:

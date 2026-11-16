@@ -149,9 +149,9 @@ def build(plan: dict, kit: dict) -> str:
                     ('EdgeW', [bx - edge, by, edge, bh]), ('EdgeE', [bx + bw, by, edge, bh])):
         s.solid(name, 'Walls', r)
     for f in plan.get('faces', []):
-        s.solid('Face_' + f['id'], 'Walls', f['rect'])
+        s.solid('Face_' + f['id'], 'Walls', f['rect'], face=True)
     for b in plan.get('buildings', []):
-        s.solid('Building_' + b['id'], 'Walls', b['rect'])
+        s.solid('Building_' + b['id'], 'Walls', b['rect'], face=True)
     boxes = solids(plan, kit)
     for o in kit['objects']:
         if o['id'] in boxes and not o.get('cond'):

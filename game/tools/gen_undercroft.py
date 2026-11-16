@@ -116,7 +116,7 @@ def build(plan: dict, kit: dict) -> str:
                     ('EdgeW', [bx - edge, by, edge, bh]), ('EdgeE', [bx + bw, by, edge, bh])):
         s.solid(name, 'Walls', r)
     for w in plan['walls']:
-        s.solid('Wall_' + w['id'], 'Walls', w['rect'])
+        s.solid('Wall_' + w['id'], 'Walls', w['rect'], face=True)
     def low(o):
         # the low rule (tools/gen_physics.py): rubble, roots and the urn stand under 64 texels, so an arrow
         # flies over them; the broken pillars, the lever and the sealed slab stop it
