@@ -1029,7 +1029,7 @@ def _content(cache: dict) -> dict:
                 (data/plans) and kit zone plans (kit/zones), data/camps.json's camps and room ids;
       restore   restore_id / site_id values in those scenes, "restore"/"restore_id"/"site_id" keys and
                 `restores[].id` in those plans, and every raid's reward offers.id (data/raids);
-      zone      a game/zones/<id>/ folder, kit/zones/<id>.json or data/plans/<id>.json.
+      zone      a scene file in game/zones/<id>/, kit/zones/<id>.json or data/plans/<id>.json.
 
     Prose and comments do not count. A file that cannot be read adds nothing (undecided: startable)."""
     if 'content' in cache:
@@ -1075,7 +1075,8 @@ def _content(cache: dict) -> dict:
             out['restore'].add(offer['id'])
     zdir = os.path.join(GAME, 'zones')
     if os.path.isdir(zdir):
-        out['zone'] |= {d for d in os.listdir(zdir) if os.path.isdir(os.path.join(zdir, d))}
+        out['zone'] |= {d for d in os.listdir(zdir)
+                        if any(os.path.isfile(p) for p in glob.glob(os.path.join(zdir, d, '*.tscn')))}
     cache['content'] = out
     return out
 
@@ -1149,7 +1150,7 @@ def dormant_quests(quests: dict, src: EventSources, cache: dict | None = None) -
         structured data in some zone's files, registered or not (_content). Any other name is a typo,
         and the quest stays startable (its events stay blockers);
       - its start condition asks for "zone_built:<zone>", the zone is not in data/zones.json
-        (has_flag, quests.gd:145-150) and the zone has a folder or plan (_content; not a typo);
+        (has_flag, quests.gd:145-150) and the zone has a scene or plan (_content; not a typo);
       - its start condition needs another quest done, active or started (done/active/started, and the
         quest named by step/past) and that quest is dormant (a quest that does not exist is a fault of
         its own, quest_refs, never a reason);
