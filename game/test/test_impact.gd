@@ -249,8 +249,10 @@ func test_a_timber_face_takes_an_arrow_from_the_south_and_drops_every_other() ->
 	# from the south, below the top: stuck, at the arrow's own height, the shaft in the y-sort, the puff over
 	var stuck := await _shoot_at_face(90.0, "timber", Vector2(180, 200), Vector2.UP)
 	assert_int(stuck.kind).is_equal(Impact.Kind.WALL)
-	assert_float(stuck.lift).is_equal(20.0)
-	assert_float(stuck.global_position.y).is_between(140.0 - 1.0, 140.0 + Arrow.RADIUS + Arrow.SPEED / 60.0)
+	# drawn where the arrow met the face, 20 up (the arrow's own height), but y-sorted FRONT south of the box,
+	# so the house (sorted by its feet at the box's edge) never covers it (#509 follow-up)
+	assert_float(stuck.global_position.y).is_equal(140.0 + Impact.FRONT)
+	assert_float(stuck.global_position.y - stuck.lift).is_between(140.0 - 20.0 - 1.0, 140.0 - 20.0 + Arrow.RADIUS + Arrow.SPEED / 60.0)
 	assert_str(stuck.face_material).is_equal("timber")
 	assert_bool(stuck.burst_on_ground()).is_false()
 	assert_int(stuck.z_index).is_equal(0)
@@ -277,7 +279,7 @@ func test_an_arrow_above_a_faces_top_drops_and_is_never_moved_down() -> void:
 	# the same wall, 33 up (its top less FACE_TOP): stuck at 33
 	var low := await _shoot_at_face(36.0, "timber", Vector2(180, 200), Vector2.UP, 33.0)
 	assert_int(low.kind).is_equal(Impact.Kind.WALL)
-	assert_float(low.lift).is_less_equal(33.0)
+	assert_float(140.0 - (low.global_position.y - low.lift)).is_less_equal(33.0)   # drawn at most 33 above the wall's foot
 	var over := await _shoot_at_face(36.0, "timber", Vector2(180, 200), Vector2.UP, 34.0)
 	assert_int(over.kind).is_equal(Impact.Kind.DROP)
 
@@ -339,7 +341,7 @@ func test_a_plinth_drops_the_arrow_with_stone_and_a_window_drops_it_plain() -> v
 	var timber := await _shoot_at_house(190.0, 66.0, 63.0, window)
 	assert_int(timber.kind).is_equal(Impact.Kind.WALL)
 	assert_str(timber.face_material).is_equal("timber")
-	assert_float(timber.lift).is_equal(66.0)
+	assert_float(timber.global_position.y - timber.lift).is_between(140.0 - 66.0 - 1.0, 140.0 - 66.0 + Arrow.RADIUS + Arrow.SPEED / 60.0)
 	# into the window (x 172, lift 66): it drops, plain dust, no chips
 	var glass := await _shoot_at_house(172.0, 66.0, 63.0, window)
 	assert_int(glass.kind).is_equal(Impact.Kind.DROP)

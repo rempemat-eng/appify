@@ -159,6 +159,8 @@ func _on_body(body: Node) -> void:
 						fx.face_material = String(face.material)
 			if fx.kind == Impact.Kind.DROP:
 				fx.drift = (-dir * 4.0).round()
+			else:
+				Impact.in_front_of(fx, body)
 	queue_free()
 
 ## Leaves the mark of where it stopped, once (two bodies met in one step still count as before, but draw one

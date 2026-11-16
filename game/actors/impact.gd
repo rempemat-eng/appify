@@ -51,6 +51,7 @@ const HIT_STOP := 0.05   ## real seconds the world holds when an arrow counts (3
 ## restore puts the scale back only while it is still this value and its own hold is the newest, so it never
 ## ends a melee hold that began during it (#509 round 1, P3).
 const HOLD_SCALE := 0.06
+const FRONT := 6.0      ## a stuck arrow y-sorts this far south of its house's box (past its drawn feet)
 const FACE_TOP := 3.0   ## an arrow sticks only this far or more below the top of the drawn face
 const STICKY := ["timber", "earth"]   ## the materials an arrow sticks in; stone sends it down with chips
 
@@ -181,6 +182,19 @@ static func face_hit(body: Node, from: Vector2, lift: float) -> String:
 ## True when a shot sticks in `body` (`face_hit` says "stick").
 static func sticks(body: Node, from: Vector2, lift: float) -> bool:
 	return face_hit(body, from, lift) == "stick"
+
+## Puts a stuck arrow's ground point just south of the face it is stuck in (FRONT texels past the box), raising
+## its lift by as much, so it is drawn where it was and y-sorts in front of the house it is in (the house sorts
+## by its drawn feet, at or a little past its box: an arrow met 1 texel inside the north cottages' box was drawn
+## behind them, seen in the follow-up's pictures, 16 Nov).
+static func in_front_of(fx: Impact, body: Node) -> void:
+	var box := box_of(body)
+	if fx == null or box.size == Vector2.ZERO:
+		return
+	var d := box.end.y + FRONT - fx.global_position.y
+	if d > 0.0:
+		fx.global_position.y += d
+		fx.lift += d
 
 ## The global rectangle of a body's first rectangle shape (unrotated), or an empty Rect2.
 static func box_of(body: Node) -> Rect2:
