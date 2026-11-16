@@ -898,3 +898,63 @@ func test_the_prepare_screen_stands_aside_under_the_pause_and_comes_back() -> vo
 	assert_bool(screen.is_open()).is_false()
 	await _frames(2)
 	assert_bool(_pause_button(host).is_visible_in_tree()).is_true()
+
+## No frame is yielded between the pause and Enter/A: a later polling hide is too late.
+func test_the_prepare_screen_stands_aside_before_a_same_frame_accept() -> void:
+	var made := await _hud_and_prepare_screen()
+	var host: Control = made[0]
+	var screen: RaidScreen = made[1]
+	var anvil := screen.get_node("Panel").find_child("SoundTheAnvil", true, false) as Button
+	for way: String in ["keyboard", "gamepad"]:
+		anvil.grab_focus()
+		assert_object(get_viewport().gui_get_focus_owner()).is_same(anvil)
+		get_tree().paused = true
+		assert_bool(screen.is_visible_in_tree()).override_failure_message("%s: hide waited for a frame" % way).is_false()
+		assert_bool(anvil.has_focus()).override_failure_message("%s: focus survived the pause" % way).is_false()
+		assert_bool(screen.is_open()).is_true()
+		if way == "keyboard":
+			_key_press(KEY_ENTER)
+		else:
+			_pad_press(JOY_BUTTON_A)
+		assert_str(Raids.state()).override_failure_message("%s: same-frame accept sounded the anvil" % way).is_equal("announced")
+		assert_bool(get_tree().paused).is_true()
+		await _frames(3)
+		(_row(host, "Resume") as Button).pressed.emit()
+		await _frames(3)
+		assert_object(get_viewport().gui_get_focus_owner()).is_same(anvil)
+
+## A real prepare screen can start the pause without any focus for PauseMenu to remember.
+func test_the_prepare_screen_with_no_prior_focus_restores_its_first_button() -> void:
+	var made := await _hud_and_prepare_screen()
+	var host: Control = made[0]
+	var screen: RaidScreen = made[1]
+	var anvil := screen.get_node("Panel").find_child("SoundTheAnvil", true, false) as Button
+	for way: String in ["resume", "external"]:
+		anvil.release_focus()
+		assert_object(get_viewport().gui_get_focus_owner()).is_null()
+		get_tree().paused = true
+		await _frames(3)
+		if way == "resume":
+			(_row(host, "Resume") as Button).pressed.emit()
+		else:
+			get_tree().paused = false
+		await _frames(3)
+		assert_bool(screen.is_visible_in_tree()).is_true()
+		assert_object(get_viewport().gui_get_focus_owner()).override_failure_message("%s: no first-button focus" % way).is_same(anvil)
+		assert_str(Raids.state()).is_equal("announced")
+
+## A selected pad keeps its place; the first-button fallback must not replace a real prior choice.
+func test_the_prepare_screen_keeps_its_selected_pad_focus_after_a_pause() -> void:
+	var made := await _hud_and_prepare_screen()
+	var host: Control = made[0]
+	var screen: RaidScreen = made[1]
+	var pads: Dictionary = screen.get("_pad_buttons")
+	var selected := pads.values()[0] as Button
+	selected.grab_focus()
+	get_tree().paused = true
+	assert_bool(selected.has_focus()).is_false()
+	await _frames(3)
+	(_row(host, "Resume") as Button).pressed.emit()
+	await _frames(3)
+	assert_object(get_viewport().gui_get_focus_owner()).is_same(selected)
+	assert_str(Raids.state()).is_equal("announced")
