@@ -77,6 +77,9 @@ const STONE_LIT := Color("#c5b8a4")
 const STONE := Color("#aba194")
 const STONE_DARK := Color("#8e8782")
 const STONE_CHIP := Color("#70676a")
+## the dark ends of the two dust ramps (stone 1, path 1), for a puff's core on light ground
+const STONE_DEEP := Color("#514850")
+const PATH_DEEP := Color("#673d37")
 ## SPLAT tints of the two shots: the toad's seed (its pale flesh, grass 5, over its husk) and the Thornback's
 ## thorn (sand 3 over its plum), from the shots' own pictures.
 const SEED_TINT: Array[Color] = [Color("#cfcf84"), Color("#4a3c2c")]
@@ -95,6 +98,7 @@ var reduced := false
 var _offset := Vector2.ZERO
 var _t := 0.0
 var drift := Vector2.ZERO         ## DROP: how far the falling arrow is carried (on, or back off a solid)
+var ground_tone := -1.0           ## the ground's brightness under the dust (0 to 1; below 0: not known)
 var face_material := ""              ## the face it met: "timber", "earth", "stone" or "" (none: plain dust)
 var _rode := true                 ## false once the creature it rode on is gone or freed
 var _burst: Node2D                ## draws the burst over its neighbours (z_index 1) when it is up on a thing
@@ -120,6 +124,8 @@ static func spawn(host: Node, what: Kind, at: Vector2, height: float, along: Vec
 	fx.global_position = at
 	if on != null:
 		fx._offset = at - on.global_position
+	if what == Kind.DROP:
+		fx.read_ground()                     # at once: never a frame drawn without its core
 	return fx
 
 ## How high above its feet a shot meets `body`, for a shot flying `height` texels up: the middle of the body
@@ -179,14 +185,44 @@ static func face_hit(body: Node, from: Vector2, lift: float, at_x: float = NAN) 
 		return "stone"
 	var at := Vector2((from.x if is_nan(at_x) else at_x) - box.get_center().x, lift)
 	for door: Variant in face.get("timber", []):
-		if door is Rect2 and (door as Rect2).has_point(at):
+		if timber_at(body, door, at):
 			return "stick"
 	for window: Variant in face.get("no_stick", []):
-		if window is Rect2 and (window as Rect2).has_point(at):
+		if window_at(body, window, at):
 			return "window"
 	if lift <= float(face.get("stone_below", 0.0)):
 		return "stone"
 	return "stick"
+
+## True when `window` (a Rect2, or {"rect": Rect2, "unless": NodePath}) of `body` holds `at` (x from the box's
+## centre, lift). A window with "unless" is boarded up while that node shows (the Ferns' damage): planks, not
+## glass, so it is no window then (impact polish, 17 Nov).
+static func window_at(body: Node, window: Variant, at: Vector2) -> bool:
+	if window is Rect2:
+		return (window as Rect2).has_point(at)
+	if not window is Dictionary or not (window as Dictionary).get("rect") is Rect2:
+		return false
+	var boards: Variant = (window as Dictionary).get("unless")
+	if boards != null:
+		var n := body.get_node_or_null(NodePath(boards))
+		if n is CanvasItem and (n as CanvasItem).visible:
+			return false
+	return ((window as Dictionary).rect as Rect2).has_point(at)
+
+## True when `span` (a Rect2, or {"rect": Rect2, "while": NodePath}) of `body` holds `at`: a door, or boards
+## that are timber where they hang into the stone band; with "while", only while that node shows (the Ferns'
+## boards, there only with its damage; #516 audit, F1).
+static func timber_at(body: Node, span: Variant, at: Vector2) -> bool:
+	if span is Rect2:
+		return (span as Rect2).has_point(at)
+	if not span is Dictionary or not (span as Dictionary).get("rect") is Rect2:
+		return false
+	var boards: Variant = (span as Dictionary).get("while")
+	if boards != null:
+		var n := body.get_node_or_null(NodePath(boards))
+		if not (n is CanvasItem and (n as CanvasItem).visible):
+			return false
+	return ((span as Dictionary).rect as Rect2).has_point(at)
 
 ## True when a shot sticks in `body` (`face_hit` says "stick").
 static func sticks(body: Node, from: Vector2, lift: float) -> bool:
@@ -204,6 +240,131 @@ static func in_front_of(fx: Impact, body: Node) -> void:
 	if d > 0.0:
 		fx.global_position.y += d
 		fx.lift += d
+
+## How bright the ground is under `at` (global texels), 0 to 1: the zone's own ground picture (`ground_of`),
+## read through its tone grid (`ground_grid`, one value per 5 x 5 texel cell). Below 0 when there is none: zones
+## whose ground is a tile layer (frostline, the kit labs, brackens_lab) have no `Ground` sprite, and their dust
+## is drawn without a core, as before.
+static func ground_tone_at(near: Node, at: Vector2) -> float:
+	var g := ground_of(near)
+	if g == null:
+		return -1.0
+	var p := g.to_local(at) - g.offset + (g.texture.get_size() * 0.5 if g.centered else Vector2.ZERO)
+	return grid_tone(ground_grid(g.texture), p)
+
+## The ground picture over `near`: the `Ground` (or `Base/Ground`) Sprite2D of its nearest ancestor that has one
+## (Crossroads and the Undercroft hold it at the root, the woodland under its Base), or null.
+static func ground_of(near: Node) -> Sprite2D:
+	var n := near
+	while n != null:
+		for path: String in ["Ground", "Base/Ground"]:
+			var g := n.get_node_or_null(path) as Sprite2D
+			if g != null and g.texture != null:
+				return g
+		n = n.get_parent()
+	return null
+
+## Builds the tone grid of `zone`'s ground as the zone is made (world/zone.gd `_ready`), so the first dust puff
+## in a zone does not pay for it (#516 round 3). Returns the milliseconds it took (0 when it was built already or
+## the zone has no ground picture).
+static func prepare_ground(zone: Node) -> float:
+	var g := ground_of(zone)
+	if g == null or (_grid_for == g.texture.get_instance_id() and not _grid.is_empty()):
+		return 0.0
+	var t0 := Time.get_ticks_usec()
+	ground_grid(g.texture)
+	last_build_ms = (Time.get_ticks_usec() - t0) / 1000.0
+	return last_build_ms
+
+const GRID_CELL := 5            ## texels a side of one tone-grid cell
+
+## The tone grid of one ground picture: {"w", "h", "tones": PackedByteArray of luma * 255, one per GRID_CELL
+## square, row by row}. Each cell is the exact mean of its 5 x 5 texels of the picture: the picture is cropped to
+## whole cells (an odd size drifted the cells before, #516 round 3), turned into luma by the engine (Rec. 709,
+## FORMAT_L8), read as bytes once and summed cell by cell; the picture is let go at once. Only the latest zone's
+## grid is kept, by its texture's instance id, not the texture: a freed zone takes its picture with it, and the
+## grid is about 130 KB for Crossroads (the full picture held was about 10 MB; #516 audit, F3 and F4).
+static var _grid_for := 0
+static var _grid := {}
+static var last_build_ms := 0.0 ## how long the last grid took to build
+
+static func ground_grid(t: Texture2D) -> Dictionary:
+	if t == null:
+		return {}
+	if _grid_for == t.get_instance_id() and not _grid.is_empty():
+		return _grid
+	var src := t.get_image()
+	if src == null or src.is_empty():
+		return {}
+	var img: Image = src.duplicate()   # never change the texture's own copy
+	if img.is_compressed():
+		img.decompress()
+	var w := maxi(1, img.get_width() / GRID_CELL)
+	var h := maxi(1, img.get_height() / GRID_CELL)
+	var cols := w * GRID_CELL
+	img.crop(cols, h * GRID_CELL)
+	img.convert(Image.FORMAT_L8)
+	var data := img.get_data()
+	var sums := PackedInt32Array()
+	sums.resize(w)
+	var tones := PackedByteArray()
+	tones.resize(w * h)
+	var cell := GRID_CELL * GRID_CELL
+	for cy in h:
+		sums.fill(0)
+		for dy in GRID_CELL:
+			var i := (cy * GRID_CELL + dy) * cols
+			for cx in w:
+				sums[cx] += data[i] + data[i + 1] + data[i + 2] + data[i + 3] + data[i + 4]
+				i += GRID_CELL
+		for cx in w:
+			tones[cy * w + cx] = (sums[cx] + cell / 2) / cell
+	_grid_for = t.get_instance_id()
+	_grid = {"w": w, "h": h, "tones": tones}
+	return _grid
+
+## The tone of the grid cell holding `p` (texels in the picture), 0 to 1; below 0 off the grid or with no grid.
+static func grid_tone(grid: Dictionary, p: Vector2) -> float:
+	if grid.is_empty():
+		return -1.0
+	var cx := int(floor(p.x / GRID_CELL))
+	var cy := int(floor(p.y / GRID_CELL))
+	if cx < 0 or cy < 0 or cx >= int(grid.w) or cy >= int(grid.h):
+		return -1.0
+	return (grid.tones as PackedByteArray)[cy * int(grid.w) + cx] / 255.0
+
+## The mean brightness (Rec. 709 luma, as the engine's FORMAT_L8) of the 5 x 5 texels of `img` round `p`; below 0 off the picture. The exact
+## reference the tone grid is tested against.
+static func tone_of(img: Image, p: Vector2) -> float:
+	if img == null or img.is_empty():
+		return -1.0
+	var sum := 0.0
+	var count := 0
+	for dy in range(-2, 3):
+		for dx in range(-2, 3):
+			var q := Vector2i(int(p.x) + dx, int(p.y) + dy)
+			if q.x < 0 or q.y < 0 or q.x >= img.get_width() or q.y >= img.get_height():
+				continue
+			var c := img.get_pixel(q.x, q.y)
+			sum += _luma(c)
+			count += 1
+	return sum / count if count > 0 else -1.0
+
+## The core of a dust puff, picked against the ground: of the dark and the light end of the dust's own ramp
+## (stone 1 and 5 for stone dust, path 1 and 5 for the rest), the one further in brightness from the ground.
+## Grey dust on grey cobbles and tan dust on the tan path could not be seen at 1x (impact polish, 17 Nov).
+## Transparent when the ground is not known: the puff is drawn as before.
+static func dust_core(material: String, tone: float) -> Color:
+	if tone < 0.0:
+		return Color(0, 0, 0, 0)
+	var stone := material == "stone"
+	var dark := STONE_DEEP if stone else PATH_DEEP
+	var light := STONE_LIT if stone else DUST_LIT
+	return dark if absf(_luma(dark) - tone) >= absf(_luma(light) - tone) else light
+
+## Brightness as the tone grid measures it: Rec. 709 luma, the engine's own FORMAT_L8 weights.
+static func _luma(c: Color) -> float:
+	return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
 
 ## The global rectangle of a body's first rectangle shape (unrotated), or an empty Rect2.
 static func box_of(body: Node) -> Rect2:
@@ -283,6 +444,16 @@ func _ready() -> void:
 	_burst.z_index = 1
 	add_child(_burst)
 	_burst.draw.connect(_draw_burst_on_top)
+
+## Reads the ground under the dust: where it is drawn, the arrow's resting point a little back (sampling at the
+## contact read the dark ground under a house's foot: 0.30 and 0.42 in the polish pictures, 17 Nov). Spawn reads
+## it once; whoever changes `drift` afterwards (the arrow knocking it back off a solid) reads it again.
+## `min_y`: the lowest global y it may read from; a drop off a solid passes the solid's box foot + 3, so the tone
+## never comes from the strip the building hides (#516 round 3).
+func read_ground(min_y := -INF) -> void:
+	var at := global_position + drift - dir * 3.0
+	at.y = maxf(at.y, min_y)
+	ground_tone = ground_tone_at(self, at)
 
 ## True when the burst is on the ground (dust where an arrow lies, a ring, a splat at a solid's foot): it is
 ## then drawn in the y-sort with the arrow, not over everything.
@@ -503,6 +674,10 @@ func _draw_dust(o: Vector2, f: int, clumps: int, chip: Color) -> void:
 ## A round clump of dust, its upper left lit and its lower right in shade, no outline (dust is soft).
 func _disc(c: Vector2, r: float, a: float) -> void:
 	var n := int(ceil(r))
+	var core := dust_core(face_material, ground_tone)
+	# a dark core sits in the lower right of the clump's middle (its shade), a light one in the upper left (its
+	# light), so the light still falls from the upper left and a clump never reads as a ring (#516 audit, F5)
+	var deep := _luma(core) < _luma(STONE if face_material == "stone" else DUST)
 	for y in range(-n, n + 1):
 		for x in range(-n, n + 1):
 			var v := Vector2(x, y)
@@ -510,7 +685,9 @@ func _disc(c: Vector2, r: float, a: float) -> void:
 				continue
 			var stone := face_material == "stone"
 			var col := STONE if stone else DUST
-			if x + y <= -n:
+			if core.a > 0.0 and v.length() <= r * 0.5 and ((x + y >= 0) if deep else (x + y <= 0)):
+				col = core                   # the core, against the ground under it, in the half the light leaves it
+			elif x + y <= -n:
 				col = STONE_LIT if stone else DUST_LIT
 			elif x + y >= n:
 				col = STONE_DARK if stone else DUST_DARK
