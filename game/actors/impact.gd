@@ -279,9 +279,10 @@ static func prepare_ground(zone: Node) -> float:
 const GRID_CELL := 5            ## texels a side of one tone-grid cell
 
 ## The tone grid of one ground picture: {"w", "h", "tones": PackedByteArray of luma * 255, one per GRID_CELL
-## square, row by row}. Each cell is the exact mean of its 5 x 5 texels of the picture: the picture is cropped to
-## whole cells (an odd size drifted the cells before, #516 round 3), turned into luma by the engine (Rec. 709,
-## FORMAT_L8), read as bytes once and summed cell by cell; the picture is let go at once. Only the latest zone's
+## square, row by row}. The picture is cropped to whole cells (an odd size drifted the cells before, #516
+## round 3), turned into luma by the engine (Rec. 709, FORMAT_L8), resized bilinearly to four texels per cell,
+## then shrunk twice. This approximates each 5 x 5 mean without the script loop (Z11); the picture is let go
+## at once. Only the latest zone's
 ## grid is kept, by its texture's instance id, not the texture: a freed zone takes its picture with it, and the
 ## grid is about 130 KB for Crossroads (the full picture held was about 10 MB; #516 audit, F3 and F4).
 static var _grid_for := 0
@@ -304,21 +305,10 @@ static func ground_grid(t: Texture2D) -> Dictionary:
 	var cols := w * GRID_CELL
 	img.crop(cols, h * GRID_CELL)
 	img.convert(Image.FORMAT_L8)
-	var data := img.get_data()
-	var sums := PackedInt32Array()
-	sums.resize(w)
-	var tones := PackedByteArray()
-	tones.resize(w * h)
-	var cell := GRID_CELL * GRID_CELL
-	for cy in h:
-		sums.fill(0)
-		for dy in GRID_CELL:
-			var i := (cy * GRID_CELL + dy) * cols
-			for cx in w:
-				sums[cx] += data[i] + data[i + 1] + data[i + 2] + data[i + 3] + data[i + 4]
-				i += GRID_CELL
-		for cx in w:
-			tones[cy * w + cx] = (sums[cx] + cell / 2) / cell
+	img.resize(w * 4, h * 4, Image.INTERPOLATE_BILINEAR)
+	img.shrink_x2()
+	img.shrink_x2()
+	var tones := img.get_data()
 	_grid_for = t.get_instance_id()
 	_grid = {"w": w, "h": h, "tones": tones}
 	return _grid
