@@ -1,0 +1,199 @@
+{
+  "id": "mill_town",
+  "status": "brief",
+  "lane": "claude-h",
+  "regions": ["cogsworth"],
+  "kit": null,
+  "about": "Cogsworth's built ground: a coal-and-iron mill town on the Cog, true brick and iron under copper, slate and glass (house-style.md, the house kits' Cogsworth environment), setts and flagstones, a canal with a lock half a tier down, the Millrace through the mills, retaining walls up to Gasworks Hill. The town's layout is scripts/art/regions/cogsworth_plan.py; this file is its ground and edges. A brief as data (rules-system.md 4), in the shape of Claude F's moor and highland (#199). It is its own biome, not the cliff core's 'city' (Claude C's harbour city, ashlar courses under a coping, 40 px tiers): Cogsworth's walls are brick, its tier is 32 px, and its edges carry iron. Its buildings come from the house kits' Cogsworth fronts; draft #180's painter is frozen, and its ground techniques are listed under 'from_180' for the kit owner. Every family is a house ramp; soot and copper are Cogsworth's accents. 'kit' is pinned when kit v1 exists.",
+  "palette_intent": "Warm brick and cool iron, clean and cared for, never grimy: red-brown stock brick in firing batches (clay, clay_warm, clay_cool), blue engineering brick for copings, plinths and the canal's walls (slate_cool), grey-brown setts and pale flags in the squares, black-green paintwork and copper roofs gone verdigris on the landmarks. Soot is placed (under eaves, in drifts on the north side of chimneys), never a wash over everything. The canal is the calm, dark green-brown water; the Millrace is fast and bright. At night the lit windows and gas lamps are the warmth (lamp glow).",
+  "families": {
+    "brick": ["clay", "clay_warm", "clay_cool"],
+    "engineering_brick": ["slate_cool", "slate", "dusk_cool"],
+    "ashlar_dressing": ["ashlar", "ashlar_warm", "stone"],
+    "setts": ["stone", "stone_cool", "stone_warm", "path_cool"],
+    "flags": ["ashlar", "stone_warm", "path"],
+    "cinder": ["path_cool", "soot_warm", "earth"],
+    "iron": ["iron", "iron_cool", "soot"],
+    "paint": ["leaf_cool", "berry_cool", "dusk"],
+    "copper": ["copper", "copper_warm", "copper_cool"],
+    "soot": ["soot", "soot_cool"],
+    "canal": ["water_cool", "leaf_cool", "earth_cool"],
+    "race": ["water", "sky", "snow_cool"],
+    "garden": ["grass", "leaf", "earth_warm", "brass", "berry"],
+    "glow": ["lamp"]
+  },
+  "ground": {
+    "base": "setts: stone in courses across the street (rows along x), each sett a small pillow lit top-left, joints stone_cool; flagstones (ashlar, stone_warm) in the station square and on the platform; cinder (path_cool) in the foundry yard, the gasworks and along the rails",
+    "drifts": [
+      {
+        "name": "setts",
+        "share": 0.46,
+        "noise_scale": 0,
+        "recipe": "laid, not noise: courses 4 texels deep at 1x, setts 5 to 7 long, each course shifted half a sett; worn paler (stone_warm) down the middle of the street where carts run, a gutter of flags at each kerb"
+      },
+      {
+        "name": "flags",
+        "share": 0.18,
+        "noise_scale": 0,
+        "recipe": "laid: large flags in staggered rows 8 to 12 texels, a few cracked with moss in the crack; the square's ring in a circle of setts set on edge"
+      },
+      {
+        "name": "cinder",
+        "share": 0.2,
+        "noise_scale": 12,
+        "recipe": "path_cool with soot_warm and earth clusters of 2 to 4 texels; rails on sleepers laid into it at the station and gasworks"
+      },
+      {
+        "name": "towpath",
+        "share": 0.08,
+        "noise_scale": 24,
+        "recipe": "packed earth with a blue-brick edge to the canal, grass in the verge away from the water"
+      },
+      {
+        "name": "allotments",
+        "share": 0.08,
+        "noise_scale": 0,
+        "recipe": "beds in rows (earth_warm) with garden crops, cinder paths between, a shed and water butts (house kit dressing)"
+      }
+    ],
+    "from_180": "draft #180 laid setts as parts on the street, a cinder ground with clustered soot, a towpath with a brick edge, allotment beds in rows and calm canal water with sparse flow marks; the kit owner ports what passes the ledger",
+    "calm": "laid surfaces are parts, never speckle (house-style.md: Cogsworth's old cobbles were salt and pepper, 18 % lone pixels); no lone pixels (SB-05); wear and moss follow use and damp, not noise"
+  },
+  "plants": [
+    {
+      "id": "buddleia",
+      "kind": "shrub on walls",
+      "where": "rooted in a few retaining walls and on the gasworks, mauve (dusk_warm) cones on the lit side"
+    },
+    {
+      "id": "ivy",
+      "kind": "climber",
+      "where": "the canal's walls near the lock and the Millrace bridge (cliff core ivy piece, in this biome's families)"
+    },
+    {
+      "id": "moss",
+      "kind": "in joints",
+      "where": "the lowest brick joints and the flags' cracks on the shady (north and east) side"
+    },
+    {
+      "id": "street_tree",
+      "kind": "tree",
+      "where": "a plane or lime in the station square and on Main Street, in an iron grille; at most four in the town"
+    },
+    {
+      "id": "allotment_crops",
+      "kind": "beds",
+      "where": "the allotments only: rows of cabbages, beans on canes, a few sunflowers (brass)"
+    },
+    {
+      "id": "window_boxes",
+      "kind": "dressing",
+      "where": "on the row houses' sills (house kit dressing), geraniums in berry"
+    }
+  ],
+  "clusters": [
+    {
+      "id": "canal_side",
+      "of": ["bollard", "mooring ring", "coil of rope", "crane", "crates"],
+      "where": "along the wharf and the canal's north wall beside the towpath, one group per 80 to 120 texels, never across a stair",
+      "notes": "requested from Claude B's prop_clusters (#188)"
+    },
+    {
+      "id": "lock_furniture",
+      "of": ["balance beam", "paddle gear", "lock gates", "bollard", "lamp"],
+      "where": "the lock at the Cog (the town's canal:lock stand)"
+    },
+    {
+      "id": "station_square",
+      "of": ["gas lamp", "bench", "ring", "street_tree", "noticeboard"],
+      "where": "the station square under the clock tower; benches where the paths pause (SB-07)"
+    },
+    {
+      "id": "works_yard",
+      "of": ["crates", "barrels", "iron ingots", "trolley", "rails"],
+      "where": "the foundry yard and the warehouse front, against walls, out of the doors' lines"
+    },
+    {
+      "id": "back_lane",
+      "of": ["water butt", "bins", "washing line", "ivy"],
+      "where": "behind the workshop rows, between the backs, never on a route"
+    },
+    {
+      "id": "gasworks",
+      "of": ["gasholder", "retort house", "coke heap", "rails"],
+      "where": "Gasworks Hill, one tier up"
+    }
+  ],
+  "tiers": {
+    "face_heights": [16, 32],
+    "notes": "the street is the town's tier; the canal and the Millrace are half a tier (16 px) down behind blue-brick walls; Gasworks Hill and the coal-hill bench are one 32 px tier up behind brick retaining walls; the Cog runs at the bottom along the west and south. Stairs, never ramps (eastward-edges.md 6.3). Rims a face plus a cell apart; walls step in and out by whole cells where a building or buttress stands (to-all-grid-2x, to-all-volume)."
+  },
+  "edges": {
+    "from_woodland": "Every edge in the town is built. A retaining wall is stock brick in stretcher bond (house-style.md: bricks 7 x 3, courses 4 px, recessed dark joints, firing batches), with a blue engineering-brick plinth two courses deep at its foot and a coping of blue brick laid on edge (a soldier course, lit on its top), with iron railings on the coping where the drop is 32 px. Buttresses every 48 to 64 texels step the wall out by a cell. The canal and Millrace walls are blue engineering brick throughout, with an ashlar coping and iron mooring rings. A quay's edge is ashlar copings over brick. The foot is a flag gutter one cell wide, no pebbles or tufts; moss only in its shady joints. This differs from the cliff core's 'city' edge set (ashlar courses, a 6-texel coping, 40 px) in material, bond, coping and railing.",
+    "stair": "stone steps with brick cheek walls and an iron handrail on the drop side; the wharf steps go down to the water between bollards",
+    "bank": "the canal: a vertical blue-brick wall with an ashlar coping, the waterline a dark band with a green slime line (leaf_cool); the Cog along the town: a brick river wall on the town side, its natural bank opposite in the coal hills' or meadow's edge set",
+    "volume": "walls lit on their tops (coping) and on west-facing buttress sides; each building stands on its foot line with a cast shadow one cell deep on the street east and south of it"
+  },
+  "water": {
+    "kinds": ["canal", "lock", "millrace", "river wall"],
+    "notes": "the canal is still and dark (water_cool, leaf_cool) with sparse flow marks; the lock's chambers step half a tier; the Millrace is the river kit's 'race', fast and bright, through the mills under their wheels; the Cog at the town is the river kit's 'river' against a brick river wall."
+  },
+  "ambience": {
+    "animals": [
+      "pigeons on the station roof",
+      "a cat on the wharf",
+      "the canal horse on the towpath"
+    ],
+    "sounds_for_m": [
+      "the station clock",
+      "a train in and out",
+      "the mills' wheels and looms",
+      "the foundry's hammer",
+      "the lock filling"
+    ],
+    "light": "gas lamps on the streets and the square; at night lit windows light the setts in front of them; smoke from the chimneys drifts east, over the coal hills, never across the walkable street"
+  },
+  "pieces": {
+    "from_cliff_core": ["stair", "path", "ledge", "ivy"],
+    "owned": [
+      "brick_retaining_wall",
+      "canal_wall",
+      "quay_edge",
+      "railing",
+      "canal_side",
+      "lock_furniture",
+      "station_square",
+      "works_yard",
+      "back_lane",
+      "gasworks"
+    ],
+    "proposed": ["brick_retaining_wall", "canal_wall", "quay_edge", "railing"]
+  },
+  "transitions": [
+    {
+      "to": "coal_hills",
+      "where": "Gasworks Hill and the north-east bench; the High Fells' gate",
+      "how": "cinder: the setts give way to cinder track, then heath; brick walls end against the hills' shale faces at a buttress"
+    },
+    {
+      "to": "meadow",
+      "where": "the Towpath gate south-east and the Foothill Road gate west",
+      "how": "the towpath's verge: packed earth with grass widening into meadow; brick river wall ends, the Cog's natural bank begins at a stone pier"
+    },
+    {
+      "to": "city",
+      "where": "none inside this region: the harbour city is Claude C's and Claude I's; the maglev terminus carries Cogsworth's brick to its east end",
+      "how": "no meeting pair; listed so the transitions table does not expect one"
+    }
+  ],
+  "sources": [
+    "docs/vision/regions/cogsworth-coal-hills-narrows.md",
+    "docs/vision/regions/cogsworth-plan.md",
+    "docs/vision/house-style.md",
+    "docs/vision/eastward-edges.md",
+    "docs/vision/rules-system.md",
+    "scripts/art/regions/cogsworth_plan.py",
+    "draft #180 (cogsworth_town.py, frozen)",
+    "#199 (Claude F's biome brief format)"
+  ]
+}
