@@ -98,7 +98,8 @@ var reduced := false
 var _offset := Vector2.ZERO
 var _t := 0.0
 var drift := Vector2.ZERO         ## DROP: how far the falling arrow is carried (on, or back off a solid)
-var ground_tone := -1.0           ## the ground's brightness under the mark (0 to 1; below 0: not known)
+var ground_tone := -1.0           ## the ground's brightness under the dust (0 to 1; below 0: not known)
+var _tone_due := false
 var face_material := ""              ## the face it met: "timber", "earth", "stone" or "" (none: plain dust)
 var _rode := true                 ## false once the creature it rode on is gone or freed
 var _burst: Node2D                ## draws the burst over its neighbours (z_index 1) when it is up on a thing
@@ -118,8 +119,7 @@ static func spawn(host: Node, what: Kind, at: Vector2, height: float, along: Vec
 	fx.shaft = with_shaft
 	fx.follow = on
 	fx.drift = (fx.dir * 6.0).round() if with_shaft else Vector2.ZERO   # a shot's ring is where it ended
-	if what == Kind.WALL or what == Kind.DROP:
-		fx.ground_tone = ground_tone_at(host, at)
+	fx._tone_due = what == Kind.DROP     # read on its first step, once its drift is known
 	if colours.size() == 2:
 		fx.tint = colours
 	host.add_child(fx)
@@ -364,6 +364,11 @@ func lifetime() -> float:
 	return lifetime_of(kind, reduced, shaft)
 
 func _process(delta: float) -> void:
+	if _tone_due:
+		# where the dust is drawn: the arrow's resting point and a little back, on the ground (sampling at the
+		# contact read the dark ground under a house's foot: 0.30 and 0.42 in the polish pictures, 17 Nov)
+		_tone_due = false
+		ground_tone = ground_tone_at(self, global_position + drift - dir * 3.0)
 	_t += delta
 	if _t >= lifetime():
 		queue_free()

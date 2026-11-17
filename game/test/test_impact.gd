@@ -475,6 +475,11 @@ func test_a_dust_puff_has_a_core_that_stands_out_from_the_ground() -> void:
 	zone.add_child(actors)
 	var light := Impact.spawn(actors, Impact.Kind.DROP, Vector2(10, 10), 20.0, Vector2.UP, true)
 	var dark := Impact.spawn(actors, Impact.Kind.DROP, Vector2(50, 10), 20.0, Vector2.UP, true)
+	assert_float(light.ground_tone).is_less(0.0)            # read on its first step, once its drift is set
+	light.set_process(false)
+	dark.set_process(false)
+	light._process(0.0)
+	dark._process(0.0)
 	assert_float(light.ground_tone).is_equal_approx(0.299 * 0.71 + 0.587 * 0.66 + 0.114 * 0.59, 0.01)
 	assert_float(dark.ground_tone).is_equal_approx(0.2, 0.01)
 	assert_object(Impact.dust_core("", light.ground_tone)).is_equal(Impact.PATH_DEEP)
