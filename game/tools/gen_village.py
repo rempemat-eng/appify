@@ -142,10 +142,16 @@ def render(zid: str, preview: str | None) -> None:
 # boarded (NorthCottagesDamage has no condition), so it is not a window here; the Ferns' window is boarded while
 # its damage is shown, so its entry names that node (a fifth item): it counts as a window only while that node
 # is hidden.
+# The boards over a boarded window or door hang into the stone band: they are timber where they are drawn (the
+# auditor's spans from the damage overlays' planks, #516 audit, checked by drawing them on the house with its
+# overlay; the planks' nail drips and shadows below them are left out). The Ferns' boards are there only while
+# their damage shows ("while", the fifth item).
+FERN_DAMAGE = 'Props/If_fern_cottage_damage'
 TIMBER_PLINTHS = {
     'hut': (11, [(-89, -56, 54, 90), (55, 88, 54, 90)], []),
-    'north_cottages': (63, [(11, 48, 52, 92)], [(-139, -77, 0, 84), (41, 103, 0, 84)]),
-    'fern_cottage': (63, [(13, 46, 54, 90, 'Props/If_fern_cottage_damage')], [(-91, -29, 0, 85)]),
+    'north_cottages': (63, [(11, 48, 52, 92)], [(-139, -77, 0, 84), (41, 103, 0, 84), (-72, -11, 51, 64)]),
+    'fern_cottage': (63, [(13, 46, 54, 90, FERN_DAMAGE)],
+                     [(-91, -29, 0, 85), (-4, 58, 53, 64, FERN_DAMAGE), (-96, -27, 0, 64, FERN_DAMAGE)]),
 }
 DRAWN_FACES = {
     'lane_bank': (36, 'stone'), 'lane_face': (36, 'stone'),

@@ -159,6 +159,7 @@ func _on_body(body: Node) -> void:
 						fx.face_material = String(face.material)
 			if fx.kind == Impact.Kind.DROP:
 				fx.drift = (-dir * 4.0).round()
+				fx.read_ground()                 # where the dust now lies
 			else:
 				Impact.in_front_of(fx, body)
 	queue_free()

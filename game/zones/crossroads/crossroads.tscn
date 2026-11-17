@@ -351,7 +351,7 @@ metadata/impact_face = 110
 metadata/impact_material = "timber"
 metadata/impact_stone_below = 63
 metadata/impact_no_stick = [Rect2(11, 52, 37, 40)]
-metadata/impact_timber = [Rect2(-139, 0, 62, 84), Rect2(41, 0, 62, 84)]
+metadata/impact_timber = [Rect2(-139, 0, 62, 84), Rect2(41, 0, 62, 84), Rect2(-72, 51, 61, 13)]
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_north_cottages"]
 position = Vector2(1176, 540)
@@ -390,7 +390,7 @@ metadata/impact_face = 110
 metadata/impact_material = "timber"
 metadata/impact_stone_below = 63
 metadata/impact_no_stick = [{"rect": Rect2(13, 54, 33, 36), "unless": NodePath("../../Props/If_fern_cottage_damage")}]
-metadata/impact_timber = [Rect2(-91, 0, 62, 85)]
+metadata/impact_timber = [Rect2(-91, 0, 62, 85), {"rect": Rect2(-4, 53, 62, 11), "while": NodePath("../../Props/If_fern_cottage_damage")}, {"rect": Rect2(-96, 0, 69, 64), "while": NodePath("../../Props/If_fern_cottage_damage")}]
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_fern_cottage"]
 position = Vector2(1476, 1176)

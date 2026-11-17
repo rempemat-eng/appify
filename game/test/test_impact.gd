@@ -475,11 +475,7 @@ func test_a_dust_puff_has_a_core_that_stands_out_from_the_ground() -> void:
 	zone.add_child(actors)
 	var light := Impact.spawn(actors, Impact.Kind.DROP, Vector2(10, 10), 20.0, Vector2.UP, true)
 	var dark := Impact.spawn(actors, Impact.Kind.DROP, Vector2(50, 10), 20.0, Vector2.UP, true)
-	assert_float(light.ground_tone).is_less(0.0)            # read on its first step, once its drift is set
-	light.set_process(false)
-	dark.set_process(false)
-	light._process(0.0)
-	dark._process(0.0)
+	# read at spawn, where the dust lies: never a frame drawn without its core
 	assert_float(light.ground_tone).is_equal_approx(0.299 * 0.71 + 0.587 * 0.66 + 0.114 * 0.59, 0.01)
 	assert_float(dark.ground_tone).is_equal_approx(0.2, 0.01)
 	assert_object(Impact.dust_core("", light.ground_tone)).is_equal(Impact.PATH_DEEP)
@@ -494,6 +490,92 @@ func test_a_dust_puff_has_a_core_that_stands_out_from_the_ground() -> void:
 	assert_float(tone).is_greater(0.4)
 	assert_object(Impact.dust_core("stone", tone)).is_equal(Impact.STONE_DEEP)
 
+## #516 audit, F1: the boards over a boarded window or door hang into the stone band; they are timber there.
+## The Ferns' boards are there only while their damage shows.
+func _house_from(scene: Node, body_name: String, damage_visible := true) -> StaticBody2D:
+	var zone: Node2D = auto_free(Node2D.new())
+	add_child(zone)
+	var walls := Node2D.new()
+	walls.name = "Walls"
+	zone.add_child(walls)
+	var props := Node2D.new()
+	props.name = "Props"
+	zone.add_child(props)
+	var damage := Node2D.new()
+	damage.name = "If_fern_cottage_damage"
+	damage.visible = damage_visible
+	props.add_child(damage)
+	var house := StaticBody2D.new()
+	house.name = body_name
+	var shape := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(240, 120)
+	shape.shape = rect
+	shape.position = Vector2(500, 300)                     # centre x 500, south edge y 360
+	house.add_child(shape)
+	walls.add_child(house)
+	var real := scene.get_node("Walls/" + body_name)
+	for key in ["impact_face", "impact_material", "impact_stone_below", "impact_no_stick", "impact_timber"]:
+		if real.has_meta(key):
+			house.set_meta(key, real.get_meta(key))
+	return house
+
+func test_boards_in_the_stone_band_are_timber() -> void:
+	var cross: Node = auto_free(load("res://zones/crossroads/crossroads.tscn").instantiate())
+	var below := Vector2(500, 380)                         # south of the box: met across its south edge
+	# the north cottages' boarded left window: its lowest board hangs to lift 51, inside the plinth (to 63)
+	var cottages := _house_from(cross, "Building_north_cottages")
+	assert_str(Impact.face_hit(cottages, below, 55.0, 500.0 - 40.0)).is_equal("stick")
+	assert_str(Impact.face_hit(cottages, below, 52.0, 500.0 - 20.0)).is_equal("stick")
+	assert_str(Impact.face_hit(cottages, below, 48.0, 500.0 - 40.0)).is_equal("stone")    # under the boards
+	assert_str(Impact.face_hit(cottages, below, 55.0, 500.0 - 5.0)).is_equal("stone")     # beside them
+	# the Ferns', damage shown: window boards (lift 53 to 63) and door planks (to 63) are timber
+	var fern := _house_from(cross, "Building_fern_cottage", true)
+	assert_str(Impact.face_hit(fern, below, 56.0, 500.0 + 20.0)).is_equal("stick")
+	assert_str(Impact.face_hit(fern, below, 30.0, 500.0 - 94.0)).is_equal("stick")       # door planks, left edge
+	assert_str(Impact.face_hit(fern, below, 56.0, 500.0 + 60.0)).is_equal("stone")       # right of the boards
+	assert_str(Impact.face_hit(fern, below, 66.0, 500.0 + 30.0)).is_equal("stick")       # the boarded window
+	# the Ferns' restored (damage hidden): the boards are gone; stone in the band, glass in the window
+	var restored := _house_from(cross, "Building_fern_cottage", false)
+	assert_str(Impact.face_hit(restored, below, 56.0, 500.0 + 52.0)).is_equal("stone")   # under the boards' place, beside the glass
+	assert_str(Impact.face_hit(restored, below, 30.0, 500.0 - 94.0)).is_equal("stone")   # past the door (-91..-29)
+	assert_str(Impact.face_hit(restored, below, 30.0, 500.0 - 60.0)).is_equal("stick")   # the door itself
+	assert_str(Impact.face_hit(restored, below, 66.0, 500.0 + 30.0)).is_equal("window")
+	# the "while" entry turns with the node
+	var boards := restored.get_node("../../Props/If_fern_cottage_damage") as CanvasItem
+	boards.visible = true
+	assert_str(Impact.face_hit(restored, below, 56.0, 500.0 + 52.0)).is_equal("stick")
+	boards.visible = false
+	assert_str(Impact.face_hit(restored, below, 56.0, 500.0 + 52.0)).is_equal("stone")   # under the boards' place, beside the glass
+	assert_bool(Impact.timber_at(restored, {"bad": 1}, Vector2(0, 30))).is_false()
+
+## #516 audit, F3: the ground is read through a tone grid, one byte per 5 x 5 texel cell, kept for one zone only.
+func test_the_ground_tone_grid_is_small_and_matches_the_picture() -> void:
+	var t: Texture2D = load("res://zones/crossroads/art/ground.png")
+	var grid := Impact.ground_grid(t)
+	assert_int(int(grid.w)).is_equal(1920 / 5)
+	assert_int(int(grid.h)).is_equal(1680 / 5)
+	assert_int((grid.tones as PackedByteArray).size()).is_equal(384 * 336)
+	assert_int((grid.tones as PackedByteArray).size()).is_less_equal(130 * 1024)      # bytes; the picture is ~10 MB
+	assert_bool(is_same(Impact.ground_grid(t), grid)).is_true()                          # built once
+	# it matches the picture's own 5 x 5 means at cell centres, across the zone
+	var img := t.get_image()
+	var worst := 0.0
+	for i in 40:
+		var cell := Vector2i((i * 37) % 384, (i * 53) % 336)
+		var centre := Vector2(cell.x * 5 + 2, cell.y * 5 + 2)
+		worst = maxf(worst, absf(Impact.grid_tone(grid, centre) - Impact.tone_of(img, centre)))
+	assert_float(worst).is_less_equal(0.08)
+	# off the grid: not known
+	assert_float(Impact.grid_tone(grid, Vector2(-1, 5))).is_less(0.0)
+	assert_float(Impact.grid_tone(grid, Vector2(1920, 5))).is_less(0.0)
+	# another zone's ground takes its place: only one grid is kept
+	var other: Texture2D = load("res://zones/undercroft/art/ground.png")
+	var g2 := Impact.ground_grid(other)
+	assert_bool(is_same(g2, grid)).is_false()
+	assert_bool(is_same(Impact.ground_grid(other), g2)).is_true()
+	assert_bool(is_same(Impact.ground_grid(t), grid)).is_false()                         # rebuilt: the first was let go
+
 func test_the_crossroads_houses_declare_their_plinths_and_windows() -> void:
 	var cross: Node = auto_free(load("res://zones/crossroads/crossroads.tscn").instantiate())
 	var hut := Impact.face_of(cross.get_node("Walls/Building_hut"))
@@ -504,7 +586,7 @@ func test_the_crossroads_houses_declare_their_plinths_and_windows() -> void:
 	assert_float(float(cottages.stone_below)).is_equal(63.0)
 	# the left window is always boarded (NorthCottagesDamage has no condition): planks, so not a window
 	assert_array(cottages.no_stick).is_equal([Rect2(11, 52, 37, 40)])
-	assert_array(cottages.timber).is_equal([Rect2(-139, 0, 62, 84), Rect2(41, 0, 62, 84)])
+	assert_array(cottages.timber).is_equal([Rect2(-139, 0, 62, 84), Rect2(41, 0, 62, 84), Rect2(-72, 51, 61, 13)])
 	var fern := Impact.face_of(cross.get_node("Walls/Building_fern_cottage"))
 	assert_float(float(fern.stone_below)).is_equal(63.0)
 	assert_int(fern.no_stick.size()).is_equal(1)
@@ -513,7 +595,11 @@ func test_the_crossroads_houses_declare_their_plinths_and_windows() -> void:
 	# the path reaches the damage's Conditional from the Ferns' solid in the scene
 	var fern_body := cross.get_node("Walls/Building_fern_cottage")
 	assert_object(fern_body.get_node_or_null(fern.no_stick[0].unless)).is_same(cross.get_node("Props/If_fern_cottage_damage"))
-	assert_array(fern.timber).is_equal([Rect2(-91, 0, 62, 85)])
+	assert_int(fern.timber.size()).is_equal(3)
+	assert_object(fern.timber[0]).is_equal(Rect2(-91, 0, 62, 85))
+	assert_object(fern.timber[1].rect).is_equal(Rect2(-4, 53, 62, 11))
+	assert_object(fern.timber[2].rect).is_equal(Rect2(-96, 0, 69, 64))
+	assert_object(fern.timber[2].get("while")).is_equal(NodePath("../../Props/If_fern_cottage_damage"))
 
 ## #509 follow-up: the arrow's last ground point is taken after its start is settled. Against a wall the start
 ## moves to the archer's feet, and the "one step before" point must be there, not at the bow's tip.
