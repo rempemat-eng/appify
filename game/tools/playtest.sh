@@ -116,7 +116,7 @@ for ROUTE in "${ROUTES[@]}"; do
       FAILED=1
       continue
     fi
-    # user:// under the profile (project.godot: custom_user_dir_name="napattack")
+    # Seed the old napattack folder: a normal MyGame boot imports it into its own user://.
     mkdir -p "$PROFILE/data/napattack" && cp "$SEED" "$PROFILE/data/napattack/save_0.json"
     FRESH=
   fi

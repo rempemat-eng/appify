@@ -240,6 +240,11 @@ func _show_due_card() -> void:
 	while Dialogue.busy:
 		await Dialogue.closed
 		await get_tree().create_timer(0.3).timeout
+	if not _told_about_the_save and SaveGame._legacy_import_error != OK:
+		_told_about_the_save = true
+		hud.show_card("A new game", "The old napattack save could not be imported",
+			"Your old progress is still in the napattack folder. This game starts afresh, and this session cannot save.", 14.0)
+		return
 	if not _told_about_the_save and (SaveGame.boot_error == ERR_PARSE_ERROR or SaveGame.boot_error == ERR_INVALID_DATA
 			or SaveGame.boot_error == ERR_UNAVAILABLE):
 		# the save on disk was not loaded: say so once, before anything else, instead of starting over silently

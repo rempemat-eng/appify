@@ -18,12 +18,36 @@ class MigrationSave:
 		legacy_lookups += 1
 		return legacy_source
 
+# Exercise the real card decision without entering the game scene or writing a story autosave.
+class RecoveryCardHud:
+	extends Control
+	var guidance := true
+	var cards: Array[Dictionary] = []
+
+	func show_card(title: String, subtitle: String, text: String, secs := 9.0) -> void:
+		cards.append({"title": title, "subtitle": subtitle, "text": text, "seconds": secs})
+
+class RecoveryCardGame:
+	extends "res://game.gd"
+	var autosave_calls := 0
+
+	func autosave() -> void:
+		autosave_calls += 1
+
 var _migration_saves: Array[Node] = []
+var _card_state := {}
 
 func before_test() -> void:
 	SaveGame.reset()
 
 func after_test() -> void:
+	if not _card_state.is_empty():
+		SaveGame.data = _card_state.data
+		SaveGame.boot_error = _card_state.boot_error
+		SaveGame._legacy_import_error = _card_state.import_error
+		Dialogue.busy = _card_state.dialogue_busy
+		Zones.current = _card_state.zone
+		_card_state.clear()
 	for instance: Node in _migration_saves:
 		instance.free()
 	_migration_saves.clear()
@@ -45,6 +69,100 @@ func _write_migration_file(target: String, text: String) -> void:
 	var file := FileAccess.open(target, FileAccess.WRITE)
 	file.store_string(text)
 	file.close()
+
+func _recovery_card_game() -> RecoveryCardGame:
+	if _card_state.is_empty():
+		_card_state = {"data": SaveGame.data.duplicate(true), "boot_error": SaveGame.boot_error,
+			"import_error": SaveGame._legacy_import_error, "dialogue_busy": Dialogue.busy, "zone": Zones.current}
+	SaveGame.boot_error = OK
+	SaveGame._legacy_import_error = OK
+	Dialogue.busy = false
+	Zones.current = null
+	# No story card is due on a repeat call; the test double also refuses any actual autosave.
+	for card: Dictionary in Quests.cards:
+		SaveGame.data.flags["seen:" + str(card.get("id", ""))] = true
+	var game: RecoveryCardGame = auto_free(RecoveryCardGame.new())
+	game.hud = RecoveryCardHud.new()
+	game.add_child(game.hud)
+	return game
+
+func test_default_legacy_lookup_uses_the_real_absolute_sibling_without_booting() -> void:
+	var instance := preload("res://core/save_game.gd").new()
+	_migration_saves.append(instance)
+	assert_str(instance.path).is_equal(SaveGame.DEFAULT_PATH)
+	var legacy: String = instance._legacy_save_path()
+	var parent := OS.get_user_data_dir().get_base_dir()
+	assert_bool(legacy.is_absolute_path()).is_true()
+	assert_str(legacy).is_equal(parent.path_join("napattack/save_0.json"))
+	assert_str(legacy.get_base_dir().get_base_dir()).is_equal(parent)
+	assert_bool(legacy == OS.get_user_data_dir().path_join("napattack/save_0.json")).is_false()
+
+func test_failed_import_card_keeps_its_cause_and_shows_once_without_autosaving() -> void:
+	# Even an overlapping load-error code is an import failure when the copy failed.
+	for err: Error in [ERR_FILE_CANT_READ, ERR_FILE_CANT_WRITE, ERR_PARSE_ERROR, ERR_INVALID_DATA, ERR_UNAVAILABLE]:
+		var game := _recovery_card_game()
+		var card_hud := game.hud as RecoveryCardHud
+		SaveGame.boot_error = err
+		SaveGame._legacy_import_error = err
+		await game._show_due_card()
+		assert_int(card_hud.cards.size()).is_equal(1)
+		var card: Dictionary = card_hud.cards[0]
+		assert_str(card.title).is_equal("A new game")
+		assert_str(card.subtitle).contains("napattack")
+		assert_str(card.text).contains("old progress is still in the napattack folder")
+		assert_str(card.text).contains("this session cannot save")
+		assert_bool(str(card.text).contains(".broken")).is_false()
+		assert_bool(str(card.text).contains("newer one")).is_false()
+		assert_float(card.seconds).is_equal(14.0)
+		await game._show_due_card()
+		assert_int(card_hud.cards.size()).is_equal(1)
+		assert_int(game.autosave_calls).is_equal(0)
+		assert_int(SaveGame.boot_error).is_equal(err)
+		assert_int(SaveGame._legacy_import_error).is_equal(err)
+
+func test_load_error_cards_keep_their_existing_explanations_without_an_import_failure() -> void:
+	for err: Error in [ERR_PARSE_ERROR, ERR_INVALID_DATA, ERR_UNAVAILABLE]:
+		var game := _recovery_card_game()
+		var card_hud := game.hud as RecoveryCardHud
+		SaveGame.boot_error = err
+		await game._show_due_card()
+		assert_int(card_hud.cards.size()).is_equal(1)
+		var card: Dictionary = card_hud.cards[0]
+		if err == ERR_UNAVAILABLE:
+			assert_str(card.subtitle).contains("newer version")
+			assert_str(card.text).contains("will not be saved over the newer one")
+			assert_bool(str(card.text).contains(".broken")).is_false()
+		else:
+			assert_str(card.subtitle).is_equal("The save could not be read")
+			assert_str(card.text).contains(SaveGame.path.get_file() + ".broken")
+		assert_bool(str(card.text).contains("napattack")).is_false()
+		assert_float(card.seconds).is_equal(14.0)
+		await game._show_due_card()
+		assert_int(card_hud.cards.size()).is_equal(1)
+		assert_int(game.autosave_calls).is_equal(0)
+
+func test_a_clean_or_missing_save_does_not_show_a_recovery_card() -> void:
+	for err: Error in [OK, ERR_FILE_NOT_FOUND]:
+		var game := _recovery_card_game()
+		SaveGame.boot_error = err
+		await game._show_due_card()
+		assert_array((game.hud as RecoveryCardHud).cards).is_empty()
+		assert_bool(game._told_about_the_save).is_false()
+		assert_int(game.autosave_calls).is_equal(0)
+
+func test_failed_import_card_waits_until_guidance_is_enabled() -> void:
+	var game := _recovery_card_game()
+	var card_hud := game.hud as RecoveryCardHud
+	SaveGame.boot_error = ERR_FILE_CANT_WRITE
+	SaveGame._legacy_import_error = ERR_FILE_CANT_WRITE
+	card_hud.guidance = false
+	await game._show_due_card()
+	assert_array(card_hud.cards).is_empty()
+	assert_bool(game._told_about_the_save).is_false()
+	card_hud.guidance = true
+	await game._show_due_card()
+	assert_int(card_hud.cards.size()).is_equal(1)
+	assert_int(game.autosave_calls).is_equal(0)
 
 func test_old_folder_v2_import_keeps_original_bytes_progress_and_unknown_fields() -> void:
 	var text := FileAccess.get_file_as_string(LEGACY_NAME_FIXTURE)
