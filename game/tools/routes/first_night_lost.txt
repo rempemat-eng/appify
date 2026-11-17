@@ -1,4 +1,5 @@
-#! save: first_night.save.json
+#! legacy-save: first_night.save.json
+# Intentionally import the old folder on the first normal boot; restarts load MyGame.
 # The first night lost, then held (Matt, 13 Nov: "Shard dims until held"; core/raids.gd, world/raid_night.gd),
 # played with real input from the save first_night.txt starts from. The player takes both hurdles off the
 # pads and stands on the garden walk while the shardstruck walk down an open road and break the shard
