@@ -459,7 +459,7 @@ func test_a_dust_puff_has_a_core_that_stands_out_from_the_ground() -> void:
 	for tone: float in [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0]:
 		for material: String in ["stone", "", "timber"]:
 			var core := Impact.dust_core(material, tone)
-			assert_float(absf(0.299 * core.r + 0.587 * core.g + 0.114 * core.b - tone)).is_greater_equal(0.2)
+			assert_float(absf(0.2126 * core.r + 0.7152 * core.g + 0.0722 * core.b - tone)).is_greater_equal(0.2)
 	# read from the zone's Ground picture under the mark
 	var zone: Node2D = auto_free(Node2D.new())
 	add_child(zone)
@@ -476,7 +476,7 @@ func test_a_dust_puff_has_a_core_that_stands_out_from_the_ground() -> void:
 	var light := Impact.spawn(actors, Impact.Kind.DROP, Vector2(10, 10), 20.0, Vector2.UP, true)
 	var dark := Impact.spawn(actors, Impact.Kind.DROP, Vector2(50, 10), 20.0, Vector2.UP, true)
 	# read at spawn, where the dust lies: never a frame drawn without its core
-	assert_float(light.ground_tone).is_equal_approx(0.299 * 0.71 + 0.587 * 0.66 + 0.114 * 0.59, 0.01)
+	assert_float(light.ground_tone).is_equal_approx(0.2126 * 0.71 + 0.7152 * 0.66 + 0.0722 * 0.59, 0.01)
 	assert_float(dark.ground_tone).is_equal_approx(0.2, 0.01)
 	assert_object(Impact.dust_core("", light.ground_tone)).is_equal(Impact.PATH_DEEP)
 	assert_object(Impact.dust_core("", dark.ground_tone)).is_equal(Impact.DUST_LIT)
@@ -550,6 +550,85 @@ func test_boards_in_the_stone_band_are_timber() -> void:
 	assert_bool(Impact.timber_at(restored, {"bad": 1}, Vector2(0, 30))).is_false()
 
 ## #516 audit, F3: the ground is read through a tone grid, one byte per 5 x 5 texel cell, kept for one zone only.
+## The largest difference between a grid's tones and the exact means of the picture's aligned 5 x 5 cells (Rec.
+## 709 luma from its RGB, in floats), over every 7th cell. Measured on 17 Nov (#516 round 3) with the exact build:
+## Crossroads, the Undercroft and the woodland all within one byte (the engine's L8 rounds each texel to a
+## byte, the grid rounds the mean); before, with the drift on odd sizes and the bilinear step, up to 108 bytes
+## (the Undercroft, 2304 wide: 460.8 cells).
+const GRID_TOLERANCE := 1.0 / 255.0
+
+func _grid_error(t: Texture2D, grid: Dictionary) -> float:
+	var img := t.get_image()
+	var worst := 0.0
+	var w := int(grid.w)
+	var h := int(grid.h)
+	for i in range(0, w * h, 7):
+		var cx := i % w
+		var cy := i / w
+		var sum := 0.0
+		for dy in 5:
+			for dx in 5:
+				var c := img.get_pixel(cx * 5 + dx, cy * 5 + dy)
+				sum += 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
+		worst = maxf(worst, absf(Impact.grid_tone(grid, Vector2(cx * 5 + 2, cy * 5 + 2)) - sum / 25.0))
+	return worst
+
+## #516 round 3: odd sizes no longer drift (the picture is cropped to whole cells), and every cell is the exact
+## mean, on the Undercroft (2304 x 648: 460.8 cells across) and the woodland (960 x 1728: 345.6 down).
+func test_the_tone_grid_is_exact_on_odd_sized_grounds() -> void:
+	for path: String in ["res://zones/undercroft/art/ground.png", "res://zones/woodland/art/ground.png"]:
+		var t: Texture2D = load(path)
+		var grid := Impact.ground_grid(t)
+		assert_int(int(grid.w)).is_equal(int(t.get_width()) / 5)
+		assert_int(int(grid.h)).is_equal(int(t.get_height()) / 5)
+		var err := _grid_error(t, grid)
+		print("GRID ", path, " ", grid.w, "x", grid.h, " worst ", err * 255.0, " bytes")
+		assert_float(err).override_failure_message("%s: %.2f bytes" % [path, err * 255.0]).is_less_equal(GRID_TOLERANCE)
+
+## #516 round 3: the grid is built as the zone is made (world/zone.gd), once.
+func test_the_grid_is_built_once_when_the_zone_is_made() -> void:
+	var zone: Node2D = auto_free(Node2D.new())
+	var base := Node2D.new()
+	base.name = "Base"
+	zone.add_child(base)
+	var ground := Sprite2D.new()
+	ground.name = "Ground"
+	ground.centered = false
+	ground.texture = load("res://zones/woodland/art/ground.png")
+	base.add_child(ground)                                  # the woodland keeps it under Base
+	assert_object(Impact.ground_of(zone)).is_same(ground)
+	Impact._grid_for = 0
+	var ms := Impact.prepare_ground(zone)
+	print("GRID build woodland ms ", ms)
+	assert_float(ms).is_greater(0.0)
+	assert_float(Impact.prepare_ground(zone)).is_equal(0.0)                 # built already
+	# world/zone.gd asks for it in its _ready
+	assert_bool(FileAccess.get_file_as_string("res://world/zone.gd").contains("Impact.prepare_ground(self)")).is_true()
+
+## #516 round 3: a drop off a solid never reads the ground from the strip its building hides.
+func test_a_drop_off_a_solid_reads_the_ground_in_front_of_it() -> void:
+	var zone: Node2D = auto_free(Node2D.new())
+	add_child(zone)
+	var ground := Sprite2D.new()
+	ground.name = "Ground"
+	ground.centered = false
+	var img := Image.create(400, 400, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0.8, 0.8, 0.8))
+	img.fill_rect(Rect2i(0, 130, 400, 20), Color(0.1, 0.1, 0.1))   # a dark strip, rows 130 to 149
+	ground.texture = ImageTexture.create_from_image(img)
+	zone.add_child(ground)
+	Impact._grid_for = 0
+	var actors := Node2D.new()
+	zone.add_child(actors)
+	var fx := Impact.spawn(actors, Impact.Kind.DROP, Vector2(180, 140), 20.0, Vector2.UP, true)
+	fx.drift = Vector2.ZERO
+	fx.read_ground()                                         # at (180, 143): the strip
+	assert_float(fx.ground_tone).is_less(0.2)
+	fx.read_ground(153.0)                                    # the box's foot (150) + 3: in front of it
+	assert_float(fx.ground_tone).is_greater(0.7)
+	# the arrow passes the box's foot + 3 (arrow.gd), so a drop off a solid reads in front of it
+	assert_bool(FileAccess.get_file_as_string("res://actors/arrow.gd").contains("fx.read_ground(Impact.box_of(body).end.y + 3.0)")).is_true()
+
 func test_the_ground_tone_grid_is_small_and_matches_the_picture() -> void:
 	var t: Texture2D = load("res://zones/crossroads/art/ground.png")
 	var grid := Impact.ground_grid(t)
@@ -559,13 +638,7 @@ func test_the_ground_tone_grid_is_small_and_matches_the_picture() -> void:
 	assert_int((grid.tones as PackedByteArray).size()).is_less_equal(130 * 1024)      # bytes; the picture is ~10 MB
 	assert_bool(is_same(Impact.ground_grid(t), grid)).is_true()                          # built once
 	# it matches the picture's own 5 x 5 means at cell centres, across the zone
-	var img := t.get_image()
-	var worst := 0.0
-	for i in 40:
-		var cell := Vector2i((i * 37) % 384, (i * 53) % 336)
-		var centre := Vector2(cell.x * 5 + 2, cell.y * 5 + 2)
-		worst = maxf(worst, absf(Impact.grid_tone(grid, centre) - Impact.tone_of(img, centre)))
-	assert_float(worst).is_less_equal(0.08)
+	assert_float(_grid_error(t, grid)).is_less_equal(GRID_TOLERANCE)
 	# off the grid: not known
 	assert_float(Impact.grid_tone(grid, Vector2(-1, 5))).is_less(0.0)
 	assert_float(Impact.grid_tone(grid, Vector2(1920, 5))).is_less(0.0)

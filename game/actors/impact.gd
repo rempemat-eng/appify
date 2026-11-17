@@ -241,55 +241,84 @@ static func in_front_of(fx: Impact, body: Node) -> void:
 		fx.global_position.y += d
 		fx.lift += d
 
-## How bright the ground is under `at` (global texels), 0 to 1: the zone's own ground picture, the `Ground`
-## Sprite2D of the nearest ancestor of `near` that has one (the generated zones' roots: woodland, Crossroads,
-## the Undercroft), read through its tone grid (`ground_grid`, one value per 5 x 5 texel cell). Below 0 when
-## there is none: zones whose ground is a tile layer (frostline, the kit labs, brackens_lab) have no `Ground`
-## sprite, and their dust is drawn without a core, as before.
+## How bright the ground is under `at` (global texels), 0 to 1: the zone's own ground picture (`ground_of`),
+## read through its tone grid (`ground_grid`, one value per 5 x 5 texel cell). Below 0 when there is none: zones
+## whose ground is a tile layer (frostline, the kit labs, brackens_lab) have no `Ground` sprite, and their dust
+## is drawn without a core, as before.
 static func ground_tone_at(near: Node, at: Vector2) -> float:
+	var g := ground_of(near)
+	if g == null:
+		return -1.0
+	var p := g.to_local(at) - g.offset + (g.texture.get_size() * 0.5 if g.centered else Vector2.ZERO)
+	return grid_tone(ground_grid(g.texture), p)
+
+## The ground picture over `near`: the `Ground` (or `Base/Ground`) Sprite2D of its nearest ancestor that has one
+## (Crossroads and the Undercroft hold it at the root, the woodland under its Base), or null.
+static func ground_of(near: Node) -> Sprite2D:
 	var n := near
 	while n != null:
-		var g := n.get_node_or_null("Ground") as Sprite2D
-		if g != null and g.texture != null:
-			var p := g.to_local(at) - g.offset + (g.texture.get_size() * 0.5 if g.centered else Vector2.ZERO)
-			return grid_tone(ground_grid(g.texture), p)
+		for path: String in ["Ground", "Base/Ground"]:
+			var g := n.get_node_or_null(path) as Sprite2D
+			if g != null and g.texture != null:
+				return g
 		n = n.get_parent()
-	return -1.0
+	return null
+
+## Builds the tone grid of `zone`'s ground as the zone is made (world/zone.gd `_ready`), so the first dust puff
+## in a zone does not pay for it (#516 round 3). Returns the milliseconds it took (0 when it was built already or
+## the zone has no ground picture).
+static func prepare_ground(zone: Node) -> float:
+	var g := ground_of(zone)
+	if g == null or (_grid_for == g.texture.get_instance_id() and not _grid.is_empty()):
+		return 0.0
+	var t0 := Time.get_ticks_usec()
+	ground_grid(g.texture)
+	last_build_ms = (Time.get_ticks_usec() - t0) / 1000.0
+	return last_build_ms
 
 const GRID_CELL := 5            ## texels a side of one tone-grid cell
 
 ## The tone grid of one ground picture: {"w", "h", "tones": PackedByteArray of luma * 255, one per GRID_CELL
-## square, row by row}. Built on first use from the picture (each cell the picture's mean there: the picture is
-## shrunk with averaging, then its luma read), and the picture is let go at once. Only the latest zone's grid is
-## kept, by its texture's instance id, not the texture: a freed zone takes its picture with it, and the grid is
-## about 130 KB for Crossroads (the full picture held was about 10 MB; #516 audit, F3 and F4).
+## square, row by row}. Each cell is the exact mean of its 5 x 5 texels of the picture: the picture is cropped to
+## whole cells (an odd size drifted the cells before, #516 round 3), turned into luma by the engine (Rec. 709,
+## FORMAT_L8), read as bytes once and summed cell by cell; the picture is let go at once. Only the latest zone's
+## grid is kept, by its texture's instance id, not the texture: a freed zone takes its picture with it, and the
+## grid is about 130 KB for Crossroads (the full picture held was about 10 MB; #516 audit, F3 and F4).
 static var _grid_for := 0
 static var _grid := {}
+static var last_build_ms := 0.0 ## how long the last grid took to build
 
 static func ground_grid(t: Texture2D) -> Dictionary:
 	if t == null:
 		return {}
 	if _grid_for == t.get_instance_id() and not _grid.is_empty():
 		return _grid
-	var img := t.get_image()
-	if img == null or img.is_empty():
+	var src := t.get_image()
+	if src == null or src.is_empty():
 		return {}
-	img = img.duplicate()           # never resize the texture's own copy
+	var img: Image = src.duplicate()   # never change the texture's own copy
 	if img.is_compressed():
 		img.decompress()
-	img.convert(Image.FORMAT_RGB8)
 	var w := maxi(1, img.get_width() / GRID_CELL)
 	var h := maxi(1, img.get_height() / GRID_CELL)
-	# halve with 2 x 2 averaging while that stays above the grid, then the last step to the grid's size
-	while img.get_width() >= w * 2 * 2 and img.get_height() >= h * 2 * 2:
-		img.shrink_x2()
-	img.resize(w, h, Image.INTERPOLATE_BILINEAR)
+	var cols := w * GRID_CELL
+	img.crop(cols, h * GRID_CELL)
+	img.convert(Image.FORMAT_L8)
+	var data := img.get_data()
+	var sums := PackedInt32Array()
+	sums.resize(w)
 	var tones := PackedByteArray()
 	tones.resize(w * h)
-	for y in h:
-		for x in w:
-			var c := img.get_pixel(x, y)
-			tones[y * w + x] = clampi(int(round((0.299 * c.r + 0.587 * c.g + 0.114 * c.b) * 255.0)), 0, 255)
+	var cell := GRID_CELL * GRID_CELL
+	for cy in h:
+		sums.fill(0)
+		for dy in GRID_CELL:
+			var i := (cy * GRID_CELL + dy) * cols
+			for cx in w:
+				sums[cx] += data[i] + data[i + 1] + data[i + 2] + data[i + 3] + data[i + 4]
+				i += GRID_CELL
+		for cx in w:
+			tones[cy * w + cx] = (sums[cx] + cell / 2) / cell
 	_grid_for = t.get_instance_id()
 	_grid = {"w": w, "h": h, "tones": tones}
 	return _grid
@@ -304,7 +333,7 @@ static func grid_tone(grid: Dictionary, p: Vector2) -> float:
 		return -1.0
 	return (grid.tones as PackedByteArray)[cy * int(grid.w) + cx] / 255.0
 
-## The mean brightness (Rec. 601 luma) of the 5 x 5 texels of `img` round `p`; below 0 off the picture. The exact
+## The mean brightness (Rec. 709 luma, as the engine's FORMAT_L8) of the 5 x 5 texels of `img` round `p`; below 0 off the picture. The exact
 ## reference the tone grid is tested against.
 static func tone_of(img: Image, p: Vector2) -> float:
 	if img == null or img.is_empty():
@@ -317,7 +346,7 @@ static func tone_of(img: Image, p: Vector2) -> float:
 			if q.x < 0 or q.y < 0 or q.x >= img.get_width() or q.y >= img.get_height():
 				continue
 			var c := img.get_pixel(q.x, q.y)
-			sum += 0.299 * c.r + 0.587 * c.g + 0.114 * c.b
+			sum += _luma(c)
 			count += 1
 	return sum / count if count > 0 else -1.0
 
@@ -333,8 +362,9 @@ static func dust_core(material: String, tone: float) -> Color:
 	var light := STONE_LIT if stone else DUST_LIT
 	return dark if absf(_luma(dark) - tone) >= absf(_luma(light) - tone) else light
 
+## Brightness as the tone grid measures it: Rec. 709 luma, the engine's own FORMAT_L8 weights.
 static func _luma(c: Color) -> float:
-	return 0.299 * c.r + 0.587 * c.g + 0.114 * c.b
+	return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
 
 ## The global rectangle of a body's first rectangle shape (unrotated), or an empty Rect2.
 static func box_of(body: Node) -> Rect2:
@@ -418,8 +448,12 @@ func _ready() -> void:
 ## Reads the ground under the dust: where it is drawn, the arrow's resting point a little back (sampling at the
 ## contact read the dark ground under a house's foot: 0.30 and 0.42 in the polish pictures, 17 Nov). Spawn reads
 ## it once; whoever changes `drift` afterwards (the arrow knocking it back off a solid) reads it again.
-func read_ground() -> void:
-	ground_tone = ground_tone_at(self, global_position + drift - dir * 3.0)
+## `min_y`: the lowest global y it may read from; a drop off a solid passes the solid's box foot + 3, so the tone
+## never comes from the strip the building hides (#516 round 3).
+func read_ground(min_y := -INF) -> void:
+	var at := global_position + drift - dir * 3.0
+	at.y = maxf(at.y, min_y)
+	ground_tone = ground_tone_at(self, at)
 
 ## True when the burst is on the ground (dust where an arrow lies, a ring, a splat at a solid's foot): it is
 ## then drawn in the y-sort with the arrow, not over everything.
