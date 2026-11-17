@@ -308,10 +308,12 @@ func _process(delta: float) -> void:
 		shake = Vector2(randf_range(-1, 1), randf_range(-1, 1)).round() * DENSITY  # 1 world px
 	var base := (_look + Vector2(0, -8.0 * DENSITY)).round()
 	var frame := framing.step(delta, player.global_position, player.global_position + base, camera_screen(),
-		camera_limits(), bool(SaveGame.setting("reduced_motion", false)), CameraFraming.game_block_reason(player))
+		camera_limits(), bool(SaveGame.setting("reduced_motion", false)), CameraFraming.game_block_reason(player),
+		hud.top_panels())
 	pcam.follow_offset = (base + frame.offset).round() + shake
 	if frame.cut:
-		# reduced motion: the framing cuts in and out instead of easing (the follow's own damping skipped once)
+		# reduced motion: a framing that comes or goes at once cuts instead of easing (the follow's own damping
+		# skipped once); walking across the area's feather moves it with the feet and is no cut
 		pcam.teleport_position()
 		snap_camera()
 

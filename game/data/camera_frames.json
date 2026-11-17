@@ -1,14 +1,19 @@
 {
-  "why": "Tall landmarks the camera frames whole while the player's feet are in `area` (texels: x, y, w, h), as world/camera_framing.gd reads them. `frame` lists the zone scene's paths of the pictures that must fit on screen; the hint holds only while one of them is drawn. The player always stays inside the safe insets, so a landmark is framed whole only where that allows it.",
+  "why": "Tall landmarks the camera frames whole near `area` (texels: x, y, w, h), as world/camera_framing.gd reads them: the weight goes from 0 at FEATHER (32) texels outside the area's edge to 1 at FEATHER inside it. `frame` lists the zone scene's paths of the pictures that must fit on screen; the hint holds only while one of them is drawn. The player always stays inside the safe insets, so a landmark is framed whole only where that allows it.",
   "crossroads": [
     {
       "id": "library_cupola",
-      "area": [568, 604, 352, 156],
+      "area": [
+        536,
+        300,
+        416,
+        428
+      ],
       "frame": [
         "Props/If_cupola_empty/CupolaEmpty",
         "Props/If_cupola_hung/CupolaHung"
       ],
-      "why": "the library's bell cupola (Matt, 13 Nov, decision (d): the bell tower optional, its cupola drawn so that paying visibly changes the square; scripts/art/native/belfry.py). Its top stands at y 235, 365 texels above the library's door (744, 600), and the plain follow puts the top of the picture 294 texels above the feet, so it was cut off from everywhere in the square. The area is the strip in front of the library, its 316-texel front and a little either side, from the wall's foot (the building's body ends at y 600) 156 texels south; the cupola fits whole while the feet are north of about y 703, where the safe inset at the bottom of the picture allows it, and more of it shows the nearer the door"
+      "why": "the library's bell cupola (Matt, 13 Nov, decision (d): the bell tower optional, its cupola drawn so that paying visibly changes the square; scripts/art/native/belfry.py). Its top stands at y 235, 365 texels above the library's door (744, 600), and the plain follow puts the top of the picture 294 texels above the feet, so it was cut off from everywhere in the square. The cupola fits whole while the feet are north of y 703 (the safe inset at the bottom of the picture), so the area's south edge is y 728: full weight to y 696, none from y 760 (the #523 audit). Its west and east edges (x 536, 952) give full weight over the library's front and the lane's mouth, x 568 to 920, and none west of 504 or east of 984. Its north edge (y 300) is in the roofs: north of about y 517 the plain follow already shows the cupola and the offset is 0, so the weight's fall there moves nothing (no counter-motion up the lane)"
     }
   ]
 }
