@@ -111,8 +111,12 @@ static func block_reason(talk: bool, input_on: bool, downed: bool, raid_night: b
 static func game_block_reason(player: Node2D) -> String:
 	var states: Array = []
 	for e in player.get_tree().get_nodes_in_group("enemy"):
-		if e.is_inside_tree() and not bool(e.get("dead")) and Zones.current != null and Zones.current.is_ancestor_of(e):
-			states.append(String(e.get("state")))
+		# the Thornback (bosses/thornback.gd) has no `dead` as the other enemies have, so only a true value
+		# counts; a node in the group with no `state` is not a fight
+		var st: Variant = e.get("state")
+		if st != null and e.is_inside_tree() and e.get("dead") != true and Zones.current != null \
+				and is_instance_valid(Zones.current) and Zones.current.is_ancestor_of(e):
+			states.append(str(st))
 	var input_on: bool = player.get("input_enabled") != false
 	var downed: bool = player.has_method("is_defeated") and player.is_defeated()
 	return block_reason(Dialogue.busy, input_on, downed, Raids.running(), states)

@@ -81,6 +81,38 @@ func test_block_reasons() -> void:
 	for st: String in ["chase", "approach", "windup", "attack", "lunge", "recover"]:
 		assert_str(CameraFraming.block_reason(false, true, false, false, ["idle", st])).is_equal("fight")
 
+func test_the_game_reads_a_fight_from_the_zone_enemies_with_or_without_a_dead_flag() -> void:
+	# found by check:godot: the Thornback has no `dead`, and bool(null) failed every frame in the Undercroft
+	var zone: Zone = auto_free(Zone.new())
+	var actors := Node2D.new()
+	actors.name = "Actors"
+	zone.add_child(actors)
+	add_child(zone)
+	var was: Zone = Zones.current
+	Zones.current = zone
+	var player := Node2D.new()
+	zone.add_child(player)
+	assert_str(CameraFraming.game_block_reason(player)).is_equal("")
+	var plain := Node2D.new()                         # in the group, no state at all: not a fight
+	plain.add_to_group("enemy")
+	zone.add_child(plain)
+	var awake := Node2D.new()
+	awake.set_script(_Stand)
+	awake.add_to_group("enemy")
+	zone.add_child(awake)
+	assert_str(CameraFraming.game_block_reason(player)).is_equal("")      # idle, no `dead`
+	awake.set("state", &"chase")
+	assert_str(CameraFraming.game_block_reason(player)).is_equal("fight")
+	var outside: Node2D = auto_free(Node2D.new())     # an awake enemy outside the current zone does not count
+	add_child(outside)
+	awake.reparent(outside)
+	assert_str(CameraFraming.game_block_reason(player)).is_equal("")
+	Zones.current = was if is_instance_valid(was) else null
+
+## A stand-in enemy with a `state` and no `dead`, as bosses/thornback.gd.
+class _Stand extends Node2D:
+	var state: StringName = &"idle"
+
 # --- the ease, reduced motion, the area and the blocks (a stand-in for the zone's cupola picture) ----------
 func _framing(visible := true) -> CameraFraming:
 	var host: Node2D = auto_free(Node2D.new())

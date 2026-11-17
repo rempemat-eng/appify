@@ -10,6 +10,11 @@ func before_test() -> void:
 
 func after_test() -> void:
 	SaveGame.path = SaveGame.DEFAULT_PATH
+	# the scene runner frees main.tscn and its zone, but Zones.current kept pointing at it: a suite run after
+	# this one that saves and restores Zones.current (test_save's cards) then assigned a freed object. GdUnit's
+	# suite order follows the folder listing, and adding a suite (test_camera_framing, 17 Nov) put test_save
+	# after this one.
+	Zones.current = null
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE))
 
 ## Frames run unthrottled in headless tests, so wait on physics ticks, not process frames.
