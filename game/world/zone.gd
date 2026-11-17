@@ -25,6 +25,7 @@ func _ready() -> void:
 		if ground != null and ground.texture != null:
 			bounds = Rect2(Vector2.ZERO, ground.texture.get_size())
 	Quests.started.connect(_on_quest_started)
+	Impact.prepare_ground(self)   # the dust's tone grid, built as the zone is made, not on its first puff
 
 ## A quest with `walks_off` {speaker, zone, toward: [x, y] texels} that starts in this zone sends that
 ## speaker ahead: she walks off toward the point and is gone (world/walk_off.gd). The quest's own flags
