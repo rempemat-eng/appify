@@ -1,0 +1,390 @@
+{
+  "id": "clack",
+  "contract": 2,
+  "walk_speed": 73.9,
+  "v1_walk_speed": 64.3,
+  "clips": [
+    {
+      "clip": "idle",
+      "drawings": 12,
+      "duration": 1.6,
+      "ticks": [9, 7, 7, 9, 9, 9, 8, 8, 7, 8, 4, 11],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "walk",
+      "drawings": 12,
+      "duration": 0.4872,
+      "ticks": [2, 2, 3, 2, 3, 2, 3, 2, 2, 3, 2, 3],
+      "sub_tick": [],
+      "v1_drawings": 10,
+      "duration_change_ms": -72.8
+    },
+    {
+      "clip": "primary",
+      "drawings": 16,
+      "duration": 0.6498,
+      "ticks": [1, 2, 3, 3, 3, 2, 5, 3, 3, 1, 1, 2, 2, 2, 2, 3],
+      "sub_tick": [],
+      "release_frame": 7,
+      "release_time": 0.3332,
+      "release_offset_ms": 0.0,
+      "release_ticks": 3,
+      "v1_drawings": 12,
+      "duration_change_ms": 9.8,
+      "release_change_ms": 3.2
+    },
+    {
+      "clip": "secondary",
+      "drawings": 12,
+      "duration": 0.65,
+      "ticks": [4, 3, 2, 4, 3, 3, 3, 3, 2, 3, 4, 5],
+      "sub_tick": [],
+      "release_frame": 6,
+      "release_time": 0.3333,
+      "release_offset_ms": 0.0,
+      "release_ticks": 3,
+      "v1_drawings": 9,
+      "duration_change_ms": 9.9,
+      "release_change_ms": 3.2
+    },
+    {
+      "clip": "special",
+      "drawings": 11,
+      "duration": 0.8166,
+      "ticks": [6, 3, 3, 6, 4, 3, 3, 5, 4, 6, 5],
+      "sub_tick": [],
+      "release_frame": 5,
+      "release_time": 0.3833,
+      "release_offset_ms": 0.0,
+      "release_ticks": 3,
+      "v1_drawings": 9,
+      "duration_change_ms": -3.4,
+      "release_change_ms": 3.3
+    },
+    {
+      "clip": "guard",
+      "drawings": 8,
+      "duration": 0.7002,
+      "ticks": [4, 4, 3, 3, 7, 7, 7, 7],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.2
+    },
+    {
+      "clip": "hit",
+      "drawings": 10,
+      "duration": 0.9334,
+      "ticks": [1, 2, 4, 3, 3, 8, 7, 9, 9, 10],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 3.4
+    },
+    {
+      "clip": "defeat",
+      "drawings": 8,
+      "duration": 1.2666,
+      "ticks": [4, 6, 6, 8, 9, 10, 14, 18],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": -3.4
+    },
+    {
+      "clip": "jump",
+      "drawings": 8,
+      "duration": 0.7,
+      "ticks": [4, 3, 5, 7, 6, 5, 4, 8],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "stair_up",
+      "drawings": 8,
+      "duration": 0.7165,
+      "ticks": [6, 6, 6, 4, 5, 5, 5, 5],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": -3.5
+    },
+    {
+      "clip": "stair_down",
+      "drawings": 8,
+      "duration": 0.7165,
+      "ticks": [6, 6, 6, 4, 5, 5, 5, 5],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": -3.5
+    },
+    {
+      "clip": "dodge",
+      "drawings": 10,
+      "duration": 0.4999,
+      "ticks": [3, 1, 2, 2, 3, 2, 2, 4, 4, 6],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 4.9
+    },
+    {
+      "clip": "powered_idle",
+      "drawings": 12,
+      "duration": 1.6,
+      "ticks": [9, 7, 7, 9, 9, 9, 8, 8, 7, 8, 4, 11],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_walk",
+      "drawings": 12,
+      "duration": 0.4872,
+      "ticks": [2, 2, 3, 2, 3, 2, 3, 2, 2, 3, 2, 3],
+      "sub_tick": [],
+      "v1_drawings": 10,
+      "duration_change_ms": -72.8
+    },
+    {
+      "clip": "powered_primary",
+      "drawings": 11,
+      "duration": 0.6499,
+      "ticks": [4, 3, 3, 6, 3, 3, 3, 5, 1, 2, 5],
+      "sub_tick": [],
+      "release_frame": 5,
+      "release_time": 0.3333,
+      "release_offset_ms": 0.0,
+      "release_ticks": 3,
+      "v1_drawings": 9,
+      "duration_change_ms": 10.0,
+      "release_change_ms": 3.4
+    },
+    {
+      "clip": "powered_guard",
+      "drawings": 8,
+      "duration": 0.7002,
+      "ticks": [4, 4, 3, 3, 7, 7, 7, 7],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.2
+    },
+    {
+      "clip": "powered_exit",
+      "drawings": 8,
+      "duration": 0.8667,
+      "ticks": [7, 6, 6, 6, 6, 5, 7, 9],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 6.5
+    },
+    {
+      "clip": "powered_hit",
+      "drawings": 10,
+      "duration": 0.9334,
+      "ticks": [1, 2, 4, 3, 3, 8, 7, 9, 9, 10],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 3.4
+    },
+    {
+      "clip": "powered_dodge",
+      "drawings": 10,
+      "duration": 0.4999,
+      "ticks": [3, 1, 2, 2, 3, 2, 2, 4, 4, 6],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 4.9
+    },
+    {
+      "clip": "powered_jump",
+      "drawings": 8,
+      "duration": 0.7,
+      "ticks": [4, 3, 5, 7, 6, 5, 4, 8],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": 0.0
+    },
+    {
+      "clip": "powered_stair_up",
+      "drawings": 8,
+      "duration": 0.7165,
+      "ticks": [6, 6, 6, 4, 5, 5, 5, 5],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": -3.5
+    },
+    {
+      "clip": "powered_stair_down",
+      "drawings": 8,
+      "duration": 0.7165,
+      "ticks": [6, 6, 6, 4, 5, 5, 5, 5],
+      "sub_tick": [],
+      "v1_drawings": 8,
+      "duration_change_ms": -3.5
+    },
+    {
+      "clip": "powered_secondary",
+      "drawings": 12,
+      "duration": 0.65,
+      "ticks": [4, 3, 2, 4, 3, 3, 3, 3, 2, 3, 4, 5],
+      "sub_tick": [],
+      "release_frame": 6,
+      "release_time": 0.3333,
+      "release_offset_ms": 0.0,
+      "release_ticks": 3,
+      "v1_drawings": 9,
+      "duration_change_ms": 9.9,
+      "release_change_ms": 3.2
+    },
+    {
+      "clip": "fidget_gauge",
+      "drawings": 10,
+      "duration": 1.2169,
+      "ticks": [9, 7, 7, 4, 5, 4, 13, 7, 7, 10],
+      "sub_tick": []
+    },
+    {
+      "clip": "fidget_heave",
+      "drawings": 8,
+      "duration": 1.0002,
+      "ticks": [9, 7, 7, 6, 7, 7, 7, 10],
+      "sub_tick": []
+    },
+    {
+      "clip": "fidget_muzzle",
+      "drawings": 9,
+      "duration": 1.1168,
+      "ticks": [9, 7, 7, 5, 5, 10, 7, 7, 10],
+      "sub_tick": []
+    }
+  ],
+  "walk_skate": {
+    "S": {
+      "planted_px_s": 27.1,
+      "body_px_s": 73.9,
+      "slide_px_s": 46.8,
+      "ok": false
+    },
+    "N": {
+      "planted_px_s": 27.1,
+      "body_px_s": 73.9,
+      "slide_px_s": 46.8,
+      "ok": false
+    },
+    "E": {
+      "planted_px_s": 73.9,
+      "body_px_s": 73.9,
+      "slide_px_s": 0.0,
+      "ok": true
+    },
+    "W": {
+      "planted_px_s": 73.9,
+      "body_px_s": 73.9,
+      "slide_px_s": 0.0,
+      "ok": true
+    }
+  },
+  "fidgets": {
+    "fidget_gauge": {
+      "seamless": true,
+      "facings_off_idle0": []
+    },
+    "fidget_heave": {
+      "seamless": true,
+      "facings_off_idle0": []
+    },
+    "fidget_muzzle": {
+      "seamless": true,
+      "facings_off_idle0": []
+    }
+  },
+  "canonical": [
+    {
+      "clip": "primary",
+      "drawings": 16,
+      "release_frame": 7,
+      "art_release": 0.3332,
+      "art_duration": 0.6498,
+      "canonical_release": 0.384,
+      "canonical_duration": 0.8,
+      "prep_factor": 1.1525,
+      "recovery_factor": 1.314,
+      "verdict": "HOLD",
+      "problems": [],
+      "ticks": [3, 3, 3, 3, 3, 3, 5, 3, 3, 2, 2, 3, 3, 3, 3, 3],
+      "durations": [
+        0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.0833, 0.05, 0.05, 0.0333, 0.0333, 0.05, 0.05, 0.05,
+        0.05, 0.05
+      ],
+      "release_ticks_shown": 3
+    },
+    {
+      "clip": "secondary",
+      "drawings": 12,
+      "release_frame": 6,
+      "art_release": 0.3333,
+      "art_duration": 0.65,
+      "canonical_release": 0.34559999999999996,
+      "canonical_duration": 0.72,
+      "prep_factor": 1.0369,
+      "recovery_factor": 1.1822,
+      "verdict": "HOLD",
+      "problems": [],
+      "ticks": [4, 3, 3, 5, 3, 3, 4, 4, 3, 3, 4, 4],
+      "durations": [
+        0.0667, 0.05, 0.05, 0.0833, 0.05, 0.05, 0.0667, 0.0667, 0.05, 0.05, 0.0667, 0.0667
+      ],
+      "release_ticks_shown": 4
+    },
+    {
+      "clip": "special",
+      "drawings": 11,
+      "release_frame": 5,
+      "art_release": 0.3833,
+      "art_duration": 0.8166,
+      "canonical_release": 0.28,
+      "canonical_duration": 0.65,
+      "prep_factor": 0.7305,
+      "recovery_factor": 0.8539,
+      "verdict": "ACCEPT",
+      "problems": [],
+      "ticks": [4, 3, 2, 4, 4, 3, 3, 3, 4, 5, 4],
+      "durations": [0.0667, 0.05, 0.0333, 0.0667, 0.0667, 0.05, 0.05, 0.05, 0.0667, 0.0833, 0.0667],
+      "release_ticks_shown": 3
+    },
+    {
+      "clip": "powered_primary",
+      "drawings": 11,
+      "release_frame": 5,
+      "art_release": 0.3333,
+      "art_duration": 0.6499,
+      "canonical_release": 0.33599999999999997,
+      "canonical_duration": 0.7,
+      "prep_factor": 1.0081,
+      "recovery_factor": 1.1497,
+      "verdict": "HOLD",
+      "problems": [],
+      "ticks": [5, 3, 3, 6, 3, 4, 3, 4, 3, 3, 5],
+      "durations": [0.0833, 0.05, 0.05, 0.1, 0.05, 0.0667, 0.05, 0.0667, 0.05, 0.05, 0.0833],
+      "release_ticks_shown": 4
+    },
+    {
+      "clip": "powered_secondary",
+      "drawings": 12,
+      "release_frame": 6,
+      "art_release": 0.3333,
+      "art_duration": 0.65,
+      "canonical_release": 0.34559999999999996,
+      "canonical_duration": 0.72,
+      "prep_factor": 1.0369,
+      "recovery_factor": 1.1822,
+      "verdict": "HOLD",
+      "problems": [],
+      "ticks": [4, 3, 3, 5, 3, 3, 4, 4, 3, 3, 4, 4],
+      "durations": [
+        0.0667, 0.05, 0.05, 0.0833, 0.05, 0.05, 0.0667, 0.0667, 0.05, 0.05, 0.0667, 0.0667
+      ],
+      "release_ticks_shown": 4
+    }
+  ]
+}
