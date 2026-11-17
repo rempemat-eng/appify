@@ -32,21 +32,44 @@ expect framed Props/If_cupola_empty/CupolaEmpty yes 4
 expect inview 48
 shot 03_east_look
 
+step at (934, 599) the aim swings east: the centre moves east a little at a time, the cupola right of the tracker (round-2 audit)
+goto 934 599 4
+aim 934 599
+wait 0.6
+shot 07_swing_0
+aim 1034 599
+wait 0.4
+expect framed Props/If_cupola_empty/CupolaEmpty yes
+shot 08_swing_1
+aim 1134 599
+wait 0.4
+expect framed Props/If_cupola_empty/CupolaEmpty yes
+shot 09_swing_2
+aim 1234 599
+wait 0.4
+expect framed Props/If_cupola_empty/CupolaEmpty yes
+shot 10_swing_3
+aim 1334 599
+wait 0.6
+expect framed Props/If_cupola_empty/CupolaEmpty yes
+expect inview 48
+shot 11_swing_4
+
 step across the south edge: the camera comes down with the feet, a little at a time
 aim 744 1100
 goto 744 696 4
 wait 1.0
 expect framed Props/If_cupola_empty/CupolaEmpty yes 4
 shot 04_edge_696
-goto 744 728 4
+goto 744 760 4
 wait 1.0
 expect inview 48
-shot 05_edge_728
-goto 744 760 4
+shot 05_edge_760
+goto 744 824 4
 wait 1.0
 expect framed Props/If_cupola_empty/CupolaEmpty no
 expect inview 48
-shot 06_edge_760
+shot 06_edge_824
 
 step back in the square: the plain follow again
 goto 744 900 20

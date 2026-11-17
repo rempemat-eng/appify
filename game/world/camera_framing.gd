@@ -13,19 +13,21 @@ extends RefCounted
 ## Near the area game.gd adds `step()`'s offset to the phantom camera's follow offset (the same channel
 ## the aim look-ahead and the hit shake use), so the camera's centre moves just far enough to fit the rect
 ## inside MARGIN, and never so far that the feet leave the SAFE insets of the screen: the player always
-## wins over the landmark. The landmark is also kept MARGIN clear of the HUD's drawn top pieces (the quest
-## tracker, ui/hud.gd `top_panels`) where the camera can do that and keep the feet safe. The centre is
-## then kept inside the zone's camera limits, as the phantom camera's own limit clamp keeps it.
+## wins over the landmark. The centre is then kept inside the zone's camera limits, as the phantom
+## camera's own limit clamp keeps it. Last, the centre x is held at or west of one bound that keeps the
+## landmark MARGIN right of the HUD's top-left pieces (the quest tracker, ui/hud.gd `top_panels`):
+## `hud_cap_x`, one continuous bound on one axis, so it only holds back the look-ahead to the east (the
+## #523 audits: the cupola went under the tracker, and then a choice between beside and below flipped).
 ##
-## How much of that offset applies is a weight with two parts. Its target follows the feet's distance
-## into the area, with a FEATHER on each side of the area's edge (0 at FEATHER outside, 1 at FEATHER
-## inside), so crossing the edge moves the camera a little each step instead of all at once (the #523
-## audit: up to 186 texels in one step). The weight itself moves toward that target at most 1 / EASE_TIME
-## a second, so a hint that comes or goes at once (a fight starts) still eases over EASE_TIME; the offset
-## is the full offset times the smoothstep of the weight. Under reduced motion the weight takes its
-## target at once: walking across the feather still moves the camera with the feet, step by step, and a
-## jump bigger than CUT_STEP (a block starting or ending) is a cut (`cut`, and game.gd teleports the
-## camera there) in place of an ease.
+## How much of the fit applies is a weight. Its target is 1 inside the hint's area and falls linearly to
+## 0 over a feather outside each side (`feather`: west, north, east, south), so crossing the edge moves
+## the camera a little each step instead of all at once (the first audit: 186 texels in one step). The
+## weight moves toward that target at most 1 / EASE_TIME a second, so a hint that comes or goes at once
+## (a fight starts) still eases over EASE_TIME; the offset is the fit's times the weight (linear, so a
+## crossing moves the camera at an even rate), and the HUD bound comes in with the weight and holds in
+## full from CAP_FULL. Under reduced motion the weight takes its target at once: walking across the feather moves the camera with the
+## feet, and a jump bigger than CUT_STEP, or a block starting or ending while framed, is a cut (`cut`,
+## and game.gd teleports the camera there) in place of an ease.
 ##
 ## While the player's input is off (the raid's prepare screen), while the player is down, while a raid's
 ## night runs or while an enemy in the zone is awake the target is 0. During a talk the weight holds where
@@ -35,17 +37,19 @@ extends RefCounted
 
 const PATH := "res://data/camera_frames.json"
 const EASE_TIME := 0.5                      ## seconds from the plain follow to the framed one, and back
-const FEATHER := 32.0                       ## texels each side of the area's edge over which the target goes 0 to 1
+const FEATHER := 64.0                       ## texels outside the area's edge over which the target falls to 0 (default)
 const CUT_STEP := 0.25                      ## under reduced motion a weight change bigger than this is a cut
+const CAP_FULL := 0.5                       ## the HUD bound holds in full from this weight up (linear from 0)
 const MARGIN := 12.0                        ## texels kept between the landmark and the screen's edge
 const SAFE_LT := Vector2(120.0, 132.0)      ## the feet stay this far inside the left and top edges ...
 const SAFE_RB := Vector2(120.0, 60.0)       ## ... and the right and bottom ones (Bramble's body is above the feet)
 const CALM := ["idle", "leash", "dormant"]  ## enemy states that are not a fight (home, walking home, asleep)
 
 var hints: Array = []       ## [{id, area: Rect2, nodes: Array}] for the current zone
-var weight := 0.0           ## 0 the plain follow, 1 framed (smoothstepped on use)
+var weight := 0.0           ## 0 the plain follow, 1 framed
 var rect := Rect2()         ## the landmark rect last framed (kept while easing out)
 var hint_id := ""           ## the hint last framed, "" when none
+var _blocked := ""          ## the block of the last step, talks left out (a talk holds the weight)
 
 ## The hints of `zone` from `defs` (data/camera_frames.json parsed), with their nodes found.
 static func hints_for(zone: Node, defs: Dictionary) -> Array:
@@ -61,9 +65,10 @@ static func hints_for(zone: Node, defs: Dictionary) -> Array:
 			var n := zone.get_node_or_null(NodePath(p)) as CanvasItem
 			if n != null:
 				nodes.append(n)
-		if not nodes.is_empty():
+		var fe: Array = h.get("feather", [FEATHER, FEATHER, FEATHER, FEATHER])
+		if not nodes.is_empty() and fe.size() == 4:
 			out.append({"id": String(h.get("id", "")), "area": Rect2(float(a[0]), float(a[1]), float(a[2]), float(a[3])),
-				"nodes": nodes})
+				"feather": [float(fe[0]), float(fe[1]), float(fe[2]), float(fe[3])], "nodes": nodes})
 	return out
 
 static func load_defs() -> Dictionary:
@@ -91,12 +96,7 @@ static func drawn_rect(nodes: Array) -> Rect2:
 ## `centre`, keeping `feet` inside the safe insets and the frame inside `limits` (all in texels).
 ## Each axis: the nearest centre to `centre` that fits the landmark with MARGIN (its middle when it is
 ## bigger than the screen), then pulled back into the feet's safe range, then into the limits.
-## `avoid` holds HUD rects on the picture (screen texels): when the landmark would lie under one (grown
-## by MARGIN), the centre moves on one axis to the nearest place that puts it beside, below or above the
-## rect, among those that keep the feet safe, the frame in the limits, the landmark on screen and clear
-## of every rect; when there is none, it stays (the player first, then the limits, then the HUD).
-static func fit_centre(centre: Vector2, feet: Vector2, landmark: Rect2, screen: Vector2, limits: Rect2,
-		avoid: Array = []) -> Vector2:
+static func fit_centre(centre: Vector2, feet: Vector2, landmark: Rect2, screen: Vector2, limits: Rect2) -> Vector2:
 	var half := screen / 2.0
 	var c := centre
 	for i in 2:
@@ -104,21 +104,20 @@ static func fit_centre(centre: Vector2, feet: Vector2, landmark: Rect2, screen: 
 		var hi := landmark.position[i] - MARGIN + half[i]
 		c[i] = clampf(c[i], lo, hi) if lo <= hi else (lo + hi) / 2.0
 		c[i] = _keep(c[i], i, feet, screen, limits)
-	if avoid.is_empty() or _clear(c, landmark, screen, avoid):
-		return c
-	var best := c
-	var best_d := INF
+	return c
+
+## The highest camera centre x that keeps `landmark` MARGIN to the right of every HUD rect in `avoid` on
+## the left half of the picture (the quest tracker, the meters): INF when there is none. One continuous
+## bound on one axis: it moves with the panels' right edge (a wider tracker, a pixel at a time) and only
+## ever holds back the look-ahead to the east. Rows are not compared: a wrap that makes the tracker taller
+## changes nothing, and the bound holds wherever the landmark is drawn.
+static func hud_cap_x(landmark: Rect2, screen: Vector2, avoid: Array) -> float:
+	var cap := INF
 	for a: Variant in avoid:
-		var p := (a as Rect2).grow(MARGIN)
-		for cand: Vector2 in [Vector2(landmark.position.x + half.x - p.end.x, c.y),   # right of it
-				Vector2(landmark.end.x + half.x - p.position.x, c.y),                    # left of it
-				Vector2(c.x, landmark.position.y + half.y - p.end.y),                    # below it
-				Vector2(c.x, landmark.end.y + half.y - p.position.y)]:                   # above it
-			var d := cand.distance_to(c)
-			if d < best_d and _clear(cand, landmark, screen, avoid) and _allowed(cand, feet, landmark, screen, limits):
-				best = cand
-				best_d = d
-	return best
+		var r := a as Rect2
+		if r.position.x < screen.x / 2.0:
+			cap = minf(cap, landmark.position.x + screen.x / 2.0 - (r.end.x + MARGIN))
+	return cap
 
 ## `v` on axis `i` pulled into the feet's safe range, then into the limits.
 static func _keep(v: float, i: int, feet: Vector2, screen: Vector2, limits: Rect2) -> float:
@@ -129,21 +128,6 @@ static func _keep(v: float, i: int, feet: Vector2, screen: Vector2, limits: Rect
 		var l1 := limits.end[i] - half[i]
 		v = clampf(v, l0, l1) if l0 <= l1 else (l0 + l1) / 2.0
 	return v
-
-## True when centre `c` keeps the feet safe, stays in the limits and has the landmark on screen within MARGIN.
-static func _allowed(c: Vector2, feet: Vector2, landmark: Rect2, screen: Vector2, limits: Rect2) -> bool:
-	for i in 2:
-		if absf(_keep(c[i], i, feet, screen, limits) - c[i]) > 0.01:
-			return false
-	return Rect2(c - screen / 2.0, screen).grow(-MARGIN + 0.01).encloses(landmark)
-
-## True when, with the camera centred at `c`, the landmark is MARGIN clear of every rect in `avoid`.
-static func _clear(c: Vector2, landmark: Rect2, screen: Vector2, avoid: Array) -> bool:
-	var on := Rect2(landmark.position - (c - screen / 2.0), landmark.size)
-	for a: Variant in avoid:
-		if on.intersects((a as Rect2).grow(MARGIN - 0.01)):
-			return false
-	return true
 
 ## Why framing may not apply now ("" when it may): a talk, the input off, downed, a raid's night, a fight.
 ## `enemy_states` holds the state of each live enemy in the zone.
@@ -181,17 +165,26 @@ func attach(zone: Node, defs: Dictionary = {}) -> void:
 	rect = Rect2()
 	hint_id = ""
 
-## The target weight at `feet` for an area: the feet's signed distance into it (negative outside),
-## FEATHER either side of its edge mapped to 0..1.
-static func feather(area: Rect2, feet: Vector2) -> float:
-	var d := minf(minf(feet.x - area.position.x, area.end.x - feet.x), minf(feet.y - area.position.y, area.end.y - feet.y))
-	return clampf((d + FEATHER) / (2.0 * FEATHER), 0.0, 1.0)
+## The target weight at `feet` for an area: 1 inside it, falling linearly to 0 over the feather outside
+## each side (`fe`: west, north, east, south, texels); the lower of the two axes at a corner.
+static func feather(area: Rect2, feet: Vector2, fe: Array = [FEATHER, FEATHER, FEATHER, FEATHER]) -> float:
+	var wx := 1.0
+	if feet.x < area.position.x:
+		wx = 1.0 - (area.position.x - feet.x) / maxf(float(fe[0]), 1.0)
+	elif feet.x > area.end.x:
+		wx = 1.0 - (feet.x - area.end.x) / maxf(float(fe[2]), 1.0)
+	var wy := 1.0
+	if feet.y < area.position.y:
+		wy = 1.0 - (area.position.y - feet.y) / maxf(float(fe[1]), 1.0)
+	elif feet.y > area.end.y:
+		wy = 1.0 - (feet.y - area.end.y) / maxf(float(fe[3]), 1.0)
+	return clampf(minf(wx, wy), 0.0, 1.0)
 
 ## The hint with the highest target at `feet` whose landmark is drawn now: {id, rect, w}, or {} for none.
 func hint_at(feet: Vector2) -> Dictionary:
 	var best := {}
 	for h: Dictionary in hints:
-		var w := feather(h.area as Rect2, feet)
+		var w := feather(h.area as Rect2, feet, h.get("feather", [FEATHER, FEATHER, FEATHER, FEATHER]))
 		if w > 0.0 and w > float(best.get("w", 0.0)):
 			var r := drawn_rect(h.nodes)
 			if r.has_area():
@@ -200,11 +193,19 @@ func hint_at(feet: Vector2) -> Dictionary:
 
 ## One frame: the offset to add to the follow offset, and `cut` when reduced motion changed it at once.
 ## `centre` is the plain camera centre (feet plus the follow offset without framing); `avoid` the HUD's
-## top pieces on the picture.
+## top pieces on the picture. The offset is the fit's times the weight; then the centre x
+## is held at or west of the HUD bound (hud_cap_x), the bound coming in linearly with the weight up to
+## CAP_FULL, so from that weight up the landmark is clear of the tracker however far the fit has come,
+## and below it the bound fades (no snap when the weight first rises from 0, where the plain follow has
+## the landmark wherever it is on main). The bound never moves the feet out of their safe range or the
+## frame out of the limits.
 func step(delta: float, feet: Vector2, centre: Vector2, screen: Vector2, limits: Rect2, reduced: bool,
 		blocked: String, avoid: Array = []) -> Dictionary:
 	var want := weight              # a talk holds the weight where it is
+	var block_changed := false
 	if blocked != "talk":
+		block_changed = blocked != _blocked
+		_blocked = blocked
 		var h := {} if blocked != "" else hint_at(feet)
 		want = 0.0
 		if not h.is_empty():
@@ -213,12 +214,20 @@ func step(delta: float, feet: Vector2, centre: Vector2, screen: Vector2, limits:
 			want = float(h.w)
 	var was := weight
 	weight = want if reduced else move_toward(weight, want, delta / EASE_TIME)
-	var cut := reduced and absf(weight - was) > CUT_STEP
+	# under reduced motion a block that starts or ends while framed is a cut, as is any other jump
+	var cut := reduced and (absf(weight - was) > CUT_STEP or (block_changed and maxf(weight, was) > 0.0))
 	if weight <= 0.0 or not rect.has_area():
 		weight = 0.0
 		rect = Rect2()
 		hint_id = ""
 		return {"offset": Vector2.ZERO, "cut": cut, "weight": 0.0}
-	var target := fit_centre(centre, feet, rect, screen, limits, avoid) - centre
-	var s := smoothstep(0.0, 1.0, weight)
-	return {"offset": target * s, "cut": cut, "weight": s}
+	var s := weight      # linear: the feather's own ramp, so crossing it moves the camera at an even rate
+	var off := (fit_centre(centre, feet, rect, screen, limits) - centre) * s
+	var cap := hud_cap_x(rect, screen, avoid)
+	var cx := centre.x + off.x
+	if cx > cap:
+		var floor_x := _keep(-INF, 0, feet, screen, limits)     # the westmost centre the feet and limits allow
+		var held := maxf(cap, floor_x)
+		if cx > held:
+			off.x -= (cx - held) * clampf(weight / CAP_FULL, 0.0, 1.0)
+	return {"offset": off, "cut": cut, "weight": s}

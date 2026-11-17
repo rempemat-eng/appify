@@ -1,19 +1,25 @@
 {
-  "why": "Tall landmarks the camera frames whole near `area` (texels: x, y, w, h), as world/camera_framing.gd reads them: the weight goes from 0 at FEATHER (32) texels outside the area's edge to 1 at FEATHER inside it. `frame` lists the zone scene's paths of the pictures that must fit on screen; the hint holds only while one of them is drawn. The player always stays inside the safe insets, so a landmark is framed whole only where that allows it.",
+  "why": "Tall landmarks the camera frames whole near `area` (texels: x, y, w, h), as world/camera_framing.gd reads them: the weight is 1 inside the area and falls to 0 over `feather` texels outside each side (west, north, east, south; 64 each when left out). `frame` lists the zone scene's paths of the pictures that must fit on screen; the hint holds only while one of them is drawn. The player always stays inside the safe insets, so a landmark is framed whole only where that allows it.",
   "crossroads": [
     {
       "id": "library_cupola",
       "area": [
-        536,
+        568,
         300,
-        416,
-        428
+        352,
+        396
       ],
       "frame": [
         "Props/If_cupola_empty/CupolaEmpty",
         "Props/If_cupola_hung/CupolaHung"
       ],
-      "why": "the library's bell cupola (Matt, 13 Nov, decision (d): the bell tower optional, its cupola drawn so that paying visibly changes the square; scripts/art/native/belfry.py). Its top stands at y 235, 365 texels above the library's door (744, 600), and the plain follow puts the top of the picture 294 texels above the feet, so it was cut off from everywhere in the square. The cupola fits whole while the feet are north of y 703 (the safe inset at the bottom of the picture), so the area's south edge is y 728: full weight to y 696, none from y 760 (the #523 audit). Its west and east edges (x 536, 952) give full weight over the library's front and the lane's mouth, x 568 to 920, and none west of 504 or east of 984. Its north edge (y 300) is in the roofs: north of about y 517 the plain follow already shows the cupola and the offset is 0, so the weight's fall there moves nothing (no counter-motion up the lane)"
+      "why": "the library's bell cupola (Matt, 13 Nov, decision (d): the bell tower optional, its cupola drawn so that paying visibly changes the square; scripts/art/native/belfry.py). Its top stands at y 235, 365 texels above the library's door (744, 600), and the plain follow puts the top of the picture 294 texels above the feet, so it was cut off from everywhere in the square. The cupola fits whole while the feet are north of y 703 (the safe inset at the bottom of the picture), so the area ends at y 696. Its feathers are 128 texels on every side (none from y 824, west of x 440 or east of 1048): crossing one, the camera's target moves at most about 2.5 times as fast as Bramble, never all at once (the #523 audits). West and east the area covers the library's front and the lane's mouth, x 568 to 920. Its north edge (y 300) is in the roofs: north of about y 517 the plain follow already shows the cupola and the fit's offset is 0, so walking up the lane moves nothing back",
+      "feather": [
+        128,
+        128,
+        128,
+        128
+      ]
     }
   ]
 }

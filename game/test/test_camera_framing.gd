@@ -7,7 +7,8 @@ extends GdUnitTestSuite
 const SCREEN := Vector2(960, 540)
 const LIMITS := Rect2(0, 0, 1920, 1680)            # Crossroads' bounds
 const CUPOLA := Rect2(717, 235, 54, 138)           # CupolaEmpty as the zone scene places it
-const AREA := Rect2(536, 300, 416, 428)
+const AREA := Rect2(568, 300, 352, 396)
+const FEATHERS := [128.0, 128.0, 128.0, 128.0]     # west, north, east, south
 const TRACKER := Rect2(8, 33, 231, 58)            # the quest tracker panel as the #523 audit measured it
 const HEARTS := Rect2(8, 8, 60, 20)
 const LIFT := Vector2(0, -24)                      # game.gd: the plain follow is 8 world px above the feet
@@ -126,7 +127,7 @@ func _framing(visible := true) -> CameraFraming:
 	s.visible = visible
 	host.add_child(s)
 	var f := CameraFraming.new()
-	f.hints = [{"id": "t", "area": AREA, "nodes": [s]}]
+	f.hints = [{"id": "t", "area": AREA, "feather": FEATHERS, "nodes": [s]}]
 	return f
 
 func _step(f: CameraFraming, feet: Vector2, dt := 1.0 / 60.0, reduced := false, blocked := "") -> Dictionary:
@@ -138,7 +139,7 @@ func test_it_eases_in_and_out_over_half_a_second() -> void:
 	var full := CameraFraming.fit_centre(feet + LIFT, feet, CUPOLA, SCREEN, LIMITS) - (feet + LIFT)
 	var r := _step(f, feet, 0.25)
 	assert_bool(r.cut).is_false()
-	assert_vector(r.offset).is_equal_approx(full * 0.5, Vector2(0.01, 0.01))   # smoothstep(0.5) = 0.5
+	assert_vector(r.offset).is_equal_approx(full * 0.5, Vector2(0.01, 0.01))   # half the weight, half the offset
 	r = _step(f, feet, 0.25)
 	assert_vector(r.offset).is_equal_approx(full, Vector2(0.01, 0.01))
 	r = _step(f, feet, 1.0)                                                   # and stays, no drift
@@ -185,7 +186,7 @@ func test_reduced_motion_cuts_in_and_out() -> void:
 
 func test_no_effect_outside_the_area() -> void:
 	var f := _framing()
-	for feet: Vector2 in [Vector2(744, 900), Vector2(400, 650), Vector2(1000, 650), Vector2(744, 770)]:
+	for feet: Vector2 in [Vector2(744, 900), Vector2(420, 650), Vector2(1060, 650), Vector2(744, 830)]:
 		for i in 60:
 			var r := _step(f, feet)
 			assert_vector(r.offset).is_equal(Vector2.ZERO)
@@ -228,74 +229,162 @@ func test_a_talk_holds_the_weight_where_it_is() -> void:
 		assert_vector(r2.offset).is_equal_approx(framed, Vector2(0.01, 0.01))
 
 func test_the_feather_round_the_area() -> void:
-	# 0 at 32 texels outside the edge, a half on it, 1 at 32 inside
-	assert_float(CameraFraming.feather(AREA, Vector2(744, AREA.end.y + 32.0))).is_equal(0.0)
-	assert_float(CameraFraming.feather(AREA, Vector2(744, AREA.end.y))).is_equal_approx(0.5, 0.001)
-	assert_float(CameraFraming.feather(AREA, Vector2(744, AREA.end.y - 32.0))).is_equal(1.0)
-	assert_float(CameraFraming.feather(AREA, Vector2(AREA.end.x + 40.0, 650))).is_equal(0.0)
-	# the south edge: full weight where the cupola still fits (y 696), none from y 760 on
+	# 1 inside, falling linearly to 0 over the feather outside each side (the south one 128 texels)
+	assert_float(CameraFraming.feather(AREA, Vector2(744, AREA.end.y), FEATHERS)).is_equal(1.0)
+	assert_float(CameraFraming.feather(AREA, Vector2(744, AREA.end.y + 64.0), FEATHERS)).is_equal_approx(0.5, 0.001)
+	assert_float(CameraFraming.feather(AREA, Vector2(744, AREA.end.y + 128.0), FEATHERS)).is_equal(0.0)
+	assert_float(CameraFraming.feather(AREA, Vector2(AREA.end.x + 14.0, 650), FEATHERS)).is_equal_approx(114.0 / 128.0, 0.001)
+	assert_float(CameraFraming.feather(AREA, Vector2(AREA.end.x + 128.0, 650), FEATHERS)).is_equal(0.0)
+	assert_float(CameraFraming.feather(AREA, Vector2(AREA.end.x + 14.0, 650))).is_equal_approx(50.0 / 64.0, 0.001)   # the default 64
 	var f := _framing()
 	for y: float in [600.0, 650.0, 696.0]:
 		assert_float(f.hint_at(Vector2(744, y)).get("w", 0.0)).is_equal(1.0)
-	for y: float in [760.0, 780.0, 900.0]:
+	for y: float in [824.0, 900.0]:
 		assert_bool(f.hint_at(Vector2(744, y)).is_empty()).is_true()
-	# x: full over the library's front and the lane's mouth
 	for x: float in [568.0, 744.0, 906.0, 920.0]:
 		assert_float(f.hint_at(Vector2(x, 650)).get("w", 0.0)).is_equal(1.0)
 
-func _max_jump(reduced: bool, from: Vector2, to: Vector2, speed := 150.0) -> Dictionary:
-	# feet walk from `from` to `to` at `speed` texels a second, 60 steps a second; the largest change of the
-	# camera's target centre in one step, and the cuts
-	var f := _framing()
+func _walk(f: CameraFraming, reduced: bool, from: Vector2, to: Vector2, look := Vector2.ZERO, speed := 150.0,
+		avoid: Array = []) -> Dictionary:
+	# feet walk from `from` to `to` at `speed` texels a second, 60 steps a second, settled first; the largest
+	# change of the camera's target centre in one step, as a multiple of the feet's step, and the cuts
 	var feet := from
-	for i in 60:
-		_step(f, feet, 1.0 / 60.0, reduced)
-	var last: Vector2 = feet + LIFT + _step(f, feet, 1.0 / 60.0, reduced).offset
+	for i in 90:
+		f.step(1.0 / 60.0, feet, feet + LIFT + look, SCREEN, LIMITS, reduced, "", avoid)
+	var last: Vector2 = feet + LIFT + look + f.step(1.0 / 60.0, feet, feet + LIFT + look, SCREEN, LIMITS, reduced, "", avoid).offset
 	var most := 0.0
 	var cuts := 0
 	var dir := (to - from).normalized()
-	while feet.distance_to(to) > 1.0:
-		feet += dir * minf(speed / 60.0, feet.distance_to(to))
-		var r := _step(f, feet, 1.0 / 60.0, reduced)
-		var c: Vector2 = feet + LIFT + r.offset
-		most = maxf(most, c.distance_to(last) - speed / 60.0)    # beyond the feet's own step
+	var stride := speed / 60.0
+	while feet.distance_to(to) > 0.5:
+		feet += dir * minf(stride, feet.distance_to(to))
+		var r := f.step(1.0 / 60.0, feet, feet + LIFT + look, SCREEN, LIMITS, reduced, "", avoid)
+		var c: Vector2 = feet + LIFT + look + r.offset
+		most = maxf(most, c.distance_to(last) / stride)
 		cuts += 1 if r.cut else 0
 		last = c
 	return {"most": most, "cuts": cuts}
 
-func test_crossing_the_south_edge_moves_the_camera_a_little_each_step() -> void:
-	# the #523 audit: one step changed the camera by up to 186 texels, with a cut every crossing under
-	# reduced motion; now the target moves at most 12 texels a step beyond the feet's own step, either way
+func test_crossing_the_edges_moves_the_camera_at_most_two_and_a_half_times_the_feet() -> void:
+	# the #523 audits: one step moved the camera up to 186 texels; with the 32-texel feather and a smoothstep,
+	# 11 a step under reduced motion; with 128-texel feathers and the weight applied linearly the target
+	# centre (the feet's own step included) keeps within 2.5 times the feet
 	for reduced: bool in [false, true]:
-		for leg: Array in [[Vector2(744, 650), Vector2(744, 800)], [Vector2(744, 800), Vector2(744, 650)],
-				[Vector2(906, 700), Vector2(1040, 700)], [Vector2(560, 650), Vector2(440, 650)]]:
-			var m := _max_jump(reduced, leg[0], leg[1])
-			print("CROSS reduced=%s %s -> %s: most %.1f texels a step beyond the feet, %d cuts" % [reduced, leg[0], leg[1], m.most, m.cuts])
-			assert_float(float(m.most)).is_less(12.0)
+		for leg: Array in [[Vector2(744, 650), Vector2(744, 900)], [Vector2(744, 900), Vector2(744, 650)],
+				[Vector2(860, 680), Vector2(1080, 680)], [Vector2(1080, 680), Vector2(860, 680)],
+				[Vector2(640, 650), Vector2(420, 650)]]:
+			var m := _walk(_framing(), reduced, leg[0], leg[1])
+			print("CROSS reduced=%s %s -> %s: the target centre moved at most %.2f times the feet's step, %d cuts" % [
+				reduced, leg[0], leg[1], m.most, m.cuts])
+			assert_float(float(m.most)).is_less_equal(2.5)
 			assert_int(int(m.cuts)).is_equal(0)
 
-func test_the_cupola_keeps_clear_of_the_quest_tracker() -> void:
-	# the #523 audit: feet at x 906 with the aim's look-ahead fully east put the centre past x 957 and the
-	# cupola's rows 33..91 under the tracker
+func test_walking_in_from_the_lane_looking_east_brings_the_hud_bound_in_without_a_jump() -> void:
+	# the bound comes in with the weight (full from CAP_FULL), so entering the east feather with the look fully
+	# east moves the target centre at most 5 times the feet's step (about 12 texels at a run), not the bound's
+	# whole width (up to about 250 texels) at once. The fastest the camera moves in this patch: the cost of
+	# the cupola being clear of the tracker from weight 0.5 up.
 	var avoid := [TRACKER, HEARTS]
-	for look: float in [0.0, 95.0, 144.0]:
-		var feet := Vector2(906, 660)
-		var centre := feet + LIFT + Vector2(look, 0)
-		var c := CameraFraming.fit_centre(centre, feet, CUPOLA, SCREEN, LIMITS, avoid)
-		var on := Rect2(CUPOLA.position - (c - SCREEN / 2.0), CUPOLA.size)
-		for r: Rect2 in avoid:
-			assert_bool(on.intersects(r.grow(CameraFraming.MARGIN - 0.01))).override_failure_message(
-				"look %s: the cupola at %s is under %s" % [look, on, r]).is_false()
-		assert_bool(_frame_at(c).grow(-CameraFraming.MARGIN + 0.01).encloses(CUPOLA)).is_true()
-		assert_bool(_feet_safe(c, feet)).is_true()
-	# the plain fit without the HUD would have put it under the tracker at the full look
-	var c0 := CameraFraming.fit_centre(Vector2(906 + 144, 636), Vector2(906, 660), CUPOLA, SCREEN, LIMITS)
-	assert_bool(Rect2(CUPOLA.position - (c0 - SCREEN / 2.0), CUPOLA.size).intersects(TRACKER)).is_true()
-	# a panel that cannot be cleared without losing the feet: the player wins, the centre stays
-	var wide := Rect2(0, 0, 960, 200)
-	var feet2 := Vector2(744, 650)
-	var plain := CameraFraming.fit_centre(feet2 + LIFT, feet2, CUPOLA, SCREEN, LIMITS)
-	assert_vector(CameraFraming.fit_centre(feet2 + LIFT, feet2, CUPOLA, SCREEN, LIMITS, [wide])).is_equal(plain)
+	for reduced: bool in [false, true]:
+		for y: float in [600.0, 640.0]:
+			var m := _walk(_framing(), reduced, Vector2(1080, y), Vector2(880, y), Vector2(144, 0), 150.0, avoid)
+			print("ENTER reduced=%s y %s: the target centre moved at most %.2f times the feet's step" % [reduced, y, m.most])
+			assert_float(float(m.most)).is_less_equal(5.0)
+
+func test_a_block_that_starts_or_ends_while_framed_cuts_under_reduced_motion() -> void:
+	var f := _framing()
+	var feet := Vector2(744, 650)
+	_step(f, feet, 1.0 / 60.0, true)
+	assert_bool(_step(f, feet, 1.0 / 60.0, true).cut).is_false()
+	for reason: String in ["input off", "downed", "raid", "fight"]:
+		assert_bool(_step(f, feet, 1.0 / 60.0, true, reason).cut).override_failure_message(reason).is_true()
+		assert_bool(_step(f, feet, 1.0 / 60.0, true, reason).cut).is_false()      # once
+		assert_bool(_step(f, feet, 1.0 / 60.0, true).cut).is_true()                  # and once back
+	# at the feather's south end the weight is small: a block there cuts too (weight above 0)
+	var g := _framing()
+	var low := Vector2(744, AREA.end.y + 120.0)
+	_step(g, low, 1.0 / 60.0, true)
+	assert_float(g.weight).is_greater(0.0)
+	assert_float(g.weight).is_less(CameraFraming.CUT_STEP)
+	assert_bool(_step(g, low, 1.0 / 60.0, true, "fight").cut).is_true()
+	# out of the area a block changes nothing and cuts nothing
+	var h := _framing()
+	assert_bool(_step(h, Vector2(744, 900), 1.0 / 60.0, true, "fight").cut).is_false()
+	assert_bool(_step(h, Vector2(744, 900), 1.0 / 60.0, true).cut).is_false()
+
+func _cupola_at(c: Vector2) -> Rect2:
+	return Rect2(CUPOLA.position - (c - SCREEN / 2.0), CUPOLA.size)
+
+func _sweep(feet: Vector2, avoid: Array) -> Dictionary:
+	# framed and settled at `feet`, the aim swings east from none to the full look-ahead (game.gd LOOK_MAX,
+	# 144 texels) over 60 steps; the centre each step, with and without the HUD bound
+	var f := _framing()
+	for i in 90:
+		f.step(1.0 / 60.0, feet, feet + LIFT, SCREEN, LIMITS, false, "", avoid)
+	var centres: Array = []
+	var plain: Array = []
+	var g := _framing()
+	for i in 90:
+		g.step(1.0 / 60.0, feet, feet + LIFT, SCREEN, LIMITS, false, "")
+	for i in 61:
+		var look := Vector2(144.0 * i / 60.0, 0)
+		var c0 := feet + LIFT + look
+		centres.append(c0 + f.step(1.0 / 60.0, feet, c0, SCREEN, LIMITS, false, "", avoid).offset)
+		plain.append(c0 + g.step(1.0 / 60.0, feet, c0, SCREEN, LIMITS, false, "").offset)
+	return {"centres": centres, "plain": plain, "weight": f.weight}
+
+func test_the_aim_swung_east_moves_the_centre_steadily_and_keeps_the_cupola_clear() -> void:
+	# the #523 round-2 audit: at feet (934, 599) the choice between beside and below flipped as the look
+	# grew, 93 texels in x and 92 in y within 0.2 s
+	var avoid := [TRACKER, HEARTS]
+	var spots: Array = [Vector2(934, 599)]
+	for y in range(440, 611, 10):
+		spots.append(Vector2(930, y))
+	for feet: Vector2 in spots:
+		var sw := _sweep(feet, avoid)
+		var cs: Array = sw.centres
+		var most := 0.0
+		for i in range(1, cs.size()):
+			var dx: float = cs[i].x - cs[i - 1].x
+			assert_float(dx).override_failure_message("feet %s step %d: x went back %.2f" % [feet, i, dx]).is_greater_equal(-0.001)
+			most = maxf(most, dx)
+			# the bound moves nothing in y
+			assert_float(cs[i].y).is_equal_approx(sw.plain[i].y, 0.001)
+		assert_float(most).is_less_equal(144.0 / 60.0 + 0.001)      # never faster than the look itself
+		if feet == spots[0]:
+			print("SWEEP feet %s weight %.2f: centre x %.1f -> %.1f, most %.2f a step; cupola at the end %s" % [
+				feet, sw.weight, cs[0].x, cs[-1].x, most, _cupola_at(cs[-1])])
+		# wherever the weight is at least CAP_FULL, the cupola is MARGIN clear of the tracker all the way
+		if sw.weight >= CameraFraming.CAP_FULL:
+			for c: Vector2 in cs:
+				for r: Rect2 in avoid:
+					assert_bool(_cupola_at(c).intersects(r.grow(CameraFraming.MARGIN - 0.01))).override_failure_message(
+						"feet %s: the cupola at %s is under %s" % [feet, _cupola_at(c), r]).is_false()
+
+func test_at_partial_weight_the_cupola_stays_clear_of_the_tracker() -> void:
+	# the round-2 audit: at partial weight the blend let the vane under the tracker. Weights 0.5 and 0.78
+	# held (a step of no time), the aim fully east, at the library's door and at the lane's mouth
+	var avoid := [TRACKER, HEARTS]
+	for w: float in [0.5, 0.78]:
+		for feet: Vector2 in [Vector2(744, 650), Vector2(906, 660), Vector2(920, 620)]:
+			var f := _framing()
+			f.rect = CUPOLA
+			f.weight = w
+			var c0 := feet + LIFT + Vector2(144, 0)
+			var r := f.step(0.0, feet, c0, SCREEN, LIMITS, false, "talk", avoid)    # a talk holds the weight
+			var c: Vector2 = c0 + r.offset
+			for p: Rect2 in avoid:
+				assert_bool(_cupola_at(c).intersects(p.grow(CameraFraming.MARGIN - 0.01))).override_failure_message(
+					"w %s feet %s: the cupola at %s is under %s" % [w, feet, _cupola_at(c), p]).is_false()
+			assert_bool(_feet_safe(c, feet)).is_true()
+
+func test_the_bound_follows_the_tracker_width_a_texel_at_a_time() -> void:
+	var c1 := CameraFraming.hud_cap_x(CUPOLA, SCREEN, [Rect2(8, 33, 231, 58)])
+	var c2 := CameraFraming.hud_cap_x(CUPOLA, SCREEN, [Rect2(8, 33, 232, 80)])    # one texel wider, wrapped taller
+	assert_float(c1 - c2).is_equal_approx(1.0, 0.001)
+	assert_float(c1).is_equal_approx(717.0 + 480.0 - (239.0 + CameraFraming.MARGIN), 0.001)
+	# pieces on the right half (the Glint count, the pause button) set no bound
+	assert_float(CameraFraming.hud_cap_x(CUPOLA, SCREEN, [Rect2(930, 27, 22, 22)])).is_equal(INF)
 
 func test_the_crossroads_hint_names_both_cupola_pictures() -> void:
 	var defs := CameraFraming.load_defs()
@@ -305,6 +394,7 @@ func test_the_crossroads_hint_names_both_cupola_pictures() -> void:
 	var area: Array = hs[0].area
 	assert_vector(Vector2(area[0], area[1])).is_equal(AREA.position)
 	assert_vector(Vector2(area[2], area[3])).is_equal(AREA.size)
+	assert_array(hs[0].feather.map(func(v: Variant) -> float: return float(v))).is_equal(FEATHERS)
 
 # --- the real game, drawn in a 960 x 540 SubViewport as main.tscn draws it --------------------------------
 func _game() -> Node2D:
@@ -394,7 +484,8 @@ func test_in_crossroads_looking_east_at_the_lane_keeps_the_cupola_clear_of_the_t
 	Zones.current = null
 
 func test_in_crossroads_walking_across_the_south_edge_moves_the_drawn_camera_smoothly() -> void:
-	# the drawn Camera2D, frame by frame, as Bramble runs (150 texels a second) from the door to the square and back
+	# the drawn Camera2D, frame by frame, as Bramble runs (150 texels a second) from the door to the square and back:
+	# within 2.5 times the feet's step and a texel of rounding
 	for reduced: bool in [false, true]:
 		SaveGame.reset()
 		SaveGame.data.settings.reduced_motion = reduced
@@ -406,7 +497,7 @@ func test_in_crossroads_walking_across_the_south_edge_moves_the_drawn_camera_smo
 		await _settle(g, Vector2(744, 650), 90)
 		var most := 0.0
 		var last := cam.get_screen_center_position()
-		for leg: Array in [[650.0, 820.0], [820.0, 650.0]]:
+		for leg: Array in [[650.0, 900.0], [900.0, 650.0]]:
 			var y: float = leg[0]
 			var dy := 2.5 if leg[1] > leg[0] else -2.5
 			while absf(y - leg[1]) > 1.0:
@@ -417,7 +508,7 @@ func test_in_crossroads_walking_across_the_south_edge_moves_the_drawn_camera_smo
 				var c := cam.get_screen_center_position()
 				most = maxf(most, absf(c.y - last.y))
 				last = c
-		print("DRAWN reduced=%s: the camera's centre moved at most %.1f texels in one frame" % [reduced, most])
-		assert_float(most).is_less(16.0)
+		print("DRAWN reduced=%s: the camera's centre moved at most %.1f texels in one frame (the feet 2.5)" % [reduced, most])
+		assert_float(most).is_less_equal(2.5 * 2.5 + 1.0)
 		SaveGame.data.settings.reduced_motion = false
 		Zones.current = null
