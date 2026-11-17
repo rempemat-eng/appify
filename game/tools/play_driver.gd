@@ -57,6 +57,8 @@ extends Node
 ##       the player aims from)
 ##       fitted (the picture is centred in the window at the pixel screen's scale, wholly inside it)
 ##       shown <path> <yes|no> (a node of the zone scene by its path, drawn now or hidden: Props/If_cupola_hung/CupolaHung)
+##       framed <path> <yes|no> [margin] (a picture of the zone scene by its path, drawn now and wholly inside the
+##       960 x 540 picture, at least <margin> texels from its edges, default 0: world/camera_framing.gd)
 ##       marker <path> <yes|no> (an interactable of the zone by its path: its "!" drawn now or not)
 ##   restart                 close the window as a player would; the runner starts the game again from the
 ##                           save and the route carries on at the next line
@@ -621,6 +623,17 @@ func expect(a: PackedStringArray) -> String:
 				return "the zone has no %s" % a[2]
 			var vis := node.is_visible_in_tree()
 			return "" if vis == (a[3] == "yes") else "%s is %s" % [a[2], "shown" if vis else "hidden"]
+		"framed":
+			# a picture of the zone by its path (Props/If_cupola_empty/CupolaEmpty): drawn now and wholly on the
+			# picture, as the player sees it (its rect through the canvas transform, the camera's position included)
+			var pic := Zones.current.get_node_or_null(NodePath(a[2])) as Sprite2D if Zones.current != null else null
+			if pic == null:
+				return "the zone has no picture %s" % a[2]
+			var on: Rect2 = pic.get_global_transform_with_canvas() * pic.get_rect()
+			var room := Rect2(Vector2.ZERO, Vector2(pic.get_viewport().size)).grow(-float(a[4]) if a.size() > 4 else 0.0)
+			var whole := pic.is_visible_in_tree() and room.encloses(on)
+			return "" if whole == (a[3] == "yes") else "%s is at %s on the %s picture (%s)" % [a[2], on, pic.get_viewport().size,
+				"drawn" if pic.is_visible_in_tree() else "hidden"]
 		"marker":
 			# an interactable by its path: its "!" drawn now (shown, and Interactable._draw's own test) or not
 			var it := Zones.current.get_node_or_null(NodePath(a[2])) as Interactable if Zones.current != null else null

@@ -1,0 +1,46 @@
+#! args: --zone=crossroads
+# The library's bell cupola framed whole near the library (Matt, 13 Nov: "bell tower optional, cupola
+# drawn"). The camera follows Bramble 8 world px above the feet, so from the square the cupola's top stood
+# above the picture; in front of the library the camera now eases up until the cupola fits, with Bramble
+# kept inside the safe insets (world/camera_framing.gd, data/camera_frames.json), eases back on the way
+# out, and cuts under reduced motion. Commands: tools/play_driver.gd.
+
+step in the square, the plain follow: the cupola stands above the picture
+wait 1.0
+expect zone crossroads
+waitfor 30 banner none
+goto 744 900 20
+wait 1.0
+expect framed Props/If_cupola_empty/CupolaEmpty no
+expect inview 48
+shot 01_square
+
+step in front of the library: the cupola whole on the picture, Bramble on it too
+goto 720 660 16
+wait 1.0
+expect framed Props/If_cupola_empty/CupolaEmpty yes 4
+expect inview 48
+st
+shot 02_library
+
+step back in the square: the plain follow again
+goto 744 900 20
+wait 1.0
+expect framed Props/If_cupola_empty/CupolaEmpty no
+expect inview 48
+
+step under reduced motion it cuts in, with no ease to wait for
+key Escape
+expect paused yes
+button Reduced motion
+expect setting reduced_motion true
+key Escape
+expect paused no
+goto 720 660 16
+wait 0.3
+expect framed Props/If_cupola_empty/CupolaEmpty yes 4
+expect inview 48
+goto 744 900 20
+wait 0.3
+expect framed Props/If_cupola_empty/CupolaEmpty no
+expect inview 48

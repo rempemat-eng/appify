@@ -1,6 +1,7 @@
 extends Node2D
 ## The running game inside the 960 x 540 art grid: loads the save, makes the one player, hands both to
-## the zone loader, drives the Phantom Camera (aim look-ahead, zone limits, hit shake), autosaves when
+## the zone loader, drives the Phantom Camera (aim look-ahead, zone limits, hit shake, the framing of tall
+## landmarks: world/camera_framing.gd), autosaves when
 ## quests move, a building is restored, zones change or the window closes, and shows the story's title
 ## cards (the opening, the closing beat). It never reads the save file: core/save_game.gd does, once.
 ##
@@ -28,6 +29,7 @@ var _shake := 0.0
 var _look := Vector2.ZERO
 var _cast_label: Label
 var _told_about_the_save := false
+var framing := CameraFraming.new()   ## tall landmarks framed whole near them (world/camera_framing.gd)
 
 @onready var zone_root: Node2D = $ZoneRoot
 @onready var pcam: PhantomCamera2D = $PCam
@@ -190,6 +192,7 @@ func _on_zone(zone: Zone) -> void:
 	# exits the tree. Hand it the player again, or the camera stays where the last zone left it.
 	pcam.follow_target = null
 	pcam.follow_target = player
+	framing.attach(zone)     # a door drops any framing at once: the new zone starts on the plain follow
 	pcam.teleport_position()
 	snap_camera()
 	_set_out_caches(zone)
@@ -303,7 +306,24 @@ func _process(delta: float) -> void:
 	_shake = maxf(_shake - delta, 0.0)
 	if _shake > 0.0 and not SaveGame.setting("reduced_motion", false):
 		shake = Vector2(randf_range(-1, 1), randf_range(-1, 1)).round() * DENSITY  # 1 world px
-	pcam.follow_offset = (_look + Vector2(0, -8.0 * DENSITY)).round() + shake
+	var base := (_look + Vector2(0, -8.0 * DENSITY)).round()
+	var frame := framing.step(delta, player.global_position, player.global_position + base, camera_screen(),
+		camera_limits(), bool(SaveGame.setting("reduced_motion", false)), CameraFraming.game_block_reason(player))
+	pcam.follow_offset = (base + frame.offset).round() + shake
+	if frame.cut:
+		# reduced motion: the framing cuts in and out instead of easing (the follow's own damping skipped once)
+		pcam.teleport_position()
+		snap_camera()
+
+## The camera's frame in texels: the phantom camera manager's screen size, pinned to the 960 x 540 picture
+## (main/pixel_screen.gd).
+func camera_screen() -> Vector2:
+	var manager := get_tree().root.get_node_or_null(^"PhantomCameraManager")
+	return Vector2(manager.get(&"screen_size")) if manager != null else Vector2(960, 540)
+
+## The zone's camera limits as the phantom camera holds them (set in _on_zone from Zone.bounds).
+func camera_limits() -> Rect2:
+	return Rect2(pcam.limit_left, pcam.limit_top, pcam.limit_right - pcam.limit_left, pcam.limit_bottom - pcam.limit_top)
 
 func _unhandled_input(event: InputEvent) -> void:
 	# debug character select, only with --debug-controls: 1 to 0 pick the first ten of Player.CAST,
