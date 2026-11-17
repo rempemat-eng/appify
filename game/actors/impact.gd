@@ -77,6 +77,9 @@ const STONE_LIT := Color("#c5b8a4")
 const STONE := Color("#aba194")
 const STONE_DARK := Color("#8e8782")
 const STONE_CHIP := Color("#70676a")
+## the dark ends of the two dust ramps (stone 1, path 1), for a puff's core on light ground
+const STONE_DEEP := Color("#514850")
+const PATH_DEEP := Color("#673d37")
 ## SPLAT tints of the two shots: the toad's seed (its pale flesh, grass 5, over its husk) and the Thornback's
 ## thorn (sand 3 over its plum), from the shots' own pictures.
 const SEED_TINT: Array[Color] = [Color("#cfcf84"), Color("#4a3c2c")]
@@ -95,6 +98,7 @@ var reduced := false
 var _offset := Vector2.ZERO
 var _t := 0.0
 var drift := Vector2.ZERO         ## DROP: how far the falling arrow is carried (on, or back off a solid)
+var ground_tone := -1.0           ## the ground's brightness under the mark (0 to 1; below 0: not known)
 var face_material := ""              ## the face it met: "timber", "earth", "stone" or "" (none: plain dust)
 var _rode := true                 ## false once the creature it rode on is gone or freed
 var _burst: Node2D                ## draws the burst over its neighbours (z_index 1) when it is up on a thing
@@ -114,6 +118,8 @@ static func spawn(host: Node, what: Kind, at: Vector2, height: float, along: Vec
 	fx.shaft = with_shaft
 	fx.follow = on
 	fx.drift = (fx.dir * 6.0).round() if with_shaft else Vector2.ZERO   # a shot's ring is where it ended
+	if what == Kind.WALL or what == Kind.DROP:
+		fx.ground_tone = ground_tone_at(host, at)
 	if colours.size() == 2:
 		fx.tint = colours
 	host.add_child(fx)
@@ -182,11 +188,26 @@ static func face_hit(body: Node, from: Vector2, lift: float, at_x: float = NAN) 
 		if door is Rect2 and (door as Rect2).has_point(at):
 			return "stick"
 	for window: Variant in face.get("no_stick", []):
-		if window is Rect2 and (window as Rect2).has_point(at):
+		if window_at(body, window, at):
 			return "window"
 	if lift <= float(face.get("stone_below", 0.0)):
 		return "stone"
 	return "stick"
+
+## True when `window` (a Rect2, or {"rect": Rect2, "unless": NodePath}) of `body` holds `at` (x from the box's
+## centre, lift). A window with "unless" is boarded up while that node shows (the Ferns' damage): planks, not
+## glass, so it is no window then (impact polish, 17 Nov).
+static func window_at(body: Node, window: Variant, at: Vector2) -> bool:
+	if window is Rect2:
+		return (window as Rect2).has_point(at)
+	if not window is Dictionary or not (window as Dictionary).get("rect") is Rect2:
+		return false
+	var boards: Variant = (window as Dictionary).get("unless")
+	if boards != null:
+		var n := body.get_node_or_null(NodePath(boards))
+		if n is CanvasItem and (n as CanvasItem).visible:
+			return false
+	return ((window as Dictionary).rect as Rect2).has_point(at)
 
 ## True when a shot sticks in `body` (`face_hit` says "stick").
 static func sticks(body: Node, from: Vector2, lift: float) -> bool:
@@ -204,6 +225,56 @@ static func in_front_of(fx: Impact, body: Node) -> void:
 	if d > 0.0:
 		fx.global_position.y += d
 		fx.lift += d
+
+## How bright the ground is under `at` (global texels), 0 to 1, read from the zone's own ground picture: the
+## `Ground` sprite of the nearest ancestor of `near` that has one (every zone root does), averaged over 5 x 5
+## texels. Below 0 when there is none. The picture is read once per texture and kept (`_grounds`).
+static func ground_tone_at(near: Node, at: Vector2) -> float:
+	var n := near
+	while n != null:
+		var g := n.get_node_or_null("Ground") as Sprite2D
+		if g != null and g.texture != null:
+			return tone_of(_ground_image(g.texture), g.to_local(at) - g.offset + (g.texture.get_size() * 0.5 if g.centered else Vector2.ZERO))
+		n = n.get_parent()
+	return -1.0
+
+static var _grounds := {}
+
+static func _ground_image(t: Texture2D) -> Image:
+	if not _grounds.has(t):
+		_grounds[t] = t.get_image()
+	return _grounds[t]
+
+## The mean brightness (Rec. 601 luma) of the 5 x 5 texels of `img` round `p`; below 0 off the picture.
+static func tone_of(img: Image, p: Vector2) -> float:
+	if img == null or img.is_empty():
+		return -1.0
+	var sum := 0.0
+	var count := 0
+	for dy in range(-2, 3):
+		for dx in range(-2, 3):
+			var q := Vector2i(int(p.x) + dx, int(p.y) + dy)
+			if q.x < 0 or q.y < 0 or q.x >= img.get_width() or q.y >= img.get_height():
+				continue
+			var c := img.get_pixel(q.x, q.y)
+			sum += 0.299 * c.r + 0.587 * c.g + 0.114 * c.b
+			count += 1
+	return sum / count if count > 0 else -1.0
+
+## The core of a dust puff, picked against the ground: of the dark and the light end of the dust's own ramp
+## (stone 1 and 5 for stone dust, path 1 and 5 for the rest), the one further in brightness from the ground.
+## Grey dust on grey cobbles and tan dust on the tan path could not be seen at 1x (impact polish, 17 Nov).
+## Transparent when the ground is not known: the puff is drawn as before.
+static func dust_core(material: String, tone: float) -> Color:
+	if tone < 0.0:
+		return Color(0, 0, 0, 0)
+	var stone := material == "stone"
+	var dark := STONE_DEEP if stone else PATH_DEEP
+	var light := STONE_LIT if stone else DUST_LIT
+	return dark if absf(_luma(dark) - tone) >= absf(_luma(light) - tone) else light
+
+static func _luma(c: Color) -> float:
+	return 0.299 * c.r + 0.587 * c.g + 0.114 * c.b
 
 ## The global rectangle of a body's first rectangle shape (unrotated), or an empty Rect2.
 static func box_of(body: Node) -> Rect2:
@@ -503,6 +574,7 @@ func _draw_dust(o: Vector2, f: int, clumps: int, chip: Color) -> void:
 ## A round clump of dust, its upper left lit and its lower right in shade, no outline (dust is soft).
 func _disc(c: Vector2, r: float, a: float) -> void:
 	var n := int(ceil(r))
+	var core := dust_core(face_material, ground_tone)
 	for y in range(-n, n + 1):
 		for x in range(-n, n + 1):
 			var v := Vector2(x, y)
@@ -510,7 +582,9 @@ func _disc(c: Vector2, r: float, a: float) -> void:
 				continue
 			var stone := face_material == "stone"
 			var col := STONE if stone else DUST
-			if x + y <= -n:
+			if core.a > 0.0 and v.length() <= r * 0.5:
+				col = core                   # the core, against the ground under it
+			elif x + y <= -n:
 				col = STONE_LIT if stone else DUST_LIT
 			elif x + y >= n:
 				col = STONE_DARK if stone else DUST_DARK

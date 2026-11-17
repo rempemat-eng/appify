@@ -411,6 +411,84 @@ func test_the_face_is_read_where_the_arrow_met_it() -> void:
 	house.set_meta("impact_timber", [Rect2(-12, 0, 15, 84)])
 	assert_str(Impact.face_hit(house, Vector2(178, 150), 60.0, 175.0)).is_equal("stick")
 
+## Impact polish (17 Nov): a window boarded up while its damage shows is planks, timber; with the damage
+## hidden (the house restored) it is glass again.
+func test_a_boarded_window_takes_the_arrow_until_the_boards_come_down() -> void:
+	var zone: Node2D = auto_free(Node2D.new())
+	add_child(zone)
+	var walls := Node2D.new()
+	walls.name = "Walls"
+	zone.add_child(walls)
+	var props := Node2D.new()
+	props.name = "Props"
+	zone.add_child(props)
+	var boards := Node2D.new()
+	boards.name = "If_damage"
+	props.add_child(boards)
+	var house := StaticBody2D.new()
+	house.name = "Building_x"
+	var shape := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(40, 80)
+	shape.shape = rect
+	shape.position = Vector2(180, 100)
+	house.add_child(shape)
+	walls.add_child(house)
+	house.set_meta("impact_face", 110)
+	house.set_meta("impact_material", "timber")
+	house.set_meta("impact_stone_below", 63)
+	house.set_meta("impact_no_stick", [{"rect": Rect2(-10, 54, 20, 36), "unless": NodePath("../../Props/If_damage")}])
+	boards.visible = true
+	assert_str(Impact.face_hit(house, Vector2(180, 150), 66.0, 180.0)).is_equal("stick")    # boarded: planks
+	boards.visible = false
+	assert_str(Impact.face_hit(house, Vector2(180, 150), 66.0, 180.0)).is_equal("window")   # restored: glass
+	# a missing node leaves the window a window; a plain Rect2 is always one
+	house.set_meta("impact_no_stick", [{"rect": Rect2(-10, 54, 20, 36), "unless": NodePath("../../Props/Gone")}])
+	assert_str(Impact.face_hit(house, Vector2(180, 150), 66.0, 180.0)).is_equal("window")
+	assert_bool(Impact.window_at(house, Rect2(-10, 54, 20, 36), Vector2(0, 66))).is_true()
+	assert_bool(Impact.window_at(house, {"bad": 1}, Vector2(0, 66))).is_false()
+
+## Impact polish (17 Nov): a puff's core is picked against the ground under it, so grey dust shows on grey
+## cobbles and tan dust on the tan path at 1x.
+func test_a_dust_puff_has_a_core_that_stands_out_from_the_ground() -> void:
+	assert_object(Impact.dust_core("stone", 0.66)).is_equal(Impact.STONE_DEEP)   # light grey cobbles: dark core
+	assert_object(Impact.dust_core("", 0.65)).is_equal(Impact.PATH_DEEP)         # tan path: dark core
+	assert_object(Impact.dust_core("stone", 0.15)).is_equal(Impact.STONE_LIT)    # dark ground: light core
+	assert_float(Impact.dust_core("", -1.0).a).is_equal(0.0)                     # ground not known: as before
+	# the core is always far from the ground: at least 0.2 apart in brightness on any ground
+	for tone: float in [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0]:
+		for material: String in ["stone", "", "timber"]:
+			var core := Impact.dust_core(material, tone)
+			assert_float(absf(0.299 * core.r + 0.587 * core.g + 0.114 * core.b - tone)).is_greater_equal(0.2)
+	# read from the zone's Ground picture under the mark
+	var zone: Node2D = auto_free(Node2D.new())
+	add_child(zone)
+	var ground := Sprite2D.new()
+	ground.name = "Ground"
+	ground.centered = false
+	var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0.71, 0.66, 0.59))
+	img.fill_rect(Rect2i(32, 0, 32, 64), Color(0.2, 0.2, 0.2))
+	ground.texture = ImageTexture.create_from_image(img)
+	zone.add_child(ground)
+	var actors := Node2D.new()
+	zone.add_child(actors)
+	var light := Impact.spawn(actors, Impact.Kind.DROP, Vector2(10, 10), 20.0, Vector2.UP, true)
+	var dark := Impact.spawn(actors, Impact.Kind.DROP, Vector2(50, 10), 20.0, Vector2.UP, true)
+	assert_float(light.ground_tone).is_equal_approx(0.299 * 0.71 + 0.587 * 0.66 + 0.114 * 0.59, 0.01)
+	assert_float(dark.ground_tone).is_equal_approx(0.2, 0.01)
+	assert_object(Impact.dust_core("", light.ground_tone)).is_equal(Impact.PATH_DEEP)
+	assert_object(Impact.dust_core("", dark.ground_tone)).is_equal(Impact.DUST_LIT)
+	# no Ground anywhere above: not known
+	var loose: Node2D = auto_free(Node2D.new())
+	add_child(loose)
+	assert_float(Impact.ground_tone_at(loose, Vector2(5, 5))).is_less(0.0)
+	# the Crossroads cobbles before the north cottages' doors: a dark core on them
+	var cross_ground: Texture2D = load("res://zones/crossroads/art/ground.png")
+	var tone := Impact.tone_of(cross_ground.get_image(), Vector2(1085, 612))
+	assert_float(tone).is_greater(0.4)
+	assert_object(Impact.dust_core("stone", tone)).is_equal(Impact.STONE_DEEP)
+
 func test_the_crossroads_houses_declare_their_plinths_and_windows() -> void:
 	var cross: Node = auto_free(load("res://zones/crossroads/crossroads.tscn").instantiate())
 	var hut := Impact.face_of(cross.get_node("Walls/Building_hut"))
@@ -419,12 +497,18 @@ func test_the_crossroads_houses_declare_their_plinths_and_windows() -> void:
 	assert_array(hut.timber).is_empty()
 	var cottages := Impact.face_of(cross.get_node("Walls/Building_north_cottages"))
 	assert_float(float(cottages.stone_below)).is_equal(63.0)
-	assert_array(cottages.no_stick).is_equal([Rect2(-61, 52, 37, 40), Rect2(11, 52, 37, 40)])
-	assert_array(cottages.timber).is_equal([Rect2(-140, 0, 62, 84), Rect2(37, 0, 69, 84)])
+	# the left window is always boarded (NorthCottagesDamage has no condition): planks, so not a window
+	assert_array(cottages.no_stick).is_equal([Rect2(11, 52, 37, 40)])
+	assert_array(cottages.timber).is_equal([Rect2(-139, 0, 62, 84), Rect2(41, 0, 62, 84)])
 	var fern := Impact.face_of(cross.get_node("Walls/Building_fern_cottage"))
 	assert_float(float(fern.stone_below)).is_equal(63.0)
-	assert_array(fern.no_stick).is_equal([Rect2(13, 54, 33, 36)])
-	assert_array(fern.timber).is_equal([Rect2(-92, 0, 67, 85)])
+	assert_int(fern.no_stick.size()).is_equal(1)
+	assert_object(fern.no_stick[0].rect).is_equal(Rect2(13, 54, 33, 36))
+	assert_object(fern.no_stick[0].unless).is_equal(NodePath("../../Props/If_fern_cottage_damage"))
+	# the path reaches the damage's Conditional from the Ferns' solid in the scene
+	var fern_body := cross.get_node("Walls/Building_fern_cottage")
+	assert_object(fern_body.get_node_or_null(fern.no_stick[0].unless)).is_same(cross.get_node("Props/If_fern_cottage_damage"))
+	assert_array(fern.timber).is_equal([Rect2(-91, 0, 62, 85)])
 
 ## #509 follow-up: the arrow's last ground point is taken after its start is settled. Against a wall the start
 ## moves to the archer's feet, and the "one step before" point must be there, not at the bow's tip.

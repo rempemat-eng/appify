@@ -68,6 +68,20 @@ def segment_quads(points, width):
     return out
 
 
+def face_rect(w, parent):
+    """One window of a face, (x0, x1, lift0, lift1) with x1 and lift1 exclusive, as the scene writes it: a Rect2
+    of (x, lift, width, height), or, with a fifth item naming the node (a path from the zone root) that boards it
+    up while it shows, {"rect": Rect2, "unless": NodePath} (game/actors/impact.gd `face_hit`). The path is written
+    from the solid's own node: the solid sits under `parent`, so it climbs one level per part of `parent` and one
+    for the solid."""
+    x0, x1, l0, l1 = w[:4]
+    rect = 'Rect2(%d, %d, %d, %d)' % (x0, l0, x1 - x0, l1 - l0)
+    if len(w) < 5:
+        return rect
+    up = '../' * (len(parent.split('/')) + 1)
+    return '{"rect": %s, "unless": NodePath("%s%s")}' % (rect, up, w[4])
+
+
 class Scene:
     def __init__(self):
         self.subs = []
@@ -124,8 +138,7 @@ class Scene:
             if len(face) > 2 and face[2]:
                 props['metadata/impact_stone_below'] = str(int(face[2]))
             if len(face) > 3 and face[3]:
-                props['metadata/impact_no_stick'] = '[%s]' % ', '.join(
-                    'Rect2(%d, %d, %d, %d)' % (x0, l0, x1 - x0, l1 - l0) for x0, x1, l0, l1 in face[3])
+                props['metadata/impact_no_stick'] = '[%s]' % ', '.join(face_rect(w, parent) for w in face[3])
             if len(face) > 4 and face[4]:
                 props['metadata/impact_timber'] = '[%s]' % ', '.join(
                     'Rect2(%d, %d, %d, %d)' % (x0, l0, x1 - x0, l1 - l0) for x0, x1, l0, l1 in face[4])

@@ -136,11 +136,16 @@ def render(zid: str, preview: str | None) -> None:
 # the box's centre for all three) take no arrow, and their doors (door and frame, from the step to the lintel)
 # are timber through the plinth band. #515 audit (16 Nov): the auditor's spans, checked by drawing them on the
 # pictures; the hut's and the Ferns' windows were 6 to 10 texels too far right before.
-# house: (stone_below, windows, timber) with windows and timber as (x0, x1, lift0, lift1)
+# house: (stone_below, windows, timber) with windows and timber as (x0, x1, lift0, lift1), x1 and lift1
+# exclusive. 17 Nov (impact polish): the doors are the auditor's spans (door and frame, checked by drawing them
+# on the pictures). A window that is boarded is planks, timber: the north cottages' left window is always
+# boarded (NorthCottagesDamage has no condition), so it is not a window here; the Ferns' window is boarded while
+# its damage is shown, so its entry names that node (a fifth item): it counts as a window only while that node
+# is hidden.
 TIMBER_PLINTHS = {
     'hut': (11, [(-89, -56, 54, 90), (55, 88, 54, 90)], []),
-    'north_cottages': (63, [(-61, -24, 52, 92), (11, 48, 52, 92)], [(-140, -78, 0, 84), (37, 106, 0, 84)]),
-    'fern_cottage': (63, [(13, 46, 54, 90)], [(-92, -25, 0, 85)]),
+    'north_cottages': (63, [(11, 48, 52, 92)], [(-139, -77, 0, 84), (41, 103, 0, 84)]),
+    'fern_cottage': (63, [(13, 46, 54, 90, 'Props/If_fern_cottage_damage')], [(-91, -29, 0, 85)]),
 }
 DRAWN_FACES = {
     'lane_bank': (36, 'stone'), 'lane_face': (36, 'stone'),
