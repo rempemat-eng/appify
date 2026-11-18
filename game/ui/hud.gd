@@ -240,6 +240,22 @@ func pause_button_clear_of() -> Array[Control]:
 		out.append(_card)
 	return out
 
+## The HUD's lasting pieces in the top half of the picture (art-grid texels): the hearts and rolls, the
+## quest tracker (it grows when its text wraps), the Glint count and the pause button. The camera keeps a
+## framed landmark clear of them (world/camera_framing.gd), and the play driver's `expect framed` fails
+## when one covers the picture. A title card is left out: it shows for seconds over the middle of the
+## picture, and moving the camera for it would swing it twice.
+func top_panels() -> Array[Rect2]:
+	var out: Array[Rect2] = []
+	var pieces: Array[Control] = [_hearts, _rolls, _quest, _glint_box, _pause_button]
+	for piece: Control in pieces:
+		if piece == null or not piece.is_visible_in_tree():
+			continue
+		var r := piece.get_global_rect()
+		if r.has_area() and r.position.y < UiStyle.GRID.y / 2.0:
+			out.append(r)
+	return out
+
 ## Shows the pause button where the menu can be opened from it and places it: a square as tall as a pause
 ## row, MARGIN in from the top right of what the window shows, moved down below any piece it would touch.
 func _place_pause_button() -> void:
