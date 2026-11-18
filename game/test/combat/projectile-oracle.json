@@ -1,0 +1,2179 @@
+{
+  "source_commit": "1820a07c5ae8b745e239aa2aaa25e0c5ef483d42",
+  "engine_sha256": "21aa782577f3d2fc51389efdd80c4c61a1a7ddd48d128e01eb318daa75d6bc10",
+  "cases": [
+    {
+      "id": "bramble",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "arrow",
+          "owner": "player",
+          "source": "bramble",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            205,
+            0
+          ],
+          "radius": 2,
+          "remaining": 0.92,
+          "damage": 22,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.5414634146341464,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "bramble",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "arrow",
+          "owner": "player",
+          "source": "bramble",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            165.64563920399112,
+            120.77467537816524
+          ],
+          "radius": 2,
+          "remaining": 0.92,
+          "damage": 22,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.3073170731707317,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "bramble",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "arrow",
+          "owner": "player",
+          "source": "bramble",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            205,
+            0
+          ],
+          "radius": 2,
+          "remaining": 0.92,
+          "damage": 24,
+          "pierce": 3,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.5414634146341464,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "bramble",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "arrow",
+          "owner": "player",
+          "source": "bramble",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            165.64563920399112,
+            120.77467537816524
+          ],
+          "radius": 2,
+          "remaining": 0.92,
+          "damage": 24,
+          "pierce": 3,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.3073170731707317,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "morel",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "flask",
+          "owner": "player",
+          "source": "morel",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            135,
+            0
+          ],
+          "radius": 4,
+          "remaining": 0.8222222222222222,
+          "damage": 14,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.8222222222222222,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "morel",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "flask",
+          "owner": "player",
+          "source": "morel",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            109.08371362214051,
+            79.53454232220638
+          ],
+          "radius": 4,
+          "remaining": 0.4666666666666667,
+          "damage": 14,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.4666666666666667,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "morel",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "flask",
+          "owner": "player",
+          "source": "morel",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            135,
+            0
+          ],
+          "radius": 4,
+          "remaining": 0.8222222222222222,
+          "damage": 14,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.8222222222222222,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "morel",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "flask",
+          "owner": "player",
+          "source": "morel",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            109.08371362214051,
+            79.53454232220638
+          ],
+          "radius": 4,
+          "remaining": 0.4666666666666667,
+          "damage": 14,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.4666666666666667,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "velvet",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "velvet",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": []
+    },
+    {
+      "id": "velvet",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "velvet",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": []
+    },
+    {
+      "id": "cairn",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "cairn",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": []
+    },
+    {
+      "id": "cairn",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "cairn",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": []
+    },
+    {
+      "id": "iona",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "iona",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": []
+    },
+    {
+      "id": "iona",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "iona",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": []
+    },
+    {
+      "id": "tam",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "tam",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": []
+    },
+    {
+      "id": "tam",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "tam",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": []
+    },
+    {
+      "id": "brine",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "harpoon",
+          "owner": "player",
+          "source": "brine",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            175,
+            0
+          ],
+          "radius": 3,
+          "remaining": 0.95,
+          "damage": 29,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.6342857142857142,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "brine",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "harpoon",
+          "owner": "player",
+          "source": "brine",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            141.40481395462658,
+            103.10033263989716
+          ],
+          "radius": 3,
+          "remaining": 0.95,
+          "damage": 29,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.36,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "brine",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "harpoon",
+          "owner": "player",
+          "source": "brine",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            205,
+            0
+          ],
+          "radius": 3,
+          "remaining": 0.95,
+          "damage": 39,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.5414634146341464,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "brine",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "harpoon",
+          "owner": "player",
+          "source": "brine",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            165.64563920399112,
+            120.77467537816524
+          ],
+          "radius": 3,
+          "remaining": 0.95,
+          "damage": 39,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.3073170731707317,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "pendle",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "bullet",
+          "owner": "player",
+          "source": "pendle",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            290,
+            0
+          ],
+          "radius": 2,
+          "remaining": 0.8,
+          "damage": 24,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.38275862068965516,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "pendle",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "bullet",
+          "owner": "player",
+          "source": "pendle",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            234.32797741052403,
+            170.85197980325816
+          ],
+          "radius": 2,
+          "remaining": 0.8,
+          "damage": 24,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.21724137931034482,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "pendle",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "rifle",
+          "owner": "player",
+          "source": "pendle",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            320,
+            0
+          ],
+          "radius": 2,
+          "remaining": 1,
+          "damage": 49,
+          "pierce": 4,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.346875,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "pendle",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "rifle",
+          "owner": "player",
+          "source": "pendle",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            258.5688026598886,
+            188.52632254152624
+          ],
+          "radius": 2,
+          "remaining": 1,
+          "damage": 49,
+          "pierce": 4,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.196875,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "mirra",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "water",
+          "owner": "player",
+          "source": "mirra",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            170,
+            0
+          ],
+          "radius": 4,
+          "remaining": 1.05,
+          "damage": 21,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.6529411764705882,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "mirra",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "water",
+          "owner": "player",
+          "source": "mirra",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            137.3646764130658,
+            100.15460885018581
+          ],
+          "radius": 4,
+          "remaining": 1.05,
+          "damage": 21,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.37058823529411766,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "mirra",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "water",
+          "owner": "player",
+          "source": "mirra",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            170,
+            0
+          ],
+          "radius": 4,
+          "remaining": 1.05,
+          "damage": 21,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.6529411764705882,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "mirra",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "water",
+          "owner": "player",
+          "source": "mirra",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            137.3646764130658,
+            100.15460885018581
+          ],
+          "radius": 4,
+          "remaining": 1.05,
+          "damage": 21,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.37058823529411766,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "ashe",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "ashe",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": []
+    },
+    {
+      "id": "ashe",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "flame-crescent",
+          "owner": "player",
+          "source": "ashe",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            145,
+            0
+          ],
+          "radius": 7,
+          "remaining": 0.65,
+          "damage": 15,
+          "pierce": 2,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.65,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "ashe",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "flame-crescent",
+          "owner": "player",
+          "source": "ashe",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            117.16398870526201,
+            85.42598990162908
+          ],
+          "radius": 7,
+          "remaining": 0.65,
+          "damage": 15,
+          "pierce": 2,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.43448275862068964,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "clack",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "rocket",
+          "owner": "player",
+          "source": "clack",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            125,
+            0
+          ],
+          "radius": 4,
+          "remaining": 1.45,
+          "damage": 40,
+          "pierce": 0,
+          "blast_radius": 23,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.888,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "clack",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "rocket",
+          "owner": "player",
+          "source": "clack",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            101.00343853901899,
+            73.64309474278369
+          ],
+          "radius": 4,
+          "remaining": 1.45,
+          "damage": 40,
+          "pierce": 0,
+          "blast_radius": 23,
+          "powered": false,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.504,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "clack",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "rocket",
+          "owner": "player",
+          "source": "clack",
+          "position": [
+            94.96357459710795,
+            97.1910930572179
+          ],
+          "velocity": [
+            144.41314628673916,
+            -13.0323896337116
+          ],
+          "radius": 4,
+          "remaining": 1.45,
+          "damage": 20,
+          "pierce": 0,
+          "blast_radius": 19,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.7655172413793103,
+          "hit_ids": []
+        },
+        {
+          "kind": "rocket",
+          "owner": "player",
+          "source": "clack",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            145,
+            0
+          ],
+          "radius": 4,
+          "remaining": 1.45,
+          "damage": 20,
+          "pierce": 0,
+          "blast_radius": 19,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.7655172413793103,
+          "hit_ids": []
+        },
+        {
+          "kind": "rocket",
+          "owner": "player",
+          "source": "clack",
+          "position": [
+            94.96357459710795,
+            98.8089069427821
+          ],
+          "velocity": [
+            144.41314628673916,
+            13.0323896337116
+          ],
+          "radius": 4,
+          "remaining": 1.45,
+          "damage": 20,
+          "pierce": 0,
+          "blast_radius": 19,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.7655172413793103,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "clack",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "rocket",
+          "owner": "player",
+          "source": "clack",
+          "position": [
+            93.71937813227441,
+            102.62722392487802
+          ],
+          "velocity": [
+            124.3677587977545,
+            74.54971878970142
+          ],
+          "radius": 4,
+          "remaining": 1.45,
+          "damage": 20,
+          "pierce": 0,
+          "blast_radius": 19,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.43448275862068964,
+          "hit_ids": []
+        },
+        {
+          "kind": "rocket",
+          "owner": "player",
+          "source": "clack",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            117.16398870526201,
+            85.42598990162908
+          ],
+          "radius": 4,
+          "remaining": 1.45,
+          "damage": 20,
+          "pierce": 0,
+          "blast_radius": 19,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.43448275862068964,
+          "hit_ids": []
+        },
+        {
+          "kind": "rocket",
+          "owner": "player",
+          "source": "clack",
+          "position": [
+            92.76625156226805,
+            103.93446204774325
+          ],
+          "velocity": [
+            109.01183072542979,
+            95.6107774358636
+          ],
+          "radius": 4,
+          "remaining": 1.45,
+          "damage": 20,
+          "pierce": 0,
+          "blast_radius": 19,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.43448275862068964,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "nix",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "nix",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": []
+    },
+    {
+      "id": "nix",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "nix",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": []
+    },
+    {
+      "id": "rook",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "pulse",
+          "owner": "player",
+          "source": "rook",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            220,
+            0
+          ],
+          "radius": 3,
+          "remaining": 1,
+          "damage": 16,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.5045454545454545,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "rook",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "pulse",
+          "owner": "player",
+          "source": "rook",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            177.7660518286734,
+            129.6118467472993
+          ],
+          "radius": 3,
+          "remaining": 1,
+          "damage": 16,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.2863636363636364,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "rook",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "pulse",
+          "owner": "player",
+          "source": "rook",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            220,
+            0
+          ],
+          "radius": 3,
+          "remaining": 1,
+          "damage": 16,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.5045454545454545,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "rook",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "pulse",
+          "owner": "player",
+          "source": "rook",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            177.7660518286734,
+            129.6118467472993
+          ],
+          "radius": 3,
+          "remaining": 1,
+          "damage": 16,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.2863636363636364,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "mote",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            94.94560488161028,
+            97.01199529246543
+          ],
+          "velocity": [
+            178.91209763220542,
+            -19.760094150691465
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 9,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.6166666666666667,
+          "hit_ids": []
+        },
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            180,
+            0
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 9,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.6166666666666667,
+          "hit_ids": []
+        },
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            94.94560488161028,
+            98.98800470753457
+          ],
+          "velocity": [
+            178.91209763220542,
+            19.760094150691465
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 9,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.6166666666666667,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "mote",
+      "action": "primary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            93.81037261709885,
+            102.47192124059363
+          ],
+          "velocity": [
+            156.207452341977,
+            89.43842481187261
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 9,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.35,
+          "hit_ids": []
+        },
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            145.44495149618734,
+            106.04605642960851
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 9,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.35,
+          "hit_ids": []
+        },
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            92.6462170285663,
+            104.0685912046533
+          ],
+          "velocity": [
+            132.92434057132584,
+            121.37182409306611
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 9,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.35,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "mote",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            94.94560488161028,
+            97.01199529246543
+          ],
+          "velocity": [
+            208.73078057090632,
+            -23.05344317580671
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 12,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.5285714285714286,
+          "hit_ids": []
+        },
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            210,
+            0
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 12,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.5285714285714286,
+          "hit_ids": []
+        },
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            94.94560488161028,
+            98.98800470753457
+          ],
+          "velocity": [
+            208.73078057090632,
+            23.05344317580671
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 12,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.5285714285714286,
+          "hit_ids": []
+        },
+        {
+          "kind": "orbit-shard",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            94.78307704397545,
+            96.03593339227217
+          ],
+          "velocity": [
+            185.42051537281506,
+            -41.46362838536517
+          ],
+          "radius": 2,
+          "remaining": 0.9,
+          "damage": 10,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.5842105263157895,
+          "hit_ids": []
+        },
+        {
+          "kind": "orbit-shard",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            94.78307704397545,
+            99.96406660772783
+          ],
+          "velocity": [
+            185.42051537281506,
+            41.46362838536517
+          ],
+          "radius": 2,
+          "remaining": 0.9,
+          "damage": 10,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.5842105263157895,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "mote",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 72,
+      "angle": 0.63,
+      "height": 13,
+      "expected": [
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            93.81037261709885,
+            102.47192124059363
+          ],
+          "velocity": [
+            182.24202773230647,
+            104.34482894718472
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 12,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.3,
+          "hit_ids": []
+        },
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            93.27224757480937,
+            103.30230282148042
+          ],
+          "velocity": [
+            169.6857767455519,
+            123.7203991678766
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 12,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.3,
+          "hit_ids": []
+        },
+        {
+          "kind": "glass",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            92.6462170285663,
+            104.0685912046533
+          ],
+          "velocity": [
+            155.07839733321347,
+            141.60046144191045
+          ],
+          "radius": 2,
+          "remaining": 0.95,
+          "damage": 12,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.3,
+          "hit_ids": []
+        },
+        {
+          "kind": "orbit-shard",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            94.25408740534945,
+            101.58748395185981
+          ],
+          "velocity": [
+            174.25295633515498,
+            75.73577231704036
+          ],
+          "radius": 2,
+          "remaining": 0.9,
+          "damage": 10,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.33157894736842103,
+          "hit_ids": []
+        },
+        {
+          "kind": "orbit-shard",
+          "owner": "player",
+          "source": "mote",
+          "position": [
+            91.93984831296484,
+            104.76152364626263
+          ],
+          "velocity": [
+            125.39679771814662,
+            142.7432769766556
+          ],
+          "radius": 2,
+          "remaining": 0.9,
+          "damage": 10,
+          "pierce": 1,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 13,
+          "age": 0,
+          "flight_duration": 0.33157894736842103,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "pendle",
+      "action": "secondary",
+      "powered": false,
+      "rounds": 0,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "pendle",
+      "action": "secondary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "fan-bullet",
+          "owner": "player",
+          "source": "pendle",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            270,
+            0
+          ],
+          "radius": 2,
+          "remaining": 0.75,
+          "damage": 18,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.4111111111111111,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "pendle",
+      "action": "secondary",
+      "powered": false,
+      "rounds": 2,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "fan-bullet",
+          "owner": "player",
+          "source": "pendle",
+          "position": [
+            94.98639093113839,
+            97.5052495247564
+          ],
+          "velocity": [
+            269.5917279341516,
+            -14.842514257308288
+          ],
+          "radius": 2,
+          "remaining": 0.75,
+          "damage": 18,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.4111111111111111,
+          "hit_ids": []
+        },
+        {
+          "kind": "fan-bullet",
+          "owner": "player",
+          "source": "pendle",
+          "position": [
+            94.98639093113839,
+            98.4947504752436
+          ],
+          "velocity": [
+            269.5917279341516,
+            14.842514257308288
+          ],
+          "radius": 2,
+          "remaining": 0.75,
+          "damage": 18,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.4111111111111111,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "pendle",
+      "action": "secondary",
+      "powered": false,
+      "rounds": 3,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "fan-bullet",
+          "owner": "player",
+          "source": "pendle",
+          "position": [
+            94.94560488161028,
+            97.01199529246543
+          ],
+          "velocity": [
+            268.36814644830815,
+            -29.640141226037198
+          ],
+          "radius": 2,
+          "remaining": 0.75,
+          "damage": 18,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.4111111111111111,
+          "hit_ids": []
+        },
+        {
+          "kind": "fan-bullet",
+          "owner": "player",
+          "source": "pendle",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            270,
+            0
+          ],
+          "radius": 2,
+          "remaining": 0.75,
+          "damage": 18,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.4111111111111111,
+          "hit_ids": []
+        },
+        {
+          "kind": "fan-bullet",
+          "owner": "player",
+          "source": "pendle",
+          "position": [
+            94.94560488161028,
+            98.98800470753457
+          ],
+          "velocity": [
+            268.36814644830815,
+            29.640141226037198
+          ],
+          "radius": 2,
+          "remaining": 0.75,
+          "damage": 18,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.4111111111111111,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "pendle",
+      "action": "secondary",
+      "powered": true,
+      "rounds": 0,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": []
+    },
+    {
+      "id": "cairn",
+      "action": "secondary",
+      "powered": false,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "boulder",
+          "owner": "player",
+          "source": "cairn",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            115,
+            0
+          ],
+          "radius": 7,
+          "remaining": 1.3,
+          "damage": 34,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": false,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.9652173913043478,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "cairn",
+      "action": "secondary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 120,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "boulder",
+          "owner": "player",
+          "source": "cairn",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            115,
+            0
+          ],
+          "radius": 7,
+          "remaining": 1.3,
+          "damage": 40,
+          "pierce": 0,
+          "blast_radius": 30,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.9652173913043478,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "morel",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 0,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "flask",
+          "owner": "player",
+          "source": "morel",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            135,
+            0
+          ],
+          "radius": 4,
+          "remaining": 0.14074074074074075,
+          "damage": 14,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.05,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "morel",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 28,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "flask",
+          "owner": "player",
+          "source": "morel",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            135,
+            0
+          ],
+          "radius": 4,
+          "remaining": 0.14074074074074075,
+          "damage": 14,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.14074074074074075,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "morel",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 70,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "flask",
+          "owner": "player",
+          "source": "morel",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            135,
+            0
+          ],
+          "radius": 4,
+          "remaining": 0.45185185185185184,
+          "damage": 14,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.45185185185185184,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "morel",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 135,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "flask",
+          "owner": "player",
+          "source": "morel",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            135,
+            0
+          ],
+          "radius": 4,
+          "remaining": 0.9333333333333333,
+          "damage": 14,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.9333333333333333,
+          "hit_ids": []
+        }
+      ]
+    },
+    {
+      "id": "morel",
+      "action": "primary",
+      "powered": true,
+      "rounds": 1,
+      "distance": 300,
+      "angle": 0,
+      "height": 0,
+      "expected": [
+        {
+          "kind": "flask",
+          "owner": "player",
+          "source": "morel",
+          "position": [
+            95,
+            98
+          ],
+          "velocity": [
+            135,
+            0
+          ],
+          "radius": 4,
+          "remaining": 0.9333333333333333,
+          "damage": 14,
+          "pierce": 0,
+          "blast_radius": 0,
+          "powered": true,
+          "launch_height": 0,
+          "age": 0,
+          "flight_duration": 0.9333333333333333,
+          "hit_ids": []
+        }
+      ]
+    }
+  ]
+}

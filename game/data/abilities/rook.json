@@ -1,0 +1,171 @@
+{
+  "id": "rook",
+  "name": "Rook",
+  "catalogue_prose": {
+    "role": "Orbital salvager · pulse carbine, thruster vault and paired space turrets",
+    "primary": "Pulse carbine — discrete aimed amber bolts, with no disc or tether.",
+    "secondary": "Thruster Vault — make a short directional jetpack vault, keeping aim and carbine available; airborne height avoids ground melee, while projectiles and explosions still hit.",
+    "block": "Energy guard — hold a rectangular amber shield.",
+    "special": "Orbital Rig — deploy exactly two finite space turrets; carbine hits designate their target, and both require the operator nearby."
+  },
+  "planar_speed": 57,
+  "resources": {
+    "ammo_capacity": 0,
+    "initial_ammo": 0,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.3,
+        "release_seconds": 0.11399999999999999,
+        "cooldown_seconds": 0.3
+      },
+      "secondary": {
+        "duration_seconds": 0.55,
+        "release_seconds": 0.05,
+        "cooldown_seconds": 4
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "pulse",
+        "speed": 220,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 3,
+        "lifetime_seconds": 1,
+        "damage": 16,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": false
+      }
+    ]
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.3,
+        "release_seconds": 0.11399999999999999,
+        "cooldown_seconds": 0.3
+      },
+      "secondary": {
+        "duration_seconds": 0.55,
+        "release_seconds": 0.05,
+        "cooldown_seconds": 4
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "pulse",
+        "speed": 220,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 3,
+        "lifetime_seconds": 1,
+        "damage": 16,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      }
+    ],
+    "duration_seconds": 10,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {},
+  "executed_rules": {
+    "vault": {
+      "duration": 0.55,
+      "height": 18,
+      "airborneThreshold": 2,
+      "forwardSpeed": 72,
+      "carbineAvailable": true,
+      "avoids": [
+        "melee",
+        "field"
+      ],
+      "stillHitBy": [
+        "projectile",
+        "explosion"
+      ]
+    },
+    "vault_direction": "movement direction if movement length>0.1; otherwise aim direction at commitment",
+    "carbine_hit": {
+      "designates_last_living_target_seconds": 1.2
+    },
+    "powered_turrets": {
+      "count": 2,
+      "lifetime_seconds": 10,
+      "initial_offsets": [
+        [
+          -15,
+          -14
+        ],
+        [
+          15,
+          -14
+        ]
+      ],
+      "target_follow_offsets": [
+        [
+          -16,
+          -14
+        ],
+        [
+          16,
+          -14
+        ]
+      ],
+      "follow_factor_per_fixed_step": 0.11666666666666667,
+      "require_designated_living_target_operator_distance_strictly_less_than": 190,
+      "require_turret_operator_distance_strictly_less_than": 55,
+      "preserves_live_existing_designation_on_activation": true,
+      "initial_cooldown_seconds": 0.18,
+      "firing_interval_seconds": 0.44,
+      "projectile": {
+        "kind": "turret-pulse",
+        "speed": 205,
+        "radius": 2,
+        "lifetime_seconds": 1,
+        "damage": 7,
+        "pierce_budget": 0
+      },
+      "removed_at_form_expiry_or_defeat": true
+    },
+    "source_functions": [
+      "v",
+      "q",
+      "M",
+      "T",
+      "N",
+      "P",
+      "X"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}

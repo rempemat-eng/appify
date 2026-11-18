@@ -1,0 +1,156 @@
+{
+  "id": "brine",
+  "name": "Brine",
+  "catalogue_prose": {
+    "role": "Coastal diver · harpoon gun and integral winch",
+    "primary": "Harpoon gun — fire one tethered harpoon, then reload the integral reel.",
+    "secondary": "Reel — pull a light target or winch toward an anchored heavy target; untethered, sweep the gun butt.",
+    "block": "Dive brace — lower the gun and hold the reinforced forearm guard.",
+    "special": "Abyssal Drive — the winch overdrives; heavy piercing shots and stronger controlled reeling."
+  },
+  "planar_speed": 57,
+  "resources": {
+    "ammo_capacity": 1,
+    "initial_ammo": 1,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.64,
+        "release_seconds": 0.2432,
+        "cooldown_seconds": 0.64
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 0.7
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "harpoon",
+        "speed": 175,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 3,
+        "lifetime_seconds": 0.95,
+        "damage": 29,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": false
+      }
+    ]
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.64,
+        "release_seconds": 0.2432,
+        "cooldown_seconds": 0.64
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 0.7
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "harpoon",
+        "speed": 205,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 3,
+        "lifetime_seconds": 0.95,
+        "damage": 39,
+        "pierce_budget": 1,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      }
+    ],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "secondary_fallback": {
+      "kind": "frontal_arc",
+      "reach": 32,
+      "minimum_direction_dot": 0.2,
+      "damage": 21,
+      "knockback": 16
+    }
+  },
+  "executed_rules": {
+    "primary": {
+      "replaces_previous_harpoon_projectiles_and_tether": true,
+      "reload_seconds": 0.95,
+      "powered_reload_seconds": 0.52
+    },
+    "harpoon_hit": {
+      "attaches_last_living_hit_target": true,
+      "tether_seconds": 3,
+      "powered_tether_seconds": 4,
+      "powered_flag_captured_on_launch": true
+    },
+    "secondary_reel": {
+      "requires_living_tether_target_within": 185,
+      "light_target_pull": 42,
+      "powered_light_target_pull": 61,
+      "heavy_kinds": [
+        "tank",
+        "dummy"
+      ],
+      "heavy_target_pulls_operator_instead": true,
+      "stop_gap_formula": "player_radius+target_radius+3",
+      "damage": 15,
+      "powered_damage": 23,
+      "powered_tether_remaining_after_reel": 2,
+      "ordinary_reel_clears_tether": true
+    },
+    "secondary_without_valid_tether": {
+      "kind": "frontal_arc",
+      "reach": 32,
+      "minimum_direction_dot": 0.2,
+      "damage": 21,
+      "knockback": 16
+    },
+    "activation": {
+      "refill_ammo": true,
+      "clear_reload": true
+    },
+    "source_functions": [
+      "E",
+      "q",
+      "M",
+      "T",
+      "v"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}
