@@ -1,7 +1,7 @@
 {
  "zone": "woodland",
  "density": 3.0,
- "restricted": 17564,
+ "restricted": 17004,
  "kinds": [
   "beech",
   "birch",
