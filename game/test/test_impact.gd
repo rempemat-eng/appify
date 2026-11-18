@@ -550,12 +550,11 @@ func test_boards_in_the_stone_band_are_timber() -> void:
 	assert_bool(Impact.timber_at(restored, {"bad": 1}, Vector2(0, 30))).is_false()
 
 ## #516 audit, F3: the ground is read through a tone grid, one byte per 5 x 5 texel cell, kept for one zone only.
-## The largest difference between a grid's tones and the exact means of the picture's aligned 5 x 5 cells (Rec.
-## 709 luma from its RGB, in floats), over every 7th cell. Measured on 17 Nov (#516 round 3) with the exact build:
-## Crossroads, the Undercroft and the woodland all within one byte (the engine's L8 rounds each texel to a
-## byte, the grid rounds the mean); before, with the drift on odd sizes and the bilinear step, up to 108 bytes
-## (the Undercroft, 2304 wide: 460.8 cells).
-const GRID_TOLERANCE := 1.0 / 255.0
+## The largest sampled difference from the picture's aligned 5 x 5 means (Rec. 709 luma in floats), over every
+## 7th cell. The exact script build was within one byte on these grounds (#516 round 3). Z11 replaces that loop
+## with the engine's bilinear-to-4x and two half-size filters; Claude's auditor measured a 0.027 maximum for
+## that approximation. This bound does not establish the separate L* dust-core contrast acceptance.
+const GRID_TOLERANCE := 0.027
 
 func _grid_error(t: Texture2D, grid: Dictionary) -> float:
 	var img := t.get_image()
@@ -573,9 +572,9 @@ func _grid_error(t: Texture2D, grid: Dictionary) -> float:
 		worst = maxf(worst, absf(Impact.grid_tone(grid, Vector2(cx * 5 + 2, cy * 5 + 2)) - sum / 25.0))
 	return worst
 
-## #516 round 3: odd sizes no longer drift (the picture is cropped to whole cells), and every cell is the exact
-## mean, on the Undercroft (2304 x 648: 460.8 cells across) and the woodland (960 x 1728: 345.6 down).
-func test_the_tone_grid_is_exact_on_odd_sized_grounds() -> void:
+## Cropping to whole cells still prevents drift with Z11's approximation: the Undercroft (2304 x 648:
+## 460.8 cells across) and the woodland (960 x 1728: 345.6 down) keep their aligned grid dimensions.
+func test_the_tone_grid_stays_aligned_on_odd_sized_grounds() -> void:
 	for path: String in ["res://zones/undercroft/art/ground.png", "res://zones/woodland/art/ground.png"]:
 		var t: Texture2D = load(path)
 		var grid := Impact.ground_grid(t)
@@ -637,7 +636,7 @@ func test_the_ground_tone_grid_is_small_and_matches_the_picture() -> void:
 	assert_int((grid.tones as PackedByteArray).size()).is_equal(384 * 336)
 	assert_int((grid.tones as PackedByteArray).size()).is_less_equal(130 * 1024)      # bytes; the picture is ~10 MB
 	assert_bool(is_same(Impact.ground_grid(t), grid)).is_true()                          # built once
-	# it matches the picture's own 5 x 5 means at cell centres, across the zone
+	# sampled cell-centre tones stay within the filter's bound of the picture's aligned 5 x 5 means
 	assert_float(_grid_error(t, grid)).is_less_equal(GRID_TOLERANCE)
 	# off the grid: not known
 	assert_float(Impact.grid_tone(grid, Vector2(-1, 5))).is_less(0.0)
