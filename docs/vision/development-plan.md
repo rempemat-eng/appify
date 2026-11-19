@@ -1,155 +1,162 @@
-# Development plan: from here to a complete game
+# MyGame: status review and plan for the next phase (10 Nov 2026)
 
-This plan replaces the "Now / Next / Later" lists in [roadmap.md](roadmap.md) as the order of work. It covers everything still needed for MyGame to be more or less complete, the order it should happen in, and which parts the Codex chats take. MyGame Codex · lead keeps it current under the [handover](../codex/handover.md); Codex claims tasks on [#149](https://github.com/rempemat-eng/appify/issues/149) as before.
+This is the one plan for the order of work and for how Claude and Codex work together. It replaces the 1 Nov development plan, `docs/codex/handover.md` and `docs/codex/coordination.md` (section 9 lists everything it supersedes). It is a proposal until Matt approves it.
 
-## Milestone update (1 Nov)
+Every statement is marked **(V)** verified, meaning Claude A checked it on main `51c47507` on 10 Nov, or **(A)** assumed. In tables the mark has its own column.
 
-[Approved integration #418](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6564188517) is merged at main `3dd71e29`, retaining the real #299 Cairn, #290 world/cast/weapon baseline and ten #415 regional documents. Matt's approvals are recorded in [Claude's decisions](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6562924662). The exact combined source passed all four hosted canonical gates: 188 clean Godot cases, kit, verify with zero project lint warnings/errors, and 16 reproducing generators. Matching Ready CI passed, including 192 screenshot cases; source/index guards and the downloaded artifact were verified. The first failed JSON-number run and 224 report-only asset findings remain retained.
+## 1. The facts
 
-[Editor #417](https://github.com/rempemat-eng/appify/pull/417) at `b5a971e5` passed all four final local gates with 299 clean Godot cases; its local slot/source lease is released. The square and walkable spring spawn are corrected in the [actual woodland image](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6563821275). Woodland stays candidate, with 31 relation faults and 335 advisories; practical editor authoring/save/reload and scene/art acceptance remain open.
+| Claim                                              | What is true                                                                                                                                                                                                                                     | Mark |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---- |
+| About 460 PRs, only 3 real zones                   | 459 PRs since 16 Oct: 283 merged, 120 closed unmerged, 56 open. The game has 3 zones (woodland, Crossroads, Undercroft) plus 4 kit test rooms.                                                                                                   | V    |
+| 20 quest files, 1 boss                             | 20 quest files. 5 can be played to the end. 3 more have their speakers placed but did not start in the play-through. 12 need speakers or zones that do not exist. 1 boss (Thornback), 5 enemy kinds.                                             | V    |
+| 577k words of docs, 8k lines of game code          | 590k words in 144 Markdown files (vision 241k, review notes 199k, Codex docs 102k). Game GDScript 7.9k lines, editor add-on 3.4k, Godot tests 6.6k. Python 171k lines (84k of it older generators). The old Expo app is 75k lines of TypeScript. | V    |
+| Last merged Codex PR is #417 (8 Nov)               | #417 (8 Nov) is the last Codex merge with content. #441 (9 Nov) is a one-line CI pin. The 21 merges since then are all claude-a art work.                                                                                                        | V    |
+| "First playable hour" came first in the 1 Nov plan | It does not exist. What exists is about 10 minutes: 5 quests through 3 zones, and it cannot be played through without restarting the game (section 2).                                                                                           | V    |
 
-[Map #381](https://github.com/rempemat-eng/appify/pull/381) at `4d3fe4b5` retains the town fills and Granary-row repair. Its [standard producer ended EXIT1](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6563157009) on `hearthold-b034: authored footprint needs an unapproved terrain-tier change` (`Town.adopt`, `towns55.py:501`). Fonts/import/setup succeeded; Crossroads/Neon/exports were not reached. Zero new images/state/full 21-town report; failures remain preserved and no retry is allocated. The [six-image comment](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6563157092) is still historical v55.
+**What blocked the first hour.** Everything a player can do today (the three zones, the five quests, the boss, the pause menu) was first committed on 25 Oct (V). Since 1 Nov, 40 PRs merged: 28 from Claude A (redrawing the Undercroft, woodland and Crossroads to the art bar, and props for zones that do not exist yet) and 12 from Codex (editor consolidation, hand-over notes, CI, three small fixes). None added a zone, a quest or a system the player touches (V). Nobody played the build with a keyboard: the slice test calls doors, talks and hits directly, so it stayed green while the route was broken (V). Both sides polished parts and neither owned "a person can play this".
 
-[Crossroads #416](https://github.com/rempemat-eng/appify/pull/416) retains source and actual same-frame comparisons, pending final validation/editor placement/art review. [Draft slice #419](https://github.com/rempemat-eng/appify/pull/419) is narrow current-main camp/weapon-metadata integration, with combined validation not yet run. The [handover](../codex/handover.md) retains the detailed evidence and unchanged merge procedure; the current priorities below supersede historical queues.
+## 2. The build, played from a fresh save
 
-## What the process so far taught us
+Played on 10 Nov with real key and mouse events sent by a script, on a virtual display. A script cannot judge how combat feels in the hand, so that is not rated here. (V) for every row.
 
-- **Standards before content.** Every region built before the soft grid, the cast contract and the kits existed had to be redrawn. Nothing is placed in the world until its kit piece has passed the gates.
-- **Checks catch what reviews miss.** Agents repeatedly handed over faults (a double head, roads under buildings, debris in a finished stage, flat buildings). Each one now has a check. Any new kind of fault gets a check, not just a fix.
-- **The Codex lead reviews art/maps against the written Eastward rules and gates before Matt sees them.** Assigned Codex workers also draw and compose existing direction. Matt approves art/map merges and any changes of direction.
-- **One claim per task.** Two chats on one task wastes both. The first ASSIGN on #149 wins.
-- **Commit often.** Containers restart. Push after each finished step, keep PRs as drafts while iterating, mark them ready once.
+| Step | What the player can do                                                                                                                                                           | Problem                                                                                                                                                               |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | The game starts in the woodland. Walk, aim with the mouse, shoot Bramble's bow, roll.                                                                                            | No title, no intro, no sound, nothing says where to go.                                                                                                               |
+| 2    | Read the sign by the stones (quest 1), fight 3 mosslings (8 to 16 seconds), read the sign again for 40 Glint.                                                                    | The mosslings stand under the oak's crown and are hard to see. If you back away they walk home and heal to full.                                                      |
+| 3    | Talk to Hale on the east path (quest 2).                                                                                                                                         | Hale stands behind the willow and is almost hidden. She can only be talked to from the path side.                                                                     |
+| 4    | Walk through the east door to Crossroads, about 70 seconds in.                                                                                                                   | **First break.** The camera stays on another part of the village and never follows again. It happens after every door. Only quitting and relaunching fixes it.        |
+| 5    | Talk to Moss and Hale, pay 30 Glint at the smithy and watch the forge light. Hale opens the hatch (quest 3).                                                                     | None. This is the best moment in the build: the village visibly changes.                                                                                              |
+| 6    | Walk back to the woodland (35 seconds) and down the hatch. Fight 5 enemies in the Undercroft.                                                                                    | All 5 die to arrows while the player stands still, with no damage taken, in about 35 seconds.                                                                         |
+| 7    | Free the Thornback and take the great shard.                                                                                                                                     | **Second break.** The boss can be shot through the closed seal. It was freed in 28 seconds without ever attacking and without the lever being pulled.                 |
+| 8    | Walk back to Crossroads (65 seconds, two doors), set the shard in the lantern (quest 4), pay 20 Glint for the Ferns' cottage, welcome Ada (quest 5). The purse ends at 85 Glint. | The walk back is the first dull stretch: over a minute with nothing to do.                                                                                            |
+| 9    | Nothing more. The hut says "interiors come later", the waystone is cracked, the west road does nothing.                                                                          | The M, Tab, Q, F and R keys are bound and do nothing. The pause menu shows two overlapping "Paused" labels and Esc does not close it. Reloading restores full health. |
 
-## The phases
+## 3. Codex scorecard and the working model
 
-Phases overlap: a later phase may start once the gate of the phase it depends on is met for the region or system in question.
+Codex opened 170 PRs: 71 merged, 75 closed unmerged (about 36 of those were folded into later PRs (A)), 24 still open, all opened on or before 31 Oct (V). Merged PRs took a median 2.2 hours from opening to merge; Claude's took 1.7 to 1.9 (V). This measures PR opening, not the first claim.
 
-### Phase 1. Tools and the world editor (now)
+| Task type                              | Result                                             | Verdict        | Evidence                                                                                                                                        | Mark |
+| -------------------------------------- | -------------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
+| Saves, data models, simulations        | 11 merged                                          | Good           | #12, #15, #318, #316. But progression (#320), the menu model (#321), the Glint ledger (#325) and the clock (#319) are never called by the game. | V    |
+| Checks, test harnesses, CI             | 22 merged                                          | Good, too many | 53 check scripts and 11 workflows, and none walks through a door.                                                                               | V    |
+| Small gameplay fixes in Godot          | 6 merged                                           | Good           | #248 enemy roles, #427, #437.                                                                                                                   | V    |
+| Features in the old app (16 to 17 Oct) | 10 merged                                          | Good then      | That app is no longer the game.                                                                                                                 | V    |
+| World editor                           | 1 merged (#417) after about 25 closed PRs, 12 days | Slow           | No zone has been built with it; all 3 zones come from Python generators.                                                                        | V    |
+| Art to the Eastward bar                | 0 merged, 8 Crossroads attempts closed             | Bad            | Claude redrew Crossroads (#456 to #460).                                                                                                        | V    |
+| Maps and town plans                    | 0 merged, about 12 closed, #381 open and failing   | Bad            | The map producer stops on a terrain conflict at Hearthold.                                                                                      | A    |
+| Coordination and evidence documents    | 21 merged, 30 % of Codex's merges                  | Too much       | `docs/codex` holds 102k words.                                                                                                                  | V    |
 
-The editor and its checks are what make every later phase fast and consistent.
+Matt's impression is right on every line. Claude's side has the same fault in another form: the woodland took 12 review passes and the review notes are 199k words, while nobody walked through a door (V).
 
-- World editor tasks W0 to W7 ([world-editor.md](../world-editor.md), on PR #302 until it merges): the kit catalogue, schema tooling, the plan round trip, the Godot dock, walk masks from tile metadata, the relation engine, validator plumbing, and Godot output equal to Python.
-- X1 (fix the check:game crash) and X6 (the PR triage table).
-- **Gate:** a zone can be built in the editor from approved pieces only, it round-trips to JSON, and every ground-rule and review check runs on it in CI.
+**The leanest model that works:**
 
-### Phase 2. The macro world
+- **Ownership by folder, not by claim.** Codex owns `game/core`, `game/actors`, `game/enemies`, `game/bosses`, `game/world` (scripts), `game/ui`, `game/test`, the check scripts and CI. Claude owns `scripts/art`, `art/`, `game/zones`, `game/kit`, `game/assets`, `game/data/quests`, `game/data/dialogue`, the vision docs and art review. `game/game.gd` and `game/data/zones.json` belong to Codex.
+- **Never the same thing at once.** A task lists its files. If it needs a file the other side owns, it asks in the issue and the owner makes that change.
+- **Briefs.** One GitHub issue per task, at most ten lines: what the player will see, the files, how Matt sees it is done, the owner. At most five open tasks per side.
+- **Maximum ceremony per task.** One issue, one branch, one draft PR, one closing comment (what changed, the tested head, how it was played, what was not tested).
+- **Keep:** one owner per task, the exact tested head in the hand-off, drafts until local checks pass, no force-push, Codex merging its own non-art PRs when checks pass, art merging after Matt's OK.
+- **Drop:** ASSIGN and ACK posts, health records, reading the thread every 15 minutes, 4-hour status requests, the daily summary, evidence sheets, bundle PRs that re-merge other PRs, slot names, and #149 as a task board.
+- **One or two Codex chats, not four** (A: fewer chats means less to coordinate).
+- **Play decides.** Every Friday there is a build Matt can play. What he reports outranks the queue. A task that changes play is done only after someone has played it with real input.
 
-- Matt approves the v55 continent map and the town plans (in progress: every settlement as plan data with streets on the soft grid, districts, buildings with purposes, and ground that matches the town).
-- X2: journey checks on the five routes in the brief (travel times, arrivals, route choices).
-- X3: settlement life data: residents, jobs, routines, animals and props per district, filled into the town plan files.
-- X4: region plan proposals per lane, checked against the town plans.
-- **Gate:** every region has an approved plan with its towns, routes, landmarks and gates.
+## 4. Building blocks
 
-### Phase 3. Kits per biome
+| Block                      | Rating                | Evidence                                                                                                                                                                         | Scales to 10 regions and 14 characters? | Mark |
+| -------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- | ---- |
+| Soft grid and ground rules | Solid                 | Enforced by `check:kit`; all 3 zones pass.                                                                                                                                       | Yes                                     | V    |
+| World editor and kits      | Needs work            | 264 kit pieces exist. The editor is merged but has built no zone.                                                                                                                | **No**, until one zone is built in it   | V    |
+| Art generators             | Needs work            | Every asset is Python code. The woodland trees took 12 passes. 84k of 171k lines are older generators.                                                                           | **No**, too slow per asset              | V    |
+| Cast and animation         | Needs work, urgent    | 21 characters animate correctly in the game. The rig that draws them (68 files, 18.9k lines) is not in the repo; it sits in a temporary session folder. Only Bramble can attack. | **No**, until the source is committed   | V    |
+| Combat and enemies         | Needs work            | It runs, with 5 enemy kinds and tells. It is trivially easy at range, enemies heal when they walk home, arrows pass the seal, melee is not bound.                                | Code yes, feel no                       | V    |
+| Quests and dialogue data   | Solid                 | The 5-quest chain completed, including a restore paid out of order. `check:quests` validates the data.                                                                           | Yes                                     | V    |
+| Progression, weapon lines  | Needs work            | 435 lines with tests; nothing in the game calls them.                                                                                                                            | Unknown until wired                     | V    |
+| Glint economy              | Needs work            | Earning and paying work (85 Glint as designed). There is nothing to buy and the ledger module is unused.                                                                         | Yes                                     | V    |
+| Village and home upgrading | Needs work            | 2 restores work and show. No hut interior, no decorating.                                                                                                                        | Yes                                     | V    |
+| Save system                | Solid                 | Versioned, written safely, with migration tests. One slot of 520 bytes.                                                                                                          | Yes                                     | V    |
+| Zone loading and camera    | Needs work, blocking  | Zones swap correctly. The camera add-on drops its target when the player leaves the old zone.                                                                                    | Yes, once fixed                         | V    |
+| UI and menus               | Needs work            | The HUD works. No title, map, inventory, journal or shop. The pause menu has the faults in section 2.                                                                            | Yes                                     | V    |
+| Sound                      | Rebuild (not started) | The Godot game has no audio file and no audio player.                                                                                                                            | n/a                                     | V    |
+| Tests and checks           | Needs work            | 53 check scripts, 6.6k lines of Godot tests, about 5,100 CI runs. They missed both breaks. Many guard the old app.                                                               | **No**, cost grows faster than the game | V    |
 
-Order: the home valley and woodland (nearly done, #302), then the Crossroads town kit, the coast and city kit (Neon Harbour's retro-future paving included), the desert, the fire country, the mountains (Highgarth's slate terraces), and the isles.
+## 5. Identity
 
-- Codex: concepts with placement rules for each biome (W0 catalogue format), variant and width-class lists, metadata (size on the grid, where it can and cannot go, shadow, story tie-in, interaction), and the validators.
-- Assigned Codex workers: drawing each piece to the written Eastward bar; lead review and Matt's approval.
-- **Gate:** the biome's pieces are approved in the catalogue, and a test zone built from them passes every check and Matt's look.
+Today MyGame is recognisably itself in three things: a stone circle whose fallen shard turned the animals wild, creatures that are freed and not killed, and a village that mends in front of you when you pay into it (V). The soft grid and the palette give Crossroads a calm look of its own (V). It still reads as generic or Eastward-like in the silent world, the lone bearded archer with no familiar, the heart HUD, and art that is measured against Eastward shots, while the Company, the ring of falls and the moon are not on screen at all (V).
 
-### Phase 4. The vertical slice for real
+| Rank | Change                                                                                                    | Why it is cheap or strong                                              |
+| ---- | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| 1    | Sound: about ten effects and one village theme that gains an instrument with every restore.               | Nothing exists yet, so every sound is new identity.                    |
+| 2    | The familiar on screen from the first minute: it follows, points at the goal and answers the F key.       | The key is already bound; the hero stops being a lone archer.          |
+| 3    | Make freeing visible: the shard pops out, the creature calms, and later turns up near the village.        | `freed_creature.gd` exists; it turns combat into the game's own theme. |
+| 4    | A 30-second Starfall opening at the circle, with a title, and the ring of falls in view in the woodland.  | Fixes the missing start and shows the landmark.                        |
+| 5    | The Company's first mark in Crossroads (a notice, a fenced yard), and villagers who move after a restore. | Puts the story's opponent on screen in the first hour.                 |
 
-The first 60 to 90 minutes ([vertical-slice.md](vertical-slice.md)): the home valley, the garden, Crossroads, the woodland and the stone circle, built in the editor from approved kits.
+## 6. Roadmap
 
-- X5: convert Crossroads to the editor.
-- Codex: quest chain wiring, NPC routines from X3, dialogue data, save and load, entering houses, the playtest harness and a scripted run of the whole slice.
-- Assigned Codex workers: composition, cast and motion under written direction; lead review and Matt's playtest.
-- **Gate:** Matt plays the slice start to finish and signs it off.
+Content counts beyond M0 are targets (A). Anything not listed serves no milestone and is parked: more editor features, the 21 town plans and map #381, kit requirement documents, new audits and checks, phone builds, multiplayer and the old app.
 
-### Phase 5. Core systems complete
+| Milestone         | Done means, in terms Matt can play                                                                                                                                                                               | Zones | Quests | Enemy kinds | Bosses | Playable folk | Who                                                                                            |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ------ | ----------- | ------ | ------------- | ---------------------------------------------------------------------------------------------- |
+| M0 "It plays"     | Matt plays the 10 minutes start to finish without a restart, from a downloadable build. Both breaks and the pause menu are fixed, Hale and the mosslings are in view.                                            | 3     | 5      | 5           | 1      | 1             | Codex: camera, seal, enemies, pause, build. Claude: sightlines, start card.                    |
+| M1 "First hour"   | 45 to 60 minutes: the Frostline and ice caves, the Brackens and the barrow, the circle wakes. A hut interior with a bed, sound, the familiar, a combat feel pass. The walk home has something to find each time. | 7     | 12     | 9           | 3      | 3             | Claude: zones, art, writing. Codex: wiring, combat, sound playback, tests that walk the route. |
+| M2 "Core systems" | Levels, skill points and weapon tiers work for 3 folk who play differently. A shop gives Glint a use. A map with waystones, inventory, journal, 3 save slots, day and night.                                     | 7     | 15     | 9           | 3      | 3             | Codex leads. Claude: UI art, balance, review.                                                  |
+| M3 "Regions"      | One region at a time in story order. Each ships with a town, 2 to 3 zones, a dungeon, a boss and its own verb, and is played by Matt before the next starts.                                                     | 25–30 | 60     | 25          | 10     | 14            | Claude: region art and content. Codex: the region's verb and systems.                          |
+| M4 "Acts 2 and 3" | The story can be played to the end.                                                                                                                                                                              | 30    | 90     | 30          | 12     | 14            | Claude writes. Codex wires and tests.                                                          |
 
-These can run in parallel with Phase 4 once their data formats are fixed.
+## 7. Reuse
 
-- Combat and enemies ([fights.md](fights.md)), weapon lines and evolutions, weapon tiers at levels 8, 16 and 24, and the skill tree ([progression.md](progression.md)).
-- Economy and Glint: shops, cosmetics, respec, balance from the economy simulation.
-- Homes: entering houses and decorating them (cosmetic, tied to Glint).
-- The in-game world map: discovery, markers, fast travel between waystones, and closed routes such as the Highgarth pass.
-- The menu, inventory, journal, day and night, weather and sound.
-- **Gate:** each system has data, tests and a check in `npm run verify`, and works in the slice.
+| Works in another game unchanged (engine)                                                                                                                                                                      | MyGame content                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Save (`core/save_game.gd`), quest and dialogue runners, zone loader, doors and interactables, the kit format and editor add-on, the cast sprite player and its manifest contract, the review gate, art-repro. | Zones, quest and dialogue files, village plans, cast art, the asset generators (trees, town, Undercroft), the vision. |
 
-### Phase 6. Region rollout
+Tangled today (V): `player.gd` names Bramble in its attack code; the save's fresh state names the woodland; the project and save folder are still called NapAttack; engine and content generators share `scripts/art`; `package.json` mixes checks for the old app, the art and the game; the review thresholds are tuned to Eastward inside the gate.
 
-In story order: the Brackens and the Frostline, Cogsworth and Fernhollow, Sunstone Reach (Palm Spring and Dust Gulch), the fire country (Hearthold and Cinderwick), the Lull and Neon Harbour with Launch Cape, the Tidebloom Isles, and Highgarth.
+The smallest change that separates them: one data file for game-specific constants (start zone, starting folk, title, review thresholds), and a rename-only PR that sorts `scripts/` into `engine/` and `content/`. Do it at the start of M2, not now.
 
-Each region follows the same steps:
+## 8. Storage
 
-1. Town plans.
-2. Ground from kits.
-3. Props.
-4. Residents and routines.
-5. Quests.
-6. Review gates.
-7. Matt's review.
+**Player saves.** Must be saved: quest states, flags, Glint, restored buildings, zone and spawn, settings (all saved today (V)), and later each folk's level, points and weapon tier, the inventory, discovered map points and play time. Recomputed on load: the village stage, open doors and cleared camps (all follow from flags (V)), enemy positions and health. Versioning already works: one version number, a migration step per change and saved fixtures (V); keep that rule. Slots: 3 plus a backup copy of the last good save; today there is 1 (V). Size: 520 bytes now (V), under 50 KB for the full game (A), so JSON stays.
 
-Assigned Codex workers own steps 1 to 7 and the data/checks. The lead reviews and integrates; Matt approves art/maps.
+**The repo.** The checkout is 153 MB and `.git` is 637 MB (V). History cannot shrink without rewriting it, which the no-force-push rule forbids.
 
-### Phase 7. Story and content
+| Item                                                          | Size (V)                  | Recommendation                                                                                           | Saved              | Risk                                                              |
+| ------------------------------------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------- |
+| Cast rig source                                               | 68 files, missing         | **Add to the repo.** It is source and must stay.                                                         | n/a                | High while missing: the 21 characters cannot be rebuilt.          |
+| Old Expo app (`app`, `components`, `lib`, `assets`, `public`) | 22.4 MB, 75k lines        | Archive on a tag, delete from main, if Matt confirms question 2.                                         | 22 MB, most checks | Medium: `verify`, Vercel and CI must be rewritten in the same PR. |
+| Older generators in `scripts/art`                             | 84k lines                 | Archive with the app after checking nothing in `native/` or `kit/` imports them (A: they serve the app). | about 5 MB         | Medium                                                            |
+| `prototypes/`                                                 | 2.4 MB                    | Archive on a tag, delete.                                                                                | 2.4 MB             | Low                                                               |
+| Duplicate PNGs                                                | 189 groups, 2.3 MB        | Keep. Most are intended copies (kit terrain variants, today's Crossroads trees).                         | 0                  | n/a                                                               |
+| 8-direction sheets                                            | about 3 MB of 20.7 MB     | Keep. The game stores 4 directions; the diagonals are the turn in-betweens it plays.                     | 0                  | n/a                                                               |
+| Character manifests                                           | 24 MB, up to 2.65 MB each | Generate without indentation.                                                                            | 12 MB              | Low                                                               |
+| LimboAI binaries                                              | 23.7 MB                   | Keep the add-on (enemies and the boss use it). Download the pinned binaries at set-up, as Godot is.      | 23.7 MB            | Medium: set-up needs the network once.                            |
+| Review images in `docs/reviews`                               | 8.4 MB (14.2 MB all docs) | Archive on a tag, delete; keep the verdict records in `art/catalogue`.                                   | 8 to 14 MB         | Low                                                               |
+| Remote branches                                               | 497                       | Delete the 401 whose PR is merged or closed (GitHub keeps PR commits). Review the 40 with no PR.         | 0 MB, less noise   | Low                                                               |
+| Superseded docs                                               | 590k words                | Archive `docs/codex` (102k) and the review rounds (199k) on a tag. Keep vision docs that hold decisions. | about 2 MB         | Low                                                               |
 
-Acts 2 and 3, the bosses, side stories, visitors and cosmetic sets, written as quest and dialogue data, with Codex wiring and testing them.
+## 9. Open questions for Matt
 
-### Phase 8. Polish, phones and release
+| #   | Decision                                                                                                                                                 | Recommendation                                                                                                            | What it blocks                            |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| 1   | The game's name. "MyGame" is a placeholder and the project and save folder still say NapAttack (V).                                                      | Choose before anyone outside plays M1.                                                                                    | The title screen and the save folder.     |
+| 2   | Is the screen-time idea gone for good?                                                                                                                   | Yes. Archive the old app on a tag.                                                                                        | Removing 22 MB and most of the 53 checks. |
+| 3   | **Change to a recorded decision:** `game/actors/player.gd` may not be edited.                                                                            | Lift it for Codex, with Claude reviewing feel. Melee, the other 13 folk's attacks and dodge tuning all live in that file. | The combat feel pass in M1.               |
+| 4   | **Change to how a recorded decision is applied:** the Eastward bar stays, but each asset gets at most 3 review rounds, then Matt's eye decides.          | Yes. The woodland took 12 rounds.                                                                                         | The pace of every art task.               |
+| 5   | Art merges. AGENTS.md says art merges after Matt's OK on that PR; since 20 Oct Claude A has merged on an independent audit, as with #446 and #460 today. | Matt approves looks by playing the Friday build, not per PR.                                                              | Every art merge.                          |
+| 6   | The world editor.                                                                                                                                        | Build M1's zones with the generators and decide after M1 whether to adopt or shelve the editor.                           | Codex's editor work, parked until then.   |
+| 7   | The Codex set-up: one or two chats on the folder split, #149 closed, tasks as issues.                                                                    | Yes.                                                                                                                      | The five tasks below.                     |
 
-- Motion, sound, accessibility, reduced motion, performance and save migration.
-- Touch controls and camera on real phones, then the native iOS and Android builds ([native-readiness.md](../native-readiness.md)).
-- For Matt to decide: whether the screen-time loop from the original app stays, and how.
+## 10. The first five tasks
 
-## How the Codex chats work through this
+| #   | Task                                                                                                                                                     | Owner  | Files                                                                                                                    | Matt sees it is done when                                                                                |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| 1   | The camera follows after every door.                                                                                                                     | Codex  | `game/game.gd`, `game/test/test_camera_frame.gd`                                                                         | He walks woodland, Crossroads and back and stays on screen. The new test fails on today's code.          |
+| 2   | Commit the cast rig source.                                                                                                                              | Claude | new `scripts/cast/`                                                                                                      | The 68 files are on main and regenerating Bramble reproduces the committed sheets.                       |
+| 3   | The seal stops arrows, the boss wakes only when the seal opens, enemies keep their damage when they walk home, and the Undercroft entrance is safe.      | Codex  | `game/actors/arrow.gd`, `game/actors/enemy.gd`, `game/enemies/slice_enemy.gd`, `game/bosses/thornback.gd`, `game/world/` | He cannot hurt the Thornback before pulling the lever, and has to fight it.                              |
+| 4   | Clear sightlines and a start: Hale and the three mosslings stand in the open, and the game opens with a title card and one line that points at the sign. | Claude | the woodland generator and plan, `game/zones/woodland/`, `game/data/dialogue/woodland.json`                              | He sees Hale and all three mosslings from the path, and knows where to go without being told.            |
+| 5   | One pause label, Esc closes the menu, the west road says it is closed, and a build Matt can download every Friday. After task 1 (same file).             | Codex  | `game/game.tscn`, `game/game.gd`, `game/ui/pause_menu.gd`, `game/world/door.gd`, `.github/workflows/`                    | Esc twice returns him to the game, walking west shows a line, and he plays Friday's build without Godot. |
 
-Claude's current DIRECTOR orders replace the old autonomous queue. A worker takes only an explicit lead assignment, checks the real current head and first claims, then posts FIRST ASSIGN and a separate ACK for exact disjoint paths. Completed sources retain review custody; no automatic restart follows a handoff.
+## Superseded by this plan
 
-The existing systems and phase descriptions above remain the design context, not permission to start extra work. The current first-hour order and stream blockers are below; everything else waits. New game rules and art direction remain Claude/Matt decisions. The lead retains eligible non-art integration under the unchanged [handover procedure](../codex/handover.md#merge-procedure-codex-lead).
-
-## Side by side right now (1 Nov)
-
-Claude A directs priorities, art direction and Matt's review list. The Codex lead delegates scoped work, allocates one serial final validation chain per ready PR and integrates eligible work. At most four implementation claims are active; other agents review/validate only. FIRST ASSIGN and separate ACK with disjoint paths precede writes. The [canonical board](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475643125) holds live ownership; historical queues below do not authorise new work.
-
-### Current streams
-
-| Stream            | Current state                                                                                                    | Next                                                                           |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Approved baseline | #418 merged: #299, #290 and the ten #415 regional documents; hosted canonical gates and matching Ready CI passed | Reuse the approved baseline; no repeat approval or unchanged rerun             |
-| Editor #417       | Four local gates passed; woodland remains candidate, with 31 relation faults/335 advisories                      | Practical editor authoring/save/reload and separate visual/art review          |
-| Map #381          | Town fills retained; actual standard producer failed on Hearthold's terrain-tier conflict before exports         | Existing owner needs an explicit source correction allocation; no retry/waiver |
-| Crossroads #416   | Consolidated candidate source and actual matching-frame comparisons complete                                     | Final validation, editor placement and art review                              |
-| Slice #419        | Narrow camp fix and existing detached weapon metadata being integrated on current main                           | Independent source review, then one lead-allocated combined final chain        |
-
-### Must wait
-
-No new audit, requirement-document or harness task starts before the first playable hour. EDITOR-FRESH-LOAD-ANCESTRY/private R4 stays stopped. A released runtime slot does not allocate a new run. Historical focused controls, old-head passes and source-only evidence do not supply current acceptance.
-
-Existing placement and approval constraints remain: X5 uses approved pieces and the accepted editor; map adoption needs the corrected actual terrain outputs and review. Home/work semantics are explicit, not inferred. No new game rules, art direction, Player edits or player-data reset is authorised.
-
-### First playable hour
-
-1. Finish the editor tooling and newest-map correction/review under Claude's current orders; keep tooling separate from candidate woodland art.
-2. Build Crossroads in the editor from approved pieces, then wire the existing Act 1 quests and dialogue through Crossroads, woodland and the stone circle.
-3. Complete the scripted playthrough through the stone circle waking.
-4. Extend Y5 quest/dialogue validation, Y6 save versions, Y1 skill tree/tiers and Y3 Glint shops only where this slice needs the existing systems. Everything else waits.
-
-- [ ] Next editor-built zone: **Frostline**, with the existing Act 1 Col hut/High Fells quest, camp and speaker bindings.
-- [ ] Next editor-built zone: **ice caves**, with the authored rooms, Rime Wyrm, Tam and frost-shard bindings.
-- [ ] Next editor-built zone: **Brackens**, with the authored flock, drove well, shepherd and Iona bindings.
-- [ ] Next editor-built zone: **the barrow**, with the authored rooms, Old Fang and barrow-shard bindings.
-
-Send questions and review decisions to Claude in the same [daily SUMMARY](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6551199704); Codex does not ask Matt directly.
-
-## Historical lead coordination update (28 Oct)
-
-Matt appointed **MyGame Codex · lead** coordinator and integrator with non-art merge authority. The separate coordinator and crew board are retired. [Issue149's canonical board](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475643125) is edited in place. The [handover](../codex/handover.md) specifies four-hour status requests, eight-hour active-claim release, art approval and exact-source merge checks. Delivered handoffs are review duties, not abandoned implementations.
-
-Claude A6467789932 opened X3 and Y15 on proposed source pins, without approving the map/art. Claude A6471345306 set the first Y15 batch on PR303@4984438d: Hearthold, Cinderwick and Launch Cape. Delivered proposals #335/#334/#336 await placement review and generator adoption. Further X3 packets need explicit home/work source semantics. X2/X4/Y4 and X5 retain their documented approval/dependency gates.
-
-The [canonical board](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475643125) holds live claims and free briefs. At the 28 Oct 23:40 snapshot, free reserve requirements are Y16 Sunstone, Y18 Tidebloom, [Y20 Cogsworth](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6480837587) and [Y22 Lull river/meadow interfaces](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6483455966). Y21 Brackens is claimed by Prism with source published at16ccf262; its PR/gates remain pending. Y10 Crossroads is claimed by Axiom on draft #353; Y19 Frostline is claimed by Tempo on draft #352. Y23's regional requirements-classifier correction is separately assigned from main and follows the higher Y12 priority. Y11 coast/city and Y17 fire-country reports retain their owners/review duties. Each brief pins existing sources, reuses W0 families by reference and writes one new document only. No catalogue/schema/painter/town/package edits, new art direction, approval promotion or placement. Concept JSON is a separate follow-up after W0 semantic intake is settled. Reserve concepts do not override the core/editor priority.
-
-Current reviews do not mark whole Y systems complete: Y1/Y3/Y7/Y8 are isolated models; Y9 audits real control-size failures that still need fixing; Y12 is evidence tooling. W2#305's logical-ID/gameplay-preservation repair has28 focused passes at `64c212fc`; its original full Godot/kit/verify/art chain and all three current hosted jobs subsequently passed. Local and hosted combined-source trees remain separately attested, and full editor acceptance remains pending. Pure engineering PRs must not carry unapproved editor/map ancestry into main.
-
-## Historical engineering update (28 Oct 21:14)
-
-Y12 classifier #346 is merged at main `7f83ee03` after independently reviewed final local verify/art evidence and three matching hosted checks. Known town/cast/concept/blockout sources remain incomplete source-only evidence; fixtures are inventory, not executed tests or production-art approval. This does not accept the editor, town plans or the whole Y12 system.
-
-Y13 actual-cache evidence is owned by CI-map on draft #350 under [ASSIGN6478940444](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6478940444). Its observed jobs missed caches, so no warm speedup is established. Full final gates remain queued. Rill #347 and Forge #343 finished their original frozen verify/art chains and all current hosted jobs passed; Rill's optional JSON-schema comparator remains skipped, not passed. Their unapproved editor/map ancestry and Matt holds remain. [Allocation6483373484](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6483373484) gives the next single chain to frozen X3 #349, retaining production custody. E2 combines delivered editor source on a new Codex proposal branch under [6483540277](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6483540277); combined gates and acceptance remain required. The board records later reservations; completed frozen suites are not restarted.
-
-## Historical entire-project Codex ownership (28 Oct 17:24)
-
-All Claude lanes are off until Matt says to switch back. Wherever historical sections name Claude A or a Claude lane, the lead now performs that work or assigns it to a Codex worker. The lead may launch as many isolated agents as useful. Claims, own branches and non-overlapping files remain mandatory. Art/map PRs use needs-matt-review and merge only after Matt's OK; written direction remains unchanged. See the latest handover and canonical149 board for live states.
+- The 1 Nov development plan (this file's earlier content), `docs/codex/handover.md` and `docs/codex/coordination.md`.
+- The "Now / Next / Later" lists in `roadmap.md`, the waves and lane table in `rebuild-plan.md`, and the Codex queue in `coherence-plan.md`. Their design content still stands.
+- The "Current coordination and authority (28 October)" section of `AGENTS.md`, and issue #149 as the task board, once Matt approves this plan.

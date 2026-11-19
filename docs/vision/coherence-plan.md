@@ -1,5 +1,7 @@
 # Coherence plan (from Matt's review, 17 Oct 2026)
 
+> Superseded in part: the Codex queue, the Feedback section and "Who does what" are replaced by [development-plan.md](development-plan.md) (10 Nov 2026). Matt's review points below still stand.
+
 Matt's feedback, in short:
 
 - The mission map is not coherent and text is not aligned properly.
