@@ -49,11 +49,11 @@ expect zone woodland
 expect shown Actors/ColCrowsCamp yes
 expect enemies 3
 goto 384 930 10
-aim 560 560
-wait 0.3
-shot 02_crows
-en
+expect tag test build: unfinished art
 goto 384 770 10
+aim 520 540
+wait 0.6
+shot 02_crows
 expect enemies 3
 
 step free the crows: the col is clear
@@ -114,5 +114,5 @@ goto 600 1032 10
 door 600 1090 woodland
 expect zone woodland
 expect at 312 168 16
-expect tag test build
+expect tag test build: unfinished art
 end

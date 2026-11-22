@@ -158,8 +158,8 @@ func _setup_cast_label() -> void:
 	_cast_label.text = "1-0, Shift+1-4: character"
 
 ## The test build (core/test_build.gd) says so in the picture's lower right corner, in the HUD's own panel and
-## letters, and in a zone whose art is not approved yet says that too: "test build: unfinished art". No other
-## build makes it.
+## letters, and wherever art that is not approved shows says that too: "test build: unfinished art" (in the
+## Frostline, and in the woodland once its north door and stand-in crows are up). No other build makes it.
 func _setup_test_tag() -> void:
 	if not TestBuild.on():
 		return
@@ -173,12 +173,16 @@ func _setup_test_tag() -> void:
 	test_tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	test_tag_panel.add_child(test_tag)
 	$UI.add_child(test_tag_panel)
+	# a quest that moves can show or hide a test-build piece where the player stands (the crows, the door)
+	Quests.started.connect(func(_id: String) -> void: _update_test_tag())
+	Quests.advanced.connect(func(_id: String, _s: int) -> void: _update_test_tag())
+	Quests.completed.connect(func(_id: String) -> void: _update_test_tag())
 	_update_test_tag()
 
 func _update_test_tag() -> void:
 	if test_tag == null or Zones.current == null or not is_instance_valid(Zones.current):
 		return
-	test_tag.text = TestBuild.tag(Zones.current.zone_id)
+	test_tag.text = TestBuild.tag(Zones.current)
 	test_tag_panel.reset_size()
 	test_tag_panel.position = UiStyle.GRID - test_tag_panel.get_combined_minimum_size() - Vector2(6, 6)
 

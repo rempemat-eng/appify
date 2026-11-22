@@ -136,6 +136,19 @@
       },
       {
         "if": {
+          "step": [
+            "a1_bread_for_the_bothy",
+            "col"
+          ]
+        },
+        "lines": [
+          "Is that one of Moss's loaves? Then you came up past the col, and the shard crows are still on it.",
+          "Nobody comes up for bread while they hold it. Go back down and free them, on the woodland's upper lawn by the stair.",
+          "Bring the loaf when the col's clear. I'll keep the kettle on."
+        ]
+      },
+      {
+        "if": {
           "done": [
             "a1_the_ring_is_shut"
           ],

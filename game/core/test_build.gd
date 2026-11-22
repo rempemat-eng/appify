@@ -45,9 +45,40 @@ static func zones() -> Dictionary:
 static func candidate(zone_id: String) -> bool:
 	return on() and zones().has(zone_id)
 
-## The corner tag in `zone_id`: "" with the switch off, "test build" elsewhere, and "test build: unfinished
-## art" in a zone of the test build.
-static func tag(zone_id: String) -> String:
+## The corner tag in `zone`: "" with the switch off; "test build: unfinished art" in a zone of the test
+## build, and in any other zone while it shows a piece that waits for one (shows_piece: the woodland's north
+## door and its stand-in shard crows, once Moss's loaf starts); "test build" everywhere else.
+static func tag(zone: Node) -> String:
 	if not on():
 		return ""
-	return TAG_UNFINISHED if zones().has(zone_id) else TAG
+	var zone_id := String(zone.get("zone_id")) if zone != null else ""
+	return TAG_UNFINISHED if zones().has(zone_id) or shows_piece(zone) else TAG
+
+## True while `zone` shows a piece that only the test build can open: a Conditional whose condition holds,
+## or a door that is open, and that waits for "zone_built:<a zone of the test build>". Read from the
+## conditions themselves, not from visibility, so the answer is right in the same frame a quest moves.
+static func shows_piece(zone: Node) -> bool:
+	if zone == null:
+		return false
+	for node in zone.find_children("*", "Node2D", true, false):
+		var cond_text := ""
+		if node is Conditional:
+			cond_text = (node as Conditional).only_if
+		elif node is Door:
+			cond_text = (node as Door).only_if
+		if cond_text == "" or not _waits_for_a_test_zone(cond_text):
+			continue
+		if node is Door and (node as Door).is_open():
+			return true
+		if node is Conditional and Quests.check(JSON.parse_string(cond_text)):
+			return true
+	return false
+
+static func _waits_for_a_test_zone(cond_text: String) -> bool:
+	var cond: Variant = JSON.parse_string(cond_text)
+	if typeof(cond) != TYPE_DICTIONARY:
+		return false
+	for f: Variant in cond.get("flags", []):
+		if String(f).begins_with("zone_built:") and zones().has(String(f).trim_prefix("zone_built:")):
+			return true
+	return false

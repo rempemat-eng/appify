@@ -39,7 +39,8 @@ func after_test() -> void:
 	TestBuild.forced = null
 	Zones.table.erase("frostline")
 	SaveGame.path = SaveGame.DEFAULT_PATH
-	for f: String in [SAVE, REAL, OWN, OWN + ".name-migration.tmp", OWN + ".tmp"]:
+	for f: String in [SAVE, REAL, OWN, OWN + ".name-migration.tmp", OWN + ".tmp", OWN + ".legacy",
+			TestBuild.SAVE_PATH, TestBuild.SAVE_PATH + ".tmp", TestBuild.SAVE_PATH + ".name-migration.tmp"]:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(f))
 	for s: Node in _saves:
 		s.free()
@@ -82,11 +83,10 @@ func test_the_switch_is_off_in_the_test_run_and_reads_the_feature_or_the_argumen
 	assert_bool(TestBuild.on()).is_true()
 	assert_bool(TestBuild.candidate("frostline")).is_true()
 	assert_bool(TestBuild.candidate("woodland")).is_false()
-	assert_str(TestBuild.tag("frostline")).is_equal("test build: unfinished art")
-	assert_str(TestBuild.tag("woodland")).is_equal("test build")
+	assert_str(TestBuild.tag(null)).is_equal("test build")
 	TestBuild.forced = false
 	assert_bool(TestBuild.candidate("frostline")).is_false()
-	assert_str(TestBuild.tag("frostline")).is_equal("")
+	assert_str(TestBuild.tag(null)).is_equal("")
 
 func test_the_test_build_lists_the_frostline_and_no_shipped_zone() -> void:
 	var listed: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Zones.TABLE))
@@ -120,6 +120,7 @@ func test_off_the_woodland_has_no_open_north_door_and_no_live_crow() -> void:
 	for e: SliceEnemy in crows:
 		assert_bool(_active(e)).override_failure_message("%s is live with the switch off" % e.name).is_false()
 		assert_str(e.state).is_equal("idle")
+	assert_bool(TestBuild.shows_piece(zone)).is_false()
 	# the camera's fight test sees no fight from them (its input switch is the only other reason here)
 	_player.input_enabled = true
 	assert_str(CameraFraming.game_block_reason(_player)).is_equal("")
@@ -160,8 +161,13 @@ func test_on_the_door_and_the_crows_wait_for_the_loaf() -> void:
 	assert_bool(door.is_open()).is_false()
 	for e: SliceEnemy in _crows(zone):
 		assert_bool(_active(e)).is_false()
+	assert_bool(TestBuild.shows_piece(zone)).is_false()
+	assert_str(TestBuild.tag(zone)).is_equal("test build")
 	# Moss gives the loaf: the camp wakes where the woodland already is, and the door opens
 	Quests.notify("talk:moss")
+	# from that moment the woodland shows test-build pieces (the undrawn door, the stand-in crows): marked
+	assert_bool(TestBuild.shows_piece(zone)).is_true()
+	assert_str(TestBuild.tag(zone)).is_equal("test build: unfinished art")
 	assert_str(Quests.state(BREAD)).is_equal("active")
 	await _ticks(3)
 	assert_bool(door.is_open()).is_true()
@@ -261,6 +267,73 @@ func test_with_no_real_save_the_test_build_starts_afresh_and_fresh_skips_the_cop
 	f.close()
 	assert_int(_seeded().boot(true)).is_equal(OK)
 	assert_bool(FileAccess.file_exists(OWN)).is_false()
+
+## The test build's seed is save_0.json, or, when a player has only the old napattack folder's save, that one.
+class LegacySeedSave:
+	extends "res://core/save_game.gd"
+	var real := ""
+	var legacy := ""
+
+	func _real_save_path() -> String:
+		return real
+
+	func _legacy_folder_save() -> String:
+		return legacy
+
+func test_with_only_the_old_folder_s_save_the_test_build_copies_that() -> void:
+	var s: Node = LegacySeedSave.new()
+	_saves.append(s)
+	s.path = TestBuild.SAVE_PATH
+	s.real = REAL
+	s.legacy = ProjectSettings.globalize_path(OWN + ".legacy")
+	var f := FileAccess.open(s.legacy, FileAccess.WRITE)
+	f.store_string(JSON.stringify({"version": 2, "glint": 77}))
+	f.close()
+	var legacy_bytes := FileAccess.get_file_as_bytes(s.legacy)
+	assert_str(s._test_build_seed()).is_equal(s.legacy)          # no save_0.json: the old folder's
+	assert_int(s.boot()).is_equal(OK)
+	assert_int(int(s.data.glint)).is_equal(77)
+	assert_bool(FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH) == legacy_bytes).is_true()
+	assert_bool(FileAccess.get_file_as_bytes(s.legacy) == legacy_bytes).is_true()
+	# with a save_0.json that one wins, and with neither the seed is the (absent) real save: a fresh start
+	f = FileAccess.open(REAL, FileAccess.WRITE)
+	f.store_string(JSON.stringify({"version": 2, "glint": 5}))
+	f.close()
+	assert_str(s._test_build_seed()).is_equal(REAL)
+	DirAccess.remove_absolute(s.legacy)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(REAL))
+	assert_str(s._test_build_seed()).is_equal(REAL)
+	# deleting the test build's save reseeds it on the next start
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TestBuild.SAVE_PATH))
+	f = FileAccess.open(REAL, FileAccess.WRITE)
+	f.store_string(JSON.stringify({"version": 2, "glint": 9}))
+	f.close()
+	assert_int(s.boot()).is_equal(OK)
+	assert_int(int(s.data.glint)).is_equal(9)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TestBuild.SAVE_PATH))
+
+## Run past the crows to the Frostline and the warden sends the player back to the col: the loaf waits.
+func test_the_warden_sends_a_player_who_ran_past_the_crows_back_to_them() -> void:
+	TestBuild.forced = true
+	Zones.add_test_zones()
+	_slice_done()
+	Quests.notify("talk:moss")
+	assert_bool(Zones.go_to("frostline", "woodland")).is_true()
+	assert_str(String(Quests.current_step(BREAD).get("id", ""))).is_equal("col")   # enter:frostline does not count yet
+	var said := "\n".join(Dialogue.lines_for("hut_warden"))
+	assert_str(said).contains("shard crows are still on it")
+	assert_str(said).contains("upper lawn")
+	Quests.notify("talk:hut_warden")
+	assert_str(String(Quests.current_step(BREAD).get("id", ""))).is_equal("col")
+	assert_bool(SaveGame.has_flag("met_hut_warden")).is_false()
+	# the crows freed, the climb counts on the next way in, and she takes the loaf
+	SaveGame.set_flag("camp_cleared:col_crows")
+	Quests.notify("camp:col_crows")
+	assert_bool(Zones.go_to("woodland", "frostline")).is_true()
+	assert_bool(Zones.go_to("frostline", "woodland")).is_true()
+	assert_str(Dialogue.lines_for("hut_warden")[0]).starts_with("Bread!")
+	Quests.notify("talk:hut_warden")
+	assert_str(Quests.state(BREAD)).is_equal("done")
 
 func test_the_test_build_uses_its_own_save_path() -> void:
 	assert_str(TestBuild.SAVE_PATH).is_not_equal(SaveGame.DEFAULT_PATH)
