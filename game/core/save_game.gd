@@ -41,6 +41,9 @@ var resume: Dictionary = {}
 var resume_unsaved := false
 
 func _ready() -> void:
+	# the test build keeps a save of its own and never writes the real one (core/test_build.gd)
+	if TestBuild.on():
+		path = TestBuild.SAVE_PATH
 	boot(OS.get_cmdline_user_args().has("--fresh"))
 
 ## Reads the save once, when the process starts. A file that cannot be read as a save is copied to
@@ -57,6 +60,13 @@ func boot(fresh_start := false) -> Error:
 		boot_error = _import_legacy_save(legacy, path)
 		if boot_error != OK:
 			return boot_error
+	var real := _test_build_seed()
+	if real != "":
+		# the test build's first start goes on from the real game: a byte copy of the real save, made only
+		# while the test build has no save of its own. The real file is read, never written.
+		var copied := _copy_legacy_save(real, path)
+		if copied != OK:
+			push_warning("SaveGame: the test build could not copy the real save (error %d); it starts afresh" % copied)
 	boot_error = load_save()
 	if boot_error == ERR_PARSE_ERROR or boot_error == ERR_INVALID_DATA:
 		var file := ProjectSettings.globalize_path(path)
@@ -70,6 +80,10 @@ func _legacy_save_path() -> String:
 	if path != DEFAULT_PATH:
 		return ""
 	return OS.get_user_data_dir().get_base_dir().path_join("napattack/save_0.json")
+
+## The real save a test build's own save starts as (core/test_build.gd), or "" outside the test build.
+func _test_build_seed() -> String:
+	return DEFAULT_PATH if path == TestBuild.SAVE_PATH else ""
 
 func _import_legacy_save(source: String, target: String) -> Error:
 	_legacy_import_target = ProjectSettings.globalize_path(target)

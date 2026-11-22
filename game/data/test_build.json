@@ -1,0 +1,6 @@
+{
+  "_about": "The test build (core/test_build.gd; Matt, 22 Nov 2026, docs/vision/decisions-2026-11-22.md: \"Yes, test build first\"). Matt plays these zones before their art is approved. In a test build, and only there, each zone below joins the zone table (core/zones.gd) as if it were in data/zones.json: its doors lead to it, \"zone_built:<id>\" holds, and it autosaves, shows its story card and its quest like any zone, while a corner tag says the art is unfinished. The test build keeps its own save (TestBuild.SAVE_PATH) and never writes the real one. The shipped build reads nothing here. A zone leaves this list when it ships (E6: into data/zones.json, after Matt approves its art).",
+  "zones": {
+    "frostline": "res://zones/frostline/frostline.tscn"
+  }
+}

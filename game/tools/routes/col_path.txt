@@ -1,0 +1,117 @@
+#! args: --test-build
+#! save: col_path.save.json
+# The Col Path in the test build (core/test_build.gd, --test-build; Matt, 22 Nov: "Yes, test build first"),
+# played with real input from the end of the slice: col_path.save.json is the save game/tools/routes/
+# first_night.txt leaves behind, copied byte for byte from its profile after a passing run on this branch (the
+# torn roof on, the first night won and its closing card seen, the bell hung; it resumes in Crossroads), not a
+# save made for this route. The test build starts its own save as a copy of it. With the switch on, the
+# Frostline is in the table, so Moss has her loaf for the warden (Matt, 22 Nov: the north door opens when
+# her quest starts). Before that the woodland's north door stays shut and its shard crows sleep. Then the
+# crows on the upper lawn by the stair (Matt, 22 Nov), the door, the Frostline as a real zone (its quest on
+# the HUD, autosaved there, the "unfinished art" tag), the warden and her loaf, the ibex on the High Fells,
+# the report, and back down to the woodland.
+# Commands: tools/play_driver.gd.
+
+step in Crossroads at the end of the slice: the test build says so, and Moss's loaf is the lead
+wait 1.0
+expect zone crossroads
+expect tag test build
+expect quest a1_the_torn_roof done
+expect flag first_night_won
+expect quest a1_bread_for_the_bothy none
+expect hud Moss has a loaf
+shot 01_square
+
+step before the loaf, the woodland's north door is shut and no crow is up
+door 12 210 woodland
+expect zone woodland
+expect tag test build
+expect shown Actors/ColCrowsCamp no
+expect enemies 0
+goto 312 96 8
+wait 1.0
+expect zone woodland
+goto 892 1352 12
+door 951 1356 crossroads
+
+step Moss gives the loaf
+goto 1152 830 10
+expect prompt Talk
+talk Moss
+expect said Here, take her one
+expect quest a1_bread_for_the_bothy active col
+expect hud Free the shard crows
+
+step out to the woodland and up the stair: the shard crows hold the upper lawn
+door 12 210 woodland
+expect zone woodland
+expect shown Actors/ColCrowsCamp yes
+expect enemies 3
+goto 384 930 10
+aim 560 560
+wait 0.3
+shot 02_crows
+en
+goto 384 770 10
+expect enemies 3
+
+step free the crows: the col is clear
+fight 180
+expect enemies 0
+expect flag camp_cleared:col_crows
+expect flag way_open:W2
+expect quest a1_bread_for_the_bothy active climb
+
+step through the north door to the Frostline: a zone in the test build, its art marked unfinished
+goto 312 110 10
+shot 03_north_door
+door 312 78 frostline
+expect zone frostline
+expect tag test build: unfinished art
+expect quest a1_bread_for_the_bothy active warden
+expect hud Take Moss's loaf
+expect flag visited:frostline
+shot 04_frostline
+restart
+expect zone frostline
+expect quest a1_bread_for_the_bothy active warden
+
+step along the spur and over the outlet's footbridge to the Col hut's door: the loaf
+goto 600 948 10
+goto 190 948 10
+expect prompt Talk
+talk HutWarden
+expect said Bread! Real bread, from Moss!
+expect quest a1_bread_for_the_bothy done
+expect quest a1_the_ring_is_shut active fells
+expect hud Free the shardstruck ibex
+
+step up the cirque's stair to the High Fells: free the ibex
+goto 600 948 10
+goto 600 560 10
+goto 600 312 10
+goto 600 204 10
+goto 680 204 10
+fight 180
+expect flag camp_cleared:fells_ibex
+expect quest a1_the_ring_is_shut active report
+
+step back down to the warden: the ring opens
+goto 600 204 10
+goto 600 312 10
+goto 600 948 10
+goto 190 948 10
+talk HutWarden
+expect said before the new ice closed the snout
+expect quest a1_the_ring_is_shut done
+expect flag ring_open:frostline
+shot 05_ring_open
+
+step down the Col Path and out through the door to the woodland's north edge
+goto 600 948 10
+goto 600 1032 10
+door 600 1090 woodland
+expect zone woodland
+expect at 312 168 16
+expect tag test build
+end

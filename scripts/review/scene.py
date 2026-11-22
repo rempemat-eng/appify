@@ -500,6 +500,51 @@ def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, 
     return out
 
 
+def _condition(raw) -> dict | None:
+    """A quest condition as a scene stores it (door.gd / conditional.gd `only_if`, a JSON text in a Godot
+    string, its quotes escaped): the dict, or None when there is none or it cannot be read."""
+    if not isinstance(raw, str) or not raw:
+        return None
+    try:
+        cond = json.loads(raw.replace('\\"', '"').replace('\\\\', '\\'))
+    except ValueError:
+        return None
+    return cond if isinstance(cond, dict) else None
+
+
+def _gates(nodes: list[dict], e: dict) -> list[dict]:
+    """Every condition that must hold for node `e` to act: its own `only_if` (door.gd is_open) and the
+    `only_if` of each enclosing Conditional (conditional.gd: hidden means switched off)."""
+    by_key = {n['key']: n['node']['props'] for n in nodes}
+    out, key = [], e['key']
+    while key:
+        cond = _condition(by_key.get(key, {}).get('only_if'))
+        if cond is not None:
+            out.append(cond)
+        key = key.rpartition('/')[0]
+    return out
+
+
+def _gated_on_built(door: dict, zone: str) -> bool:
+    """True when the door can act only while "zone_built:<zone>" holds (core/quests.gd has_flag): one of
+    its gates asks for that flag, so in a build without the zone it stays shut and is never refused."""
+    return any(ZONE_BUILT + zone in (g.get('flags') or []) for g in door.get('gates', []))
+
+
+def test_build_zones() -> dict:
+    """data/test_build.json's zones, {id: scene path}: the zones a test build adds to the table
+    (core/test_build.gd, core/zones.gd add_test_zones). Empty when the file is absent or unreadable."""
+    doc = _json_or(os.path.join(GAME, 'data', 'test_build.json'), {})
+    zones = doc.get('zones') if isinstance(doc, dict) else None
+    return zones if isinstance(zones, dict) else {}
+
+
+def scene_spawns(res: str) -> set:
+    """The spawn names (Marker2D under Spawns) of the scene at `res`, without the rest of scene intake."""
+    nodes = _walk_nodes(parse_tscn(res_path(res)), '')
+    return {e['node']['name'] for e in nodes if e['node'].get('type') == 'Marker2D' and e['key'].startswith('Spawns/')}
+
+
 def load_zone(zone_id: str, stage: str | None = None) -> Zone:
     try:
         zones = _json(os.path.join(GAME, 'data', 'zones.json'))
@@ -554,7 +599,7 @@ def load_zone(zone_id: str, stage: str | None = None) -> Zone:
             z.spawns[n['name']] = e['pos']
         if 'target_zone' in props:
             z.doors.append(dict(name=n['name'], zone=props['target_zone'], spawn=props.get('target_spawn', 'start'),
-                                pos=e['pos'], key=e['key']))
+                                pos=e['pos'], key=e['key'], gates=_gates(nodes, e)))
         if 'speaker_id' in props:
             z.talkers.append(dict(speaker=props['speaker_id'], pos=e['pos'], key=e['key']))
         if 'camp_id' in props:
@@ -1285,6 +1330,7 @@ def check_wiring(zone_ids=None) -> list[Finding]:
     for p in glob.glob(os.path.join(GAME, 'data', 'dialogue', '*.json')):
         dialogue.update(json.load(open(p)))
     fs = []
+    testing = test_build_zones()
     for zid, z in loaded.items():
         if zone_ids and zid not in zone_ids:
             continue
@@ -1294,7 +1340,23 @@ def check_wiring(zone_ids=None) -> list[Finding]:
         for d in z.doors:
             x, y = d['pos']
             box = (int(x) - 20, int(y) - 20, int(x) + 20, int(y) + 20)
-            if d['zone'] not in zones:
+            if d['zone'] not in zones and d['zone'] in testing and _gated_on_built(d, d['zone']):
+                # a door to a zone of the test build (data/test_build.json) that waits for that zone to be
+                # built: shut in this build, open only in the test build, so its spawn is checked there
+                try:
+                    there = scene_spawns(testing[d['zone']])
+                except (ValueError, KeyError, TypeError, OSError, IndexError, RecursionError) as err:
+                    fs.append(Finding('logic.wiring', 'blocker', box,
+                                      f'{zid}: door {d["name"]} leads to the test build\'s {d["zone"]}, which cannot be '
+                                      f'read, so spawn "{d["spawn"]}" cannot be verified ({err})',
+                                      f'fix {testing[d["zone"]]} or its entry in data/test_build.json', subject=d['name']))
+                    continue
+                if d['spawn'] not in there:
+                    fs.append(Finding('logic.wiring', 'blocker', box,
+                                      f'{zid}: door {d["name"]} sends the player to spawn "{d["spawn"]}" in the test '
+                                      f'build\'s {d["zone"]}, which has no such marker',
+                                      f'add Spawns/{d["spawn"]} in {d["zone"]} or fix target_spawn', subject=d['name']))
+            elif d['zone'] not in zones:
                 fs.append(Finding('logic.wiring', 'polish', box,
                                   f'{zid}: door {d["name"]} leads to "{d["zone"]}", which is not in data/zones.json (the door '
                                   'is refused at runtime)', 'add the zone, or mark the door as waiting for its act in the '
