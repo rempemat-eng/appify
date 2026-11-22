@@ -14,7 +14,8 @@
 # PLAYTEST_TIMEOUT caps one game session in seconds (default 900).
 # A route may start somewhere other than a fresh game, with header lines before its first command:
 #   #! args: --try-zone=frostline --zone=frostline   engine arguments for every session of the route
-#   #! save: frostline.save.json                     a save to start from (beside the route), in place of --fresh
+#   #! save: frostline.save.json                     seed MyGame directly (beside the route), in place of --fresh
+#   #! legacy-save: first_night.save.json            intentionally exercise the old-folder import instead
 # A real-time play of the whole route takes about a quarter of an hour; it is not part of check:godot.
 set -uo pipefail
 GAME=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -88,15 +89,39 @@ for ROUTE in "${ROUTES[@]}"; do
   fi
   ROUTE=$(cd "$(dirname "$ROUTE")" && pwd)/$(basename "$ROUTE")
   DIR="$OUT/$NAME"
-  rm -rf "$DIR"
-  mkdir -p "$DIR"
+  if [ -e "$DIR" ]; then
+    # Keep prior route evidence before a later attempt writes result/log/pictures.
+    PREVIOUS=1
+    while [ -e "$DIR.previous-$PREVIOUS" ]; do
+      PREVIOUS=$((PREVIOUS + 1))
+    done
+    if ! mv -- "$DIR" "$DIR.previous-$PREVIOUS"; then
+      echo "FAIL $NAME: cannot preserve previous reports at $DIR" >&2
+      FAILED=1
+      continue
+    fi
+    echo "playtest: kept previous reports at $DIR.previous-$PREVIOUS"
+  fi
+  mkdir -p "$DIR" || { FAILED=1; continue; }
   # one profile for the whole route: a restart loads the save the session before it wrote
   PROFILE="$TMP/profile-$NAME"
   mkdir -p "$PROFILE"/{home,data,config,cache}
   FRESH=--fresh
-  # header lines (`#! args:`, `#! save:`): extra engine arguments, and a save to start from
+  # header lines: extra engine arguments, and a direct or intentional legacy save to start from
   read -r -a EXTRA <<< "$(sed -n 's/^#! args: *//p' "$ROUTE" | tr '\n' ' ')"
   SEED=$(sed -n 's/^#! save: *//p' "$ROUTE" | head -1)
+  LEGACY_SEED=$(sed -n 's/^#! legacy-save: *//p' "$ROUTE" | head -1)
+  SEED_FOLDER=MyGame
+  if [ -n "$LEGACY_SEED" ]; then
+    if [ -n "$SEED" ]; then
+      echo "FAIL $NAME: use either save or legacy-save, not both"
+      FAILED=1
+      continue
+    fi
+    SEED="$LEGACY_SEED"
+    SEED_FOLDER=napattack
+  fi
+  SEED_OK=1
   if [ -n "$SEED" ]; then
     SEED="$(dirname "$ROUTE")/$SEED"
     if [ ! -f "$SEED" ]; then
@@ -104,8 +129,18 @@ for ROUTE in "${ROUTES[@]}"; do
       FAILED=1
       continue
     fi
-    # user:// under the profile (project.godot: custom_user_dir_name="napattack")
-    mkdir -p "$PROFILE/data/napattack" && cp "$SEED" "$PROFILE/data/napattack/save_0.json"
+    # Ordinary routes load MyGame directly; only legacy-save intentionally exercises import.
+    if ! mkdir -p "$PROFILE/data/$SEED_FOLDER" || ! cp "$SEED" "$PROFILE/data/$SEED_FOLDER/save_0.json"; then
+      echo "FAIL $NAME: cannot seed $SEED_FOLDER"
+      FAILED=1
+      continue
+    fi
+    printf 'seed folder: %s\n' "$SEED_FOLDER" >"$DIR/seed.txt"
+    if [ "$SEED_FOLDER" = napattack ]; then
+      # This private profile is new: the first normal boot must perform the import.
+      [ ! -e "$PROFILE/data/MyGame/save_0.json" ] || { FAILED=1; continue; }
+      echo "before first boot: MyGame save absent" >>"$DIR/seed.txt"
+    fi
     FRESH=
   fi
   SESSIONS=0
@@ -126,13 +161,21 @@ for ROUTE in "${ROUTES[@]}"; do
     wait "$WATCH" 2>/dev/null
     [ -n "$SLEEPER" ] && kill $SLEEPER 2>/dev/null
     FRESH=
-    [ -f "$DIR/resume.txt" ] && [ "$CODE" -eq 0 ] && continue
+    if [ "$SEED_FOLDER" = napattack ]; then
+      if [ -f "$PROFILE/data/MyGame/save_0.json" ] && cmp -s "$SEED" "$PROFILE/data/napattack/save_0.json"; then
+        printf 'session %s: MyGame save exists; legacy bytes unchanged\n' "$SESSIONS" >>"$DIR/seed.txt"
+      else
+        echo "FAIL $NAME: legacy import evidence missing or legacy bytes changed" | tee -a "$DIR/seed.txt"
+        SEED_OK=0
+      fi
+    fi
+    [ "$SEED_OK" -eq 1 ] && [ -f "$DIR/resume.txt" ] && [ "$CODE" -eq 0 ] && continue
     break
   done
   SECS=$(( $(date +%s) - START ))
   BAD=$(grep -E 'SCRIPT ERROR|^ERROR:|Parse Error|Failed loading resource' "$DIR/godot.log" | grep -Ev "$NOISE" | sort | uniq -c | head -20 || true)
   RESULT=$(cat "$DIR/result.txt" 2>/dev/null || true)
-  if [ "$CODE" -eq 0 ] && [ -z "$BAD" ] && [ "${RESULT:0:4}" = "PASS" ]; then
+  if [ "$SEED_OK" -eq 1 ] && [ "$CODE" -eq 0 ] && [ -z "$BAD" ] && [ "${RESULT:0:4}" = "PASS" ]; then
     echo "ok   $NAME (${SECS}s, $SESSIONS game sessions)"
   else
     FAILED=1
