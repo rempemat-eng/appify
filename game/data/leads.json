@@ -1,5 +1,5 @@
 {
-  "_about": "What the HUD says when no quest is active, and the story's title cards (core/quests.gd: lead, due_card). `leads`: the first entry whose `if` holds shows in the quest tracker, so the player always has a line saying where the story goes on. `cards`: shown once a save, top centre, for `seconds` (ui/hud.gd show_card); the flag seen:<id> records it. Conditions are quest conditions (core/quests.gd). The closing card and its lead wait for the first night to be won (the flag first_night_won, core/raids.gd) as well as for Home again and The torn roof; until then the lead names the night, before it is announced and while it is put off or lost. The closing entries hold only while the Frostline is not built (the flag zone_built:frostline, core/quests.gd): when it lands, Moss's loaf takes over. `beats`: a short card (a title and one small line, for `seconds`) shown at the moment a world event happens, keyed by the event as the quests hear it (\"camp:<id>\": that camp's last creature freed); game.gd shows it with a brief settle effect (world/camp_settle.gd). A beat is not saved and never shows on a load.",
+  "_about": "What the HUD says when no quest is active, and the story's title cards (core/quests.gd: lead, due_card). `leads`: the first entry whose `if` holds shows in the quest tracker, so the player always has a line saying where the story goes on. `cards`: shown once a save, top centre, for `seconds` (ui/hud.gd show_card); the flag seen:<id> records it. Conditions are quest conditions (core/quests.gd). The closing card and its lead wait for the first night to be won (the flag first_night_won, core/raids.gd) as well as for Home again and The torn roof; until then the lead names the night, before it is announced and while it is put off or lost. The closing entries hold only while the Frostline is not built (the flag zone_built:frostline, core/quests.gd): when it lands, Moss's loaf takes over. `beats`: a short card (a title and one small line, for `seconds`) shown at the moment a world event happens, keyed by the event as the quests hear it (\"camp:<id>\": that camp's last creature freed); game.gd shows it with a brief settle effect (world/camp_settle.gd). A beat is not saved and never shows on a load. The well follows shard_home:woodland: the lantern clears it without a paid restore. The closing card and lead name that light explicitly, preserve their existing progress conditions and never require the optional bell tower.",
   "beats": {
     "camp:meadow": {
       "title": "The meadow is quiet",
@@ -40,7 +40,7 @@
       },
       "title": "The valley holds",
       "subtitle": "Here the story rests, for now",
-      "text": "The lantern is lit, the well runs and the Ferns are home. The Col Path to the Frostline is still buried by the storm. The story goes on when it opens.",
+      "text": "The shard lantern has cleared the well, and the Ferns are home. The Col Path to the Frostline is still buried by the storm. The story goes on when it opens.",
       "seconds": 14
     }
   ],
@@ -195,7 +195,7 @@
         ]
       },
       "title": "The valley holds",
-      "text": "The Col Path is still buried. The story goes on when it opens"
+      "text": "The lantern has cleared the well. The Col Path is still buried; the story goes on when it opens."
     },
     {
       "if": {
