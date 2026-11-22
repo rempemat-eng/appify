@@ -309,8 +309,9 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
     whole lawn flattened its sun patches); the lip hangs in its own green. Where the face meets
     the river its foot is wet rock down to the water's light waterline (no turf lip, no old bank).
     `crevices` (world px column spans) are joints of a masonry stack laid over the face: dark
-    crevice stone with moss. Log steps carry the path down the face to a landing one cell deep,
-    the ground under it kept as it was (the bridge's north abutment). Returns the fallen stones
+    crevice stone with moss. A timber stair in a cut with stone cheeks (softground.timber_stair)
+    carries the path down the face to a landing one cell deep, the ground under it kept as it was
+    (the bridge's north abutment). Returns the fallen stones
     (img, anchor, foot) for the caller to seat."""
     tr = plan.get('terrace')
     if not tr:
@@ -467,43 +468,81 @@ def terrace(cv: np.ndarray, plan: dict, wm: np.ndarray) -> list:
         # where the bridge (painted after the terrace) sets its north abutment; the path takes its
         # own texture from the rows above the rim, any other ground under it is the wet rock foot
         xs_ = np.arange(w)[None, :]
-        land = (yy >= sfoot) & (yy < waterline) & (xs_ >= sx0 - P(1, 0)) & (xs_ < sx1 + P(1, 0))
-        # its top corners rounded into the face (eastward-edges 1.6), not a square notch
-        land &= (np.minimum(xs_ - (sx0 - P(1, 0)), (sx1 + P(1, 0) - 1) - xs_) + (yy - sfoot)) >= 3
-        # its sides lumpy where the face's rock meets the grass (up to five texels in and out, never
-        # a ruler-straight vertical; eastward-edges 1.4 and 3.3)
-        ly_ = np.arange(h)
-        wl_ = np.round(2.4 + 2.2 * np.sin(ly_ / 3.4 + 0.7) + 0.8 * np.sin(ly_ / 1.6 + 2.3)).clip(0, 5).astype(int)
-        wr_ = np.round(2.4 + 2.2 * np.sin(ly_ / 3.0 + 2.9) + 0.8 * np.sin(ly_ / 1.8 + 0.4)).clip(0, 5).astype(int)
-        rect_ = land.copy()
-        land &= (xs_ >= sx0 - P(1, 0) + wl_[:, None]) & (xs_ < sx1 + P(1, 0) - wr_[:, None])
-        # what the lumps take back is the face's rock, mirrored from beside the landing
-        xa_, xb_ = sx0 - P(1, 0), sx1 + P(1, 0)
-        for y_, x_ in zip(*np.nonzero(rect_ & ~land)):
-            xm_ = 2 * xa_ - x_ - 1 if x_ - xa_ < xb_ - x_ else 2 * xb_ - x_ - 1
-            if 0 <= xm_ < w:
-                cv[y_, x_] = cv[y_, xm_]
-        cv[land] = under[land]
-        lys, lxs = np.nonzero(land)
-        waters_ = [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI]
-        for y_, x_ in zip(lys, lxs):
-            src_ = under[rim - 3 - ((y_ - sfoot) % P(8, 0)), x_]
-            if src_ >= 0 and is_fam(np.array(src_), 'path'):
+        cut = st.get('cut')
+        if cut:
+            # a stair in a cut (Matt, 16 Nov): the landing runs on straight between the stringers'
+            # outer edges, as wide as the bridge's deck, all path; either side the face's rock goes
+            # on down to its foot beside it, its side the broken darkest line (3.3)
+            la_, lb_ = P(cut[0], 0) + st.get('cheek', 10), P(cut[1], 0) - st.get('cheek', 10)
+            land = (yy >= sfoot) & (yy < waterline) & (xs_ >= la_) & (xs_ < lb_)
+            cv[land] = under[land]
+            pcols = [x_ for x_ in range(la_, lb_) if under[rim - 3, x_] >= 0 and is_fam(np.array(under[rim - 3, x_]), 'path')]
+            pa_, pb_ = (min(pcols), max(pcols)) if pcols else (la_, lb_ - 1)
+            for y_, x_ in zip(*np.nonzero(land)):
+                xm_ = x_
+                if xm_ < pa_ + 2:
+                    xm_ = 2 * (pa_ + 2) - xm_                       # the path's texture mirrored out to the edge
+                elif xm_ > pb_ - 2:
+                    xm_ = 2 * (pb_ - 2) - xm_
+                sy_ = rim - 3 - ((y_ - sfoot) % P(8, 0))
+                src_ = under[sy_, xm_]
+                if not (src_ >= 0 and is_fam(np.array(src_), 'path')):
+                    # a tuft's blades over the upper path: the nearest path texel of the same row
+                    near_ = [under[sy_, xm_ + d_] for d_ in (1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 6, -6)
+                             if 0 <= xm_ + d_ < w and under[sy_, xm_ + d_] >= 0 and is_fam(np.array(under[sy_, xm_ + d_]), 'path')]
+                    src_ = near_[0] if near_ else C('path_warm', 3)
                 cv[y_, x_] = src_
-            elif cv[y_, x_] < 0 or cv[y_, x_] // 8 in waters_:
-                cv[y_, x_] = C(ec, 1)
-        # where the face's side meets the landing: its darkest line, broken (3.3), and the grass
-        # beside it a step into shade
-        side_ = land & ~(np.roll(land, 1, 1) & np.roll(land, -1, 1))
-        for y_, x_ in zip(*np.nonzero(side_)):
-            if y_ - sfoot < 2:
-                continue
-            xo_ = x_ - 1 if not land[y_, x_ - 1] else x_ + 1
-            if 0 <= xo_ < w and not land[y_, xo_] and (y_ + x_) % 7 != 0:
-                cv[y_, xo_] = C(ec, 0)
-            if is_fam(np.array(cv[y_, x_]), 'grass') or is_fam(np.array(cv[y_, x_]), 'leaf'):
-                cv[y_, x_] = cv[y_, x_] - 1 if cv[y_, x_] % 8 > 1 else cv[y_, x_]
-        GD.log_steps(cv, sx0, sx1, rim - 2, sfoot, st.get('n', 5), np.random.default_rng(tr.get('seed', 461) + 1))
+            for y_ in range(sfoot + 1, waterline):
+                for x_ in (la_ - 1, lb_):
+                    if (y_ + x_) % 7 != 0:
+                        cv[y_, x_] = C(ec, 0)
+        else:
+            land = (yy >= sfoot) & (yy < waterline) & (xs_ >= sx0 - P(1, 0)) & (xs_ < sx1 + P(1, 0))
+            # its top corners rounded into the face (eastward-edges 1.6), not a square notch
+            land &= (np.minimum(xs_ - (sx0 - P(1, 0)), (sx1 + P(1, 0) - 1) - xs_) + (yy - sfoot)) >= 3
+            # its sides lumpy where the face's rock meets the grass (up to five texels in and out, never
+            # a ruler-straight vertical; eastward-edges 1.4 and 3.3)
+            ly_ = np.arange(h)
+            wl_ = np.round(2.4 + 2.2 * np.sin(ly_ / 3.4 + 0.7) + 0.8 * np.sin(ly_ / 1.6 + 2.3)).clip(0, 5).astype(int)
+            wr_ = np.round(2.4 + 2.2 * np.sin(ly_ / 3.0 + 2.9) + 0.8 * np.sin(ly_ / 1.8 + 0.4)).clip(0, 5).astype(int)
+            rect_ = land.copy()
+            land &= (xs_ >= sx0 - P(1, 0) + wl_[:, None]) & (xs_ < sx1 + P(1, 0) - wr_[:, None])
+            # what the lumps take back is the face's rock, mirrored from beside the landing
+            xa_, xb_ = sx0 - P(1, 0), sx1 + P(1, 0)
+            for y_, x_ in zip(*np.nonzero(rect_ & ~land)):
+                xm_ = 2 * xa_ - x_ - 1 if x_ - xa_ < xb_ - x_ else 2 * xb_ - x_ - 1
+                if 0 <= xm_ < w:
+                    cv[y_, x_] = cv[y_, xm_]
+            cv[land] = under[land]
+            lys, lxs = np.nonzero(land)
+            waters_ = [FI[n_] for n_ in ('water', 'water_warm', 'water_cool') if n_ in FI]
+            for y_, x_ in zip(lys, lxs):
+                src_ = under[rim - 3 - ((y_ - sfoot) % P(8, 0)), x_]
+                if src_ >= 0 and is_fam(np.array(src_), 'path'):
+                    cv[y_, x_] = src_
+                elif cv[y_, x_] < 0 or cv[y_, x_] // 8 in waters_:
+                    cv[y_, x_] = C(ec, 1)
+            # where the face's side meets the landing: its darkest line, broken (3.3), and the grass
+            # beside it a step into shade
+            side_ = land & ~(np.roll(land, 1, 1) & np.roll(land, -1, 1))
+            for y_, x_ in zip(*np.nonzero(side_)):
+                if y_ - sfoot < 2:
+                    continue
+                xo_ = x_ - 1 if not land[y_, x_ - 1] else x_ + 1
+                if 0 <= xo_ < w and not land[y_, xo_] and (y_ + x_) % 7 != 0:
+                    cv[y_, xo_] = C(ec, 0)
+                if is_fam(np.array(cv[y_, x_]), 'grass') or is_fam(np.array(cv[y_, x_]), 'leaf'):
+                    cv[y_, x_] = cv[y_, x_] - 1 if cv[y_, x_] % 8 > 1 else cv[y_, x_]
+        # the stair in its cut (Matt, 16 Nov): stone cheeks, timber stringers, lit treads over shaded
+        # risers; the cut is as wide as the bridge's abutments, so the path runs on in one line
+        cx0, cx1 = (P(v_, 0) for v_ in st.get('cut', (st['x0'], st['x1'])))
+        GD.timber_stair(cv, cx0, cx1, rim - 2, sfoot, st.get('n', 5), np.random.default_rng(tr.get('seed', 461) + 1),
+                        cheek=st.get('cheek', 10), kerb_to=waterline if st.get('cut') else None,
+                        seed=tr.get('seed', 461))
+        if st.get('cut'):
+            # the stair's foot: a contact row of shade where the last riser meets the landing
+            for x_ in range(la_, lb_):
+                cv[sfoot, x_] = C('path_cool', 1) if (x_ * 7) % 5 else C('path_cool', 2)
         items = [it for it in items if not (sx0 - P(4, 0) <= it[2][0] <= sx1 + P(4, 0))]
     return items, waterline
 
@@ -847,7 +886,38 @@ def tree_shadow_hd(x, y, ex, W, H) -> np.ndarray:
     return m
 
 
-def lawn_dressing_hd(cv: np.ndarray, plan: dict, h: int, w: int) -> list:
+def unpainted_heap(plan: dict, h: int, w: int):
+    """The footprint (texels) of the heap rocks the ground no longer paints (`"ground": false`, the
+    two slabs beside the woodland's stair, Matt 16 Nov). The lawn's dressing keeps out of it as it
+    did while they stood, so its draws, and every tuft and flower it places, stay as they were."""
+    from . import rocks as RK
+    m = np.zeros((h, w), bool)
+    for b in plan.get('rock', {}).get('heap', []):
+        if b.get('ground') is not False or 'shape' not in b:
+            continue
+        dec, anc = RK.rock(b['size'][0], b['size'][1], b['seed'], flat=b['shape'] == 'slab',
+                           moss=0.6 if b.get('moss') else 0.0)
+        X, Y = int(round(b['at'][0] * D - anc[0])), int(round(b['at'][1] * D - anc[1]))
+        hh, ww = dec.shape
+        ys, xs = np.nonzero(dec >= 0)
+        ys, xs = ys + Y, xs + X
+        ok = (ys >= 0) & (ys < h) & (xs >= 0) & (xs < w)
+        m[ys[ok], xs[ok]] = True
+    return m
+
+
+def stair_box(plan: dict, h: int, w: int):
+    """The texels of a terrace stair in a cut and its landing, as a slice pair, or None."""
+    tr = plan.get('terrace') or {}
+    st = tr.get('steps') or {}
+    if not st.get('cut'):
+        return None
+    x0, x1 = P(st['cut'][0], 0) - 3, P(st['cut'][1], 0) + 3
+    y0, y1 = P(tr['y'], 0) - 4, P(tr['y'] + tr['face'], 0) + P(4, 0)
+    return (slice(max(0, y0), min(h, y1)), slice(max(0, x0), min(w, x1)))
+
+
+def lawn_dressing_hd(cv: np.ndarray, plan: dict, h: int, w: int, keep_out: np.ndarray | None = None) -> list:
     """The lawn's dressing at density 3 and up, the way Eastward dresses grass: few, clustered and
     varied, with calm lawn between. Clusters stand about one in two 20 world px cells; each holds
     2 to 5 of: a tuft (fine, broad or seeding, 0.5 to 1.6 of the kit's size, three greens), a group
@@ -858,6 +928,8 @@ def lawn_dressing_hd(cv: np.ndarray, plan: dict, h: int, w: int) -> list:
     from .terrain import noise as TN
     rng = np.random.default_rng(1907)
     lawn = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 < 6)
+    if keep_out is not None:
+        lawn &= ~keep_out
     lawn = ndi.binary_erosion(lawn, iterations=P(3))
     for (oid, kind, x, y, ow, oh) in plan['objects']:
         x0, x1 = P(x - 2, 0), P(x + ow + 2, 0)
@@ -1425,6 +1497,8 @@ def terrain(plan: dict, layers: dict) -> tuple:
             from . import rocks as RK
             RK.face(cv, *f['face'], seed=f.get('seed', 11) + 3)
         for b in sorted(plan['rock']['heap'], key=lambda b: b['at'][1]):
+            if b.get('ground') is False:
+                continue      # kept for the kit prototype, not painted here (Matt, 16 Nov: read as floating blocks)
             if 'shape' in b:
                 # the cascade's rocks (rocks.py): slabs stepping down beside the fall, rounded
                 # boulders of different sizes at its edges and foot
@@ -1449,6 +1523,8 @@ def terrain(plan: dict, layers: dict) -> tuple:
         WA.paint(cv, wm)
         footbridge(cv, br['x0'], br['w'], br['y0'], br['y1'], wm)
         for b in sorted(plan['rock']['heap'], key=lambda b: b['at'][1]):
+            if b.get('ground') is False:
+                continue
             boulder(cv, b['at'][0], b['at'][1], b['size'][0], b['size'][1], b['seed'], moss=b['moss'])
         WA.wet_rock(cv, f['x0'], f['w'], f['y0'] - 2, f['y1'])
         WA.fall(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
@@ -1615,7 +1691,7 @@ def build() -> Zone:
                 x0, y0, x1, y1 = CO._bbox(a)
                 low.append((ty, img, ((x0 + x1) / 2, y1), (tx * D, ty * D), False))
     if hd:
-        low += lawn_dressing_hd(cv, plan, h, w)
+        low += lawn_dressing_hd(cv, plan, h, w, keep_out=unpainted_heap(plan, h, w))
     rng = np.random.default_rng(421)
     for (x, y, _k) in plan['dressing']['leaves']:
         limg = CO.fallen_leaf(D, rng)
@@ -1628,7 +1704,12 @@ def build() -> Zone:
         shade = np.zeros((h, w), bool)
         for m in casts:
             shade |= m
+        # the stair in its cut and its landing are built, not lawn: no blades or crumbs on them
+        sbox = stair_box(plan, h, w)
+        kept = cv[sbox].copy() if sbox is not None else None
         ground_detail_hd(cv, plan, trees, h, w, shade, soft=True)
+        if sbox is not None:
+            cv[sbox] = kept
     G = CO.ground_from_codes(cv, D)
     CO.cast_shadows(G, casts, tcasts, things + [(l[0], l[1], l[2], l[3]) for l in low if l[4]], D)
     ground = G.rgba()

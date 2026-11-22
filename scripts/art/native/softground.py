@@ -22,6 +22,7 @@ fills them and what happens where they meet, measured on the Eastward references
                                      boulders (rock) lit at their upper left, roots, a dark foot
                                      with pebbles, weeds over it, a soft cast shadow on the ground
     log_steps(cv, ...)               steps cut into a ledge: sawn log treads, earth cheeks
+    timber_stair(cv, ...)            a timber stair in a cut: stone cheeks, stringers, treads over risers
     water(cv, m, seed)               still or running water: the north bank's earth face under a
                                      grass lip, a 1 px light waterline, depth bands under the
                                      north bank, lit shallows, ripples 4 to 15 px, glints
@@ -939,6 +940,249 @@ def log_steps(cv: np.ndarray, x0: int, x1: int, y_top: int, y_foot: int, n: int,
             put(cv, ya + tread // 2, ex + 1, C(wood, 2 if lit else 1))
     # earth spilled on the lowest tread and the path's start
     cv[y_foot - 1, a:b] = np.where(rng.random(b - a) < 0.3, C(e0, 3), cv[y_foot - 1, a:b])
+
+
+def timber_stair(cv: np.ndarray, x0: int, x1: int, y_top: int, y_foot: int, n: int, rng, wood: str = 'timber',
+                 stone: str = 'stone', cheek: int = 10, stringer: int = 5, kerb_to: int | None = None,
+                 kerb: int = 7, seed: int = 0) -> np.ndarray:
+    """A timber stair set into a cut in a rock face (Matt, 16 Nov: the log steps read as a ladder
+    or loose planks; eastward-edges 6.1 and 6.2; the #513 detail audit, round 1). The cut runs from
+    x0 to x1 (texels), the head flush with the upper floor at y_top, the foot on the path at y_foot,
+    `n` steps. Across it, west to east: a stone cheek `cheek` texels wide, a timber stringer
+    `stringer` wide, the treads, the east stringer and the east cheek.
+
+    - Each step is a tread over a riser, about half and half (Eastward's farm stair, 6.1). A tread
+      is one board with its own grain (streaks of two tones, worn highlights), a lit nosing over its
+      rounded front, two peg heads at each end (2 texels dark under a lit rim), and here and there a
+      knot or a split. A riser is the board's face in shade in four or five tones of timber_cool:
+      the two rows under the nosing darkest, a plank seam, grain, end grain where it meets the
+      stringers, its bottom row a step lighter where the tread below lights it.
+    - The stringers are notched where each tread is housed: each notch's top edge lit, the beam
+      shading down its length to the next notch (a sawtooth). The west one's inner side is in shade;
+      the east one's inner side catches the light.
+    - The cheeks are stepped walls of two or three dressed blocks of different lengths, the joints at
+      other heights on each side, 1 texel of mortar: on each step a lit top plane (two or three
+      rows) over a front in shade, a dark flank on the east, a broken ink line where the cheek
+      meets the face's rock, a chipped corner and moss at the foot. The west cheek and its stringer
+      shade the west end of every tread and riser.
+    - The cheeks end a tread short of the foot (6.1). From there a low kerb of dressed stones `kerb`
+      wide runs down each side of the last step and the landing to `kerb_to` (the bridge's north
+      abutment), so the landing never meets bare boulders; the west kerb shades the landing's edge.
+
+    Returns the stair's mask (cheeks and kerbs included)."""
+    H, W = cv.shape
+    r = np.random.default_rng(seed + 9161)
+    wc = wood + '_cool' if wood + '_cool' in FI else wood
+    ww = wood + '_warm' if wood + '_warm' in FI else wood
+    sw_ = stone + '_warm' if stone + '_warm' in FI else stone
+    pitch = (y_foot - y_top) / n
+    rise = max(4, int(round(pitch * 0.47)))
+    xs_, xe_ = x0 + cheek, x1 - cheek - stringer                    # the stringers' west columns
+    xa, xb = xs_ + stringer, xe_                                    # the treads
+    mask = np.zeros((H, W), bool)
+    mask[y_top - 2:y_foot, x0:x1] = True
+    rows = []
+    for k in range(n):
+        ya = int(round(y_top + k * pitch))
+        yb = int(round(y_top + (k + 1) * pitch))
+        rows.append((ya, yb, yb - ya - rise))
+    # ---- the treads and the risers
+    for k, (ya, yb, tread) in enumerate(rows):
+        L = xb - xa
+        body = np.full((tread, L), C(wood, 4))
+        body[0] = C(wood, 2)                                            # the crease at its back
+        body[0, r.random(L) < 0.25] = C(wood, 1)
+        body[1] = C(wood, 3)
+        body[tread - 2] = C(ww, 5)                                      # the nosing, lit
+        body[tread - 1] = np.where(r.random(L) < 0.3, C(ww, 3), C(wood, 3))   # its round front
+        # this board's own grain: long streaks of two tones and worn highlights, never the same twice
+        for _ in range(int(r.integers(7, 11))):
+            gy = int(r.integers(2, tread - 2))
+            gx = int(r.integers(0, L - 4))
+            gl = int(r.integers(4, 14))
+            body[gy, gx:gx + gl] = C(wood, 3) if r.random() < 0.6 else C(ww, 3)
+        for _ in range(int(r.integers(4, 7))):
+            gy = int(r.integers(2, tread - 3))
+            gx = int(r.integers(0, L - 3))
+            body[gy, gx:gx + int(r.integers(2, 6))] = C(wood, 5) if r.random() < 0.5 else C(ww, 4)
+        for _ in range(int(r.integers(1, 4))):                          # chips on the nosing
+            cx_ = int(r.integers(2, L - 3))
+            body[tread - 2, cx_:cx_ + int(r.integers(1, 3))] = C(ww, 4)
+        if k in (1, 3):                                                 # a knot: dark heart, ring, lit rim
+            kx = int(r.integers(12, L - 14))
+            ky = int(r.integers(3, tread - 3))
+            body[ky, kx:kx + 3] = C(wood, 2)
+            body[ky, kx + 1] = C(wood, 1)
+            body[ky - 1, kx:kx + 3] = C(wood, 5)
+            body[ky + 1, kx - 1:kx + 4] = C(wood, 3)
+        if k == 2:                                                      # a split along the grain
+            sx_ = int(r.integers(8, L - 22))
+            sl = int(r.integers(12, 18))
+            body[3, sx_:sx_ + sl] = C(wood, 1)
+            body[4, sx_ + 1:sx_ + sl - 1] = C(wood, 5)
+        # two peg heads at each end: 2 texels dark under a lit rim
+        for px_ in (2, 6, L - 8, L - 4):
+            body[2, px_:px_ + 2] = C(wood, 5)
+            body[3, px_:px_ + 2] = C(wood, 1)
+            body[4, px_:px_ + 2] = C(wood, 2)
+        cv[ya:ya + tread, xa:xb] = body
+        # the riser: the board's face in shade
+        r0 = ya + tread
+        face = np.full((rise, L), C(wc, 2))
+        face[0:2] = C(wc, 0)                                            # the darkest, under the nosing
+        face[min(rise - 3, 3)] = np.where(r.random(L) < 0.85, C(wc, 3), C(wc, 2))   # a plank seam
+        face[rise - 1] = C(wc, 4) if k < n - 1 else C(wc, 3)            # lit from the tread below
+        for _ in range(int(r.integers(5, 9))):                          # grain
+            gy = int(r.integers(2, rise - 1))
+            gx = int(r.integers(0, L - 4))
+            face[gy, gx:gx + int(r.integers(2, 7))] = C(wc, 3) if face[gy, gx] != C(wc, 3) else C(wc, 2)
+        for ex_ in (0, L - 3):                                          # end grain at the stringers
+            face[2:rise - 1, ex_:ex_ + 3] = C(wc, 3)
+            face[3:rise - 2, ex_ + 1] = C(wc, 5)
+            face[2, ex_ + 1] = C(wc, 4)
+        cv[r0:yb, xa:xb] = face
+    # ---- the west cheek and stringer shade the west end of each tread (3 texels) and riser (2)
+    for (ya, yb, tread) in rows:
+        tr_ = cv[ya:ya + tread, xa:xa + 3]
+        cv[ya:ya + tread, xa:xa + 3] = np.where(tr_ % 8 > 1, tr_ - 1, tr_)
+        rz = cv[ya + tread:yb, xa:xa + 2]
+        t_ = rz % 8
+        cv[ya + tread:yb, xa:xa + 2] = np.where(t_ == 2, C(wc, 0), np.where(t_ >= 3, rz - 1, rz))
+    # ---- the stringers, notched at each tread: the notch's top edge lit, shading down to the next
+    for k, (ya, yb, tread) in enumerate(rows):
+        for y in range(ya, yb):
+            d = y - ya
+            tt = 5 if d == 0 else (4 if d < 4 else (3 if d < 9 else (2 if d < yb - ya - 1 else 1)))
+            f = ww if d == 0 else wood
+            cv[y, xs_ + 1:xs_ + stringer - 1] = C(f, tt)
+            cv[y, xe_ + 1:xe_ + stringer - 1] = C(f, tt)
+            cv[y, xs_] = C(wood, 1)                                     # the west one's outer edge
+            cv[y, xs_ + stringer - 1] = C(ww, 4) if d < 2 else C(wc, 0)   # its inner side, in shade
+            cv[y, xe_] = C(ww, 4) if d < tread else C(ww, 3)            # the east one's, lit
+            cv[y, xe_ + stringer - 1] = C(wood, 1)
+        for x_ in (xs_ + 2, xe_ + 2):                                   # grain along the beam
+            gy = ya + int(r.integers(4, max(5, yb - ya - 4)))
+            cv[gy:gy + int(r.integers(2, 4)), x_] = C(wood, 2)
+    # ---- the cheeks: stepped walls of dressed blocks, ending a tread short of the foot
+    c_end = rows[-1][0]                                                 # the last step's top
+    for (c0, west, joints, chip) in ((x0, True, (789, 811), (790, 0)), (x1 - cheek, False, (798, 817), (816, 1))):
+        joints = tuple(y_top + (j - 766) for j in joints)               # (laid out for y_top 766)
+        # each block its own stone: a warmer, a cooler, a plain one, in another order each side
+        sc_ = stone + '_cool' if stone + '_cool' in FI else stone
+        bf = (stone, sw_, sc_) if west else (sc_, stone, sw_)
+        def block_of(y):
+            return sum(1 for j in joints if y > j)
+        for k, (ya, yb, tread) in enumerate(rows[:-1]):
+            y0_ = ya - 2 if k == 0 else ya
+            for y in range(y0_, yb):
+                d = y - y0_
+                fb = bf[min(2, block_of(y))]
+                if y < ya + tread:
+                    tt, f = ((4, sw_) if d == 0 else (3, sw_) if d < 3 else (3, fb))
+                elif y == ya + tread:
+                    tt, f = 1, stone                                    # the shade under its edge
+                else:
+                    tt, f = (3, fb) if y - (ya + tread) < 3 else (2, fb)   # its front
+                cv[y, c0:c0 + cheek] = C(f, tt)
+            # its surface: worn specks, pits (a dark texel pair over a lit one) and lichen
+            for _ in range(4):
+                sy_ = int(r.integers(y0_ + 3, max(y0_ + 4, ya + tread - 1)))
+                sx2 = int(r.integers(c0 + 2, c0 + cheek - 3))
+                cv[sy_, sx2:sx2 + 2] = C(stone, 2) if r.random() < 0.6 else C(sw_, 4)
+            for _ in range(2):
+                py_ = int(r.integers(ya + tread + 2, max(ya + tread + 3, yb - 1)))
+                px2 = int(r.integers(c0 + 2, c0 + cheek - 3))
+                cv[py_, px2:px2 + 2] = C(stone, 1)
+                cv[py_ + 1 if py_ + 1 < yb else py_, px2] = C(sw_, 3)
+            if r.random() < 0.6:
+                lx = int(r.integers(c0 + 2, c0 + cheek - 3))
+                ly = int(r.integers(y0_ + 2, max(y0_ + 3, ya + tread - 1)))
+                cv[ly, lx:lx + 2] = C(sw_, 5)
+                cv[ly + 1, lx] = C('leaf', 3)
+        # the blocks: 1 texel of mortar where one meets the next, the next block's top a texel lit
+        for j in joints:
+            if y_top <= j < c_end - 1:
+                cv[j, c0 + 1:c0 + cheek - 1] = C(stone, 1)
+                lit_ = cv[j + 1, c0 + 1:c0 + cheek - 1]
+                cv[j + 1, c0 + 1:c0 + cheek - 1] = np.where(lit_ % 8 < 4, lit_ + 1, lit_)
+        # the flanks: the west cheek lit at its west end and dark on its east flank; the east cheek
+        # lit on its inner (west) side and dark on its east flank; a broken ink line against the rock
+        if west:
+            cv[y_top - 2:c_end, c0 + 1] = np.where(cv[y_top - 2:c_end, c0 + 1] % 8 >= 2, C(sw_, 4), cv[y_top - 2:c_end, c0 + 1])
+            cv[y_top - 2:c_end, c0 + cheek - 2] = np.where(cv[y_top - 2:c_end, c0 + cheek - 2] % 8 >= 3, C(stone, 2),
+                                                            cv[y_top - 2:c_end, c0 + cheek - 2])
+            cv[y_top - 2:c_end, c0 + cheek - 1] = C(stone, 1)
+            outer = c0
+        else:
+            cv[y_top - 2:c_end, c0] = np.where(cv[y_top - 2:c_end, c0] % 8 >= 2, C(sw_, 4), cv[y_top - 2:c_end, c0])
+            cv[y_top - 2:c_end, c0 + cheek - 2] = np.where(cv[y_top - 2:c_end, c0 + cheek - 2] % 8 >= 3, C(stone, 2),
+                                                            cv[y_top - 2:c_end, c0 + cheek - 2])
+            cv[y_top - 2:c_end, c0 + cheek - 1] = C(stone, 1)
+            outer = c0 + cheek - 1
+        for y in range(y_top - 1, c_end):
+            if (y * 7) % 11 != 0:
+                cv[y, outer] = C(stone, 0)
+        # a chipped corner: a block's corner knocked off, its broken face lit
+        cy_, side = chip
+        cy_ = y_top + (cy_ - 766)
+        cx_ = c0 + 1 if side == 0 else c0 + cheek - 4
+        cv[cy_:cy_ + 2, cx_:cx_ + 3] = C(stone, 1)
+        cv[cy_ + 2, cx_:cx_ + 3] = C(sw_, 4)
+        # the cheek's foot: a dark row, moss in it and up its last front
+        cv[c_end - 1, c0:c0 + cheek] = C(stone, 0)
+        for mx in range(c0 + 1, c0 + cheek - 1):
+            if r.random() < 0.55:
+                cv[c_end - 1, mx] = C('leaf', 1)
+                if r.random() < 0.5:
+                    cv[c_end - 2, mx] = C('leaf', 2)
+        mask[y_top - 2:c_end, c0:c0 + cheek] = True
+    # ---- the kerbs: low dressed stones beside the last step and the landing, to the abutment
+    if kerb_to is not None:
+        ky0 = c_end
+        for (k0, west) in ((xs_ - kerb, True), (xe_ + stringer, False)):
+            y = ky0
+            bi = 0
+            while y < kerb_to:
+                bl = int(r.integers(10, 16)) if not west else int(r.integers(12, 18))
+                y1_ = min(kerb_to, y + bl)
+                for yy in range(y, y1_):
+                    dd = yy - y
+                    tt, f = ((4, sw_) if dd == 0 else (3, sw_) if dd < 2 else (3, stone) if dd < y1_ - y - 2 else (2, stone))
+                    cv[yy, k0:k0 + kerb] = C(f, tt)
+                if y1_ < kerb_to:
+                    cv[y1_ - 1, k0:k0 + kerb] = C(stone, 1)             # the mortar to the next
+                # a speck or two on its top
+                sy_ = int(r.integers(y + 2, max(y + 3, y1_ - 2)))
+                sx2 = int(r.integers(k0 + 1, k0 + kerb - 2))
+                cv[sy_, sx2:sx2 + 2] = C(stone, 2)
+                y = y1_
+                bi += 1
+            ys_ = slice(ky0, kerb_to)
+            if west:
+                cv[ys_, k0 + 1] = np.where(cv[ys_, k0 + 1] % 8 >= 2, C(sw_, 4), cv[ys_, k0 + 1])
+                cv[ys_, k0 + kerb - 1] = C(stone, 1)                    # its east flank
+                outer = k0
+                # its shade on the landing's west edge, a tone down, two texels
+                for yy in range(ky0 + 1, kerb_to):
+                    for xx in (k0 + kerb, k0 + kerb + 1):
+                        if cv[yy, xx] >= 0 and cv[yy, xx] % 8 > 1 and cv[yy, xx] % 8 < 6 and not (xx >= xa and yy < y_foot):
+                            cv[yy, xx] = cv[yy, xx] - 1
+            else:
+                cv[ys_, k0] = np.where(cv[ys_, k0] % 8 >= 2, C(sw_, 4), cv[ys_, k0])
+                cv[ys_, k0 + kerb - 1] = C(stone, 1)
+                outer = k0 + kerb - 1
+            for yy in range(ky0, kerb_to):
+                if (yy * 5) % 9 != 0:
+                    cv[yy, outer] = C(stone, 0)
+            # moss tucked against its foot here and there
+            for _ in range(3):
+                my = int(r.integers(ky0 + 4, kerb_to - 1))
+                mx = outer + (-1 if west else 1)
+                if 0 <= mx < W:
+                    cv[my, mx] = C('leaf', 1)
+                    cv[my - 1, mx] = C('leaf', 2)
+            mask[ky0:kerb_to, k0:k0 + kerb] = True
+    return mask
 
 
 # ------------------------------------------------------------------------------------------------
