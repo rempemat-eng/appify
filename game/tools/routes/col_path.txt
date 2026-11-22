@@ -28,7 +28,8 @@ expect zone woodland
 expect tag test build
 expect shown Actors/ColCrowsCamp no
 expect enemies 0
-goto 312 96 8
+goto 312 80 8
+expect at 312 80 8
 wait 1.0
 expect zone woodland
 goto 892 1352 12
