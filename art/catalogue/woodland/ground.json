@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "4c13d71219179e424e0083ff1a4c4573b3f7cd15e2546e4e70f8ab904478a645",
+ "sha256": "34cc6a9d202dc5d283937f9b7848b3f1d3f24f985314eac14c24fff2f12b09a6",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
@@ -18,11 +18,11 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-11-11",
+ "reviewed": "2026-11-16",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pass",
-  "date": "2026-11-11",
-  "note": "Audit of PR #476 assets (audit476_assets.md, not committed), PR #476 at d6b6c8eb, detail-auditor, 11 Nov. 1,973 texels changed, all at x 577..739, y 1572..1594: wood-38's cast shadow moved 36 texels east (added 964 x 623..739, removed 1,009 x 577..695; shape IoU 0.85 against the old shadow shifted, the difference is where it used to merge with the holly's). Composed with bramble.png at the new foot (672, 1584) it sits under the bush as before, east and down; the vacated grass shows no remnant or seam; the low fern drawn in the ground now shows between holly and bramble. Detectors pass. Condition: woodland_base.tscn and woodland_kit.tscn still place wood-38 at x 636; regenerate them (gen_zone.py woodland, scripts.art.kit.woodland_kit) before merge, or the shadow lies 36 texels east of the bush."
+  "date": "2026-11-16",
+  "note": "Round 2 of 3 (PR #513, head d13494db, sha256 34cc6a9d). The round-1 faults are fixed. At 1x and 2x beside Bramble the climb reads as a timber stair up the cliff, and the cheeks and kerbs read as dressed stone edging, not rails. Measured: a 15-row pitch with 5 steps (y 766-840); stair_read riser shares are 0.33/0.40/0.40/0.40/0.40 (median 0.40), and the detector passes. Each riser has 4 tones plus a 1% fifth, the largest covering 0.35-0.39. Steps 2-5 differ from step 1 in 179-234 of 825 texels. The stringers are notched, the contact row at y 841 is L 61/91, and the west kerb shades the landing. bands.score: stair wood (356-410 x 766-840) 0.907 against prop; whole stair 1.081 prop and 0.897 stone. The cheeks were measured with same-area sliding windows (10x32 and 7x46). That window shape changes nothing on the approved rock (10x32 gives 39.8 shapes, 18x18 gives 40.4), so the cheeks' score is not a patch-size artefact. The west cheek scores 0.82 tones and 1.00 shapes; the east cheek 0.69 and 0.73, which is a real shortfall but above the approved rock face beside it (0.64-0.66). Polish, which does not block placement: (a) on steps 1-4 the riser's bottom row is L 121, almost the tread's L 130, over a dark back row on the tread (L 46/75), so the joint has a lit lip where it should be occluded; this came from the round-1 fix note. Move the light to the tread's back row, end the riser at 70-96, and aim for a riser share of 0.43-0.53 (Eastward). (b) The pegs sit in the same 4 columns (359-360, 363-364, 403-404, 407-408) on every tread; shift some by 1-2 px. (c) Give the east cheek more chips and pits. Above row 760 only 25 texels differ from main. The detectors' status is left as written (0 findings)."
  }
 }

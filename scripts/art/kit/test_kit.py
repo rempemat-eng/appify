@@ -1010,10 +1010,11 @@ class WaterBanks(unittest.TestCase):
 
     def test_the_woodlands_landing_is_a_cell_of_open_path(self):
         # (review round 4, L4-1; eastward-edges 5.3b, 6.1) measured on the rendered ground, art px
-        # at density 3 (1 world px = 3 art px): the log steps rise 5 to 6 world px a step (15 to 18
-        # art px), and between the stair's last riser and the bridge's north abutment lies at least
-        # one cell (8 world px = 24 art px) of open ground, no timber, stone or water; the abutment
-        # starts within 4 world px of the water's edge
+        # at density 3 (1 world px = 3 art px): the stair rises 5 to 6 world px a step (15 to 18
+        # art px), each a lit tread (timber) over a riser in shade (timber_cool, Matt 16 Nov), and
+        # between the stair's last riser and the bridge's north abutment lies at least one cell
+        # (8 world px = 24 art px) of open ground, no timber, stone or water; the abutment starts
+        # within 4 world px of the water's edge
         from PIL import Image
         from scripts.art.native.palette import LUT, FAMS
         root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
@@ -1031,17 +1032,22 @@ class WaterBanks(unittest.TestCase):
             col = [fam.get(tuple(int(v) for v in g[y, x]), '?') for y in range(rim - 4, foot + 30)]
             ys = list(range(rim - 4, foot + 30))
             ab = next(y for y, f in zip(ys, col) if y > rim + 30 and f.split('_')[0] in ('ashlar', 'stone'))   # (ashlar and stone share colours)
-            # the treads' top rows: where timber starts below a riser or the rim
-            treads = [y for k, (y, f) in enumerate(zip(ys, col)) if k and f.startswith('timber') and not col[k - 1].startswith('timber') and y < ab]
+            # the treads' top rows: where a lit tread starts below a riser or the rim
+            lit = [f in ('timber', 'timber_warm') for f in col]
+            treads = [y for k, y in enumerate(ys) if k and lit[k] and not lit[k - 1] and y < ab]
             self.assertEqual(len(treads), tr['steps']['n'], (x, treads))
             pitch = np.diff(treads)
             self.assertTrue(((pitch >= 15) & (pitch <= 18)).all(), (x, pitch.tolist()))
-            # the stair's foot: down through the last tread's log, then its riser
-            k = ys.index(treads[-1])
-            while col[k].startswith('timber'):
-                k += 1
-            while col[k].startswith('earth'):
-                k += 1
+            # every tread has its riser in shade under it, at least a third of the pitch
+            for t_ in treads:
+                k = ys.index(t_)
+                while lit[k]:
+                    k += 1
+                r_ = k
+                while col[k] == 'timber_cool':
+                    k += 1
+                self.assertGreaterEqual(k - r_, 5, (x, t_, col[r_]))
+            # the stair's foot: down through the last tread, then its riser
             last = ys[k] - 1
             open_ = [f for y, f in zip(ys, col) if last < y < ab]
             self.assertGreaterEqual(len(open_), 24, 'column %d: %d art px of landing' % (x, len(open_)))
