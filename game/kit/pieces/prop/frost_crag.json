@@ -13,8 +13,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/frost/frost_crag_a.png",
    "foot": [
-    91,
-    107
+    97,
+    106
    ]
   },
   {
@@ -22,8 +22,8 @@
    "weight": 0.6,
    "png": "res://kit/props/art/frost/frost_crag_b.png",
    "foot": [
-    92,
-    104
+    88,
+    96
    ]
   }
  ],
@@ -36,15 +36,15 @@
  },
  "geometry": {
   "size_px": [
-   174,
-   126
+   180,
+   111
   ],
   "size_cells": [
    7,
    3
   ],
   "z_sort": "foot",
-  "height_px": 126,
+  "height_px": 111,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -55,8 +55,8 @@
    ]
   },
   "foot": [
-   91,
-   107
+   97,
+   106
   ],
   "footprint": [
    [
