@@ -20,6 +20,19 @@ func _ready() -> void:
 	table = doc if typeof(doc) == TYPE_DICTIONARY else {}
 	if OS.is_debug_build():
 		try_zones(OS.get_cmdline_user_args())
+	if TestBuild.on():
+		add_test_zones()
+
+## The test build (core/test_build.gd): its zones (data/test_build.json) join the table for this run, so
+## their doors lead to them and "zone_built:<id>" holds. A shipped build never calls this. Returns the ids added.
+func add_test_zones() -> PackedStringArray:
+	var added := PackedStringArray()
+	var listed := TestBuild.zones()
+	for id: String in listed:
+		if id.is_valid_identifier() and not table.has(id) and ResourceLoader.exists(String(listed[id])):
+			table[id] = String(listed[id])
+			added.append(id)
+	return added
 
 ## `--try-zone=<id>` (debug builds only, as --play): a zone that is built (res://zones/<id>/<id>.tscn) but
 ## not yet in data/zones.json, because nothing in the world leads to it yet, joins the table for this run,
@@ -48,9 +61,10 @@ static func is_lab(zone: Node) -> bool:
 	var ground := zone.get_node_or_null("Ground")
 	return ground != null and ground.get("lab") == true
 
-## True while the player stands in a lab zone: no autosave, no story card, no quest on the HUD.
+## True while the player stands in a lab zone: no autosave, no story card, no quest on the HUD. A zone of
+## the test build is played as a real zone there, though its ground still says lab (core/test_build.gd).
 func in_lab() -> bool:
-	return current != null and is_instance_valid(current) and is_lab(current)
+	return current != null and is_instance_valid(current) and is_lab(current) and not TestBuild.candidate(current.zone_id)
 
 func has_zone(zone_id: String) -> bool:
 	return table.has(zone_id) and ResourceLoader.exists(table[zone_id])
@@ -85,7 +99,7 @@ func go_to(zone_id: String, spawn: String = "start") -> bool:
 	# A lab zone (an editor test bed, started by name) is never where the game resumes: the save
 	# keeps the zone the player came from, and the lab leaves no "visited" mark. Before this, one
 	# start of a lab made it the save's zone, so every later start opened inside it with no door out.
-	if is_lab(next):
+	if is_lab(next) and not TestBuild.candidate(zone_id):
 		if SaveGame.resume.is_empty():
 			# a save made before this rule may already name the lab: it resumes at the game's start
 			var fresh := SaveGame.fresh()

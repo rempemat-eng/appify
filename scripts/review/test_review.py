@@ -412,6 +412,68 @@ class Scene(unittest.TestCase):
         os.unlink(t.name)
 
 
+class TestBuildDoors(unittest.TestCase):
+    """A door to a zone that is not in data/zones.json is refused at runtime, a finding. A door to a zone of
+    the test build (data/test_build.json, core/test_build.gd) that waits for "zone_built:<that zone>", on
+    itself or on a Conditional round it, is shut in the shipped build and open only in the test build:
+    no finding, but its spawn is checked in the test build's scene, and a missing one is a blocker."""
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.game = Path(tmp.name) / 'game'
+        for d in ('data/quests', 'data/dialogue', 'zones/north'):
+            (self.game / d).mkdir(parents=True)
+        (self.game / 'data/zones.json').write_text(json.dumps({'home': 'res://zones/home/home.tscn'}))
+        (self.game / 'data/test_build.json').write_text(json.dumps({'zones': {'north': 'res://zones/north/north.tscn'}}))
+        (self.game / 'zones/north/north.tscn').write_text(
+            '[gd_scene format=3]\n\n[node name="North" type="Node2D"]\n\n[node name="Spawns" type="Node2D" parent="."]\n\n'
+            '[node name="south" type="Marker2D" parent="Spawns"]\nposition = Vector2(10, 20)\n')
+        self.enterContext(patch.object(SN, 'GAME', str(self.game)))
+        self.enterContext(patch.object(SN, 'REPO', str(self.game.parent)))
+
+    def door_findings(self, gates, zone='north', spawn='south'):
+        home = SimpleNamespace(spawns={'start': (0, 0)}, camps=[], restores=[], plan={}, talkers=[],
+                               doors=[dict(name='ToNorth', zone=zone, spawn=spawn, pos=(50, 10), key='Doors/ToNorth',
+                                           gates=gates)])
+        with patch.object(SN, 'load_zone', side_effect=lambda zid: home):
+            return [f for f in SN.check_wiring(['home']) if f.subject == 'ToNorth']
+
+    def test_the_gate_is_read_from_the_door_and_the_conditionals_round_it(self):
+        t = tempfile.NamedTemporaryFile('w', suffix='.tscn', delete=False)
+        self.addCleanup(os.unlink, t.name)
+        t.write('[gd_scene format=3]\n\n[node name="Z" type="Node2D"]\n\n'
+                '[node name="If" type="Node2D" parent="."]\nonly_if = "{\\"flags\\":[\\"zone_built:north\\"]}"\n\n'
+                '[node name="ToNorth" type="Area2D" parent="If"]\ntarget_zone = "north"\n'
+                'only_if = "{\\"started\\":[\\"loaf\\"]}"\n')
+        t.close()
+        nodes = SN._walk_nodes(SN.parse_tscn(t.name), '')
+        door = next(e for e in nodes if e['key'] == 'If/ToNorth')
+        self.assertEqual(SN._gates(nodes, door), [{'started': ['loaf']}, {'flags': ['zone_built:north']}])
+        self.assertTrue(SN._gated_on_built({'gates': SN._gates(nodes, door)}, 'north'))
+        self.assertFalse(SN._gated_on_built({'gates': [{'started': ['loaf']}]}, 'north'))
+
+    def test_a_test_build_door_that_waits_for_its_zone_is_no_finding(self):
+        self.assertEqual(self.door_findings([{'flags': ['zone_built:north'], 'started': ['loaf']}]), [])
+
+    def test_its_spawn_is_still_checked_in_the_test_build_scene(self):
+        fs = self.door_findings([{'flags': ['zone_built:north']}], spawn='nowhere')
+        self.assertEqual([f.severity for f in fs], ['blocker'])
+        self.assertIn('has no such marker', fs[0].message)
+
+    def test_an_ungated_door_to_a_test_build_zone_is_still_refused(self):
+        # open in the shipped build, where the zone is not in the table: refused at runtime, as before
+        for gates in ([], [{'started': ['loaf']}], [{'flags': ['zone_built:elsewhere']}]):
+            with self.subTest(gates=gates):
+                fs = self.door_findings(gates)
+                self.assertEqual([f.severity for f in fs], ['polish'])
+                self.assertIn('not in data/zones.json', fs[0].message)
+
+    def test_a_gated_door_to_a_zone_outside_the_test_build_is_still_refused(self):
+        fs = self.door_findings([{'flags': ['zone_built:south']}], zone='south')
+        self.assertEqual([f.severity for f in fs], ['polish'])
+
+
 class DormantQuestWiring(unittest.TestCase):
     """A quest this build can never start (core/quests.gd) cannot leave a player stuck: its unsendable
     events are advice. A quest that can start keeps every unsendable event as a blocker, and so does a

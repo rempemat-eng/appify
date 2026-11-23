@@ -46,9 +46,26 @@ func test_the_numbers_are_two_three_and_ten_and_a_fifth() -> void:
 	assert_int(GlintCache.amount_for(100, 90)).is_equal(10)     # never below the floor
 	assert_int(GlintCache.amount_for(50, 90)).is_equal(0)
 
-## Today's build pays 31 Glint in all, counted from the zone scenes themselves.
+## True when `node` sits in a Conditional that waits for a zone this build does not have
+## ("zone_built:<zone>"): the woodland's shard crows, which only the test build wakes (core/test_build.gd).
+func _waits_for_an_unbuilt_zone(node: Node) -> bool:
+	var at := node.get_parent()
+	while at != null:
+		if at is Conditional and (at as Conditional).only_if != "":
+			var cond: Variant = JSON.parse_string((at as Conditional).only_if)
+			if typeof(cond) == TYPE_DICTIONARY:
+				for f: String in cond.get("flags", []):
+					if f.begins_with("zone_built:") and not Zones.has_zone(f.trim_prefix("zone_built:")):
+						return true
+		at = at.get_parent()
+	return false
+
+## Today's build pays 31 Glint in all, counted from the zone scenes themselves. The test build's shard
+## crows on the woodland's upper lawn (two rushers and a shooter: 9 more) wait for the Frostline, which
+## this build does not have, so they are counted apart.
 func test_the_three_zones_hold_thirty_one_glint_of_fights() -> void:
 	var total := 0
+	var waiting := 0
 	var keys := {}
 	for id: String in ["woodland", "crossroads", "undercroft"]:
 		var zone: Node = (load(Zones.table[id]) as PackedScene).instantiate()
@@ -56,11 +73,15 @@ func test_the_three_zones_hold_thirty_one_glint_of_fights() -> void:
 			if camp is Camp:
 				for c in camp.get_children():
 					if c.has_signal("died"):
+						if _waits_for_an_unbuilt_zone(camp):
+							waiting += GlintCache.fight_glint(Camp.kind_of(c))
+							continue
 						total += GlintCache.fight_glint(Camp.kind_of(c))
 						keys["%s/%s" % [(camp as Camp).camp_id, c.name]] = true
 		zone.free()
 	assert_int(total).is_equal(31)
 	assert_int(keys.size()).is_equal(9)                         # nine creatures, nine different keys
+	assert_int(waiting).is_equal(9)
 
 ## Nobody farms Glint: clear part of the camp, leave, come back to a whole camp, clear it: every creature
 ## has paid once.

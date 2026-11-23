@@ -298,8 +298,18 @@ func test_every_door_leads_somewhere_built() -> void:
 			var door := d as Door
 			if door.target_zone == "halt":
 				continue  # Valley Halt waits for act 1
-			assert_bool(Zones.has_zone(door.target_zone)).override_failure_message(door.name).is_true()
-			var probe: Zone = load(Zones.table[door.target_zone]).instantiate()
+			var path := String(Zones.table.get(door.target_zone, ""))
+			var gate: Variant = JSON.parse_string(door.only_if) if door.only_if != "" else null
+			if not Zones.has_zone(door.target_zone) and typeof(gate) == TYPE_DICTIONARY \
+					and ("zone_built:" + door.target_zone) in gate.get("flags", []):
+				# the woodland's north door waits for the Frostline to be built: shut in this build, it leads
+				# to the test build's Frostline (core/test_build.gd, data/test_build.json)
+				assert_bool(door.is_open()).override_failure_message(door.name + " opens to an unbuilt zone").is_false()
+				assert_bool(TestBuild.zones().has(door.target_zone)).override_failure_message(door.name).is_true()
+				path = String(TestBuild.zones().get(door.target_zone, ""))
+			else:
+				assert_bool(Zones.has_zone(door.target_zone)).override_failure_message(door.name).is_true()
+			var probe: Zone = load(path).instantiate()
 			assert_bool(probe.has_node("Spawns/" + door.target_spawn)).override_failure_message(
 				"%s -> %s:%s" % [door.name, door.target_zone, door.target_spawn]).is_true()
 			probe.free()
