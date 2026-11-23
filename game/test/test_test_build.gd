@@ -20,16 +20,18 @@ class SeededSave:
 	func _test_build_seed() -> String:
 		return real_source
 
-## The real test-build save of whoever runs this suite (user:// is the game's own folder in an editor run):
-## whether it existed before the suite and, if so, its bytes. Nothing is written: the last test checks that a
-## file that was absent is still absent, or that one that existed has the same bytes.
-var _real_existed := false
-var _real_before := PackedByteArray()
+## The real test-build save of whoever runs this suite (user:// is the game's own folder in an editor run),
+## and its two temporary files (save_game.gd's .tmp and the copy's .name-migration.tmp, which a crash of the
+## player's own game can leave): for each, whether it existed before the suite and, if so, its bytes. Nothing
+## is written: the last test checks that each is exactly as it was.
+const GUARDED := [TestBuild.SAVE_PATH, TestBuild.SAVE_PATH + ".tmp", TestBuild.SAVE_PATH + ".name-migration.tmp"]
+var _before := {}          ## path -> its bytes, for each guarded file that existed before the suite
 
 func before() -> void:
-	_real_existed = FileAccess.file_exists(TestBuild.SAVE_PATH)
-	if _real_existed:
-		_real_before = FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH)
+	_before.clear()
+	for f: String in GUARDED:
+		if FileAccess.file_exists(f):
+			_before[f] = FileAccess.get_file_as_bytes(f)
 
 var _holder: Node2D
 var _player: Player
@@ -378,14 +380,13 @@ func test_the_tag_shows_only_in_the_test_build() -> void:
 
 # --- last: the real test-build save is untouched -------------------------------------------------
 ## Runs last (gdUnit keeps file order): every test above left the test-build save in user:// as it was.
+## It must stay the last test function in this file: gdUnit4 runs tests in declaration order, not by name.
 func test_zz_the_real_test_build_save_survives_the_suite_untouched() -> void:
-	if _real_existed:
-		assert_bool(FileAccess.file_exists(TestBuild.SAVE_PATH)).override_failure_message(
-			"a test deleted user://test_build_save.json").is_true()
-		assert_bool(FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH) == _real_before).override_failure_message(
-			"a test changed user://test_build_save.json").is_true()
-	else:
-		assert_bool(FileAccess.file_exists(TestBuild.SAVE_PATH)).override_failure_message(
-			"a test wrote user://test_build_save.json, which did not exist before the suite").is_false()
-	for f: String in [TestBuild.SAVE_PATH + ".tmp", TestBuild.SAVE_PATH + ".name-migration.tmp"]:
-		assert_bool(FileAccess.file_exists(f)).override_failure_message("a test left " + f).is_false()
+	for f: String in GUARDED:
+		if not _before.has(f):
+			assert_bool(FileAccess.file_exists(f)).override_failure_message(
+				"a test wrote %s, which did not exist before the suite" % f).is_false()
+		else:
+			assert_bool(FileAccess.file_exists(f)).override_failure_message("a test deleted " + f).is_true()
+			assert_bool(FileAccess.get_file_as_bytes(f) == _before[f]).override_failure_message(
+				"a test changed " + f).is_true()
