@@ -27,11 +27,15 @@ Matt gave these on 22 Nov 2026, in chat, by picking one option from each of Clau
 - **The choked well.** Matt, 22 Nov: "Lantern clears it, cut the restore".
   Claude A's reading (22 Nov): *The choked well* (`a1_the_choked_well`) is rewritten so the shard lantern clears the well, at no Glint cost; its `restore:well` step goes. This keeps the 11 Nov line ("the lantern clears it") and removes the restore.
 
+## Added 23 November
+
+- **The Frostline's water state.** Matt, 23 Nov: "Frozen tarn, open outlet".
+  Claude A's reading (23 Nov): up high the tarn is frozen. Its outlet is open, thawing water that runs down into the woodland brook, and a short thaw band marks the woodland's north seam. This unblocks frost art A2 (water and ice), which stays with Claude A's art stream after E1 lands.
+
 ## Still open
 
 None of these is decided; each waits for Matt.
 
-- **The water state**: what water is, looks like and does in the Frostline.
 - **Act 1's extent** beyond the two-screen zone.
 - **The col hut or a bothy**: which the warden's building is (the quest is titled "Col hut", its id says `bothy`).
 - **The ice caves**: their mouth, their rooms and their look.
