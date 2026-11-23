@@ -1363,8 +1363,9 @@ def _granite_stair(W, seed):
                             f = 'slate_warm' if fam != 'iron' else fam       # the lit plane warm
                     else:
                         rr = y - nose - 1                                    # the riser, 8 rows under the nose
-                        t = 2 if rr == 0 else (1 if rr <= 3 else 0)
-                        f = fam if rr <= 3 else 'slate_cool'
+                        # the riser: its stone in shade under the nose, the contact line at its foot
+                        t = 2 if rr <= 1 else (1 if rr <= 6 else 0)
+                        f = fam if rr <= 5 else 'slate_cool'
                     if x == x0 and x0 > 0:
                         # the joint between slabs: a dark seam on the riser, a fine one on the tread
                         t, f = (0, 'slate_cool') if y > nose else (max(1, t - 2), fam)
