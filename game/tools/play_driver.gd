@@ -43,7 +43,7 @@ extends Node
 ##       zone <id> | quest <id> <none|active|done> [step id] | flag <f> | noflag <f> | focus <Node|none>
 ##       prompt <verb|none> | hp <n> | hurt (hearts missing) | glint <n> | restored <id> | notrestored <id> | enemies <n>
 ##       at x y <tol> | hud <text|none> | said <text> | banner <text|none> | paused <yes|no>
-##       line <text|none> (the line on the dialogue box now)
+##       line <text|none> (the line on the dialogue box now) | tag <text|none> (the test build's corner tag)
 ##       uifocus <Node|none> (the node name of the control with the keyboard focus: Quit is the pause menu's
 ##       row, QuitConfirm the Quit under "Quit the game?")
 ##       setting <key> <value> (a setting in the save: reduced_motion true, pixel_scale whole, ambience false)
@@ -300,10 +300,13 @@ func click() -> void:
 		await _sleep(0.06)
 
 # --- what it sees -----------------------------------------------------------------------------
+## The enemies a player can meet now: alive, in the tree and drawn. One a Conditional hides (the col crows
+## before Moss's loaf, world/conditional.gd) is switched off with it: it is not counted and not fought.
 func enemies() -> Array:
 	var a := []
 	for e in get_tree().get_nodes_in_group("enemy"):
-		if is_instance_valid(e) and not e.get("dead") and e.is_inside_tree() and str(e.get("state")) != "freed":
+		if is_instance_valid(e) and not e.get("dead") and e.is_inside_tree() and str(e.get("state")) != "freed" \
+				and (not e is CanvasItem or (e as CanvasItem).is_visible_in_tree()):
 			a.append(e)
 	return a
 
@@ -552,6 +555,13 @@ func expect(a: PackedStringArray) -> String:
 			if rest == "none":
 				return "" if str(hud().get("quest_title", "")) == "" else "the HUD tracks '%s'" % text
 			return "" if text.to_lower().contains(rest.to_lower()) else "the HUD tracks '%s'" % text
+		"tag":
+			# the test build's corner tag (core/test_build.gd, game.gd): its text, or none when there is no tag
+			var tag := get_tree().get_first_node_in_group("test_build_tag") as Label
+			var shown_tag := tag.text if tag != null and tag.is_visible_in_tree() else ""
+			if rest == "none":
+				return "" if shown_tag == "" else "the corner tag says '%s'" % shown_tag
+			return "" if shown_tag == rest else "the corner tag says '%s'" % shown_tag
 		"banner":
 			var banner := str(hud().get("banner", ""))
 			if rest == "none":

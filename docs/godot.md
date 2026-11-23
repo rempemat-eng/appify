@@ -50,6 +50,12 @@ earlier success cannot stand in for a failed producer. Crop sheets round only th
 pixel slice bounds outwards for fractional findings, keeping the finding boxes;
 invalid, empty or wholly outside boxes get a labelled unavailable cell.
 
+## The test build (22 Nov)
+
+Matt plays the Frostline before its art is approved (Matt, 22 Nov: "Yes, test build first"; `core/test_build.gd`, `data/test_build.json`). The switch is the custom export feature `test_build` (set it on a scratch export preset, never a committed one) or `-- --test-build` on a debug build; a release export ignores the argument. With it on, the zones in `data/test_build.json` join the zone table and play as real zones (autosave, the story card, the quest HUD), the woodland's north door opens and its shard crows wake once Moss's *Bread for the Col hut* starts, and a tag in the lower right corner says "test build", or "test build: unfinished art" wherever a piece that waits for a test-build zone shows (the Frostline itself, and the woodland once its door and stand-in crows are up). With it off nothing of this happens.
+
+The test build keeps its own save, `user://test_build_save.json`, beside the real one and never writes the real one. On its first start it is a byte copy of `save_0.json`, or, when there is none, of the old `napattack/save_0.json`; with neither it starts fresh. **To take a new copy of the real game, quit and delete `test_build_save.json`** from the game's user folder (on a Mac, `~/Library/Application Support/MyGame/`): the next test-build start copies the real save again. `--fresh` starts an empty game and copies nothing. `game/tools/routes/col_path.txt` plays the chain under `--test-build`.
+
 ## Playing with real input (10 Nov)
 
 A test that calls methods is not proof that something plays. `npm run playtest:godot` (`game/tools/playtest.sh`) plays the build the way a player does and fails, with the step's name and the game's state, at the first step that does not work:

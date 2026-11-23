@@ -42,6 +42,7 @@
 [ext_resource type="Script" path="res://world/villager.gd" id="40_ocr2f"]
 [ext_resource type="Texture2D" path="res://zones/woodland/art/hatch_closed.png" id="41_joj48"]
 [ext_resource type="Texture2D" path="res://zones/woodland/art/hatch_open.png" id="42_xjiwv"]
+[ext_resource type="PackedScene" path="res://zones/woodland/col_crows_camp.tscn" id="44_c0lcr"]
 [ext_resource type="Script" path="res://world/door.gd" id="43_rqdb3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sqqqi"]
@@ -67,6 +68,9 @@ size = Vector2(30, 24)
 
 [sub_resource type="RectangleShape2D" id="edge"]
 size = Vector2(18, 72)
+
+[sub_resource type="RectangleShape2D" id="north_edge"]
+size = Vector2(72, 36)
 
 [node name="WoodlandKit" type="Node2D" unique_id=994513246]
 y_sort_enabled = true
@@ -974,8 +978,8 @@ metadata/kit_zone_plan = {
 "zone": "woodland_kit"
 }
 metadata/kit_zone_gameplay_ids = {
-"Doors": ["ToUndercroft", "ToCrossroads"],
-"Spawns": ["start", "crossroads", "undercroft"]
+"Doors": ["ToUndercroft", "ToCrossroads", "ToFrostline"],
+"Spawns": ["start", "crossroads", "undercroft", "frostline"]
 }
 
 [node name="Ground" type="Node2D" parent="." unique_id=811269146]
@@ -2207,6 +2211,15 @@ texture = ExtResource("42_xjiwv")
 centered = false
 offset = Vector2(-23, -58)
 
+[node name="ColCrowsCamp" type="Node2D" parent="Actors" unique_id=1921702911]
+script = ExtResource("39_k5raf")
+only_if = "{\"flags\":[\"zone_built:frostline\"],\"started\":[\"a1_bread_for_the_bothy\"]}"
+metadata/kit_zone_explicit = false
+
+[node name="ColCrows" type="Node2D" parent="Actors/ColCrowsCamp" unique_id=1883315782 instance=ExtResource("44_c0lcr")]
+y_sort_enabled = true
+position = Vector2(560, 580)
+
 [node name="Spawns" type="Node2D" parent="." unique_id=777662575]
 
 [node name="start" type="Marker2D" parent="Spawns" unique_id=1888149236]
@@ -2224,6 +2237,11 @@ metadata/kit_zone_inherited = Vector2(892, 1352)
 position = Vector2(330, 1080)
 metadata/kit_zone_explicit = false
 metadata/kit_zone_inherited = Vector2(330, 1080)
+
+[node name="frostline" type="Marker2D" parent="Spawns" unique_id=1612026371]
+position = Vector2(312, 168)
+metadata/kit_zone_explicit = false
+metadata/kit_zone_inherited = Vector2(312, 168)
 
 [node name="clearing" type="Marker2D" parent="Spawns" unique_id=2089128311]
 position = Vector2(330, 480)
@@ -2280,3 +2298,24 @@ metadata/kit_zone_inherited = {
 
 [node name="Shape" type="CollisionShape2D" parent="Doors/ToCrossroads" unique_id=922639684]
 shape = SubResource("edge")
+
+[node name="ToFrostline" type="Area2D" parent="Doors" unique_id=1295845370]
+position = Vector2(312, 66)
+script = ExtResource("43_rqdb3")
+target_zone = "frostline"
+target_spawn = "woodland"
+only_if = "{\"flags\":[\"zone_built:frostline\"],\"started\":[\"a1_bread_for_the_bothy\"]}"
+metadata/kit_zone_explicit = false
+metadata/kit_zone_inherited = {
+"id": "ToFrostline",
+"if": {
+"flags": ["zone_built:frostline"],
+"started": ["a1_bread_for_the_bothy"]
+},
+"rect": [11.5, 2.0, 3.0, 1.5],
+"spawn": "woodland",
+"to": "frostline"
+}
+
+[node name="Shape" type="CollisionShape2D" parent="Doors/ToFrostline" unique_id=1539912476]
+shape = SubResource("north_edge")
