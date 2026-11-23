@@ -85,6 +85,11 @@ func _legacy_save_path() -> String:
 func _legacy_folder_save() -> String:
 	return OS.get_user_data_dir().get_base_dir().path_join("napattack/save_0.json")
 
+## The test build's own save (core/test_build.gd SAVE_PATH); tests give a disposable file instead, so a test
+## run never touches the test-build save of whoever runs it.
+func _test_save_path() -> String:
+	return TestBuild.SAVE_PATH
+
 ## The real save as this game keeps it (the test build reads it, never writes it).
 func _real_save_path() -> String:
 	return DEFAULT_PATH
@@ -93,7 +98,7 @@ func _real_save_path() -> String:
 ## save_0.json, or, when there is none, the old napattack folder's save, as a normal start would import it.
 ## Deleting the test build's save makes its next start take a new copy.
 func _test_build_seed() -> String:
-	if path != TestBuild.SAVE_PATH:
+	if path != _test_save_path():
 		return ""
 	var real := _real_save_path()
 	if FileAccess.file_exists(real):

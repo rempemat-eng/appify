@@ -20,6 +20,26 @@ class SeededSave:
 	func _test_build_seed() -> String:
 		return real_source
 
+## The real test-build save of whoever runs this suite (user:// is the game's own folder in an editor run):
+## its bytes before the suite, or a sentinel written for the suite when there was none. The last test checks
+## that no test touched it; after() removes only a sentinel this suite wrote.
+var _real_before := PackedByteArray()
+var _sentinel := false
+
+func before() -> void:
+	if FileAccess.file_exists(TestBuild.SAVE_PATH):
+		_real_before = FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH)
+	else:
+		_sentinel = true
+		var f := FileAccess.open(TestBuild.SAVE_PATH, FileAccess.WRITE)
+		f.store_string(JSON.stringify({"version": 2, "glint": 4242, "_about": "test_test_build.gd sentinel"}))
+		f.close()
+		_real_before = FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH)
+
+func after() -> void:
+	if _sentinel and FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH) == _real_before:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(TestBuild.SAVE_PATH))
+
 var _holder: Node2D
 var _player: Player
 var _saves: Array[Node] = []
@@ -39,8 +59,7 @@ func after_test() -> void:
 	TestBuild.forced = null
 	Zones.table.erase("frostline")
 	SaveGame.path = SaveGame.DEFAULT_PATH
-	for f: String in [SAVE, REAL, OWN, OWN + ".name-migration.tmp", OWN + ".tmp", OWN + ".legacy",
-			TestBuild.SAVE_PATH, TestBuild.SAVE_PATH + ".tmp", TestBuild.SAVE_PATH + ".name-migration.tmp"]:
+	for f: String in [SAVE, REAL, OWN, OWN + ".name-migration.tmp", OWN + ".tmp", OWN + ".legacy"]:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(f))
 	for s: Node in _saves:
 		s.free()
@@ -280,10 +299,13 @@ class LegacySeedSave:
 	func _legacy_folder_save() -> String:
 		return legacy
 
+	func _test_save_path() -> String:
+		return OWN
+
 func test_with_only_the_old_folder_s_save_the_test_build_copies_that() -> void:
 	var s: Node = LegacySeedSave.new()
 	_saves.append(s)
-	s.path = TestBuild.SAVE_PATH
+	s.path = OWN
 	s.real = REAL
 	s.legacy = ProjectSettings.globalize_path(OWN + ".legacy")
 	var f := FileAccess.open(s.legacy, FileAccess.WRITE)
@@ -293,7 +315,7 @@ func test_with_only_the_old_folder_s_save_the_test_build_copies_that() -> void:
 	assert_str(s._test_build_seed()).is_equal(s.legacy)          # no save_0.json: the old folder's
 	assert_int(s.boot()).is_equal(OK)
 	assert_int(int(s.data.glint)).is_equal(77)
-	assert_bool(FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH) == legacy_bytes).is_true()
+	assert_bool(FileAccess.get_file_as_bytes(OWN) == legacy_bytes).is_true()
 	assert_bool(FileAccess.get_file_as_bytes(s.legacy) == legacy_bytes).is_true()
 	# with a save_0.json that one wins, and with neither the seed is the (absent) real save: a fresh start
 	f = FileAccess.open(REAL, FileAccess.WRITE)
@@ -304,13 +326,13 @@ func test_with_only_the_old_folder_s_save_the_test_build_copies_that() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(REAL))
 	assert_str(s._test_build_seed()).is_equal(REAL)
 	# deleting the test build's save reseeds it on the next start
-	DirAccess.remove_absolute(ProjectSettings.globalize_path(TestBuild.SAVE_PATH))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(OWN))
 	f = FileAccess.open(REAL, FileAccess.WRITE)
 	f.store_string(JSON.stringify({"version": 2, "glint": 9}))
 	f.close()
 	assert_int(s.boot()).is_equal(OK)
 	assert_int(int(s.data.glint)).is_equal(9)
-	DirAccess.remove_absolute(ProjectSettings.globalize_path(TestBuild.SAVE_PATH))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(OWN))
 
 ## Run past the crows to the Frostline and the warden sends the player back to the col: the loaf waits.
 func test_the_warden_sends_a_player_who_ran_past_the_crows_back_to_them() -> void:
@@ -338,8 +360,9 @@ func test_the_warden_sends_a_player_who_ran_past_the_crows_back_to_them() -> voi
 func test_the_test_build_uses_its_own_save_path() -> void:
 	assert_str(TestBuild.SAVE_PATH).is_not_equal(SaveGame.DEFAULT_PATH)
 	var s: Node = auto_free(load("res://core/save_game.gd").new())
-	s.path = TestBuild.SAVE_PATH
-	assert_str(s._test_build_seed()).is_equal(SaveGame.DEFAULT_PATH)
+	s.path = TestBuild.SAVE_PATH                 # strings only: nothing is read, copied or written
+	assert_str(s._test_save_path()).is_equal(TestBuild.SAVE_PATH)
+	assert_array([SaveGame.DEFAULT_PATH, s._legacy_folder_save()]).contains([s._test_build_seed()])
 	assert_str(s._legacy_save_path()).is_equal("")
 
 # --- the corner tag ------------------------------------------------------------------------------
@@ -361,3 +384,13 @@ func test_the_tag_shows_only_in_the_test_build() -> void:
 	assert_bool(Zones.go_to("frostline", "woodland")).is_true()
 	await _ticks(2)
 	assert_str(on.test_tag.text).is_equal("test build: unfinished art")
+
+# --- last: the real test-build save is untouched -------------------------------------------------
+## Runs last (gdUnit keeps file order): every test above left the test-build save in user:// as it was.
+func test_zz_the_real_test_build_save_survives_the_suite_untouched() -> void:
+	assert_bool(FileAccess.file_exists(TestBuild.SAVE_PATH)).override_failure_message(
+		"a test deleted user://test_build_save.json").is_true()
+	assert_bool(FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH) == _real_before).override_failure_message(
+		"a test changed user://test_build_save.json").is_true()
+	for f: String in [TestBuild.SAVE_PATH + ".tmp", TestBuild.SAVE_PATH + ".name-migration.tmp"]:
+		assert_bool(FileAccess.file_exists(f)).is_false()
