@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://3b14xpbwrar6"
-path="res://.godot/imported/frost_lead_strip_long.png-b3d01effe4ed54c5fe2265a66d01f86d.ctex"
+uid="uid://b8ngti7i1iv4c"
+path="res://.godot/imported/frost_shore_ice_west.png-95595ea31b260572701e864873827139.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/props/art/frost/frost_lead_strip_long.png"
-dest_files=["res://.godot/imported/frost_lead_strip_long.png-b3d01effe4ed54c5fe2265a66d01f86d.ctex"]
+source_file="res://kit/props/art/frost/frost_shore_ice_west.png"
+dest_files=["res://.godot/imported/frost_shore_ice_west.png-95595ea31b260572701e864873827139.ctex"]
 
 [params]
 

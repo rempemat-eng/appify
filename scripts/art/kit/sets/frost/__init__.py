@@ -154,6 +154,11 @@ from .water_ice import (
     _pic as _pic,
     ice_stack as ice_stack,
     lead as lead,
+    open_fall as open_fall,
+    plunge as plunge,
+    pressure_ridge as pressure_ridge,
+    shore_ice as shore_ice,
+    thaw as thaw,
 )
 
 # ================================================================================================
@@ -340,25 +345,52 @@ def prop_jobs():
             fp=[[c, r] for c in range(-2, 2) for r in range(-4, 0)],
             collision={'shape': 'rect', 'rect': [-16.0, -32.0, 32, 32]}, shadow=None, composition='edge', forbids=NATURE,
             size_class='unsized (a 32 world px face)', eastward='12', fn='rockface', note='A four-cell length of the face.')),
-        ('frost_icefall', [('still', lambda: rockface_fall())], dict(
-            name='Frozen fall', purpose='exclude', role='rock', cells=(4, 5), fp=[[c, r] for c in range(-2, 2) for r in range(-4, 0)],
+        ('frost_icefall', [('still', lambda: open_fall())], dict(
+            name='Thawing fall', purpose='exclude', role='rock', cells=(4, 5), fp=[[c, r] for c in range(-2, 2) for r in range(-4, 0)],
             collision={'shape': 'rect', 'rect': [-16.0, -32.0, 32, 32]}, shadow=None, composition='edge',
-            size_class='unsized (a fall frozen over the face)', eastward='-', fn='rockface_fall',
-            note='The tarn\'s outlet frozen over the face: bulging columns of ice that merge into curtains, lit on the '
-                 'west and blue in the east, icicles at the lip, an apron at the foot.')),
+            size_class='unsized (the outlet falling over the face, 32 world px)', eastward='- (the house fall, eastward-edges 5.3b)',
+            fn='open_fall',
+            note='The tarn\'s outlet open and thawing (Matt, 23 Nov) where it falls over the cirque\'s step: the house\'s '
+                 'sheet exactly the outlet\'s three cells wide at the lip, its 8-frame loop; west of it the winter\'s ice '
+                 'curtain rotting on the rock, dripping icicles over the bare stone, the rock wet beside the sheet.')),
         ('frost_rock_stair', [('still', lambda: rock_stair())], dict(
             name='Granite stair', purpose='climb', role='rock_steps', cells=(5, 5), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='axis', z_sort='ground',
             size_class='unsized (rough steps cut up the granite face: no stair kind in the guide; 40 world px wide, at least 34)', eastward='12 (the stairs)', fn='rock_stair',
             note='Six steps of laid granite up the face, lit noses over shaded risers, snow in the tread corners, the '
                  'trod worn into the middle, cheeks of the face either side: the Col Path\'s way up the cirque\'s step.')),
-        ('frost_lead', [(v, (lambda v=v: lead(v))) for v in ('run', 'short', 'pool', 'gap', 'strip', 'strip_long')], dict(
+        ('frost_lead', [('outlet', lambda: lead('outlet'))], dict(
             name='Open lead in the ice', purpose='mark', role='water', cells=(1, 3), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='axis', z_sort='ground',
-            size_class='unsized (open water in a frozen stream: ground dressing on the ice)', eastward='-', fn='lead',
-            note='Running water left open down the middle of the frozen outlet: a calm dark centre, lighter shallows, '
-                 'the shelf ice\'s snow-covered lip round it and its shadow on the water; the fall\'s plunge pool, half '
-                 'open under an ice rim; the inflow\'s one dark gap.')),
+            size_class='unsized (open water in the tarn\'s ice: ground dressing on the ice)', eastward='-',
+            note='The one dark lead in the frozen tarn (Matt, 23 Nov), where the outlet leaves: shut at its north, opening '
+                 'south into the outlet\'s open water; a dark centre, lighter shallows, the shelf ice\'s snowy lip round it '
+                 'and its shadow on the water.')),
+        ('frost_plunge', [('still', lambda: plunge())], dict(
+            name='Plunge under the thawing fall', purpose='mark', role='water', cells=(5, 2), fp=[], blocks=False,
+            collision={'shape': 'none'}, shadow=None, composition='axis', z_sort='ground',
+            size_class='unsized (foam where the fall lands: ground dressing on the water)', eastward='- (the house plunge, 5.3b)',
+            note='The house\'s foam churning where the open fall lands (8 frames, held still under reduced motion), and two '
+                 'floes broken off the rotting curtain turning in the eddy.')),
+        ('frost_shore_ice', [(v, (lambda v=v: shore_ice(v))) for v in ('west', 'east', 'floe')], dict(
+            name='Thawing shelf ice', purpose='mark', role='water', cells=(1, 2), fp=[], blocks=False,
+            collision={'shape': 'none'}, shadow=None, composition='edge', z_sort='ground',
+            size_class='unsized (shelf ice on open water: ground dressing)', eastward='-',
+            note='What is left of the outlet\'s winter ice as it thaws: a rotten candled plate fast to the west or east bank, '
+                 'or broken off as a floe; lit rims north and west, its thickness and a wet shade on its south edge.')),
+        ('frost_thaw', [(v, (lambda v=v: thaw(v))) for v in ('west', 'east', 'trod')], dict(
+            name='Thaw at the woodland seam', purpose='mark', role='water', cells=(4, 3), fp=[], blocks=False,
+            collision={'shape': 'none'}, shadow=None, composition='edge', z_sort='ground',
+            size_class='unsized (wet snow and bare ground: ground dressing)', eastward='-',
+            note='The short thaw band at the woodland\'s north seam (Matt, 23 Nov): the snow wet and greying southward and '
+                 'breaking into patches of bare cold earth and flattened grass, slush rims, meltwater rivulets running into '
+                 'the stream; on the Col Path, slush and puddles.')),
+        ('frost_pressure_ridge', [(v, (lambda v=v: pressure_ridge(v))) for v in ('long', 'short', 'side')], dict(
+            name='Pressure ridge', purpose='mark', role='water', cells=(3, 1), fp=[], blocks=False,
+            collision={'shape': 'none'}, shadow=None, composition='edge', z_sort='ground',
+            size_class='unsized (heaved slabs of lake ice along the tarn\'s shore: ground dressing on the ice)', eastward='-',
+            note='Where the tarn\'s ice pushed against its shore: tilted broken slabs heaped in a line, lit tops with snow, '
+                 'blue fronts, shaded east sides, snow in the lee and its shade on the ice. Drawn on the ice, not walkable.')),
         ('frost_footbridge', [('still', lambda: footbridge())], dict(
             name='Plank footbridge over the outlet', purpose='cross', role='bridge', cells=(5, 2), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='axis', z_sort='ground', deck=[-20.0, -16.0, 40.0, 16.0],

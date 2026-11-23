@@ -16139,6 +16139,18 @@
   "z_sort": "foot"
  },
  "frost_icefall": {
+  "anim": {
+   "clip": "flow",
+   "cover": false,
+   "fps": 10.0,
+   "frames": 8,
+   "offset": [
+    -48,
+    -103
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/frost/frost_icefall_loop.png"
+  },
   "approval": "candidate",
   "blocks_move": true,
   "collision": [
@@ -16221,7 +16233,7 @@
   "forbids": [],
   "function": {},
   "kind": "prop",
-  "name": "Frozen fall",
+  "name": "Thawing fall",
   "painted": false,
   "requires": [],
   "role": "rock",
@@ -16338,7 +16350,7 @@
   "deck": null,
   "foot": [
    12,
-   95
+   71
   ],
   "footprint": [],
   "forbids": [],
@@ -16358,47 +16370,12 @@
    "owner": null
   },
   "variants": {
-   "gap": {
-    "foot": [
-     8,
-     23
-    ],
-    "png": "res://kit/props/art/frost/frost_lead_gap.png"
-   },
-   "pool": {
-    "foot": [
-     39,
-     53
-    ],
-    "png": "res://kit/props/art/frost/frost_lead_pool.png"
-   },
-   "run": {
-    "foot": [
-     12,
-     95
-    ],
-    "png": "res://kit/props/art/frost/frost_lead_run.png"
-   },
-   "short": {
+   "outlet": {
     "foot": [
      12,
      71
     ],
-    "png": "res://kit/props/art/frost/frost_lead_short.png"
-   },
-   "strip": {
-    "foot": [
-     12,
-     59
-    ],
-    "png": "res://kit/props/art/frost/frost_lead_strip.png"
-   },
-   "strip_long": {
-    "foot": [
-     12,
-     119
-    ],
-    "png": "res://kit/props/art/frost/frost_lead_strip_long.png"
+    "png": "res://kit/props/art/frost/frost_lead_outlet.png"
    }
   },
   "z_sort": "ground"
@@ -16676,6 +16653,106 @@
    }
   },
   "z_sort": "foot"
+ },
+ "frost_plunge": {
+  "anim": {
+   "clip": "flow",
+   "cover": false,
+   "fps": 10.0,
+   "frames": 8,
+   "offset": [
+    -60,
+    -47
+   ],
+   "reduced_motion": "hold:0",
+   "strip": "res://kit/props/art/frost/frost_plunge_loop.png"
+  },
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   60,
+   47
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Plunge under the thawing fall",
+  "painted": false,
+  "requires": [],
+  "role": "water",
+  "shadow": null,
+  "size_cells": [
+   5,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     60,
+     47
+    ],
+    "png": "res://kit/props/art/frost/frost_plunge.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "frost_pressure_ridge": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   39,
+   23
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Pressure ridge",
+  "painted": false,
+  "requires": [],
+  "role": "water",
+  "shadow": null,
+  "size_cells": [
+   3,
+   1
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "long": {
+    "foot": [
+     39,
+     23
+    ],
+    "png": "res://kit/props/art/frost/frost_pressure_ridge_long.png"
+   },
+   "short": {
+    "foot": [
+     27,
+     23
+    ],
+    "png": "res://kit/props/art/frost/frost_pressure_ridge_short.png"
+   },
+   "side": {
+    "foot": [
+     11,
+     83
+    ],
+    "png": "res://kit/props/art/frost/frost_pressure_ridge_side.png"
+   }
+  },
+  "z_sort": "ground"
  },
  "frost_rock_stair": {
   "approval": "candidate",
@@ -17047,6 +17124,57 @@
    }
   },
   "z_sort": "foot"
+ },
+ "frost_shore_ice": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   8,
+   47
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Thawing shelf ice",
+  "painted": false,
+  "requires": [],
+  "role": "water",
+  "shadow": null,
+  "size_cells": [
+   1,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "east": {
+    "foot": [
+     8,
+     47
+    ],
+    "png": "res://kit/props/art/frost/frost_shore_ice_east.png"
+   },
+   "floe": {
+    "foot": [
+     13,
+     19
+    ],
+    "png": "res://kit/props/art/frost/frost_shore_ice_floe.png"
+   },
+   "west": {
+    "foot": [
+     8,
+     47
+    ],
+    "png": "res://kit/props/art/frost/frost_shore_ice_west.png"
+   }
+  },
+  "z_sort": "ground"
  },
  "frost_sledge": {
   "approval": "candidate",
@@ -17436,6 +17564,57 @@
    }
   },
   "z_sort": "foot"
+ },
+ "frost_thaw": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   48,
+   71
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Thaw at the woodland seam",
+  "painted": false,
+  "requires": [],
+  "role": "water",
+  "shadow": null,
+  "size_cells": [
+   4,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "east": {
+    "foot": [
+     24,
+     71
+    ],
+    "png": "res://kit/props/art/frost/frost_thaw_east.png"
+   },
+   "trod": {
+    "foot": [
+     24,
+     71
+    ],
+    "png": "res://kit/props/art/frost/frost_thaw_trod.png"
+   },
+   "west": {
+    "foot": [
+     48,
+     71
+    ],
+    "png": "res://kit/props/art/frost/frost_thaw_west.png"
+   }
+  },
+  "z_sort": "ground"
  },
  "frost_woodpile": {
   "approval": "candidate",

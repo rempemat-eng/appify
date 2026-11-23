@@ -1,6 +1,8 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://world/terrain/kit_piece.gd" id="1"]
+[ext_resource type="Script" path="res://world/loop_fx.gd" id="3"]
+[ext_resource type="Texture2D" path="res://kit/props/art/frost/frost_icefall_loop.png" id="4"]
 [ext_resource type="Texture2D" path="res://kit/props/art/frost/frost_icefall.png" id="2"]
 
 [sub_resource type="RectangleShape2D" id="solid"]
@@ -14,6 +16,14 @@ piece_id = "frost_icefall"
 texture = ExtResource("2")
 centered = false
 offset = Vector2(-48, -107)
+
+[node name="Flow" type="Sprite2D" parent="."]
+script = ExtResource("3")
+texture = ExtResource("4")
+centered = false
+offset = Vector2(-48, -103)
+hframes = 8
+fps = 10
 
 [node name="Solid" type="StaticBody2D" parent="."]
 collision_mask = 0

@@ -1,7 +1,7 @@
 {
  "schema": "napattack.piece/1",
  "id": "frost_icefall",
- "name": "Frozen fall",
+ "name": "Thawing fall",
  "kind": "prop",
  "biomes": [
   "frostline"
@@ -23,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The tarn's outlet frozen over the face: bulging columns of ice that merge into curtains, lit on the west and blue in the east, icicles at the lip, an apron at the foot."
+  "note": "The tarn's outlet open and thawing (Matt, 23 Nov) where it falls over the cirque's step: the house's sheet exactly the outlet's three cells wide at the lip, its 8-frame loop; west of it the winter's ice curtain rotting on the rock, dripping icicles over the bare stone, the rock wet beside the sheet."
  },
  "geometry": {
   "size_px": [
@@ -126,7 +126,28 @@
   "cast_shadow": {
    "shape": "none"
   },
-  "contact_ao": true
+  "contact_ao": true,
+  "animations": [
+   {
+    "clip": "flow",
+    "loop": true,
+    "frames": 8,
+    "fps": 10.0,
+    "strip": "res://kit/props/art/frost/frost_icefall_loop.png",
+    "frame_px": [
+     96,
+     110
+    ],
+    "reduced_motion": "hold:0",
+    "on_screen_only": true,
+    "region_px": [
+     0,
+     4,
+     96,
+     110
+    ]
+   }
+  ]
  },
  "function": {},
  "story": {
@@ -137,11 +158,11 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "unsized (a fall frozen over the face)",
-  "eastward_ref": "-",
+  "size_class": "unsized (the outlet falling over the face, 32 world px)",
+  "eastward_ref": "- (the house fall, eastward-edges 5.3b)",
   "painter": {
    "module": "scripts.art.kit.sets.frost",
-   "fn": "rockface_fall",
+   "fn": "open_fall",
    "args": {}
   },
   "seeded_from": "scripts/art/kit/sets/frost.py",
