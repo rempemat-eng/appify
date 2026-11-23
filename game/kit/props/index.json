@@ -15719,7 +15719,7 @@
   "deck": null,
   "foot": [
    97,
-   106
+   121
   ],
   "footprint": [
    [
@@ -15814,7 +15814,7 @@
    "a": {
     "foot": [
      97,
-     106
+     121
     ],
     "png": "res://kit/props/art/frost/frost_crag_a.png",
     "shadow": {
@@ -15828,7 +15828,7 @@
    "b": {
     "foot": [
      88,
-     96
+     119
     ],
     "png": "res://kit/props/art/frost/frost_crag_b.png",
     "shadow": {
