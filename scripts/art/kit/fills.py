@@ -609,7 +609,9 @@ def ice(seed: int = 1404, P: int = PERIOD) -> np.ndarray:
     cv[lit] = C('sky_cool', 5)
     cv[crack & ~snowy] = C('water_cool', 2)
     cv[crack & snowy] = C('snow_cool', 3)
-    return cv
+    # the fill tiles exactly; its wrap is set on a row and a column of ordinary contrast, since the drifts'
+    # lips make single rows unequal (test_kit.test_fills_seamless compares one row pair with the next)
+    return np.roll(cv, (-1, -34), (0, 1))
 
 
 PAINTERS = {'lawn': lawn, 'dirt': dirt, 'water': water, 'face_strip': face_strip,
