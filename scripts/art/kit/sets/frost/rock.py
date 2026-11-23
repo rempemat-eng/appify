@@ -111,19 +111,33 @@ def _gblock(out, own, x0, yb, w, hf, dtop, seed, fam='slate', snow=1.0, tilt=0, 
                 if x < xa + 0.35 * r:
                     t = 4
                 elif x > xc - 0.3 * r:
-                    # the turned east facet: a cooler plane, its shade dithered (no solid dark band)
-                    f_, t = 'slate_cool', (2 if (x + y) % 2 else 3)
+                    # the turned east facet: a cooler plane, its shade in diagonal dashes (no solid band)
+                    f_, t = 'slate_cool', (2 if ((x + y) // 2) % 2 else 3)
                 if r <= 1:
                     t = min(5, t + 1)
+                elif yb - y < hf * 0.4 and ((x + y) // 2) % 2 == 0:
+                    t -= 1                                             # darker toward its foot
                 if yb - y <= 2:
-                    t = 2 if (x + y) % 2 or yb - y > 0 else 1
+                    t = 2 if ((x + y) // 2) % 2 or yb - y > 0 else 1
                 c = C(f_, t)
             out[y, x] = c
             m[y, x] = True
             own[y, x] = bid
-    # a crack down a big front
-    if crease and hf > 14 and w > 18:
-        x = float(x0 + w * rng.uniform(0.2, 0.45))
+    # small ledges where the front steps back a texel: a lit lip over a shade line, snow on some
+    for _ in range(int(hf > 12) + int(hf > 24) + int(w > 30)):
+        lw = int(rng.integers(5, 10))
+        lx = int(x0 + rng.uniform(2, max(3, w - lw - 2)))
+        ly = int(yb - rng.uniform(4, max(5, hf - 4)))
+        for x in range(lx, lx + lw):
+            yy = ly + (1 if (x - lx) > lw * 0.6 else 0)
+            if 0 <= yy + 1 < H and 0 <= x < W and m[yy - 1, x] and m[yy + 1, x] and out[yy, x] // 8 not in SNOWS:
+                out[yy, x] = C('slate', 5) if x < lx + lw * 0.7 else C('slate', 4)
+                out[yy + 1, x] = C('slate_cool', 1)
+                if rng.random() < 0.6 and x < lx + lw - 1:
+                    out[yy - 1, x] = C('snow', 5) if x < lx + lw * 0.5 else C('snow_cool', 4)
+    # cracks down a big front
+    for _c in range(int(crease and hf > 14 and w > 18) + int(w > 34)):
+        x = float(x0 + w * rng.uniform(0.2, 0.75))
         y = int(ytop_front[int(x - x0)]) + 3
         for _ in range(int(hf * rng.uniform(0.4, 0.7))):
             xi = int(round(x))
@@ -154,8 +168,12 @@ def _gblock(out, own, x0, yb, w, hf, dtop, seed, fam='slate', snow=1.0, tilt=0, 
                     c = C('snow', 5)
                 elif y == yf_:
                     c = C('snow_cool', 3)
+                elif x < sx + sw * 0.3 and y < yf_ - 1:
+                    c = C('snow', 5)                                   # the cap's lit west shoulder
                 else:
-                    c = C('snow', 4) if x < sx + sw * 0.6 else C('snow_cool', 4)
+                    c = C('snow', 4) if x < sx + sw * 0.65 else C('snow_cool', 4)
+                    if hsh(seed, (x + y) // 3, y, 17) > 0.8:
+                        c = C('snow_cool', 4) if c == C('snow', 4) else C('snow_cool', 3)   # wind crust
                 out[y, x] = c
                 own[y, x] = bid
             if e >= 2 and yf_ + 1 < H and m[yf_ + 1, x]:
@@ -940,7 +958,7 @@ def _paint_blocks(W, seed, lab, joint, bed):
             t = np.where((front > 0) & (_dl <= 1), t0 + 1, t)
             t = np.where((_dr <= 2) & (front >= 0), t0 - 1, t)
             t = np.where((_db <= 2) & (front >= 0), np.minimum(t, t0 - 1), t)
-            t = np.where((_db == 0) & (front >= 0) & ((xs + ys) % 2 == 0), t0 - 2, t)
+            t = np.where((_db == 0) & (front >= 0) & (((xs + ys) // 2) % 2 == 0), t0 - 2, t)
             if crease:
                 # a big block turned on a crease: the plane east of it a tone down, a lit texel on its edge
                 cx = info[b]['x0'] + w * (0.4 + 0.3 * r[5])
@@ -958,8 +976,8 @@ def _paint_blocks(W, seed, lab, joint, bed):
             t = np.where(arris & (lipd > 1), 5, t)
             f = np.where(arris & (lipd > 1), FI['slate'], f)
             t = np.where(top & (_dr <= 1), 3, t)
-            # the darkest tones only as lines and dithered fades, never as solid bands
-            t = np.where((t < 2) & ((xs + ys) % 2 == 1), 2, t)
+            # the darkest tones only as lines and diagonal two-texel dashes, never as solid bands
+            t = np.where((t < 2) & (((xs + ys) // 2) % 2 == 1), 2, t)
         a[ys, xs] = f * 8 + np.clip(t, 0, 5)
     # the joints: dark, the one under a lit lip a tone lighter where it is only a hairline
     a[joint] = C('slate_cool', 0)
@@ -1236,8 +1254,8 @@ def _granite_face(W, seed, cheeks=(False, False)):
     ov = _cornice(W, seed)
     Y, X = np.mgrid[0:H, 0:W]
     under = Y - (LIP_PX + ov[None, :])
-    # (the deepest shade fades out in a checker: dither belongs to a fade of light, eastward-edges 5.4)
-    chk = ((X + Y) % 2) == 0
+    # (the deepest shade broken in diagonal two-texel dashes, so it never lies as a ruled band)
+    chk = (((X + Y) // 2) % 2) == 0
     band = rock & (under >= 0) & (under < 5)
     t_ = out % 8
     out[band] = (out[band] // 8) * 8 + np.where(chk[band], np.maximum(0, t_[band] - 2), np.clip(t_[band] - 1, 2, 3))
@@ -1248,7 +1266,7 @@ def _granite_face(W, seed, cheeks=(False, False)):
     for side, on in enumerate(cheeks):
         if on:
             _granite_cheek(out, side, seed)
-    # lone texels tidied, except the dithered shades (a checker is meant)
+    # lone texels tidied, except in the dashed shades
     V.tidy(out, passes=1, keep=rock & (((under >= 0) & (under < 13)) | (Y >= yf - 8) | (out % 8 <= 1)))
     # granite's grain and a few fractures, on the stone's lit and mid texels
     body = rock & (out >= 0) & (out % 8 >= 1) & (out // 8 != FI['slate_cool']) | (rock & (out // 8 == FI['slate_cool']) & (out % 8 >= 2))
@@ -1303,9 +1321,9 @@ def _granite_face(W, seed, cheeks=(False, False)):
 
 def _granite_stair(W, seed):
     """The Col Path's stair up the face, seen from above (eastward-edges.md 6.1, size guide: six
-    steps on a 16 px pitch): each step a tread of two or three long granite slabs, 9 rows deep, its
-    back row in the shade of the riser above, its nose lit and chipped, over a riser 7 rows deep
-    darkening to a contact line at its foot (a riser 44 % of the pitch, Eastward's 43 to 53). The
+    steps on a 16 px pitch): each step a tread of two or three long granite slabs, 8 rows deep, its
+    back row in the shade of the riser above, its nose lit and chipped, over a riser 8 rows deep
+    darkening to a contact line at its foot (half the pitch, Eastward's 43 to 53 %). The
     slab joints line up from step to step (laid, not bonded) and each slab sits a texel high or low,
     so no tread edge runs ruled across. The cheeks' shade on the treads at both sides, snow banked
     in the back corners and along the outer thirds of the treads, the trod worn smooth up the middle
@@ -1314,7 +1332,7 @@ def _granite_stair(W, seed):
     yf = LIP_PX + FACE_PX
     rng = np.random.default_rng(seed + 7)
     out = np.full((H, W), -1, np.int32)
-    TR = 9
+    TR = 8
     j0 = [int(W * 0.34 + rng.integers(-3, 4)), int(W * 0.68 + rng.integers(-3, 4))]
     mid0, mid1 = int(W * 0.36), int(W * 0.64)
     for k in range(STEPS):
@@ -1344,7 +1362,7 @@ def _granite_stair(W, seed):
                         if base == 4 and 0 < r < TR - 3 and y != nose:
                             f = 'slate_warm' if fam != 'iron' else fam       # the lit plane warm
                     else:
-                        rr = y - nose - 1                                    # the riser, 7 rows under the nose
+                        rr = y - nose - 1                                    # the riser, 8 rows under the nose
                         t = 2 if rr == 0 else (1 if rr <= 3 else 0)
                         f = fam if rr <= 3 else 'slate_cool'
                     if x == x0 and x0 > 0:
