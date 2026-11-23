@@ -195,3 +195,49 @@ func test_bread_waits_for_the_frostline_to_be_built() -> void:
 	Quests.notify("talk:moss")
 	assert_str(Quests.state("a1_bread_for_the_bothy")).is_equal("none")
 	assert_str(Quests.state("a1_the_choked_well")).is_equal("none")
+
+func test_the_lantern_clears_the_well_without_a_restore_payment() -> void:
+	_finish_slice()
+	SaveGame.data.quests["a1_bread_for_the_bothy"] = {"state": "done", "step": 3}
+	SaveGame.data.glint = 0
+	Quests.notify("talk:moss")
+	# The shard was brought home before Moss asked: the existing flag settles the step.
+	assert_str(_step("a1_the_choked_well")).is_equal("moss")
+	assert_bool(Village.sites.has("well")).is_false()
+	assert_bool(Village.is_restored("well")).is_false()
+	assert_int(int(SaveGame.data.glint)).is_equal(0)
+	Quests.notify("talk:moss")
+	assert_str(Quests.state("a1_the_choked_well")).is_equal("done")
+	assert_bool(SaveGame.has_flag("well_clear")).is_true()
+	# Keep the authored quest reward; clearing the water itself charges nothing.
+	assert_int(int(SaveGame.data.glint)).is_equal(15)
+
+func test_training_yard_uses_its_authored_price_after_the_warden_asks() -> void:
+	SaveGame.data.glint = 40
+	assert_int(Village.cost("training_yard")).is_equal(40)
+	assert_bool(Village.can_restore("training_yard")).is_false()
+	SaveGame.data.quests["a1_the_training_yard"] = {"state": "active", "step": 0}
+	assert_bool(Village.can_restore("training_yard")).is_true()
+	assert_bool(Village.restore("training_yard")).is_true()
+	assert_int(int(SaveGame.data.glint)).is_equal(0)
+	assert_str(_step("a1_the_training_yard")).is_equal("hale")
+	assert_bool(Village.restore("training_yard")).is_false()
+	assert_int(int(SaveGame.data.glint)).is_equal(0)
+	var plan: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/plans/crossroads.json"))
+	var marks: Array = plan.restore_sites.filter(func(site: Dictionary) -> bool: return site.restore == "training_yard")
+	assert_int(marks.size()).is_equal(1)
+	assert_array(marks[0].at).is_equal([184, 472])
+
+func test_closing_card_names_the_lantern_but_does_not_require_the_optional_bell() -> void:
+	Zones.table.erase("frostline")
+	_finish_slice()
+	SaveGame.data.quests["a1_the_torn_roof"] = {"state": "done", "step": 2}
+	SaveGame.set_flag("first_night_won")
+	for restored: bool in [false, true]:
+		if restored:
+			SaveGame.data.village.restored["bell_tower"] = 1
+		else:
+			SaveGame.data.village.restored.erase("bell_tower")
+		assert_str(Quests.due_card().get("id", "")).is_equal("closing")
+		assert_str(Quests.lead().get("title", "")).is_equal("The valley holds")
+		assert_str(Quests.due_card().get("text", "")).contains("lantern has cleared the well")

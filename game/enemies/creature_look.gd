@@ -1,6 +1,6 @@
 class_name CreatureLook
 extends Node2D
-## The drawn woodland creature for one SliceEnemy (castwork: boarlet, toad, tortoise, thornback):
+## The drawn creature for one SliceEnemy (woodland fallback: boarlet, toad, tortoise, thornback):
 ## a child of the enemy that only reads it (role, state, elapsed, facing, hp, velocity, shot) and
 ## never changes its behaviour. It hides Codex's placeholder drawing (the enemy's own _draw, via
 ## self_modulate, which does not reach children), plays the matching clip, draws a soft contact
@@ -32,6 +32,9 @@ const GLINT_TIME := 0.12
 const RUN := {"rusher": 26.0, "elite": 34.0, "shield": 14.0}
 const SEED := preload("res://assets/enemies/seed.png")
 
+## Region's role -> character overrides. Empty or unavailable entries keep the woodland look.
+@export var look_set: Dictionary = {}
+
 var enemy: SliceEnemy
 var sprite: CastSprite
 var character := ""
@@ -47,7 +50,7 @@ func _ready() -> void:
 	if enemy == null:
 		queue_free()
 		return
-	character = String(LOOKS.get(enemy.role, "boarlet"))
+	character = character_for_role(enemy.role)
 	sprite = CastSprite.new()
 	sprite.name = "Sprite"
 	add_child(sprite)
@@ -64,6 +67,19 @@ func _ready() -> void:
 	enemy.died.connect(_on_died)
 	enemy.released.connect(_on_released)
 	_play()
+
+func character_for_role(role: String) -> String:
+	var fallback := String(LOOKS.get(role, "boarlet"))
+	var candidate: Variant = look_set.get(role, "")
+	if typeof(candidate) != TYPE_STRING:
+		return fallback
+	var id := String(candidate)
+	if id.strip_edges().is_empty():
+		return fallback
+	var path := "res://assets/characters/%s/" % id
+	if not FileAccess.file_exists(path + "manifest.json") or not ResourceLoader.exists(path + "frames.tres"):
+		return fallback
+	return id
 
 func _process(delta: float) -> void:
 	if sprite == null or enemy.dead:
