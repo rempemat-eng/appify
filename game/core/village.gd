@@ -47,13 +47,64 @@ func can_restore(id: String) -> bool:
 	return Quests.check(sites[id].get("if")) and int(SaveGame.data.glint) >= cost(id)
 
 func restore(id: String) -> bool:
+	return bool(restore_result(id).get("applied", false))
+
+## Only the existing forge uses the durable ledger in this step. Other restores
+## retain their existing payment/notification path and do not acquire receipts.
+func restore_result(id: String) -> Dictionary:
+	if id == "forge":
+		return _restore_forge(id)
 	if not can_restore(id):
-		return false
+		return {"ok": false, "applied": false, "code": "not_available"}
 	SaveGame.add_glint(-cost(id))
 	SaveGame.data.village.restored[id] = 1
 	changed.emit(id)
 	Quests.notify("restore:" + id)
-	return true
+	return {"ok": true, "applied": true, "code": "applied"}
+
+func _restore_forge(id: String) -> Dictionary:
+	# Stored applied payloads always say eligible=true. Do not reinterpret a
+	# repeat using a quest condition that may have changed since the first call.
+	var event := {"id": "restore:%s:t1" % id, "kind": "spend", "amount": cost(id),
+		"source": "restore:" + id, "category": "restoration", "item": id, "eligible": true}
+	var expected: Dictionary = event.duplicate(true)
+	expected.tier = 1
+	var ledger: Variant = SaveGame.data.get("ledger", {})
+	if not ledger is Dictionary or not ledger.get("receipts", []) is Array:
+		return {"ok": false, "applied": false, "code": "invalid_ledger"}
+	for receipt: Variant in ledger.get("receipts", []):
+		if receipt is Dictionary and receipt.get("id") == event.id:
+			if receipt != expected:
+				return {"ok": false, "applied": false, "code": "id_conflict"}
+			return {"ok": true, "applied": false, "code": "duplicate", "receipt": receipt.duplicate(true)}
+	if is_restored(id):
+		return {"ok": true, "applied": false, "code": "already_restored"}
+	if not sites.has(id) or not Quests.check(sites[id].get("if")):
+		return {"ok": false, "applied": false, "code": "not_eligible"}
+	if int(SaveGame.data.glint) < cost(id):
+		return {"ok": false, "applied": false, "code": "insufficient_funds"}
+	# This state is transaction-local validation only. SaveGame's signed purse
+	# remains authoritative; a negative purse never reaches fresh().
+	var initial := GlintEconomy.fresh(SaveGame.data.glint)
+	if not initial.ok:
+		return initial
+	var applied := GlintEconomy.apply(initial.state, event)
+	if not applied.ok:
+		return applied
+	var stored: Dictionary = applied.receipt.duplicate(true)
+	stored.tier = 1
+	var change := func() -> void:
+		SaveGame.data.glint = applied.state.balance
+		SaveGame.data.village.restored[id] = 1
+		SaveGame.data.ledger.receipts.append(stored.duplicate(true))
+		Quests.notify("restore:" + id)
+	var err: Error = SaveGame.commit_transaction(change)
+	if err != OK:
+		return {"ok": false, "applied": false, "code": "save_failed"}
+	# Existing success observers can capture live state (game.gd copies HP) and
+	# perform their normal autosave; that is outside the atomic restore boundary.
+	changed.emit(id)
+	return {"ok": true, "applied": true, "code": "applied", "receipt": stored.duplicate(true)}
 
 ## The plan's current stage id: the last entry of `stages` whose condition holds ("" without stages).
 func stage(plan_id: String) -> String:
