@@ -31,7 +31,7 @@ extends GdUnitTestSuite
 
 const WalkGrid := preload("res://tools/walk_grid.gd")
 const ZONES := ["woodland", "crossroads", "undercroft"]
-## What this build's story is made of: with all of these done the closing card shows.
+## The quests of this build. Its closing card also needs the actual lantern/night conditions.
 const PLAYABLE := ["woodland_stones", "road_to_crossroads", "cold_forge", "under_the_stones", "home_again",
 	"a1_the_torn_roof"]
 const SLICE_FILES := ["woodland", "crossroads", "undercroft"]
@@ -246,6 +246,12 @@ func _route(key: String, parent: Dictionary) -> String:
 	steps.reverse()
 	return " > ".join(steps) if steps.size() > 0 else "(the start)"
 
+func _closing_ready() -> bool:
+	for card: Dictionary in Quests.cards:
+		if card.get("id", "") == "closing":
+			return Quests.check(card.get("if"))
+	return false
+
 func test_the_story_holds_in_every_order() -> void:
 	_scan()
 	# a fresh game: in the woodland at `start`, as game.gd begins it
@@ -334,17 +340,38 @@ func test_the_story_holds_in_every_order() -> void:
 		return seen
 
 	# 1. the end of this build can be reached from everywhere
-	var to_end: Dictionary = can_reach.call(func() -> bool: return PLAYABLE.all(func(q: String) -> bool: return Quests.state(q) == "done"))
+	var to_end: Dictionary = can_reach.call(func() -> bool: return _closing_ready() and PLAYABLE.all(func(q: String) -> bool: return Quests.state(q) == "done"))
 	if to_end.is_empty():
-		problems.append("no order of play finishes this build's quests (%s)" % ", ".join(PLAYABLE))
+		problems.append("no order of play finishes this build's quests and closing card (%s)" % ", ".join(PLAYABLE))
 	else:
 		for key: String in order:
 			if not to_end.has(key):
 				problems.append("stranded: after [%s] the build's quests can no longer all be finished" % _route(key, parent))
 				break
-	# 1b. said outright for the restores: from every state, also after the worst defeats, each restore of
-	# this build can still be paid
+	# The optional tower must not become the price of reaching the closing card. A state where it
+	# was already bought need not undo it; every other state must still have an ending without it.
+	var without_bell: Dictionary = can_reach.call(func() -> bool: return _closing_ready() and not Village.is_restored("bell_tower"))
+	var with_bell: Dictionary = can_reach.call(func() -> bool: return _closing_ready() and Village.is_restored("bell_tower"))
+	if without_bell.is_empty() or with_bell.is_empty():
+		problems.append("the story needs reachable closing states both with and without the optional bell tower")
+	for key: String in order:
+		SaveGame.data = states[key]
+		if not Village.is_restored("bell_tower") and not without_bell.has(key):
+			problems.append("the optional bell became mandatory after [%s]" % _route(key, parent))
+			break
+	# 1b. retain the all-states affordance guard for every existing restore. The new training yard
+	# waits on the Frostline's warden quest; exclude only that site if no state of this three-zone
+	# build offers it. Once that quest can start in the model, the same all-states guard applies.
 	for id: String in Village.sites:
+		if id == "training_yard":
+			var ever_offered := false
+			for key: String in order:
+				SaveGame.data = states[key]
+				if Quests.check(Village.sites[id].get("if")):
+					ever_offered = true
+					break
+			if not ever_offered:
+				continue
 		var can_pay: Dictionary = can_reach.call(func() -> bool: return Village.is_restored(id))
 		for key: String in order:
 			if not can_pay.has(key):
