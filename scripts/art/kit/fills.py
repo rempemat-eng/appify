@@ -525,107 +525,88 @@ def moraine(seed: int = 1403, P: int = PERIOD) -> np.ndarray:
 
 
 def ice(seed: int = 1404, P: int = PERIOD) -> np.ndarray:
-    """A frozen tarn (Matt, 23 Nov: the tarn is frozen, its outlet open). Lake ice read as a surface
-    with depth, not as flat blobs:
+    """A frozen tarn (Matt, 23 Nov: the tarn frozen, its outlet open), after the round 1 detail
+    audit of #535: lake ice as a calm plane.
 
-    - clear ice (sky_cool 4) over black ice where it is deep and clear (water_cool 4, a water_cool 3
-      core stepping in from it), and milky snow-ice where slush froze (sky_cool 5, a soft rim);
-    - snow dusting laid by the wind in long thin drifts (snow_cool 4 body, a snow 4 crest, a
-      snow_cool 3 lee row on its south side), their ends feathering out in two-texel flecks, and
-      loose dust in two-texel flecks on the clear ice;
-    - bubbles frozen in the black ice in short rising columns of two-texel beads (sky_cool 5);
-    - a crack network: long primary cracks in slow bends (a water_cool 2 line, its north side lit
-      sky_cool 5, white fracture plane feathers under it in places), secondary cracks branching
-      off them, and a few star cracks; where a crack crosses snow it shows only as a cool line.
+    - One body tone (sky_cool 4) with broad swells laid by the wind in long clustered steps: darker
+      clear ice where the snow has blown off (water_cool 4, its deepest runs sky_cool 3), greyer
+      snow-ice where slush froze (sky_cool 5). The swells are long and thin, never ovals.
+    - Snow dusting in long thin drifts with the snow's own crisp edge: a lit lip on the north, a
+      shaded two-texel underside on the south, no single-texel fray.
+    - Glints in pairs: a streak of two or three texels and a shorter one beside it.
+    - Cracks as long wandering lines (a water_cool 2 line, a lit texel on its north side), their
+      branches leaving at a T, at a Y or stopping short, every junction different; where a crack
+      crosses snow it shows only as a cool line.
     Periodic: every mark is laid by world position modulo P, so the fill tiles exactly."""
     rng = np.random.default_rng(seed)
     yy, xx = np.mgrid[0:P, 0:P]
-    d = aniso(P, 70.0, 64.0, seed + 1)                       # clarity: low = black ice, high = snow-ice
-    w = aniso(P, 130.0, 18.0, seed) + 0.3 * aniso(P, 36.0, 9.0, seed + 2)   # the wind's drifts
-    hh = TN._fmix(((yy % P) * 92821 + (xx % P) * 68917 + seed * 7 + 11) & 0xffffffff) / 4294967295.0
-    pair = TN._fmix((((yy % P)) * 92821 + ((xx // 2) % (P // 2)) * 68917 + seed * 13) & 0xffffffff) / 4294967295.0
+    v = aniso(P, 150.0, 26.0, seed + 1) + 0.35 * aniso(P, 60.0, 14.0, seed + 3)     # the clear ice's swells
+    w = aniso(P, 130.0, 16.0, seed) + 0.25 * aniso(P, 40.0, 8.0, seed + 2)          # the wind's drifts
     cv = np.full((P, P), C('sky_cool', 4), np.int32)
-    d2 = d + 0.45 * aniso(P, 22.0, 16.0, seed + 3)            # the core's edge wanders
-    black = _no_specks(d < -0.35, 120)
-    core = _no_specks(d2 < -1.05, 50) & black
-    milky = _no_specks(d > 0.95, 80)
-    cv[black] = C('water_cool', 4)
-    cv[core] = C('water_cool', 3)
+    clear = _no_specks(v < -0.5, 160)
+    deepest = _no_specks(v < -1.25, 90) & clear
+    milky = _no_specks(v > 0.85, 140)
+    cv[clear] = C('water_cool', 4)
+    cv[deepest] = C('sky_cool', 3)
     cv[milky] = C('sky_cool', 5)
-    # the milky ice's soft rim: a broken ring of the clear tone a texel inside it, in pairs
-    rim = milky & ~ndi.binary_erosion(np.pad(milky, 4, mode='wrap'), iterations=2)[4:-4, 4:-4]
-    cv[rim & (pair > 0.45)] = C('sky_cool', 4)
-    # snow dusting: thin wind drifts, crest and lee
-    drift = _no_specks(w > 0.7, 70)
-    crest = _no_specks(w > 1.7, 40) & drift
-    # the drift's ends feather: near its edge, keep only pairs of texels
-    edge = drift & ~ndi.binary_erosion(np.pad(drift, 4, mode='wrap'), iterations=3)[4:-4, 4:-4]
-    drift = drift & ~(edge & (pair < 0.45))
+    drift = _no_specks(w > 0.75, 120)
+    drift = ndi.binary_closing(np.pad(drift, 4, mode='wrap'), iterations=2)[4:-4, 4:-4]
     cv[drift] = C('snow_cool', 4)
-    cv[crest] = C('snow', 5)
-    lee = drift & ~np.roll(drift, -1, 0)
-    cv[lee] = C('snow_cool', 3)
-    # loose dust on the clear ice near the drifts: two-texel flecks
-    seedm = ~drift & (w > 0.35) & (hh > 0.9975)
-    dust = seedm | np.roll(seedm, 1, 1) | (np.roll(seedm, 1, 0) & (pair > 0.5)) | (np.roll(np.roll(seedm, 1, 0), 2, 1) & (pair > 0.6))
-    cv[dust & ~black] = C('snow_cool', 4)
-    cv[dust & black] = C('sky_cool', 4)
-    # bubbles in the black ice: short columns of beads rising (2 by 1, a texel apart)
-    for _ in range(P * P // 500):
+    crest = _no_specks(w > 1.6, 60) & drift
+    cv[crest] = C('snow', 4)
+    north = drift & ~np.roll(drift, 1, 0)
+    cv[north] = C('snow', 5)
+    s1 = drift & ~np.roll(drift, -1, 0)
+    s2 = drift & np.roll(s1, -1, 0) & ~s1
+    cv[s1] = C('snow_cool', 3)
+    cv[s2 & ~north] = C('snow_cool', 3)
+    # glints in pairs on the clear and body ice
+    for _ in range(P * P // 5000):
         y, x = int(rng.integers(0, P)), int(rng.integers(0, P))
-        if not black[y, x] or drift[y, x]:
+        if drift[y, x]:
             continue
-        n = int(rng.integers(2, 5))
-        for j in range(n):
-            Y, X = (y - j * 3) % P, (x + (j % 2)) % P
-            if black[Y, X] and not drift[Y, X]:
-                cv[Y, X] = C('sky_cool', 5)
-                cv[Y, (X + 1) % P] = C('sky_cool', 5) if j < n - 1 else C('sky_cool', 4)
-    # hoar crystals on the clear ice: small white tufts (a lit texel over a pair), loosely grouped
-    grp = aniso(P, 40.0, 40.0, seed + 4) > 0.2
-    for _ in range(P * P // 1400):
-        y, x = int(rng.integers(0, P)), int(rng.integers(0, P))
-        if not grp[y, x] or drift[y, x] or black[y, x]:
-            continue
-        cv[y, x] = C('snow', 5)
-        cv[(y + 1) % P, x] = C('snow_cool', 4)
-        cv[(y + 1) % P, (x + 1) % P] = C('snow_cool', 4)
-        if rng.random() < 0.5:
-            cv[(y + 1) % P, (x - 1) % P] = C('sky_cool', 5)
+        L = int(rng.integers(2, 4))
+        for j in range(L):
+            cv[y, (x + j) % P] = C('sky_cool', 5)
+        for j in range(L - 1):
+            cv[(y + 2) % P, (x + 2 + j) % P] = C('sky_cool', 5)
     # the crack network
     crack = np.zeros((P, P), bool)
-    feather = np.zeros((P, P), bool)
+    lit = np.zeros((P, P), bool)
 
-    def walk(y, x, a, L, bend, feathers):
+    def walk(y, x, a, L, bend, primary):
         pts = []
         for _j in range(L):
             a += rng.normal(0, bend)
             y += math.sin(a)
             x += math.cos(a)
-            pts.append((int(round(y)) % P, int(round(x)) % P))
-        for k, (Y, X) in enumerate(pts):
+            Y, X = int(round(y)) % P, int(round(x)) % P
+            pts.append((Y, X, a))
             crack[Y, X] = True
-            if feathers and k % 9 < 3 and (k // 9) % 2 == 0:
-                for dy in (1, 2):
-                    feather[(Y + dy) % P, X] = True
+            if primary:
+                lit[(Y - 1) % P, X] = True
         return pts
 
-    for _ in range(P * P // 15000):                          # primaries, long and slow
-        pts = walk(float(rng.integers(0, P)), float(rng.integers(0, P)), rng.uniform(-0.6, 0.6) + (np.pi if rng.random() < 0.5 else 0),
-                   int(rng.integers(70, 150)), 0.09, rng.random() < 0.6)
-        for _b in range(int(rng.integers(1, 4))):            # secondaries branching off
-            Y, X = pts[int(rng.integers(5, len(pts) - 5))]
-            walk(float(Y), float(X), rng.uniform(0, 2 * np.pi), int(rng.integers(12, 36)), 0.22, False)
-    for _ in range(P * P // 60000):                         # star cracks
-        y, x = float(rng.integers(0, P)), float(rng.integers(0, P))
-        n = int(rng.integers(5, 8))
-        for k in range(n):
-            walk(y, x, 2 * np.pi * k / n + rng.uniform(-0.3, 0.3), int(rng.integers(6, 15)), 0.12, False)
-    snowy = np.isin(cv, [C('snow_cool', 4), C('snow', 4), C('snow_cool', 3)])
-    lit = np.roll(crack, -1, 0) & ~crack
-    fe = feather & ~crack & ~snowy
-    cv[fe] = np.where(black[fe], C('sky_cool', 4), C('sky_cool', 5))
-    cv[lit & ~snowy] = C('sky_cool', 5)
+    for _ in range(P * P // 22000):
+        a0 = rng.uniform(-0.7, 0.7) + (np.pi if rng.random() < 0.5 else 0)
+        pts = walk(float(rng.integers(0, P)), float(rng.integers(0, P)), a0, int(rng.integers(90, 200)), 0.07, True)
+        nb = int(rng.integers(0, 4))
+        used = set()
+        for _b in range(nb):
+            k = int(rng.integers(10, len(pts) - 10))
+            if any(abs(k - u) < 14 for u in used):
+                continue
+            used.add(k)
+            Y, X, a = pts[k]
+            kind = rng.random()
+            if kind < 0.4:
+                da = (np.pi / 2) * (1 if rng.random() < 0.5 else -1) + rng.normal(0, 0.15)   # a T
+            else:
+                da = rng.uniform(0.45, 0.8) * (1 if rng.random() < 0.5 else -1)               # a Y
+            walk(float(Y), float(X), a + da, int(rng.integers(8, 40)), 0.18, False)
+    snowy = np.isin(cv, [C('snow_cool', 4), C('snow', 4), C('snow', 5), C('snow_cool', 3)])
+    lit &= ~crack & ~snowy
+    cv[lit] = C('sky_cool', 5)
     cv[crack & ~snowy] = C('water_cool', 2)
     cv[crack & snowy] = C('snow_cool', 3)
     return cv

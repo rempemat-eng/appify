@@ -10,4 +10,4 @@ piece_id = "frost_pressure_ridge"
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = ExtResource("2")
 centered = false
-offset = Vector2(-39, -23)
+offset = Vector2(-40, -27)

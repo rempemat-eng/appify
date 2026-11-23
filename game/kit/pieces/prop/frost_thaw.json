@@ -9,30 +9,12 @@
  "version": 1,
  "variants": [
   {
-   "id": "west",
+   "id": "band",
    "weight": 1.0,
-   "png": "res://kit/props/art/frost/frost_thaw_west.png",
+   "png": "res://kit/props/art/frost/frost_thaw_band.png",
    "foot": [
-    48,
-    71
-   ]
-  },
-  {
-   "id": "east",
-   "weight": 0.6,
-   "png": "res://kit/props/art/frost/frost_thaw_east.png",
-   "foot": [
-    24,
-    71
-   ]
-  },
-  {
-   "id": "trod",
-   "weight": 0.6,
-   "png": "res://kit/props/art/frost/frost_thaw_trod.png",
-   "foot": [
-    24,
-    71
+    564,
+    0
    ]
   }
  ],
@@ -41,32 +23,32 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The short thaw band at the woodland's north seam (Matt, 23 Nov): the snow wet and greying southward and breaking into patches of bare cold earth and flattened grass, slush rims, meltwater rivulets running into the stream; on the Col Path, slush and puddles."
+  "note": "The short thaw band at the woodland's north seam (Matt, 23 Nov) across the zone's last three rows: wet greying snow, lobed patches of bare earth and flattened grass growing toward the seam, slush rims, rivulets running to the water, slush and puddles on the Col Path, the snow pulled back round the trees' feet."
  },
  "geometry": {
   "size_px": [
-   96,
-   72
+   1128,
+   84
   ],
   "size_cells": [
-   4,
+   47,
    3
   ],
   "z_sort": "ground",
-  "height_px": 72,
+  "height_px": 84,
   "collision": {
    "shape": "none"
   },
   "foot": [
-   48,
-   71
+   564,
+   0
   ],
   "footprint": []
  },
  "placement": {
   "snap": "cell",
   "purpose": "mark",
-  "role": "water",
+  "role": "ground",
   "composition": "edge"
  },
  "rendering": {
@@ -88,7 +70,7 @@
   "eastward_ref": "-",
   "painter": {
    "module": "scripts.art.kit.sets.frost",
-   "fn": "thaw",
+   "fn": "thaw_band",
    "args": {}
   },
   "seeded_from": "scripts/art/kit/sets/frost.py",

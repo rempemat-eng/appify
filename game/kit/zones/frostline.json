@@ -53,7 +53,7 @@
   "c": "moraine",
   "i": "ice"
  },
- "note": "LAB ZONE until Matt approves its pieces. The Frostline's first screens (docs/vision/regions/home-valley-frostline-brackens.md; game/data/plans/frostline.json): the Col Path in at the south, the Col hut and its yard on the lower shelf, the tarn's outlet, open and thawing, under a footbridge, the cirque's granite step climbed by a stair, the frozen tarn (its one open lead where the outlet leaves) with the ice-cut and the ice-cutter's sledge on the upper bench, and the High Fells' moraine where the shardstruck ibex are, under the headwall's crags. Built from the Frostline set's candidate pieces (scripts/art/kit/sets/frost.py). Not in data/zones.json: nothing leads to it yet.",
+ "note": "LAB ZONE until Matt approves its pieces. The Frostline's first screens (docs/vision/regions/home-valley-frostline-brackens.md; game/data/plans/frostline.json): the Col Path in at the south, the Col hut and its yard on the lower shelf, the tarn's outlet, open and thawing, under a footbridge, the cirque's granite step climbed by a stair, the frozen tarn (its one open lead where the outlet leaves, the outlet's water painted over its cells by frost_outlet) with the ice-cut and the ice-cutter's sledge on the upper bench, and the High Fells' moraine where the shardstruck ibex are, under the headwall's crags. Built from the Frostline set's candidate pieces (scripts/art/kit/sets/frost.py). Not in data/zones.json: nothing leads to it yet.",
  "pieces": [
   {
    "at": [
@@ -708,16 +708,6 @@
   {
    "at": [
     228,
-    311
-   ],
-   "facing": "s",
-   "id": "lead_outlet",
-   "piece": "frost_lead",
-   "variant": "outlet"
-  },
-  {
-   "at": [
-    228,
     570
    ],
    "facing": "s",
@@ -757,83 +747,33 @@
   },
   {
    "at": [
-    200,
-    383
+    357,
+    230
    ],
    "facing": "s",
-   "id": "shore_ice",
-   "piece": "frost_shore_ice",
-   "variant": "west"
+   "id": "outlet",
+   "piece": "frost_outlet",
+   "variant": "still"
   },
   {
    "at": [
-    256,
-    359
+    302,
+    0
    ],
    "facing": "s",
-   "id": "shore_ice_2",
-   "piece": "frost_shore_ice",
-   "variant": "east"
+   "id": "inflow",
+   "piece": "frost_inflow",
+   "variant": "still"
   },
   {
    "at": [
-    296,
-    647
+    564,
+    1020
    ],
    "facing": "s",
-   "id": "shore_ice_3",
-   "piece": "frost_shore_ice",
-   "variant": "west"
-  },
-  {
-   "at": [
-    348,
-    668
-   ],
-   "facing": "s",
-   "id": "floe",
-   "piece": "frost_shore_ice",
-   "variant": "floe"
-  },
-  {
-   "at": [
-    448,
-    839
-   ],
-   "facing": "s",
-   "id": "shore_ice_4",
-   "piece": "frost_shore_ice",
-   "variant": "east"
-  },
-  {
-   "at": [
-    384,
-    1103
-   ],
-   "facing": "s",
-   "id": "thaw_west",
+   "id": "thaw",
    "piece": "frost_thaw",
-   "variant": "west"
-  },
-  {
-   "at": [
-    552,
-    1103
-   ],
-   "facing": "s",
-   "id": "thaw_east",
-   "piece": "frost_thaw",
-   "variant": "east"
-  },
-  {
-   "at": [
-    600,
-    1103
-   ],
-   "facing": "s",
-   "id": "thaw_trod",
-   "piece": "frost_thaw",
-   "variant": "trod"
+   "variant": "band"
   }
  ],
  "rows": [

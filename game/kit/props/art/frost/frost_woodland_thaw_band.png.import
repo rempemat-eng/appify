@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxceb3ljiussk"
-path="res://.godot/imported/frost_shore_ice_floe.png-fe6755a810e9c68728675bc130581c4e.ctex"
+uid="uid://cuwf0271t6kh5"
+path="res://.godot/imported/frost_woodland_thaw_band.png-f1f625b5137c9f280b17a6b7dfe53ac2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/props/art/frost/frost_shore_ice_floe.png"
-dest_files=["res://.godot/imported/frost_shore_ice_floe.png-fe6755a810e9c68728675bc130581c4e.ctex"]
+source_file="res://kit/props/art/frost/frost_woodland_thaw_band.png"
+dest_files=["res://.godot/imported/frost_woodland_thaw_band.png-f1f625b5137c9f280b17a6b7dfe53ac2.ctex"]
 
 [params]
 

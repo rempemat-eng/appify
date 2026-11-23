@@ -13,8 +13,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/frost/frost_pressure_ridge_long.png",
    "foot": [
-    39,
-    23
+    40,
+    27
    ]
   },
   {
@@ -22,8 +22,8 @@
    "weight": 0.6,
    "png": "res://kit/props/art/frost/frost_pressure_ridge_short.png",
    "foot": [
-    27,
-    23
+    28,
+    27
    ]
   },
   {
@@ -31,8 +31,8 @@
    "weight": 0.6,
    "png": "res://kit/props/art/frost/frost_pressure_ridge_side.png",
    "foot": [
-    11,
-    83
+    15,
+    85
    ]
   }
  ],
@@ -41,25 +41,25 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "Where the tarn's ice pushed against its shore: tilted broken slabs heaped in a line, lit tops with snow, blue fronts, shaded east sides, snow in the lee and its shade on the ice. Drawn on the ice, not walkable."
+  "note": "Where the tarn's ice pushed against its shore: plates of every size tilted every way along a bending line, piled at its kink, lit tops, broken blue fronts, snow banked on the west, a short shade east on the ice."
  },
  "geometry": {
   "size_px": [
-   78,
-   84
+   80,
+   86
   ],
   "size_cells": [
    3,
    1
   ],
   "z_sort": "ground",
-  "height_px": 84,
+  "height_px": 86,
   "collision": {
    "shape": "none"
   },
   "foot": [
-   39,
-   23
+   40,
+   27
   ],
   "footprint": []
  },
@@ -84,7 +84,7 @@
   "blocks_shots": false
  },
  "audit": {
-  "size_class": "unsized (heaved slabs of lake ice along the tarn's shore: ground dressing on the ice)",
+  "size_class": "unsized (heaved plates of lake ice along the tarn's shore: ground dressing on the ice)",
   "eastward_ref": "-",
   "painter": {
    "module": "scripts.art.kit.sets.frost",

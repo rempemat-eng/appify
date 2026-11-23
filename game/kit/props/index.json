@@ -16257,6 +16257,43 @@
   },
   "z_sort": "foot"
  },
+ "frost_inflow": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   41,
+   0
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Frozen rill",
+  "painted": false,
+  "requires": [],
+  "role": "water",
+  "shadow": null,
+  "size_cells": [
+   3,
+   5
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     41,
+     0
+    ],
+    "png": "res://kit/props/art/frost/frost_inflow.png"
+   }
+  },
+  "z_sort": "ground"
+ },
  "frost_krummholz": {
   "approval": "candidate",
   "blocks_move": true,
@@ -16342,43 +16379,6 @@
    }
   },
   "z_sort": "foot"
- },
- "frost_lead": {
-  "approval": "candidate",
-  "blocks_move": false,
-  "collision": null,
-  "deck": null,
-  "foot": [
-   12,
-   71
-  ],
-  "footprint": [],
-  "forbids": [],
-  "function": {},
-  "kind": "prop",
-  "name": "Open lead in the ice",
-  "painted": false,
-  "requires": [],
-  "role": "water",
-  "shadow": null,
-  "size_cells": [
-   1,
-   3
-  ],
-  "snap": "cell",
-  "story": {
-   "owner": null
-  },
-  "variants": {
-   "outlet": {
-    "foot": [
-     12,
-     71
-    ],
-    "png": "res://kit/props/art/frost/frost_lead_outlet.png"
-   }
-  },
-  "z_sort": "ground"
  },
  "frost_lost_hat": {
   "approval": "candidate",
@@ -16517,6 +16517,43 @@
    }
   },
   "z_sort": "foot"
+ },
+ "frost_outlet": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   189,
+   0
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Open outlet",
+  "painted": false,
+  "requires": [],
+  "role": "water",
+  "shadow": null,
+  "size_cells": [
+   16,
+   36
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "still": {
+    "foot": [
+     189,
+     0
+    ],
+    "png": "res://kit/props/art/frost/frost_outlet.png"
+   }
+  },
+  "z_sort": "ground"
  },
  "frost_pine": {
   "approval": "candidate",
@@ -16709,8 +16746,8 @@
   "collision": null,
   "deck": null,
   "foot": [
-   39,
-   23
+   40,
+   27
   ],
   "footprint": [],
   "forbids": [],
@@ -16732,22 +16769,22 @@
   "variants": {
    "long": {
     "foot": [
-     39,
-     23
+     40,
+     27
     ],
     "png": "res://kit/props/art/frost/frost_pressure_ridge_long.png"
    },
    "short": {
     "foot": [
-     27,
-     23
+     28,
+     27
     ],
     "png": "res://kit/props/art/frost/frost_pressure_ridge_short.png"
    },
    "side": {
     "foot": [
-     11,
-     83
+     15,
+     85
     ],
     "png": "res://kit/props/art/frost/frost_pressure_ridge_side.png"
    }
@@ -17124,57 +17161,6 @@
    }
   },
   "z_sort": "foot"
- },
- "frost_shore_ice": {
-  "approval": "candidate",
-  "blocks_move": false,
-  "collision": null,
-  "deck": null,
-  "foot": [
-   8,
-   47
-  ],
-  "footprint": [],
-  "forbids": [],
-  "function": {},
-  "kind": "prop",
-  "name": "Thawing shelf ice",
-  "painted": false,
-  "requires": [],
-  "role": "water",
-  "shadow": null,
-  "size_cells": [
-   1,
-   2
-  ],
-  "snap": "cell",
-  "story": {
-   "owner": null
-  },
-  "variants": {
-   "east": {
-    "foot": [
-     8,
-     47
-    ],
-    "png": "res://kit/props/art/frost/frost_shore_ice_east.png"
-   },
-   "floe": {
-    "foot": [
-     13,
-     19
-    ],
-    "png": "res://kit/props/art/frost/frost_shore_ice_floe.png"
-   },
-   "west": {
-    "foot": [
-     8,
-     47
-    ],
-    "png": "res://kit/props/art/frost/frost_shore_ice_west.png"
-   }
-  },
-  "z_sort": "ground"
  },
  "frost_sledge": {
   "approval": "candidate",
@@ -17571,8 +17557,8 @@
   "collision": null,
   "deck": null,
   "foot": [
-   48,
-   71
+   564,
+   0
   ],
   "footprint": [],
   "forbids": [],
@@ -17581,10 +17567,10 @@
   "name": "Thaw at the woodland seam",
   "painted": false,
   "requires": [],
-  "role": "water",
+  "role": "ground",
   "shadow": null,
   "size_cells": [
-   4,
+   47,
    3
   ],
   "snap": "cell",
@@ -17592,26 +17578,49 @@
    "owner": null
   },
   "variants": {
-   "east": {
+   "band": {
     "foot": [
-     24,
-     71
+     564,
+     0
     ],
-    "png": "res://kit/props/art/frost/frost_thaw_east.png"
-   },
-   "trod": {
+    "png": "res://kit/props/art/frost/frost_thaw_band.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "frost_woodland_thaw": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   0,
+   0
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "prop",
+  "name": "Thaw at the Frostline door (woodland side)",
+  "painted": false,
+  "requires": [],
+  "role": "ground",
+  "shadow": null,
+  "size_cells": [
+   26,
+   9
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "band": {
     "foot": [
-     24,
-     71
+     0,
+     0
     ],
-    "png": "res://kit/props/art/frost/frost_thaw_trod.png"
-   },
-   "west": {
-    "foot": [
-     48,
-     71
-    ],
-    "png": "res://kit/props/art/frost/frost_thaw_west.png"
+    "png": "res://kit/props/art/frost/frost_woodland_thaw_band.png"
    }
   },
   "z_sort": "ground"

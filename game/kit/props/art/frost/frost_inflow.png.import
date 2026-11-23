@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8ngti7i1iv4c"
-path="res://.godot/imported/frost_shore_ice_west.png-95595ea31b260572701e864873827139.ctex"
+uid="uid://djkipjtph2r6x"
+path="res://.godot/imported/frost_inflow.png-e3cbd9ffeed0367b4a6880f194d80469.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/props/art/frost/frost_shore_ice_west.png"
-dest_files=["res://.godot/imported/frost_shore_ice_west.png-95595ea31b260572701e864873827139.ctex"]
+source_file="res://kit/props/art/frost/frost_inflow.png"
+dest_files=["res://.godot/imported/frost_inflow.png-e3cbd9ffeed0367b4a6880f194d80469.ctex"]
 
 [params]
 
