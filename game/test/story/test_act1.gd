@@ -226,7 +226,7 @@ func test_training_yard_uses_its_authored_price_after_the_warden_asks() -> void:
 	var plan: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/plans/crossroads.json"))
 	var marks: Array = plan.restore_sites.filter(func(site: Dictionary) -> bool: return site.restore == "training_yard")
 	assert_int(marks.size()).is_equal(1)
-	assert_array(marks[0].at).is_equal([184, 472])
+	assert_array(marks[0].at).is_equal([184.0, 472.0])
 
 func test_closing_card_names_the_lantern_but_does_not_require_the_optional_bell() -> void:
 	Zones.table.erase("frostline")
