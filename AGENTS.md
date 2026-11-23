@@ -6,7 +6,7 @@ The source of truth is `rempemat-eng/appify` on GitHub. The Bilt editor and its 
 
 ## Read the vision first
 
-Matt's latest decisions are in `docs/vision/decisions-2026-11-13.md` (a lost first night, the bell tower, the Frostline as a lab, the Mac; that page marks which of its lines are Matt's, with dates, and which are Claude A's reading still to be confirmed) and `docs/vision/decisions-2026-11-11.md`; they override older text where the two disagree, and the newer page overrides the older.
+Matt's latest decisions are in `docs/vision/decisions-2026-11-22.md` (the Frostline as act 1's next region, the woodland stair, the Glint ledger, a test build first, the shard crows on the upper lawn, the north door, the choked well; same split of Matt's dated words and Claude A's reading), then `docs/vision/decisions-2026-11-13.md` (a lost first night, the bell tower, the Frostline as a lab (superseded for act 1 on 22 Nov), the Mac; that page marks which of its lines are Matt's, with dates, and which are Claude A's reading still to be confirmed) and `docs/vision/decisions-2026-11-11.md`; they override older text where the two disagree, the newer page overrides the older, and the older pages stay valid wherever a newer one does not override them.
 
 `docs/vision/` holds Matt's direction and the shared design rules (art style, the full-screen interface, garden growth, roadmap). Read it before any design, art or interface work, follow it over older docs, and update it when the direction changes.
 

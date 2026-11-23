@@ -16,6 +16,7 @@ Matt gave these between 12 and 14 Nov, after playing the first night; each carri
 ## The world
 
 - **The Frostline is parked as a lab (Matt, 12 Nov).** It is not part of the slice. Its entrance stays at the woodland's north edge.
+  *Superseded for act 1 on 22 Nov:* Matt chose the Frostline as act 1's next region (`decisions-2026-11-22.md`). The line above is kept as history.
 
 ## How work runs
 
@@ -50,6 +51,6 @@ What each line above needs before it is true in the game, with what is built sin
   - Words: `restore_bell_tower` and `bell_tower` in `game/data/dialogue/a1_valley.json`, and Hale's offer in `raids.json`.
   - Art: the library's cupola in two states, empty and with the bell hung, drawn by the village module (`game/tools/gen_village.py`, `scripts/art/kit/`), through the asset gate.
   - Numbers: it is optional, so the story model (`game/test/story/test_story_model.gd`) must still finish with and without it. With every quest, restore and fight of the slice done the purse is 106 Glint (76 after the apothecary, and the night's 30), or 56 with the tower.
-- **The Frostline as a lab.** `game/data/zones.json` does not register it, and the closing lead and card in `game/data/leads.json` hold while `zone_built:frostline` is false. When it comes back its door goes at the woodland's north edge (`game/zones/woodland/`), which today has no door there.
+- **The Frostline as a lab** (superseded for act 1 on 22 Nov, see `decisions-2026-11-22.md`). `game/data/zones.json` does not register it, and the closing lead and card in `game/data/leads.json` hold while `zone_built:frostline` is false. When it comes back its door goes at the woodland's north edge (`game/zones/woodland/`), which today has no door there.
 - **A Mac build.** Main has no export presets yet, and the packaging draft #464 covers Windows and Linux only. A weekly build Matt can play needs a macOS one.
 - **Day and night.** Only the question is recorded. `game/core/world_clock.gd` and `game/data/sun.json` are where an answer would land.
