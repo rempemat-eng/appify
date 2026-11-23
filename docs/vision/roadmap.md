@@ -1,6 +1,6 @@
 # Roadmap
 
-> The order of work now lives in [development-plan.md](development-plan.md) (27 Oct). The lists below are kept for history.
+> Superseded: the order of work lives in [development-plan.md](development-plan.md) (10 Nov 2026). The lists below are kept for history.
 
 ## Now: make it feel like one finished game
 
