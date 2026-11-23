@@ -28,6 +28,8 @@ var args := {}
 var _shake := 0.0
 var _look := Vector2.ZERO
 var _cast_label: Label
+var test_tag: Label        ## the test build's corner tag (core/test_build.gd); null in every other build
+var test_tag_panel: PanelContainer
 var _told_about_the_save := false
 var framing := CameraFraming.new()   ## tall landmarks framed whole near them (world/camera_framing.gd)
 
@@ -96,6 +98,7 @@ func _ready() -> void:
 	if args.has("cycle"):
 		_cycle.call_deferred()
 	_setup_cast_label()
+	_setup_test_tag()
 	if args.has("play") and OS.is_debug_build():
 		# the play driver is a development tool: an exported release build ignores --play
 		_start_play_driver()
@@ -154,6 +157,35 @@ func _setup_cast_label() -> void:
 	$UI.add_child(_cast_label)
 	_cast_label.text = "1-0, Shift+1-4: character"
 
+## The test build (core/test_build.gd) says so in the picture's lower right corner, in the HUD's own panel and
+## letters, and wherever art that is not approved shows says that too: "test build: unfinished art" (in the
+## Frostline, and in the woodland once its north door and stand-in crows are up). No other build makes it.
+func _setup_test_tag() -> void:
+	if not TestBuild.on():
+		return
+	test_tag_panel = PanelContainer.new()
+	test_tag_panel.name = "TestBuildTagPanel"
+	test_tag_panel.add_theme_stylebox_override("panel", UiStyle.panel(2))
+	test_tag_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	test_tag = UiStyle.label("", UiStyle.TEXT)
+	test_tag.name = "TestBuildTag"
+	test_tag.add_to_group("test_build_tag")
+	test_tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	test_tag_panel.add_child(test_tag)
+	$UI.add_child(test_tag_panel)
+	# a quest that moves can show or hide a test-build piece where the player stands (the crows, the door)
+	Quests.started.connect(func(_id: String) -> void: _update_test_tag())
+	Quests.advanced.connect(func(_id: String, _s: int) -> void: _update_test_tag())
+	Quests.completed.connect(func(_id: String) -> void: _update_test_tag())
+	_update_test_tag()
+
+func _update_test_tag() -> void:
+	if test_tag == null or Zones.current == null or not is_instance_valid(Zones.current):
+		return
+	test_tag.text = TestBuild.tag(Zones.current)
+	test_tag_panel.reset_size()
+	test_tag_panel.position = UiStyle.GRID - test_tag_panel.get_combined_minimum_size() - Vector2(6, 6)
+
 static func parse_args(list: PackedStringArray) -> Dictionary:
 	var out := {}
 	for a in list:
@@ -197,6 +229,7 @@ func _on_zone(zone: Zone) -> void:
 	snap_camera()
 	_set_out_caches(zone)
 	_watch_camps(zone)
+	_update_test_tag()
 	_show_due_card()
 	autosave()
 
