@@ -177,6 +177,8 @@ def _piece(pid, name, variants, size, cells, purpose, role, **kw):
     zsort = kw.pop('z_sort', None)
     pc = B._piece(pid, name, variants, size, cells, purpose, role, shadow=None, **kw)
     pc['biomes'] = list(BIOMES)
+    if pid == 'frost_woodland_thaw':                 # the thaw's woodland half lies in the woodland (round 3, P2)
+        pc['biomes'] = list(BIOMES) + ['woodland']
     pc['approval']['standard'] = STANDARD
     for v in pc['variants']:
         v['png'] = v['png'].replace(B.RES, RES)

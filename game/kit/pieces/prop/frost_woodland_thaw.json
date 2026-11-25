@@ -4,7 +4,8 @@
  "name": "Thaw at the Frostline door (woodland side)",
  "kind": "prop",
  "biomes": [
-  "frostline"
+  "frostline",
+  "woodland"
  ],
  "version": 1,
  "variants": [

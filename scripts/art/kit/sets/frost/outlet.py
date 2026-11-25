@@ -812,7 +812,7 @@ def inflow_at():
 
 
 
-THAW_ROWS = 5                     # the band's reach north of the seam (its top edge wanders a cell or two in it)
+THAW_ROWS = 6                     # the band's reach north of the seam (its top edge wanders a cell or two in it)
 
 
 
@@ -923,12 +923,18 @@ def thaw_band(seed=441):
     gw = np.kron(g[-(H // CELL):], np.ones((CELL, CELL), object))[-H:]
     land = ~wm & ~ndi.binary_dilation(wm, iterations=2)
     # the band's top edge wanders a cell or two; t runs 0 there to 1 at the seam
-    top = 0.25 * H + 22.0 * _noise((1, W), 40.0, seed + 1)[0] + 8.0 * _noise((1, W), 12.0, seed + 2)[0]
+    # round 3 (B1): the band fades out inside its own picture: a lobed, wandering edge 12 to 30 texels
+    # down, nothing above it, so no row of the box shows as a line on the snow
+    edge = np.clip(21.0 + 5.0 * _noise((1, W), 7.0, seed + 11)[0] + 3.0 * _noise((1, W), 2.5, seed + 12)[0], 12, 30)
+    top = np.maximum(0.3 * H + 22.0 * _noise((1, W), 40.0, seed + 1)[0] + 8.0 * _noise((1, W), 12.0, seed + 2)[0], edge + 4)
     t = np.clip((Y - top[None, :]) / (H - 4 - top[None, :]), -1.0, 1.0)
     # the door's lane: the Col Path's middle 36 texels, straight to the door cells
     trod_cols = np.nonzero((gw[-1] == 'b'))[0]
     lc = (trod_cols.min() + trod_cols.max() + 1) / 2.0 if len(trod_cols) else W / 2.0
-    lane = (np.abs(X - lc) <= 18 + np.round(1.3 * _noise((H, W), 3.0, seed + 3))) & (t > -0.2) & land
+    # the lane tapers into the trod above it over its top 24 texels, its sides wandering 2 to 3 texels
+    taper = np.clip((Y - edge[None, :]) / 24.0, 0.0, 1.0)
+    half = np.maximum(6.0 + 12.5 * taper + np.round(2.0 * _noise((H, W), 4.0, seed + 3)), np.where(taper >= 1.0, 18.0, 0.0))
+    lane = (np.abs(X - lc) <= half) & (Y >= edge[None, :]) & land
     # where the patches open: large and merging near the seam, a few small ones north
     nb = _noise((H, W), 9.0, seed + 4)
     ns = _noise((H, W), 3.5, seed + 5)
@@ -1008,6 +1014,7 @@ def thaw_band(seed=441):
                 path = _meander(rng, ys0, xs0, ty, tx, int(abs(tx - xs0) + abs(ty - ys0)) + 4, float(rng.uniform(2, 4)))
                 _rivulet(out, path, land & ~lane, wm, bare, int(rng.integers(2, 4)))
     out[~land & (out >= 0) & wm] = -1
+    out[Y < edge[None, :]] = -1
     p = V.Pic(W, H, W // 2, 0)
     p.a[:] = out
     p.world = (0, int(y0))

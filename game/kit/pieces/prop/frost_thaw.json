@@ -28,14 +28,14 @@
  "geometry": {
   "size_px": [
    1128,
-   120
+   144
   ],
   "size_cells": [
    47,
    5
   ],
   "z_sort": "ground",
-  "height_px": 120,
+  "height_px": 144,
   "collision": {
    "shape": "none"
   },
