@@ -16,7 +16,6 @@ from ._shared import (
     _cracks,
     _drift_west,
     _fractures,
-    _grain,
     _grain_after,
     _granite_dress,
     _rock,
@@ -36,219 +35,6 @@ from .ground import (
 from .water_ice import (
     _icefall,
 )
-
-# ------------------------------------------------------------------------------------------------
-# round 6 (A1): boulders and crags as the face's granite, painted texel by texel
-# ------------------------------------------------------------------------------------------------
-def _gblock(out, own, x0, yb, w, hf, dtop, seed, fam='slate', snow=1.0, tilt=0, crease=True):
-    """One granite block seen from the south and above, its foot's west corner at (x0, yb): a top
-    plane `dtop` rows deep (lit, warm, its back row cooler, its front arris the brightest), a front
-    `hf` rows tall (lit at its west arris, a tone down past a crease, darker to its foot), the
-    corners knocked off in 1 x 1 chamfers; its outline in the stone's edge tone, lighter along the lit
-    top; a snow cap on the top plane heaped west, hanging a texel over the arris with the blue shade
-    row under it. `tilt` lifts the top's east end. Paints over what is behind it (draw back to
-    front); `own` gets the block's id."""
-    rng = np.random.default_rng(seed)
-    H, W = out.shape
-    bid = int(own.max()) + 1
-    xs = np.arange(x0, x0 + w)
-    u = (xs - x0) / max(1, w - 1)
-    # the top's line wanders in single steps (a weathered arris, never a ruled edge)
-    jag = np.zeros(w)
-    j_, run_ = 0.0, 0
-    for i in range(w):
-        if run_ <= 0:
-            j_ = float(np.clip(j_ + rng.choice((-1, 1)), -2, 1))
-            run_ = int(rng.integers(3, 8))
-        jag[i] = j_
-        run_ -= 1
-    ytop_front = np.round(yb - hf - tilt * u + jag).astype(int)    # the arris row per column
-    yback = ytop_front - dtop
-    # big knocked corners: the top corners rounded off, the west one more (weathered from the wind)
-    cl, cr = int(rng.integers(2, max(3, w // 4))), int(rng.integers(2, max(3, w // 5)))
-    # the front's facets: a lit west facet, the body, a turned east facet
-    xa = x0 + w * rng.uniform(0.18, 0.32)
-    xc = x0 + w * rng.uniform(0.6, 0.78)
-    # its sides and foot wander a texel at a time (never a ruled edge)
-    def walk(n, lo, hi):
-        v, out_, c_ = int(rng.integers(lo, hi + 1)), np.zeros(n, int), 0
-        for q in range(n):
-            if c_ <= 0:
-                v = int(np.clip(v + rng.choice((-1, 1)), lo, hi))
-                c_ = int(rng.integers(3, 7))
-            out_[q] = v
-            c_ -= 1
-        return out_
-    span_y = int(hf + dtop + 6)
-    li, ri, bo = walk(span_y, 0, 2), walk(span_y, 0, 2), walk(w, 0, 1)
-    m = np.zeros((H, W), bool)
-    for i, x in enumerate(xs):
-        if not (0 <= x < W):
-            continue
-        dl_, dr_ = i, w - 1 - i
-        cut = 0
-        if dl_ < cl:
-            cut = int(round((cl - dl_) ** 1.3))
-        if dr_ < cr:
-            cut = max(cut, int(round((cr - dr_) ** 1.3)))
-        foot_cut = 1 if min(dl_, dr_) == 0 else 0
-        y0 = max(0, int(yback[i]) + cut)
-        y1 = min(H, yb + 1 - foot_cut)
-        for y in range(y0, y1 - int(bo[i])):
-            q = min(span_y - 1, max(0, yb - y))
-            if dl_ < li[q] or dr_ < ri[q]:
-                continue
-            if y <= ytop_front[i] and y < yb - 2:
-                if y == y0:
-                    c = C('slate', 3)
-                elif y == ytop_front[i]:
-                    c = C('slate', 5)
-                else:
-                    c = C('slate_warm', 4)
-            else:
-                r = y - ytop_front[i]
-                t, f_ = 3, fam
-                if x < xa + 0.35 * r:
-                    t = 4
-                elif x > xc - 0.3 * r:
-                    # the turned east facet: a cooler plane, its shade in diagonal dashes (no solid band)
-                    f_, t = 'slate_cool', (2 if ((x + y) // 2) % 2 else 3)
-                if r <= 1:
-                    t = min(5, t + 1)
-                elif yb - y < hf * 0.4 and ((x + y) // 2) % 2 == 0:
-                    t -= 1                                             # darker toward its foot
-                if yb - y <= 2:
-                    t = 2 if ((x + y) // 2) % 2 or yb - y > 0 else 1
-                c = C(f_, t)
-            out[y, x] = c
-            m[y, x] = True
-            own[y, x] = bid
-    # small ledges where the front steps back a texel: a lit lip over a shade line, snow on some
-    for _ in range(int(hf > 12) + int(hf > 24) + int(w > 30)):
-        lw = int(rng.integers(5, 10))
-        lx = int(x0 + rng.uniform(2, max(3, w - lw - 2)))
-        ly = int(yb - rng.uniform(4, max(5, hf - 4)))
-        for x in range(lx, lx + lw):
-            yy = ly + (1 if (x - lx) > lw * 0.6 else 0)
-            if 0 <= yy + 1 < H and 0 <= x < W and m[yy - 1, x] and m[yy + 1, x] and out[yy, x] // 8 not in SNOWS:
-                out[yy, x] = C('slate', 5) if x < lx + lw * 0.7 else C('slate', 4)
-                out[yy + 1, x] = C('slate_cool', 1)
-                if rng.random() < 0.6 and x < lx + lw - 1:
-                    out[yy - 1, x] = C('snow', 5) if x < lx + lw * 0.5 else C('snow_cool', 4)
-    # cracks down a big front
-    for _c in range(int(crease and hf > 14 and w > 18) + int(w > 34)):
-        x = float(x0 + w * rng.uniform(0.2, 0.75))
-        y = int(ytop_front[int(x - x0)]) + 3
-        for _ in range(int(hf * rng.uniform(0.4, 0.7))):
-            xi = int(round(x))
-            if 0 <= y < H and 0 <= xi < W and m[y, xi]:
-                out[y, xi] = C('slate_cool', 0)
-                if m[y, xi - 1]:
-                    out[y, xi - 1] = (out[y, xi - 1] // 8) * 8 + min(5, out[y, xi - 1] % 8 + 1)
-            y += 1
-            x += rng.choice((-0.6, 0.3, 0.5))
-    # the outline: the edge tone, lighter where the top's lit edge meets the sky
-    edge = m & ~ndi.binary_erosion(m)
-    lit = edge & (np.roll(out, 1, 0) < 0) & (np.arange(W)[None, :] < xc)
-    out[edge] = C('slate_cool', 0)
-    out[lit] = C('slate', 2)
-    # the snow cap on the top plane
-    if snow > 0 and dtop >= 2:
-        sw = int(w * rng.uniform(0.55, 0.85) * snow)
-        sx = x0 + 1 + int((w - sw - 2) * rng.uniform(0.0, 0.35))
-        for x in range(sx, sx + sw):
-            i = x - x0
-            if not (0 <= x < W) or i < 0 or i >= w:
-                continue
-            e = min(x - sx, sx + sw - 1 - x)
-            yf_ = int(ytop_front[i]) + (1 if e >= 2 else 0)
-            yt = int(yback[i]) + (1 if e >= 1 else 2) - (1 if (e >= 3 and x < sx + sw * 0.6) else 0)
-            for y in range(max(0, yt), min(H, yf_ + 1)):
-                if y == yt:
-                    c = C('snow', 5)
-                elif y == yf_:
-                    c = C('snow_cool', 3)
-                elif x < sx + sw * 0.3 and y < yf_ - 1:
-                    c = C('snow', 5)                                   # the cap's lit west shoulder
-                else:
-                    c = C('snow', 4) if x < sx + sw * 0.65 else C('snow_cool', 4)
-                    if hsh(seed, (x + y) // 3, y, 17) > 0.8:
-                        c = C('snow_cool', 4) if c == C('snow', 4) else C('snow_cool', 3)   # wind crust
-                out[y, x] = c
-                own[y, x] = bid
-            if e >= 2 and yf_ + 1 < H and m[yf_ + 1, x]:
-                out[yf_ + 1, x] = C('sky_cool', 2)
-    return m
-
-
-
-def _gdrift(out, cx, yb, hw, hh):
-    """A drift banked at a west foot: lit on its top and west, cool to the east."""
-    H, W = out.shape
-    for x in range(int(cx - hw), int(cx + hw) + 1):
-        uu = (x - cx) / hw
-        if abs(uu) > 1 or not (0 <= x < W):
-            continue
-        h = hh * (1 - uu * uu) ** 0.7
-        top = int(round(yb - h))
-        for y in range(max(0, top), min(H, yb + 2)):
-            if y == top:
-                c = C('snow', 5) if uu < 0.3 else C('snow_cool', 4)
-            elif y >= yb:
-                c = C('snow_cool', 4) if uu > -0.2 else C('snow', 4)
-            else:
-                c = C('snow', 4) if uu < 0.2 else C('snow_cool', 4)
-            out[y, x] = c
-
-
-
-def _gcontact(out, m, yb):
-    """The contact shadow on the ground: east of the foot and a row or two under it."""
-    H, W = out.shape
-    foot = m & ~np.roll(m, -1, 0)
-    for y, x in zip(*np.nonzero(foot)):
-        for (dy, dx) in ((1, 1), (1, 2), (2, 3), (1, 3)):
-            Y2, X2 = y + dy, x + dx
-            if 0 <= Y2 < H and 0 <= X2 < W and out[Y2, X2] < 0:
-                out[Y2, X2] = C('snow_cool', 3)
-
-
-
-def _gpaint(spec, seed, canvas=(240, 180), origin=(120, 150), drifts=(), snow=1.0):
-    """Blocks (x, depth, w, front, top, fam, tilt) relative to the piece's foot, drawn back to
-    front; returns a Pic cropped to them."""
-    Hc, Wc = canvas[1], canvas[0]
-    ox, oy = origin
-    out = np.full((Hc, Wc), -1, np.int32)
-    own = np.zeros((Hc, Wc), np.int32)
-    allm = np.zeros((Hc, Wc), bool)
-    for k, (x, dep, w, hf, dt, fam, tilt) in sorted(enumerate(spec), key=lambda kv: kv[1][1]):
-        allm |= _gblock(out, own, int(ox + x), int(oy + dep), int(w), int(hf), int(dt), seed + 13 * k, fam=fam,
-                        snow=snow, tilt=tilt)
-    stone = (out >= 0) & ~np.isin(out // 8, list(SNOWS)) & (out % 8 >= 1) & (out != C('sky_cool', 2))
-    _grain(out, stone & ndi.binary_erosion(allm), seed, swap=0.3, step=0.06, lit=(out % 8 >= 4))
-    for (dx, hw, hh) in drifts:
-        _gdrift(out, ox + dx, oy, hw, hh)
-    _gcontact(out, out >= 0, oy)
-    return K.crop(out, ox, oy)
-
-
-
-def boulder(kind='a', seed=43):
-    """A Frostline granite boulder (round 6, A1: the face's granite as blocks): `a` one block with a
-    smaller one split off its east side, `b` a tilted slab on a lower block, `large` a big block
-    with two smaller in its lee and a chip in front; `small` the round 2 stone, a cell across."""
-    if kind == 'small':
-        return _boulder_r3('small', seed)
-    if kind == 'a':
-        spec = [(-14, -3, 22, 15, 8, 'slate', 1), (6, 0, 12, 9, 5, 'slate_warm', 0)]
-        return _gpaint(spec, seed, drifts=[(-15, 6, 4)])
-    if kind == 'b':
-        spec = [(-12, -4, 26, 11, 9, 'iron', -3), (-15, 0, 14, 7, 5, 'slate', 0), (9, 1, 9, 6, 4, 'slate', 0)]
-        return _gpaint(spec, seed, drifts=[(-15, 5, 3)])
-    spec = [(-30, -14, 34, 26, 12, 'slate', 2), (2, -12, 28, 20, 10, 'slate_warm', -2), (18, -4, 20, 13, 7, 'slate', 0),
-            (-36, -2, 16, 10, 6, 'iron', 0), (-14, 2, 12, 7, 5, 'slate', 0), (30, 2, 10, 6, 4, 'slate_warm', 0)]
-    return _gpaint(spec, seed, drifts=[(-36, 9, 5)])
 
 
 
@@ -274,29 +60,6 @@ def _boulder_r3(kind='a', seed=43):
         a = _solo(sc, dress=lambda s, a: (_chip(s, a, seed), _granite_dress(s, a, seed, n_frac=6 if kind == 'large' else 3)))
         _grain_after(sc, a, seed)
     return K.crop(a, sc.ox, sc.oy)
-
-
-def crag(kind='a', seed=61):
-    """A crag of the headwall's foot (round 6, A1): the face's granite as blocks of very different
-    sizes, the big ones behind and the small ones stepping down in front, staggered in depth and
-    height, some tilted (strata dipping east like the face's), each with a lit top plane under a
-    snow cap, a front stepping darker, a crack down the biggest; drifts at the west foot. The
-    zone's north frame (B8, Z1)."""
-    rng = np.random.default_rng(seed + (0 if kind == 'a' else 9))
-    fams = ('slate', 'slate', 'slate_warm', 'slate')
-    if kind == 'a':
-        spec = [(-62, -26, 50, 56, 14, 3), (-18, -30, 60, 66, 16, 4), (34, -22, 44, 44, 12, 3), (-86, -12, 34, 28, 10, 2),
-                (-48, -6, 42, 24, 10, 2), (2, -6, 36, 22, 9, 1), (48, -2, 34, 16, 7, 0), (-14, 2, 22, 10, 6, 0)]
-    else:
-        spec = [(-58, -28, 62, 78, 16, 4), (2, -24, 54, 60, 14, 3), (-86, -14, 34, 30, 10, 2), (46, -12, 36, 26, 10, 2),
-                (-32, -6, 44, 22, 10, 1), (16, 0, 28, 12, 6, 0), (-58, 2, 24, 11, 6, 0)]
-    sp = []
-    for k, (x, d, w, hf, dt, tl) in enumerate(spec):
-        sp.append((x + rng.uniform(-3, 3), d, w * rng.uniform(0.92, 1.08), hf * rng.uniform(0.9, 1.1), dt,
-                   fams[int(rng.integers(0, len(fams)))], tl * (1 if rng.random() < 0.7 else -1)))
-    dr = [(spec[3][0] - 2, 9, 5), (spec[-1][0] - 4, 7, 4)]
-    return _gpaint(sp, seed, canvas=(260, 180), origin=(130, 160), drifts=dr)
-
 
 
 def cairn(kind='standing', seed=47):
@@ -782,22 +545,147 @@ def _stair_wear(sc, a, stair, seed):
 
 
 # ------------------------------------------------------------------------------------------------
-# round 6 (A1): the face and the stair painted texel by texel
+# round 7 (A1, the #536 audits of round 1): granite painted in flat planes, its grain in clusters
 # ------------------------------------------------------------------------------------------------
-# Rounds 3 to 5 built the face from rendered boxes, so its joints ran ruled across and down it and
-# it read as a brick wall (detail.masonry_rock, calibration F12), and the stair's risers were lines
-# (detail.stair_read, F11). Round 6 paints both on the texel grid. The face is granite split along
-# bedding planes that dip and kink (never level for more than a few texels) into blocks by joints
-# that lean, so no joint runs straight across or down it (eastward-edges.md 2.4); each block a
-# ledge: a lit top plane where the block above stands back, its lit west arris, a front stepping
-# darker to its foot and its east side, big blocks turned on a crease; snow lying on the wider
-# ledges, lichen on a few lit fronts; under the snow lip the under-lip shade in two values (2.3), at
-# the foot a dark band, talus with contact shadows and drifts (3.2). The frozen fall keeps the
-# round 5 face behind its ice (water and ice are another stream's).
+# Round 6 shaded the darkest planes in diagonal two-texel dashes (hatching), laid the granite's grain
+# as lone texels in warm sibling ramps (terrazzo), stamped the same strip of snow with a comb of
+# icicles on every ledge, darkened the foot as an overlay and drew the cheeks and crags as stacked
+# blocks. Round 7 shades every plane flat (eastward-edges.md 5.4: dither belongs to light, never to
+# a plane), lays the grain in clusters of two to four texels of the stone's own ramp, keeps a lone
+# texel only where a line needs it (5.5), and builds crags and boulders from the face's own strata.
+GRAIN_SHAPES = (((0, 0), (0, 1)), ((0, 0), (0, 1), (0, 2)), ((0, 0), (0, 1), (1, 1), (1, 2)), ((0, 0), (0, 1), (1, 1)),
+                ((0, 0), (0, 1), (0, 2), (0, 3)), ((0, 0), (0, 1), (1, 0), (1, 1)), ((0, 0), (1, 0)), ((0, 1), (0, 2), (1, 0), (1, 1)))
+# (mostly along the beds: marks on a face run across, eastward-edges.md 2.4)
+
+
+GR_COOL = {'slate': ('slate_warm', 'slate_cool', 'iron'), 'slate_warm': ('slate', 'slate_cool', 'slate'),
+           'slate_cool': ('slate', 'iron', 'slate_warm'), 'iron': ('slate_cool', 'slate', 'slate_cool')}     # granite's minerals at one value: the cool ramps only, no brown
+
+
+def _cgrain(a, m, seed, step=4, p=0.8, lit=None, fleck=0.08, sib=0.0, keep_value=False):
+    """Granite's grain in clusters (eastward-edges.md 5.5: detail in clusters of two or more): on a
+    grid jittered `step` texels apart, a cluster of two to four texels of the stone's own ramp, a
+    tone up on lit planes and a tone down in shade (never toward the next plane's value); here and there a
+    feldspar fleck of three or four texels two tones up; with `sib`, that share of the clusters keeps
+    its value and takes a sibling cool ramp instead (quartz and hornblende: hue, not noise; with
+    `keep_value` only these, so a flat shade keeps its two values). A cluster
+    lies on one tone of one plane, or is not laid; it never reaches tone 0, which is for lines."""
+    H, W = a.shape
+    for gy in range(0, H, step):
+        for gx in range(0, W, step):
+            if hsh(seed, gx, gy, 1) > p:
+                continue
+            y = gy + int(hsh(seed, gx, gy, 2) * step)
+            x = gx + int(hsh(seed, gx, gy, 3) * step)
+            if not (0 <= y < H and 0 <= x < W) or not m[y, x]:
+                continue
+            base = int(a[y, x])
+            shp = GRAIN_SHAPES[int(hsh(seed, gx, gy, 4) * len(GRAIN_SHAPES))]
+            pts = [(y + dy, x + dx) for dy, dx in shp
+                   if 0 <= y + dy < H and 0 <= x + dx < W and m[y + dy, x + dx] and a[y + dy, x + dx] == base]
+            if len(pts) < 2:
+                continue
+            fb = FI_NAME.get(base // 8)
+            if sib and fb in GR_COOL and hsh(seed, gx, gy, 6) < sib:
+                g = GR_COOL[fb][int(hsh(seed, gx, gy, 7) * 3)]
+                q = hsh(seed, gx, gy, 8)
+                up_ = lit is not None and bool(lit[y, x])
+                t = int(np.clip(base % 8 + (0 if q < 0.5 or keep_value else (1 if up_ else -1)) + (1 if g == 'iron' else 0), 1,
+                                3 if g == 'iron' else 5))                # iron's light end is warm: kept out
+                for (yy, xx) in pts:
+                    a[yy, xx] = FI[g] * 8 + t
+                continue
+            up = bool(lit[y, x]) if lit is not None else False
+            r = hsh(seed, gx, gy, 5)
+            d = 1 if up else -1                                    # a lit plane's grain lighter, a shaded one's darker
+            if up and r > 1 - fleck and len(pts) >= 3:
+                d = 2
+            t = base % 8 + d
+            if not 1 <= t <= 5:
+                continue
+            for (yy, xx) in pts:
+                a[yy, xx] = (base // 8) * 8 + t
+
+
+FI_NAME = {v: k for k, v in FI.items()}
+
+
+def _unlone(a, m, passes=2):
+    """A texel unlike all four of its neighbours (in `m`) takes the commonest of them, on a tie the
+    nearest in tone on its own ramp: the picture's lone texels down to what its lines need."""
+    H, W = a.shape
+    for _ in range(passes):
+        p = np.pad(a, 1, constant_values=-9)
+        c = p[1:-1, 1:-1]
+        ns = (p[:-2, 1:-1], p[2:, 1:-1], p[1:-1, :-2], p[1:-1, 2:])
+        lone = m & (c >= 0) & (c != ns[0]) & (c != ns[1]) & (c != ns[2]) & (c != ns[3])
+        for y, x in zip(*np.nonzero(lone)):
+            v0 = int(c[y, x])
+            vals = [int(n[y, x]) for n in ns if n[y, x] >= 0]
+            if not vals:
+                continue
+            a[y, x] = max(set(vals), key=lambda v: (vals.count(v), -(abs(v % 8 - v0 % 8) + 8 * (v // 8 != v0 // 8))))
+
+
+def _icicles(out, x0, y0, n, seed, lo=2, hi=6, below=None):
+    """A cluster of `n` icicles hanging from row `y0`: each two texels wide (its west texel lit, its
+    east in the snow's shade), its own length from `lo` to `hi`, its last row a single lit tip; a
+    texel or two of gap between them. Only over `below` (stone) where given."""
+    H, W = out.shape
+    x = x0
+    for j in range(n):
+        ln = lo + int(hsh(seed, x0, j, 31) * (hi - lo + 1))
+        for r in range(ln):
+            y = y0 + r
+            for dx in (0, 1):
+                xx = x + dx
+                if not (0 <= y < H and 0 <= xx < W) or out[y, xx] < 0:
+                    continue
+                if below is not None and not below[y, xx]:
+                    continue
+                if r == ln - 1 and dx == 1:
+                    continue                                     # the tip: one texel
+                out[y, xx] = C('snow', 5) if dx == 0 else C('snow_cool', 3)
+        x += 3 + int(hsh(seed, x0, j, 32) * 2)
+    return x
+
+
+def _drift(out, cx, yb, hw, hh, seed, stone=None):
+    """A drift banked at a foot, shaded in three planes (the #536 detail audit, finding 5): its lit
+    top and west (snow 5), a mid body (snow 4), a blue-grey shade on its lower east (snow 2, its
+    deepest corner snow 1); its top wanders a texel at a time, its windward west a little higher; a
+    contact row of the stone's shade on the face above it (`stone`)."""
+    H, W = out.shape
+    wob = 0
+    for x in range(int(cx - hw), int(cx + hw) + 1):
+        u = (x - cx) / hw
+        if abs(u) > 1 or not (0 <= x < W):
+            continue
+        if hsh(seed, x // 4, 41) > 0.7:
+            wob = int(np.clip(wob + (1 if hsh(seed, x, 42) > 0.5 else -1), -1, 1))
+        h = hh * (1 - u * u) ** 0.65 * (1.0 + 0.2 * (u < 0)) + wob
+        top = int(round(yb - h))
+        if top >= yb:
+            continue
+        for y in range(max(0, top), min(H, yb + 2)):
+            v = (y - top) / max(1.0, yb + 1 - top)
+            if y == top or (u < -0.15 and v < 0.45):
+                c = C('snow', 5) if u < 0.35 else C('snow', 4)
+            elif u > 0.62 and v > 0.5:
+                c = C('snow', 1)
+            elif u > 0.3 and v > 0.35 or u > 0.55:
+                c = C('snow', 2)
+            else:
+                c = C('snow', 4)
+            out[y, x] = c
+        if stone is not None and top - 1 >= 0 and stone[top - 1, x] and out[top - 1, x] >= 0:
+            out[top - 1, x] = C('slate_cool', 1)
+
+
 BEDS = (16, 34, 54, 75)          # the inner bedding planes, art px under the face's top, at every panel seam
 SEAM = 10                        # either side of a seam a plane follows one shared profile, so panels meet
 SEAM_BLOCK = 14                  # no joint stands nearer a panel's edge than this
-LICHEN = (('grass_warm', 3), ('grass_warm', 2), ('brass', 2))
+LICHEN = (('grass_warm', 3), ('grass_warm', 2), ('grass', 2))
 
 
 
@@ -821,41 +709,56 @@ def _shift(a, sel, d):
 
 
 
-def _bed_lines(W, seed):
-    """The inner bedding planes across a panel: tilted strata, each plane dipping east 1 in 4 to
-    1 in 7 for 18 to 40 texels and then stepping back up 3 to 7 texels where a joint offsets it (so
-    no run of it is level for more than about seven texels and the blocks between read as tilted
-    slabs), passing every seam on one shared profile (the same dip of 0.3)."""
+def _bed_lines(W, seed, fault=False):
+    """The inner bedding planes across a panel (the #536 detail audit, finding 13): sheet joints that
+    dip east and rise again in gentle folds (1 in 4 to 1 in 7, so no run of one is level for more
+    than about seven texels), stepping a texel or two at some joints, entering and leaving every
+    panel on one shared profile so the strata run on across the seams; `fault` puts one deliberate
+    fault of 4 to 5 texels in the panel."""
     rng = np.random.default_rng(seed + 3)
     xs = np.arange(W)
     lines = []
+    S0 = 0.16
+    fk = int(rng.integers(0, len(BEDS))) if fault else -1
     for k, e in enumerate(BEDS):
-        kx, ky = [0.0, float(SEAM)], [0.0, 0.3 * SEAM]
-        x, y = float(SEAM), 0.3 * SEAM
+        kx, ky = [0.0, float(SEAM)], [0.0, S0 * SEAM]
+        x, y = float(SEAM), S0 * SEAM
+        ex, ey = float(W - SEAM), -S0 * SEAM
+        dip = rng.random() < 0.6
+        faulted = False
         while True:
-            rest = W - SEAM - x
-            L = float(rng.integers(18, 41))
-            if rest - L < 22:
+            L = float(rng.integers(18, 40))
+            if ex - (x + L) < 20:
                 break
-            sl = rng.uniform(0.15, 0.25)
-            y = min(y + sl * L, 8.0)
+            if y > 3.0:
+                dip = False
+            elif y < -3.0:
+                dip = True
+            sl = rng.uniform(0.15, 0.24) if dip else -rng.uniform(0.14, 0.2)
             x += L
+            y += sl * L
             kx.append(x)
             ky.append(y)
-            j = float(rng.integers(3, 8))
-            y = max(y - j, -8.0)
-            x += 1.5
-            kx.append(x)
-            ky.append(y)
-        rest = W - SEAM - x
-        # the last stretch dips into the seam's profile: step up to where it must start
-        y0 = max(-9.0, -0.3 * SEAM - 0.2 * (rest - 2))
-        if abs(y0 - y) > 0.5:
-            x += 1.5
-            kx.append(x)
-            ky.append(y0)
-        kx += [float(W - SEAM), float(W)]
-        ky += [-0.3 * SEAM, 0.0]
+            if k == fk and not faulted and x > W * 0.3:
+                y -= float(rng.integers(4, 6))                # the panel's one fault
+                faulted = True
+                x += 1.0
+                kx.append(x)
+                ky.append(y)
+            elif rng.random() < 0.3:
+                y += float(rng.choice((-2.0, -1.0, 1.0)))     # a small step at a joint
+                x += 1.0
+                kx.append(x)
+                ky.append(y)
+            dip = not dip if rng.random() < 0.7 else dip
+        d = ey - y
+        h = (ex - x) / 2.0
+        if h > 2 and abs(d / (2 * h)) < 0.14:
+            off = 0.14 * h + abs(d) / 2.0 + 0.5
+            kx.append(x + h)
+            ky.append(y + d / 2.0 + (off if y + d / 2.0 < 2 else -off))
+        kx += [ex, float(W)]
+        ky += [ey, 0.0]
         ln = np.round(e + np.interp(xs, kx, ky)).astype(int)
         if lines:
             ln = np.maximum(ln, lines[-1] + 9)
@@ -863,13 +766,12 @@ def _bed_lines(W, seed):
     return lines
 
 
-
-def _blocks(W, seed):
+def _blocks(W, seed, fault=False):
     """The face (FACE_PX x W) split into blocks: the bedding planes and the leaning joints between
     them (each 0.2 to 0.55 off the vertical, kinking once in a tall bed, one in five stopping short
     as a crack). Returns (labels, joints, bed of each texel)."""
     rng = np.random.default_rng(seed + 5)
-    lines = _bed_lines(W, seed)
+    lines = _bed_lines(W, seed, fault=fault)
     Y, X = np.mgrid[0:FACE_PX, 0:W]
     joint = np.zeros((FACE_PX, W), bool)
     for ln in lines:
@@ -910,7 +812,14 @@ def _blocks(W, seed):
 
 
 def _paint_blocks(W, seed, lab, joint, bed):
-    """Each block shaded as a granite ledge, lit from the upper left (see the section's note)."""
+    """Each block shaded as a granite ledge by the way its planes face, lit from the upper left
+    (the #536 detail audit, findings 1 and 14): its top plane lit and warm (its front arris the
+    brightest, its back row in the shade of the block above, its east end a tone down), its front
+    at the body's tone 3 with its west arris lit, its east end and its foot a tone down and its last
+    row a tone further (the occlusion where it sits on the block below), a big block turned on a
+    crease with the plane east of it a tone down. Every plane is flat: no dashes, no dither. A block
+    is darker than its neighbours only as a pocket (a block weathered out, in the shade of the one
+    above)."""
     a = np.full(lab.shape, -1, np.int32)
     dt, db = _run(lab, 0, False), _run(lab, 0, True)
     dl, dr = _run(lab, 1, False), _run(lab, 1, True)
@@ -920,7 +829,7 @@ def _paint_blocks(W, seed, lab, joint, bed):
             if b >= 0:
                 dd[lab == b] += 60
     Y, X = np.mgrid[0:FACE_PX, 0:W]
-    fams = ('slate', 'slate', 'slate_warm', 'iron', 'slate', 'slate_cool')
+    fams = ('slate', 'slate', 'slate_warm', 'slate', 'slate_cool')
     info = {}
     for b, sl in enumerate(ndi.find_objects(lab + 1)):
         if sl is None:
@@ -934,10 +843,9 @@ def _paint_blocks(W, seed, lab, joint, bed):
         else:
             r = [hsh(seed, b, 71 + j) for j in range(6)]
         fam = fams[int(r[0] * len(fams))]
-        t0 = 3 if r[1] > 0.4 else 2
+        t0 = 3
         lipd = (3 + int(hsh(seed if not seam else 0, k, 77) * 3) + int(r[2] * 3) - 1) if k > 0 else 1 + int(r[2] * 2)
         w = sl[1].stop - sl[1].start
-        h = sl[0].stop - sl[0].start
         pocket = (not seam) and m.sum() < 170 and r[3] < 0.3
         crease = (not seam) and w > 30 and r[4] < 0.7
         info[b] = dict(fam=fam, t0=t0, lipd=lipd, pocket=pocket, seam=seam, k=k, w=w, x0=sl[1].start, y0=sl[0].start)
@@ -948,118 +856,101 @@ def _paint_blocks(W, seed, lab, joint, bed):
         f = np.full(len(ys), FI[fam], np.int32)
         _dt, _db, _dl, _dr = dt[ys, xs], db[ys, xs], dl[ys, xs], dr[ys, xs]
         if pocket:
-            # a block weathered out: a recess, its top row in the shadow of the block above
-            t[:] = 1
-            t[_dt <= 1] = 0
-            t[_dl == 0] = 2
+            # a block weathered out: a recess in the shade of the block above, its top rows darkest
+            t[:] = 2
+            t[_dt <= 2] = 1
+            t[_dl <= 1] = 3
         else:
             front = _dt - lipd
-            t = np.where((front >= 0) & (front <= 1) & (_dl <= 6), t0 + 1, t)
-            t = np.where((front > 0) & (_dl <= 1), t0 + 1, t)
-            t = np.where((_dr <= 2) & (front >= 0), t0 - 1, t)
-            t = np.where((_db <= 2) & (front >= 0), np.minimum(t, t0 - 1), t)
-            t = np.where((_db == 0) & (front >= 0) & (((xs + ys) // 2) % 2 == 0), t0 - 2, t)
+            t = np.where((front >= 0) & (_dl <= 1), t0 + 1, t)                 # the lit west arris
+            t = np.where((front >= 0) & (_dr <= 2) & (_dl > 1), t0 - 1, t)     # the east end turned away
+            t = np.where((front >= 0) & (_db <= 2) & (_dl > 1), t0 - 1, t)     # the foot, toward the block below
+            t = np.where((front >= 0) & (_db == 0) & (_dl > 1), t0 - 1, t)     # where it sits (the joint under it is the line)
             if crease:
-                # a big block turned on a crease: the plane east of it a tone down, a lit texel on its edge
-                cx = info[b]['x0'] + w * (0.4 + 0.3 * r[5])
-                xc = cx + 0.45 * (ys - info[b]['y0'])
-                east = (xs > xc) & (front > 0)
-                t = np.where(east, t - 1, t)
-                t = np.where((np.abs(xs - xc) < 0.6) & (front > 0), t0, t)
-            # the top plane: lit, warm, its front arris the brightest, its back row in the shade of
-            # the face above it
+                # a big block turned on a crease: the plane east of it a tone down, its edge lit
+                cx = info[b]['x0'] + w * (0.45 + 0.3 * r[5])
+                xc = cx + 0.4 * (ys - info[b]['y0'])
+                east = (xs > xc) & (front > 0) & (_db > 2) & (_dr > 2)
+                t = np.where(east, t0 - 1, t)
+                t = np.where((np.abs(xs - xc) < 0.6) & (front > 0) & (_db > 2), t0 + 1, t)
             top = _dt < lipd
             t = np.where(top, 4, t)
-            f = np.where(top, FI['slate_warm'], f)
-            t = np.where(top & (_dt == 0) & (lipd > 2), 3, t)
+            f = np.where(top, FI[('slate_warm', 'slate_warm', 'slate')[int(r[1] * 3)]], f)
+            t = np.where(top & (_dt == 0) & (lipd > 2), 3, t)                  # its back row, under the block above
             arris = _dt == lipd - 1
             t = np.where(arris & (lipd > 1), 5, t)
             f = np.where(arris & (lipd > 1), FI['slate'], f)
             t = np.where(top & (_dr <= 1), 3, t)
-            # the darkest tones only as lines and diagonal two-texel dashes, never as solid bands
-            t = np.where((t < 2) & (((xs + ys) // 2) % 2 == 1), 2, t)
         a[ys, xs] = f * 8 + np.clip(t, 0, 5)
-    # the joints: dark, the one under a lit lip a tone lighter where it is only a hairline
+    # the joints: dark, the one under a lit lip a tone lighter in runs where it is only a hairline
     a[joint] = C('slate_cool', 0)
-    hair = joint & (Y > 0) & (np.roll(a, 1, 1) % 8 >= 3) & (K.vhash(X // 3, Y, seed + 9) > 0.6)
-    a[hair & ~np.isin(Y, [0])] = C('slate_cool', 1)
+    hair = joint & (Y > 0) & (np.roll(a, 1, 1) % 8 >= 3) & (K.vhash(X // 4, Y, seed + 9) > 0.65)
+    a[hair] = C('slate_cool', 1)
     return a, info, dict(dt=dt, db=db, dl=dl, dr=dr)
 
 
-
-def _ledge_snow(a, lab, info, d, W, seed):
-    """Snow lying on the wider ledges: heaped west of the ledge's middle, its top lit, its front
-    cool, its ends rounded, a shade row on the stone under where it hangs over."""
+def _ledge_snow(a, lab, info, d, W, seed, stone):
+    """Snow lying on the ledges as loads (the #536 detail audit, finding 4): about a third of the
+    ledges bare; on the rest a load 1 to 4 rows thick, thickest at its inner corner and tapering to
+    its ends, its top lit, its body snow 4, its front row the snow's mid tone, a row of the stone's
+    darkest under it; icicles under at most one load in three. Returns the snow's mask."""
+    H, Wd = a.shape
     out = np.zeros(a.shape, bool)
-    for b, bi in info.items():
+    for b, bi in sorted(info.items()):
         if bi['pocket'] or bi['lipd'] < 2 or bi['w'] < 12 or bi['k'] == 0:
             continue
-        if hsh(seed, b, 91) < 0.2:
-            continue
+        if hsh(seed, b, 91) < 0.36:
+            continue                                               # a bare ledge
         m = (lab == b) & (d['dt'] < bi['lipd'])
-        m[:, :SEAM_BLOCK] = False                              # never across a seam: panels meet in bare stone
-        m[:, W - SEAM_BLOCK:] = False
-        cols = np.nonzero(m.any(0))[0]
-        if len(cols) < 12:
+        m[:, :SEAM_BLOCK] = False                                  # never across a seam: panels meet in bare stone
+        m[:, Wd - SEAM_BLOCK:] = False
+        cols = [x for x in np.nonzero(m.any(0))[0]
+                if np.ptp(np.nonzero(m[:, x])[0]) + 1 <= bi['lipd'] + 1]   # not on a jog in the plane
+        if len(cols) < 10:
             continue
-        span = int(len(cols) * (0.5 + 0.4 * hsh(seed, b, 92)))
-        c0 = cols[0] + int((len(cols) - span) * 0.3 * hsh(seed, b, 93))
-        th = 2 + int(hsh(seed, b, 94) * 2)
-        for x in range(c0, c0 + span):
-            if not m[:, x].any():
-                continue
+        span = int(len(cols) * (0.4 + 0.5 * hsh(seed, b, 92)))
+        span = max(6, span)
+        c0i = int((len(cols) - span) * hsh(seed, b, 93))
+        run = cols[c0i:c0i + span]
+        tmax = 2 + int(hsh(seed, b, 94) * 3)                       # 2 to 4 rows at its deepest
+        deep = hsh(seed, b, 95)                                    # where along it the inner corner lies
+        for i, x in enumerate(run):
+            u = i / max(1, len(run) - 1)
+            v = max(0.35, 1.0 - abs(u - deep) / 0.5)
+            th = 1 + (tmax - 1) * v
+            th = min(th, 1 + 0.8 * min(i, len(run) - 1 - i))     # tapering at its ends
+            th = int(np.clip(round(th), 1, 4))
             col = np.nonzero(m[:, x])[0]
-            if col.max() - col.min() + 1 > bi['lipd'] + 1:
-                continue                                       # a jog in the plane: no ledge to lie on
-            yl = int(col.max())                                # the ledge's front row
-            e = min(x - c0, c0 + span - 1 - x)
-            hh = th if e >= 2 else max(1, th - 2 + e)
-            for j in range(hh + 1):
-                y = yl - j + 1
-                if not (0 <= y < a.shape[0]):
+            yl = int(col.max())                                    # the ledge's front row
+            for j in range(th):
+                y = yl - j
+                if not 0 <= y < H:
                     continue
-                if j == hh:
-                    c = C('snow', 5) if x < c0 + span * 0.7 else C('snow', 4)
-                elif j == 0:
-                    c = C('snow_cool', 3)
+                if j == 0:
+                    c = C('snow_cool', 3)                          # its front, the mid tone
+                elif j == th - 1:
+                    c = C('snow', 5)                               # its lit top
                 else:
-                    c = C('snow', 4) if x < c0 + span * 0.6 else C('snow_cool', 4)
+                    c = C('snow', 4)
                 a[y, x] = c
                 out[y, x] = True
+            if yl + 1 < H and stone[yl + 1, x] and not out[yl + 1, x]:
+                a[yl + 1, x] = C('slate_cool', 0)                  # the shade under its front
+        if hsh(seed, b, 96) < 0.33 and len(run) > 8:
+            i = int(len(run) * (0.2 + 0.5 * hsh(seed, b, 97)))
+            x = run[i]
+            yl = int(np.nonzero(m[:, x])[0].max())
+            _icicles(a, x, yl + 2, 1 + int(hsh(seed, b, 98) * 2), seed + b, lo=2, hi=4, below=stone)
     return out
 
 
-
-def _drips(out, seed, rows=None):
-    """Snow hanging in short tongues from the underside of every snow lip and ledge (1 texel wide,
-    1 to 3 long, every 3 to 7 texels), so the shade under the snow is broken, never a ruled band."""
-    H, W = out.shape
-    sn = (out >= 0) & np.isin(out // 8, list(SNOWS))
-    below = np.zeros_like(sn)
-    below[:-1] = sn[:-1] & (out[1:] >= 0) & ~sn[1:]
-    if rows is not None:
-        below &= rows
-    nxt = -1
-    for x in range(W):
-        if x < nxt:
-            continue
-        ys = np.nonzero(below[:, x])[0]
-        if not len(ys):
-            continue
-        for y in ys:
-            n = 1 + int(hsh(seed, x, int(y), 21) * 3)
-            for j in range(1, n + 1):
-                if y + j < H and out[y + j, x] >= 0 and not sn[y + j, x]:
-                    out[y + j, x] = C('snow_cool', 4) if j < n else C('snow_cool', 3)
-        nxt = x + 3 + int(hsh(seed, x, 22) * 5)
-
-
-
 def _lichen(a, info, d, lab, W, seed, avoid):
-    """A few rosettes of lichen (two to five texels) on lit fronts, never on a seam block."""
+    """One or two patches of lichen (3 to 6 texels, clustered) on lit fronts, never on a seam block:
+    the face's only warm hue (the #536 detail audit, finding 2)."""
     rng = np.random.default_rng(seed + 31)
     cand = [b for b, bi in info.items() if not bi['seam'] and not bi['pocket'] and bi['k'] > 0]
-    n = max(1, W // 40)
+    n = 1 + int(W >= 144)
+    shapes = ([(0, 0), (0, 1), (1, 0), (1, 1), (0, 2)], [(0, 0), (0, 1), (1, 1), (1, 2)], [(0, 1), (1, 0), (1, 1), (1, 2), (0, 2), (2, 1)])
     for b in rng.permutation(cand)[:n]:
         bi = info[b]
         m = (lab == b) & (d['dt'] >= bi['lipd'] + 1) & (d['dl'] >= 2) & (d['dr'] >= 4) & (d['db'] >= 3) & ~avoid
@@ -1069,177 +960,266 @@ def _lichen(a, info, d, lab, W, seed, avoid):
         j = int(rng.integers(0, len(ys)))
         y, x = int(ys[j]), int(xs[j])
         f, t = LICHEN[int(rng.integers(0, len(LICHEN)))]
-        shape = [(0, 0), (0, 1), (1, 0), (1, 1), (0, 2)] if rng.random() < 0.5 else [(0, 0), (0, 1), (1, 1), (1, 2)]
+        shape = shapes[int(rng.integers(0, len(shapes)))]
         for dy, dx in shape:
             if 0 <= y + dy < a.shape[0] and 0 <= x + dx < W and m[y + dy, x + dx]:
-                a[y + dy, x + dx] = C(f, t if (dy, dx) != (0, 0) else min(5, t + 1))
-        if y + 2 < a.shape[0] and m[y + 2, x + 1]:
-            a[y + 2, x + 1] = C(f, max(1, t - 2))
+                a[y + dy, x + dx] = C(f, t if dy > 0 else min(5, t + 1))
 
 
-
-def _cornice(W, seed, stair=None):
-    """How far the upper tier's snow hangs over the face, per column (2 to 7 rows, in lumps 4 to 8
-    wide stepping a row at a time, so the shade under it never runs level); the same 3 rows at
-    every seam."""
+def _cornice(W, seed):
+    """How far the upper tier's snow hangs over the face, per column: 0 or 1 row in runs of 3 to 8
+    (eastward-edges.md 3.1: the lip wobbles a texel; no dark line under it runs ruled), 0 at every
+    seam."""
     rng = np.random.default_rng(seed + 41)
-    ov = np.full(W, 3.0)
-    x = SEAM
-    prev = 3
+    ov = np.zeros(W, int)
+    x = SEAM + int(rng.integers(0, 6))
+    v = 1
     while x < W - SEAM:
-        n = int(rng.integers(4, 9))
-        v = int(np.clip(prev + rng.choice((-3, -2, 2, 3)), 2, 7))
-        ov[x:min(W - SEAM, x + n)] = float(v)
-        prev = v
+        n = int(rng.integers(3, 9))
+        ov[x:min(W - SEAM, x + n)] = v
+        v = 1 - v
         x += n
-    o = ov.copy()
-    for _ in range(3):
-        for x in range(1, W):
-            o[x] = min(o[x], o[x - 1] + 1)
-        for x in range(W - 2, -1, -1):
-            o[x] = min(o[x], o[x + 1] + 1)
-    return o.astype(int)
+    return ov
 
 
-
-def _talus(out, W, seed, yf, keep_clear=None):
-    """Stones fallen to the foot (7 to 14 texels, outlined, lit at their upper left) with a contact
-    shadow thrown east on the ground, and drifts banked against the face (the windward west of each
-    heaped higher)."""
+def _foot(out, stone, W, seed, yf, sfill, keep_clear=None):
+    """The face's foot (the #536 detail audit, finding 5; eastward-edges.md 3.2): a band 2 to 3
+    texels deep in the stone's tone 2 (its two values) holding pebbles of 2 to 4 texels; the lower ground's
+    snow climbing it 2 to 3 texels on a wandering edge; a few stones fallen to the foot and drifts
+    banked against the face, shaded in three planes."""
     rng = np.random.default_rng(seed + 51)
     H = out.shape[0]
-    # drifts first, stones in front of them
-    x = SEAM_BLOCK + float(rng.integers(0, 20))
+    depth = 2
+    for x in range(W):
+        if hsh(seed, x // 5, 52) > 0.6:
+            depth = 3 if depth == 2 else 2
+        for y in range(yf - depth, yf):
+            if stone[y, x] and out[y, x] >= 0:
+                out[y, x] = C('slate_cool', 2) if y >= yf - 2 else (out[y, x] // 8) * 8 + 2
+    # pebbles in the band: a lit top-left over a shaded body
+    x = int(rng.integers(2, 9))
+    while x < W - 4:
+        pw = int(rng.integers(2, 5))
+        if keep_clear is None or not (keep_clear(x) or keep_clear(x + pw)):
+            fam = 'slate' if rng.random() < 0.6 else 'slate_warm'
+            for i in range(pw):
+                if stone[yf - 2, x + i]:
+                    out[yf - 2, x + i] = C(fam, 4 if i == 0 else 3)
+                if stone[yf - 1, x + i]:
+                    out[yf - 1, x + i] = C(fam, 3 if i == 0 else 2)
+        x += pw + int(rng.integers(4, 12))
+    # the lower ground's snow climbing the foot
+    climb = 1
+    for x in range(W):
+        if hsh(seed, x // 3, 53) > 0.55:
+            climb = int(np.clip(climb + (1 if hsh(seed, x, 54) > 0.45 else -1), 0, 3))
+        for y in range(yf - climb, yf):
+            if stone[y, x]:
+                out[y, x] = sfill[y, x]
+    # stones fallen to the foot: angular, a lit top over a front and a shaded east, outlined
+    x = SEAM_BLOCK + float(rng.integers(6, 30))
     while x < W - SEAM_BLOCK - 10:
-        hw = rng.uniform(8, 17)
-        hh = rng.uniform(4, 9)
-        cx = x + hw
-        if cx + hw > W - SEAM_BLOCK + 4:
-            break
-        for xi in range(int(cx - hw), int(cx + hw) + 1):
-            if keep_clear is not None and keep_clear(xi):
-                continue
-            u = (xi - cx) / hw
-            if abs(u) > 1:
-                continue
-            h = hh * (1 - u * u) ** 0.7 * (1.0 + 0.25 * (u < 0))
-            top = int(round(yf - 1 - h))
-            for y in range(top, yf + 1):
-                if not (0 <= y < H):
-                    continue
-                if y == top:
-                    c = C('snow', 5) if u < 0.2 else C('snow_cool', 4)
-                elif y <= top + 2:
-                    c = C('snow', 4) if u < 0.35 else C('snow_cool', 4)
-                else:
-                    c = C('snow', 4) if u < -0.1 else C('snow_cool', 4)
-                out[y, xi] = c
-            if top - 1 >= 0 and out[top - 1, xi] >= 0 and out[top - 1, xi] // 8 not in SNOWS and u > -0.5:
-                out[top - 1, xi] = (out[top - 1, xi] // 8) * 8 + max(0, out[top - 1, xi] % 8 - 1)
-        x = cx + hw + rng.uniform(18, 46)
-    x = SEAM_BLOCK + float(rng.integers(4, 26))
-    while x < W - SEAM_BLOCK - 8:
-        w = rng.uniform(6, 11) if rng.random() < 0.6 else rng.uniform(12, 19)
-        h = w * rng.uniform(0.55, 0.8)
+        w = rng.uniform(7, 12) if rng.random() < 0.6 else rng.uniform(12, 17)
+        h = w * rng.uniform(0.5, 0.7)
         if keep_clear is not None and (keep_clear(int(x)) or keep_clear(int(x + w))):
-            x += w + rng.uniform(16, 40)
+            x += w + rng.uniform(20, 40)
             continue
         cx, cy = x + w / 2, yf + 1 - h / 2
         fam = 'slate' if rng.random() < 0.6 else 'slate_warm'
         ys, xs = np.mgrid[int(cy - h / 2) - 1:int(cy + h / 2) + 2, int(x) - 1:int(x + w) + 2]
         dx_, dy_ = (xs + 0.5 - cx) / (w / 2), (ys + 0.5 - cy) / (h / 2)
-        # an angular block, its corners knocked off: a lit top plane, a front, a shaded east side
         r = np.maximum(np.maximum(np.abs(dx_), np.abs(dy_)), (np.abs(dx_) + np.abs(dy_)) / 1.45)
         ins = r <= 1.0
-        tp = rng.uniform(-0.3, -0.05)
-        tone = np.where(dy_ < tp, np.where(dx_ < 0.3, 5, 4), np.where(dx_ > 0.4, 2, np.where(dy_ > 0.55, 2, 3)))
-        tone = np.where((dy_ >= tp) & (dy_ < tp + 0.3) & (dx_ <= 0.4), 4, tone)
+        tp = rng.uniform(-0.3, -0.1)
+        tone = np.where(dy_ < tp, np.where(dx_ < 0.3, 5, 4), np.where(dx_ > 0.4, 2, 3))
         rim = ins & ~ndi.binary_erosion(ins)
         ok = (ys >= 0) & (ys < H) & (xs >= 0) & (xs < W)
-        # contact shadow: east and a row down, on the ground only
-        for (yy, xx) in zip(ys[ins & ok], xs[ins & ok]):
-            for (sy, sx) in ((1, 2), (1, 1), (2, 3)):
-                Y2, X2 = yy + sy, xx + sx
-                if Y2 < H and X2 < W and Y2 > yf - 1 and out[Y2, X2] < 0:
-                    out[Y2, X2] = C('snow_cool', 3)
         for (yy, xx, tt, rr) in zip(ys[ins & ok], xs[ins & ok], tone[ins & ok], rim[ins & ok]):
             out[yy, xx] = C('slate_cool', 0) if rr and not (tt >= 5) else C(fam, tt)
-        # a cap of snow on the bigger stones
-        if w > 10:
-            capy = int(cy - h / 2) + 1
-            for xx in range(int(cx - w * 0.3), int(cx + w * 0.15)):
-                if 0 <= capy < H and 0 <= xx < W:
-                    out[capy, xx] = C('snow', 5)
-                    if capy + 1 < H:
-                        out[capy + 1, xx] = C('snow_cool', 4)
-        x += w * rng.uniform(0.6, 1.0) if rng.random() < 0.3 else w + rng.uniform(22, 60)
+        # a contact shadow east of it on the ground, one row, joined to it
+        for xx in range(int(cx), int(x + w) + 3):
+            yy = yf + 1
+            if 0 <= yy < H and 0 <= xx < W and out[yy, xx] < 0:
+                out[yy, xx] = C('snow_cool', 3)
+        x += w + rng.uniform(30, 70)
+    # drifts banked against the face, two or three a panel, of their own sizes
+    x = SEAM_BLOCK + float(rng.integers(0, 24))
+    while x < W - SEAM_BLOCK - 10:
+        hw = rng.uniform(7, 15)
+        hh = rng.uniform(3.5, 8)
+        cx = x + hw
+        if cx + hw > W - SEAM_BLOCK + 4:
+            break
+        if keep_clear is None or not (keep_clear(int(cx - hw)) or keep_clear(int(cx + hw))):
+            _drift(out, cx, yf, hw, hh, seed + int(x), stone=stone)
+        x = cx + hw + rng.uniform(26, 60)
 
 
+STEP_TREAD, STEP_RISE = 9, 7          # (the #536 audits) nine rows of tread over seven of riser: mostly treads
 
-def _granite_cheek(out, side, seed):
-    """The face's end beside the stair (eastward-edges.md 3.3 and 6.1, after the woodland's
-    approved timber stair, #513): a stepped wall of the face's granite beside the treads, its
-    blocks one or two steps tall with the joints at their own heights; on each step a lit top plane
-    (three rows) level with its tread, a front in shade under it, the block's foot a tone darker; on
-    the stair side a band 3 texels wide (lit where it faces west, in shade where it faces east) with
-    the broken ink line at its edge; a broken ink line where the cheek meets the face's rock, its
-    edge staggered every few rows; snow lodged on each top; the snow lip turning down over the
-    corner. `side` 0 is the piece's west end (the stair lies west), 1 its east end."""
+
+def _step_rows(k):
+    """A step's sixteen rows as (ramp, tone), tread then riser: its back row in the shade of the
+    riser above, the lit plane (warm), its nosing (the brightest) and its rounded front; the riser
+    under it darkest under the nose, its stone in shade, the contact line at its foot."""
+    rows = [('slate_cool', 2) if k > 0 else ('slate', 3), ('slate', 3)] + [('slate_warm', 4)] * 5 + [('slate', 5), ('slate', 4)]
+    rows += [('slate_cool', 1), ('slate', 2), ('slate', 2), ('slate', 2), ('slate_cool', 2), ('slate_cool', 1), ('slate_cool', 0)]
+    return rows
+
+
+def _granite_cheek(out, side, seed, stone):
+    """The face's end beside the stair (the #536 audits: detail findings 6 and 8, logic finding 1;
+    eastward-edges.md 3.3 and 6.1; after the woodland's approved timber stair, #513): a stepped wall
+    of two or three granite blocks, the joints at their own heights on each side, ending a tread
+    short of the foot. On each step a lit top plane (2 to 3 rows, level with its tread) over a front
+    in shade stepping down; the cheek lit on its west side and dark on its east flank; a broken ink
+    line where it meets the face's rock (the side band); one chipped corner; snow lodged on some
+    steps. Under its end the bottom step runs on out under it (the stair's last tread and riser,
+    their lit nosing unbroken from cheek end to cheek end) and the face's foot wraps round it.
+    `side` 0 is the piece's west end (the stair lies west: this is the stair's east cheek), 1 its
+    east end (the stair's west cheek)."""
     H, W = out.shape
     yf = LIP_PX + FACE_PX
     rng = np.random.default_rng(seed + 61 + side)
-    k = 0
-    while k < STEPS:
-        span = 2 if (k < STEPS - 1 and rng.random() < 0.4) else 1
-        y0 = LIP_PX + k * STEP_PX
-        y1 = yf if k + span >= STEPS else y0 + span * STEP_PX
-        wd = CHEEK + int(rng.integers(-1, 3))
-        fam = ('slate', 'slate', 'slate_warm', 'iron')[int(rng.integers(0, 4))]
-        for y in range(y0, y1):
-            r = y - y0
-            in_step = (y - LIP_PX) % STEP_PX                       # rows into the step (the tread's own)
-            wdy = wd + (1 if ((y + 3 * k) // 5) % 2 else 0)
-            for d in range(wdy):
-                x = d if side == 0 else W - 1 - d
-                if in_step < 3 and (r < 3 or span == 2):
-                    # a lit top plane on every step, the upper one of a two-step block a ledge cut in it
-                    c = C('slate_warm', 4) if in_step < 2 else C('slate', 5)
-                    if in_step == 0 and r > 0:
-                        c = C(fam, 2)                              # the crease where the block steps back
-                elif y == y1 - 1:
-                    c = C('slate_cool', 0)                         # the joint under the block
-                elif y >= y1 - 4:
-                    c = C(fam, 1)
-                elif in_step < 5:
-                    c = C(fam, 3)
-                else:
-                    c = C(fam, 2)
-                if d < 3 and in_step >= 3 and y < y1 - 1:
-                    # the side band toward the stair: facing west it is lit, facing east in shade
-                    if d == 0:
-                        c = C('slate_cool', 0) if hsh(seed, y // 3, side, 5) > 0.3 else C(fam, 1)
-                    else:
-                        c = C(fam, 4 if side == 0 else 1)
-                if d == wdy - 1 and in_step >= 3:
-                    c = C('slate_cool', 0) if hsh(seed, y // 2, side, 6) > 0.35 else C(fam, 1)
-                out[y, x] = c
-            if r == 0 or (span == 2 and in_step == 0):
-                for d in range(1, wd - 2):
-                    x = d if side == 0 else W - 1 - d
-                    if hsh(seed, d // 3, y, side) > 0.45:
-                        out[y, x] = C('snow', 5)
-                        if hsh(seed, d // 2, y, side, 3) > 0.5:
-                            out[y + 1, x] = C('snow_cool', 4)
-        k += span
+    wd = CHEEK
+    c_end = LIP_PX + (STEPS - 1) * STEP_PX                         # the last step's top: the cheek ends here
 
+    def X(d):
+        return d if side == 0 else W - 1 - d                       # d: 0 at the stair's side
+    j1 = LIP_PX + int(rng.integers(1, 3)) * STEP_PX + int(rng.integers(6, 12))
+    j2 = j1 + int(rng.integers(2, 3)) * STEP_PX + int(rng.integers(-3, 4))
+    joints = [j for j in (j1, j2) if LIP_PX + 4 < j < c_end - 4]
+    bf = ('slate', 'slate_warm', 'slate') if side == 0 else ('slate_warm', 'slate', 'slate')
+
+    def block_of(y):
+        return sum(1 for j in joints if y > j)
+    for k in range(STEPS - 1):
+        ya = LIP_PX + k * STEP_PX
+        y0_ = ya - 2 if k == 0 else ya
+        for y in range(y0_, ya + STEP_PX):
+            dd = y - y0_
+            r_ = y - ya
+            fb = bf[min(2, block_of(y))]
+            if dd == 0:
+                c = C('slate', 5)                                  # the step's lit edge
+            elif r_ < 3:
+                c = C('slate_warm', 4)                             # its lit top plane, level with its tread
+            elif r_ < STEP_TREAD - 1:
+                c = C(fb, 3)                                       # the top turning down to its front
+            elif r_ == STEP_TREAD - 1:
+                c = C('slate_cool', 2)                             # the shade under its edge
+            elif r_ < STEP_TREAD + 3:
+                c = C(fb, 2)                                       # its front in shade, beside the riser
+            else:
+                c = C(fb, 2)
+            for d in range(wd):
+                out[y, X(d)] = c
+                stone[y, X(d)] = True
+        # the step's front: a pit or two and a worn texel pair (clusters, never single texels)
+        for _ in range(2):
+            py = ya + int(rng.integers(5, 12))
+            px = int(rng.integers(3, wd - 5))
+            out[py, X(px)] = C('slate', 1)
+            out[py, X(px + 1)] = C('slate', 1)
+            out[py + 1, X(px)] = C('slate_warm', 4)
+            out[py + 1, X(px + 1)] = C('slate_warm', 4)
+    # the blocks: a texel of joint where one meets the next, the next one's top lit
+    for j in joints:
+        for d in range(1, wd - 1):
+            jj = j + (1 if d >= wd // 2 else 0)                     # the joint jogs a texel halfway across
+            out[jj, X(d)] = C('slate_cool', 0)
+            t_ = out[jj + 1, X(d)]
+            if t_ % 8 < 4:
+                out[jj + 1, X(d)] = t_ + 1
+    # the flanks: lit on the west, dark on the east (3 texels of side band each side of the cheek),
+    # the ink line broken every 4 to 8 rows where it meets the face's rock
+    west = [0, 1] if side == 0 else [wd - 2, wd - 3]               # in d, the cheek's west columns
+    east = [wd - 3, wd - 2] if side == 0 else [0, 1]
+    outer = wd - 1                                                 # the face side (d)
+    for y in range(LIP_PX - 2, c_end):
+        for d in west:
+            if out[y, X(d)] % 8 >= 2 and out[y, X(d)] % 8 < 4:
+                out[y, X(d)] = C('slate_warm', 4)
+        for d in east:
+            if 2 <= out[y, X(d)] % 8 <= 3:
+                out[y, X(d)] = C('slate_cool', 2)
+    y = LIP_PX - 1
+    while y < c_end:
+        n = int(rng.integers(4, 9))
+        for yy in range(y, min(c_end, y + n)):
+            out[yy, X(outer)] = C('slate_cool', 0)
+        if y + n < c_end:
+            out[y + n, X(outer)] = C('slate', 2)                   # the break in the line
+        y += n + 1
+    # a chipped corner: a block's corner knocked off, its broken face lit
+    ck = int(rng.integers(1, STEPS - 2))
+    cy = LIP_PX + ck * STEP_PX
+    for (dy, dd_, c) in ((0, 0, C('slate_cool', 1)), (0, 1, C('slate_cool', 1)), (0, 2, C('slate_cool', 1)),
+                         (1, 0, C('slate_cool', 1)), (1, 1, C('slate', 2)), (2, 0, C('slate', 5)), (2, 1, C('slate', 5))):
+        d = (wd - 2 - dd_) if (ck % 2) else (1 + dd_)
+        out[cy + dy, X(d)] = c
+    # snow lodged at the back of some steps' tops, of its own length and depth
+    for k in range(STEPS - 1):
+        if hsh(seed, k, side, 71) < 0.4:
+            continue
+        ya = LIP_PX + k * STEP_PX
+        n = 4 + int(hsh(seed, k, side, 72) * 7)
+        d0 = 1 + int(hsh(seed, k, side, 73) * (wd - n - 1)) if wd - n - 1 > 1 else 1
+        th = 1 + int(hsh(seed, k, side, 74) * 2)
+        for i in range(n):
+            d = d0 + i
+            tt = th if 0 < i < n - 1 else 1
+            for j in range(tt):
+                out[ya + tt - 1 - j, X(d)] = C('snow', 5) if j == tt - 1 and tt > 1 else (C('snow_cool', 3) if j == 0 else C('snow', 4))
+            out[ya + tt, X(d)] = C('slate_cool', 1)
+    # its head: the upper tier's snow turning down over the cheek
+    for d in range(wd + 2):
+        x = X(d)
+        top = LIP_PX - 5 + int(round(1.0 * hsh(seed, d // 4, 2)))
+        for y in range(max(0, top), LIP_PX - 1):
+            out[y, x] = C('snow', 4) if y > top else C('snow', 5)
+        out[LIP_PX - 1, x] = C('snow_cool', 3)
+    # under the cheek's end: the bottom step running on out under it, its nosing unbroken
+    rows = _step_rows(STEPS - 1)
+    for r_, (f_, t_) in enumerate(rows):
+        y = c_end + r_
+        if y >= yf:
+            break
+        for d in range(wd):
+            c = C(f_, t_)
+            if d == wd - 1:
+                c = C('slate_cool', 0) if r_ >= STEP_TREAD else C('slate', 2)   # the step's end against the face
+            out[y, X(d)] = c
+            stone[y, X(d)] = True
+    out[c_end - 1, [X(d) for d in range(wd)]] = C('slate_cool', 2)  # the cheek's foot on the step
+    # snow drifted into the corner where the cheek ends on the step, a pebble on the tread
+    n = 4 + int(rng.integers(0, 5))
+    for i in range(n):
+        d = wd - 2 - i
+        h = max(1, 3 - i // 2)
+        for j in range(h):
+            out[c_end + j, X(d)] = C('snow', 5) if j == 0 and i < n - 2 else (C('snow', 4) if j < h - 1 else C('snow_cool', 3))
+    pd = int(rng.integers(2, 6))
+    out[c_end + 4, X(pd)] = C('slate', 5)
+    out[c_end + 4, X(pd + 1)] = C('slate', 3)
+    out[c_end + 5, X(pd)] = C('slate', 2)
+    out[c_end + 5, X(pd + 1)] = C('slate_cool', 1)
 
 
 def _granite_face(W, seed, cheeks=(False, False)):
-    """A south granite face W texels wide on its picture (see the section's note). Panel seams meet:
-    the bedding planes, the cornice and the seam blocks are the same at every edge."""
+    """A south granite face W texels wide on its picture (see the section's notes). Panel seams
+    meet: the bedding planes, the lip and the seam blocks are the same at every edge.
+
+    Top to bottom (eastward-edges.md 2.3, 3.1): the upper tier's snow ending in one row a tone
+    darker, hanging 0 or 1 row over the face on a wobble of 3 to 8 texels; a 1 px rim line in the
+    stone's darkest; the under-lip shade, 4 to 5 rows in two flat values (slate_cool 2 over the
+    block's own tone 2, its grain only a sibling hue at the same value); a zone of horizontal
+    streaks; the strata; the foot (3.2). Icicles hang from the lip in two or three clusters. No dark
+    row runs ruled across the face (forms.masonry_rock): the rim line steps with the lip, and the
+    block feet and the foot band keep to tone 2 over the 1 px joints."""
     H = LIP_PX + FACE_PX + 6
     yf = LIP_PX + FACE_PX
-    lab, joint, bed = _blocks(W, seed)
+    lab, joint, bed = _blocks(W, seed, fault=seed in FAULT_SEEDS)
     face, info, d = _paint_blocks(W, seed, lab, joint, bed)
     out = np.full((H, W), -1, np.int32)
     out[LIP_PX:yf] = face
@@ -1247,177 +1227,220 @@ def _granite_face(W, seed, cheeks=(False, False)):
     rock[LIP_PX:yf] = True
     labf = np.full((H, W), -1, np.int32)
     labf[LIP_PX:yf] = lab
+    jointf = np.zeros((H, W), bool)
+    jointf[LIP_PX:yf] = joint
     df = {k_: np.zeros((H, W), np.int32) for k_ in d}
     for k_ in d:
         df[k_][LIP_PX:yf] = d[k_]
-    # the under-lip shade, in two values, under the cornice's own wobble
-    ov = _cornice(W, seed)
     Y, X = np.mgrid[0:H, 0:W]
-    under = Y - (LIP_PX + ov[None, :])
-    # (the deepest shade broken in diagonal two-texel dashes, so it never lies as a ruled band)
-    chk = (((X + Y) // 2) % 2) == 0
-    band = rock & (under >= 0) & (under < 5)
-    t_ = out % 8
-    out[band] = (out[band] // 8) * 8 + np.where(chk[band], np.maximum(0, t_[band] - 2), np.clip(t_[band] - 1, 2, 3))
-    _shift(out, rock & (under >= 5) & (under < 13) & chk & (out % 8 >= 3), -1)
-    # the foot: a dark band, darkest in its last rows
-    _shift(out, rock & (Y >= yf - 8) & (out % 8 >= 3), -1)
-    _shift(out, rock & (Y >= yf - 4) & chk, -1)
+    ov = _cornice(W, seed)
+    lipb = LIP_PX + ov                                              # the first row of stone under the lip
+    # the under-lip shade's lower edge wanders a texel in long runs
+    sh = np.array([5 + int(hsh(seed, x // 7, 43) > 0.55) for x in range(W)])
+    u = Y - lipb[None, :]
+    fam_ = out // 8
+    out[rock & (u == 0)] = C('slate_cool', 0)                       # the rim line on the lip's wobble
+    s1 = rock & (u >= 1) & (u < 3) & ~jointf
+    out[s1] = C('slate_cool', 2)                                    # the under-lip shade, its darker value
+    s2 = rock & (u >= 3) & (u < 1 + sh[None, :]) & ~jointf
+    out[s2] = fam_[s2] * 8 + 2                                      # and its lighter
+    out[rock & (u < 0)] = -1
+    # the zone of horizontal streaks under the shade: marks 2 to 6 texels long, a tone down
+    zone = rock & (u >= 1 + sh[None, :]) & (u < 13) & ~jointf & (out % 8 >= 3)
+    srng = np.random.default_rng(seed + 44)
+    for _ in range(W // 5):
+        y = int(srng.integers(LIP_PX + 7, LIP_PX + 13))
+        x = int(srng.integers(0, W - 6))
+        n = int(srng.integers(2, 7))
+        if zone[y, x:x + n].all() and not (zone[y - 1, x:x + n] & (out[y - 1, x:x + n] % 8 < out[y, x:x + n] % 8)).any():
+            out[y, x:x + n] = out[y, x:x + n] - 1
     for side, on in enumerate(cheeks):
         if on:
-            _granite_cheek(out, side, seed)
-    # lone texels tidied, except in the dashed shades
-    V.tidy(out, passes=1, keep=rock & (((under >= 0) & (under < 13)) | (Y >= yf - 8) | (out % 8 <= 1)))
-    # granite's grain and a few fractures, on the stone's lit and mid texels
-    body = rock & (out >= 0) & (out % 8 >= 1) & (out // 8 != FI['slate_cool']) | (rock & (out // 8 == FI['slate_cool']) & (out % 8 >= 2))
-    _grain(out, body, seed, swap=0.3, step=0.06, lit=(out % 8 >= 4))
-    _fractures(out, rock & (Y > yf - FACE_PX + 16) & (Y < yf - 10) & (out % 8 >= 2), seed + 5, n=max(1, W // 60))
-    snow = _ledge_snow(out[LIP_PX:yf], lab, info, d, W, seed)
+            _granite_cheek(out, side, seed, rock)
+    snow = _ledge_snow(out[LIP_PX:yf], lab, info, d, W, seed, rock[LIP_PX:yf])
     snowf = np.zeros((H, W), bool)
     snowf[LIP_PX:yf] = snow
-    _lichen(out, info, {k_: df[k_] for k_ in df}, labf, W, seed, avoid=snowf | (under < 13))
-    # the upper tier's snow (the zone's own snow fill) and the cornice hanging over the face
+    # granite's grain in clusters, on the stone's planes (not its lines, not the shade under the lip)
+    body = rock & (out >= 0) & (out % 8 >= 2) & ~jointf & ~snowf & ~np.isin(out // 8, list(SNOWS)) & (u >= 1 + sh[None, :])
+    _cgrain(out, body, seed, step=3, p=0.9, lit=(out % 8 >= 4), sib=0.65, fleck=0.15)
+    shade = rock & (u >= 1) & (u < 1 + sh[None, :]) & ~jointf & (out % 8 == 2)
+    _cgrain(out, shade, seed + 3, step=3, p=0.8, sib=1.0, keep_value=True)
+    _fractures(out, rock & (Y > yf - FACE_PX + 18) & (Y < yf - 12) & (out % 8 >= 2) & ~snowf & ~np.isin(out // 8, list(SNOWS)),
+               seed + 5, n=max(1, W // 72))
+    _lichen(out, info, {k_: df[k_] for k_ in df}, labf, W, seed, avoid=snowf | (u < 13))
+    # the upper tier's snow (the zone's own fill), ending in a row a tone darker on the lip's wobble
     sfill = np.full((H, W), -1, np.int32)
     paint_snow(sfill, np.ones((H, W), bool))
     for x in range(W):
-        o = int(ov[x])
-        for y in range(0, LIP_PX + o):
-            if cheeks[0] and x < CHEEK + 2 or cheeks[1] and x >= W - CHEEK - 2:
-                if y >= LIP_PX - 5:
-                    continue
-            if y < LIP_PX - 4:
-                c = sfill[y, x]
-            elif y < LIP_PX - 1:
-                c = C('snow', 5)                            # the crest of the lip, lit
-            elif y == LIP_PX + o - 1:
-                c = C('snow_cool', 2)                       # its underside
-            elif y >= LIP_PX + o - 3:
-                c = C('snow_cool', 3)
-            else:
-                c = C('snow_cool', 4)
-            out[y, x] = c
-    for side, on in enumerate(cheeks):
-        if on:
-            x0, x1 = (0, CHEEK + 2) if side == 0 else (W - CHEEK - 2, W)
-            for x in range(x0, x1):
-                top = LIP_PX - 5 + int(round(1.5 * hsh(seed, x // 4, 2)))
-                for y in range(max(0, top), LIP_PX):
-                    out[y, x] = C('snow', 5) if y == top else (C('snow', 4) if y < LIP_PX - 2 else C('snow_cool', 3))
-    fringe = np.zeros((H, W), bool)
-    fringe[:yf - 10] = True
-    if cheeks[0]:
-        fringe[:, :CHEEK + 3] = False
-    if cheeks[1]:
-        fringe[:, W - CHEEK - 3:] = False
-    _drips(out, seed, rows=fringe)
+        if cheeks[0] and x < CHEEK + 2 or cheeks[1] and x >= W - CHEEK - 2:
+            continue
+        for y in range(0, lipb[x]):
+            out[y, x] = sfill[y, x] if y < lipb[x] - 1 else C('snow_cool', 3)
+    # icicles from the lip: two or three clusters a panel, none near a seam or a cheek
+    lo_x = SEAM_BLOCK + (CHEEK + 4 if cheeks[0] else 0)
+    hi_x = W - SEAM_BLOCK - 8 - (CHEEK + 4 if cheeks[1] else 0)
+    n_cl = 2 + int(W >= 144 and hsh(seed, 61) > 0.3)
+    for i in range(n_cl):
+        if hi_x <= lo_x:
+            break
+        span = (hi_x - lo_x) / n_cl
+        x = int(lo_x + span * i + span * (0.15 + 0.6 * hsh(seed, i, 62)))
+        _icicles(out, x, lipb[x], 2 + int(hsh(seed, i, 63) * 2), seed + 7 * i, lo=2, hi=6, below=rock)
     clear = None
     if cheeks[0] or cheeks[1]:
         def clear(x, c=cheeks):
             return (c[0] and x < CHEEK + 4) or (c[1] and x >= W - CHEEK - 4)
-    _talus(out, W, seed, yf, keep_clear=clear)
+    stone = rock & (out >= 0) & ~np.isin(out // 8, list(SNOWS))
+    for side, on in enumerate(cheeks):
+        if on:
+            x0, x1 = (0, CHEEK) if side == 0 else (W - CHEEK, W)
+            stone[:, x0:x1] = False                                  # the bottom step's run under the cheek
+    _foot(out, stone, W, seed, yf, sfill, keep_clear=clear)
+    # under the foot: the drifts' lower edge, then nothing (the ground below is the zone's)
+    prof = ndi.gaussian_filter1d(np.array([hsh(seed, x, 9) for x in range(W)]), 3.0, mode='wrap')
+    prof = (prof - prof.min()) / max(1e-6, prof.max() - prof.min())
+    for x in range(W):
+        out[yf + int(round(2.2 * prof[x])):, x] = -1
+    lines_ = (out % 8 == 0) & (out >= 0)
+    _unlone(out, (out >= 0) & ~lines_ & (Y >= LIP_PX) & (Y < yf))
     return V.Pic(W, H, W // 2, yf - 1), out
 
+
+FAULT_SEEDS = {130}                    # the long face's third plain look (plain_c) carries the one deliberate fault
 
 
 def _granite_stair(W, seed):
     """The Col Path's stair up the face, seen from above (eastward-edges.md 6.1, size guide: six
-    steps on a 16 px pitch): each step a tread of two or three long granite slabs, 8 rows deep, its
-    back row in the shade of the riser above, its nose lit and chipped, over a riser 8 rows deep
-    darkening to a contact line at its foot (half the pitch, Eastward's 43 to 53 %). The
-    slab joints line up from step to step (laid, not bonded) and each slab sits a texel high or low,
-    so no tread edge runs ruled across. The cheeks' shade on the treads at both sides, snow banked
-    in the back corners and along the outer thirds of the treads, the trod worn smooth up the middle
-    with a few packed bootprints; the packed trod coming over the top."""
+    steps on a 16 px pitch; the #536 audits, detail findings 7 and 9, logic finding 4): each step a
+    tread nine rows deep over a riser of seven (`_step_rows`). Each step is laid from slabs 25 to 70
+    texels long whose joints break from step to step (one step a single long slab), each slab a
+    texel high or low; every row of the flight is stone (no gaps under a riser). The steps differ:
+    a chipped nosing on one, a crack across another, the trod worn lighter up the middle of all.
+    Snow lies in loads at the back of the treads against the riser above, of their own lengths and
+    depths, and drifts into the cheeks' corners on some steps; the packed trod comes over the top."""
     H = LIP_PX + FACE_PX + 6
     yf = LIP_PX + FACE_PX
     rng = np.random.default_rng(seed + 7)
     out = np.full((H, W), -1, np.int32)
-    TR = 8
-    j0 = [int(W * 0.34 + rng.integers(-3, 4)), int(W * 0.68 + rng.integers(-3, 4))]
     mid0, mid1 = int(W * 0.36), int(W * 0.64)
+    single = int(rng.integers(1, STEPS - 1))                       # the step laid as one long slab
+    chip_k, crack_k = int(rng.integers(0, STEPS)), int(rng.integers(0, STEPS))
+    if crack_k == chip_k:
+        crack_k = (chip_k + 2) % STEPS
+    prev = []
+    tread_m = np.zeros((H, W), bool)
     for k in range(STEPS):
         y0 = LIP_PX + k * STEP_PX
-        js = [j + int(rng.integers(-1, 2)) for j in j0]
-        if rng.random() < 0.3:
-            js = [js[int(rng.integers(0, 2))]]                       # one long slab and a short one
-        edges = [0] + js + [W]
+        rows = _step_rows(k)
+        # the step's slabs: cuts 25 to 70 apart, never within 10 of a joint on the step above
+        cuts = []
+        if k != single:
+            x = 0
+            while True:
+                w = int(rng.integers(25, 71))
+                x += w
+                if x > W - 25:
+                    break
+                for _ in range(6):
+                    if all(abs(x - p) >= 10 for p in prev):
+                        break
+                    x += 11
+                if x > W - 25:
+                    break
+                cuts.append(x)
+        prev = cuts
+        edges = [0] + cuts + [W]
         for s in range(len(edges) - 1):
             x0, x1 = edges[s], edges[s + 1]
-            fam = ('slate', 'slate_warm', 'slate', 'iron')[int(hsh(seed, k, s, 3) * 4)]
-            base = 4
+            fam = ('slate', 'slate_warm', 'slate')[int(hsh(seed, k, s, 3) * 3)]
             dy = (0, 0, 1, -1)[int(hsh(seed, k, s, 5) * 4)] if k > 0 else 0
-            tb = y0 + dy                                           # the slab's back row
-            nose = y0 + TR - 1 + dy
             for x in range(x0, x1):
-                for y in range(max(y0 - 1, tb), min(yf, y0 + STEP_PX)):
-                    if y <= nose:
-                        r = y - tb
-                        if r == 0 and k > 0:
-                            t = 2                                            # the riser above shades its back
-                        elif y == nose:
-                            t = 5 if hsh(seed, x // 2, k, 6) > 0.12 else 3   # the lit nose, chipped
-                        else:
-                            t = base
-                        f = fam if (y != nose and r > 0) else 'slate'
-                        if base == 4 and 0 < r < TR - 3 and y != nose:
-                            f = 'slate_warm' if fam != 'iron' else fam       # the lit plane warm
-                    else:
-                        rr = y - nose - 1                                    # the riser, 8 rows under the nose
-                        # the riser: its stone in shade under the nose, the contact line at its foot
-                        t = 2 if rr <= 1 else (1 if rr <= 6 else 0)
-                        f = fam if rr <= 5 else 'slate_cool'
+                for y in range(y0 - (1 if dy < 0 else 0), y0 + STEP_PX):
+                    r = int(np.clip(y - y0 - dy, 0, STEP_PX - 1))
+                    f, t = rows[r]
+                    if f == 'slate_warm' and fam != 'slate':
+                        f = fam
                     if x == x0 and x0 > 0:
-                        # the joint between slabs: a dark seam on the riser, a fine one on the tread
-                        t, f = (0, 'slate_cool') if y > nose else (max(1, t - 2), fam)
-                    elif x == x0 + 1 and x0 > 0 and y <= nose and y != nose:
-                        t = min(5, t + 1)                                    # the next slab's lit west end
+                        # the joint: a fine dark seam on the tread, a dark one on the riser
+                        f, t = ('slate', max(1, t - 2)) if r < STEP_TREAD else ('slate_cool', 0)
+                    elif x == x0 + 1 and x0 > 0 and 1 <= r < STEP_TREAD - 2:
+                        t = min(5, t + 1)                          # the next slab's lit west end
                     out[y, x] = C(f, t)
-        # the west cheek shades the west end of every tread and riser; the east cheek only meets it
-        for y in range(y0, min(yf, y0 + STEP_PX)):
-            for x in range(0, 5):
-                if out[y, x] >= 0 and out[y, x] % 8 >= 1 and (x < 3 or hsh(seed, y, k, 12) > 0.4):
-                    out[y, x] = (out[y, x] // 8) * 8 + max(0, out[y, x] % 8 - (2 if x < 2 else 1))
-            out[y, W - 1] = (out[y, W - 1] // 8) * 8 + max(0, out[y, W - 1] % 8 - 2)
-    V.tidy(out, passes=1)
-    Y, X = np.mgrid[0:H, 0:W]
-    stone = out >= 0
-    tread = stone & (out % 8 >= 3)
-    worn = tread & (X >= mid0) & (X < mid1)
-    _grain(out, stone & ~worn & (out % 8 >= 1), seed, swap=0.45, step=0.06, lit=(out % 8 >= 4))
-    _grain(out, worn, seed + 1, swap=0.2, step=0.0)
-    # snow banked into the treads' back corners against the cheeks (a quarter heap, its top lit,
-    # its rim toward the tread cool), clumps lying at the back of the outer thirds
+                    tread_m[y, x] = 2 <= r < STEP_TREAD - 2
+        # the step's own marks
+        if k == chip_k:
+            cx = int(rng.integers(mid1 + 4, W - 14)) if rng.random() < 0.5 else int(rng.integers(8, mid0 - 6))
+            n = int(rng.integers(3, 6))
+            out[y0 + STEP_TREAD - 2, cx:cx + n] = C('slate', 2)        # the nosing knocked off
+            out[y0 + STEP_TREAD - 1, cx:cx + n] = C('slate_cool', 1)
+            out[y0 + STEP_TREAD - 3, cx:cx + n] = C('slate', 5)        # its broken face lit
+        if k == crack_k:
+            cx = float(rng.integers(mid0 - 10, mid1 + 6))
+            for r in range(1, STEP_TREAD - 1):
+                xi = int(round(cx))
+                out[y0 + r, xi] = C('slate', 1)
+                out[y0 + r, xi - 1] = C('slate', 5)
+                cx += 0.6
+    # every row of the flight is stone
+    assert (out[LIP_PX:yf] >= 0).all(), 'a gap in the stair'
+    # the trod worn lighter up the middle of each tread, in a lens that wanders step to step
     for k in range(STEPS):
         y0 = LIP_PX + k * STEP_PX
+        c = (mid0 + mid1) / 2 + rng.uniform(-4, 4)
+        hw = rng.uniform(9, 14)
+        for r in range(3, STEP_TREAD - 2):
+            w_ = hw * (1 - ((r - 4.5) / 3.5) ** 2) ** 0.5
+            for x in range(int(c - w_), int(c + w_)):
+                if out[y0 + r, x] == C('slate_warm', 4) or out[y0 + r, x] == C('slate', 4):
+                    out[y0 + r, x] = C('slate', 5)
+    # the west cheek shades the west end of each tread (3 texels) and riser (2)
+    for k in range(STEPS):
+        y0 = LIP_PX + k * STEP_PX
+        for y in range(y0, y0 + STEP_PX):
+            n = 3 if y - y0 < STEP_TREAD else 2
+            for x in range(n):
+                if out[y, x] % 8 >= 1:
+                    out[y, x] -= 1
+    stone = out >= 0
+    stone[:LIP_PX] = False
+    Y, X = np.mgrid[0:H, 0:W]
+    _cgrain(out, stone & (out % 8 >= 2) & (out % 8 <= 4) & ~((X >= mid0) & (X < mid1) & tread_m), seed, step=3, p=0.9,
+            lit=(out % 8 >= 4), sib=0.65)
+    # snow: loads at the back of the treads (against the riser above), drifts into the cheeks' corners
+    for k in range(STEPS):
+        y0 = LIP_PX + k * STEP_PX + (1 if k > 0 else 0)
         for side in (0, 1):
-            wl = 8 + int(round(7 * hsh(seed, k, side, 8)))
-            hm = 4 + int(round(2 * hsh(seed, k, side, 13)))
+            if hsh(seed, k, side, 8) < 0.3:
+                continue                                           # this corner bare
+            wl = 5 + int(round(9 * hsh(seed, k, side, 9)))
+            hm = 2 + int(round(3 * hsh(seed, k, side, 13)))
             for dx in range(wl):
                 x = dx if side == 0 else W - 1 - dx
                 h = int(round(hm * math.sqrt(max(0.0, 1 - (dx / wl) ** 2))))
-                for r in range(h):
-                    y = y0 + r + (1 if k > 0 else 0)
-                    rim = r == h - 1 or dx >= wl - 2
-                    c = C('snow', 5) if r == 0 and dx < wl - 2 else (C('snow_cool', 3) if rim else (
-                        C('snow', 4) if side == 0 or dx > 2 else C('snow_cool', 4)))
-                    out[y, x] = c
-        x = 16 + int(rng.integers(0, 8))
-        while x < W - 18:
-            n = int(rng.integers(3, 7))
-            if not (mid0 - 6 <= x + n and x <= mid1 + 6) and hsh(seed, x, k, 9) > 0.35:
-                for xx in range(x, x + n):
-                    out[y0 + 2, xx] = C('snow', 5) if xx < x + n - 1 else C('snow_cool', 4)
-                    if 0 < xx - x < n - 1:
-                        out[y0 + 3, xx] = C('snow_cool', 4)
-            x += n + int(rng.integers(6, 16))
-        # a pair of packed bootprints on alternate treads
-        if k % 2 == 0:
-            for j, fx in enumerate((-6, 4)):
-                x = int((mid0 + mid1) / 2 + fx + rng.integers(-2, 3))
-                y = y0 + 3 + 2 * j
-                out[y:y + 3, x:x + 2] = C('snow_cool', 4)
-                out[y, x] = C('snow', 5)
-    # the trod coming over the top (the zone's own trod fill) between the snow either side
+                if h <= 0:
+                    continue
+                for r in range(max(1, h)):
+                    y = y0 + r
+                    rim = r == max(1, h) - 1
+                    out[y, x] = C('snow_cool', 3) if rim else (C('snow', 5) if r == 0 and dx < wl * 0.6 else C('snow', 4))
+                yy = y0 + max(1, h)
+                if out[yy, x] % 8 >= 3 and out[yy, x] // 8 not in SNOWS:
+                    out[yy, x] -= 1                                # the shade row under it
+        x = 10 + int(rng.integers(0, 14))
+        while x < W - 16:
+            n = int(rng.integers(5, 17))
+            if not (mid0 - 4 <= x + n and x <= mid1 + 4) and hsh(seed, x, k, 9) > 0.4:
+                th = 1 + int(hsh(seed, x, k, 10) * 2)
+                for i in range(n):
+                    xx = x + i
+                    tt = th if 1 <= i < n - 1 else 1
+                    for r in range(tt):
+                        out[y0 + r, xx] = C('snow', 5) if r == 0 and tt > 1 else (C('snow_cool', 3) if r == tt - 1 else C('snow', 4))
+                    if out[y0 + tt, xx] % 8 >= 3 and out[y0 + tt, xx] // 8 not in SNOWS:
+                        out[y0 + tt, xx] -= 1
+            x += n + int(rng.integers(10, 26))
+    # the trod coming over the top (the zone's own trod fill) between the snow either side, its lone
+    # specks cleared, a pair of bootprints in it
     sfill = np.full((H, W), -1, np.int32)
     paint_snow(sfill, np.ones((H, W), bool))
     tfill = np.full((H, W), -1, np.int32)
@@ -1429,8 +1452,276 @@ def _granite_stair(W, seed):
             if y == LIP_PX - 1 and not side:
                 c = C('snow_cool', 3)                     # the trod's worn edge over the head tread
             out[y, x] = c
+    head = np.zeros((H, W), bool)
+    head[:LIP_PX - 1] = True
+    out[head & np.isin(out, [C('snow_cool', 2), C('snow_cool', 5)])] = C('snow_cool', 4)   # no specks floating in it
+    _unlone(out, head)
+    for (fx, fy) in ((int(W * 0.44), 3), (int(W * 0.53), 6)):
+        out[fy:fy + 2, fx:fx + 2] = C('snow_cool', 3)
+        out[fy, fx] = C('snow_cool', 2)
+        out[fy, fx + 1] = C('snow_cool', 2)
+    _unlone(out, stone & (out % 8 > 0))
     return V.Pic(W, H, W // 2, yf - 1), out
 
+
+def _slab(out, stone, x0, yfo, h, dtop, seed, fam='slate', dip=0.0, load=0.0, ledge=False, fissure=False,
+          chamfer=1):
+    """One slab of the face's strata (the #536 detail audit, findings 10 and 11), its west end at
+    column x0 and its foot along the rows `yfo` (one per column, so an upper slab stands on the back
+    of the slab under it). Its top dips east by `dip` a column, like the face's beds. Seen from
+    the south and above: a top plane `dtop` rows deep (bare rock, lit and warm, its front arris the
+    brightest, its back row in the shade where it meets what stands behind), a front at tone 3 with
+    its west arris lit, an east flank turned from the light (flat, tone 1), its foot a tone down and
+    its last row the occlusion where it sits; `ledge` puts a bedding ledge across a tall front (a
+    dark line, the lower bed's lit lip under it), `fissure` one crack down it from its top; `load`
+    the share of its top under a load of snow. Paints over what is behind it (draw back to front).
+    Returns the rows of its top plane's back edge, per column (for the slab stacked on it)."""
+    H, W = out.shape
+    w = len(yfo)
+    rng = np.random.default_rng(seed)
+    xs = np.arange(x0, x0 + w)
+    fe = max(3, min(8, w // 6))                                    # the east flank's width
+    jag = np.zeros(w, int)
+    j_ = 0
+    for i in range(w):
+        if hsh(seed, i // 6, 81) > 0.75:
+            j_ = int(np.clip(j_ + (1 if hsh(seed, i, 82) > 0.5 else -1), -1, 1))
+        jag[i] = j_
+    ytf = np.array([yfo[i] - h + int(round(dip * i)) + jag[i] for i in range(w)])
+    ytb = ytf - dtop + 1
+    for i in range(w):
+        if i < chamfer:
+            ytb[i] += chamfer - i
+            ytf[i] += max(0, chamfer - i - 1)
+        if i >= w - fe:
+            ytb[i] += int(round((i - (w - fe) + 1) * dtop / (fe + 1)))   # the top turning down over the flank
+        if i > w - 1 - chamfer:
+            ytf[i] += i - (w - 1 - chamfer)
+    yl = None
+    if ledge:
+        hb = int(h * rng.uniform(0.4, 0.6))
+        yl = ytf + hb
+    xf = None
+    if fissure:
+        xf = float(x0 + int(w * rng.uniform(0.25, 0.6)))
+    # its sides and its foot wander a texel at a time (weathered, never a ruled edge)
+    def walk(n, k):
+        v, o, c_ = 0, np.zeros(n, int), 0
+        for q in range(n):
+            if c_ <= 0:
+                v = 1 - v
+                c_ = 3 + int(hsh(seed, q, k + 1) * 4)
+            o[q] = v
+            c_ -= 1
+        return o
+    y_hi = int(ytb.min())
+    li, ri, bo = walk(H, 90), walk(H, 92), walk(w, 94)
+    m = np.zeros((H, W), bool)
+    for i, x in enumerate(xs):
+        if not 0 <= x < W:
+            continue
+        flank = i >= w - fe
+        for y in range(max(0, ytb[i]), min(H, yfo[i] + 1 - bo[i])):
+            q = y - y_hi
+            if (i < li[q] or i > w - 1 - ri[q]) and y > ytf[min(i, w - 1)]:
+                continue
+            if y <= ytf[i]:
+                # the top plane
+                if flank:
+                    c = C('slate', 3)
+                elif y == ytf[i]:
+                    c = C('slate', 5)
+                elif y == ytb[i] and dtop > 2:
+                    c = C('slate', 3)
+                else:
+                    c = C('slate_warm', 4)
+            else:
+                t = 3
+                if flank:
+                    t = 2
+                elif i <= 1:
+                    t = 4
+                if y >= yfo[i] - 1 and not flank:
+                    t = 2
+                if y == yfo[i] - bo[i]:
+                    t = 1
+                f = fam if not flank else 'slate_cool'
+                c = C(f, t)
+                if yl is not None and not flank and i > 1:
+                    if y == yl[i]:
+                        c = C('slate_cool', 1)                      # the bedding line
+                    elif y == yl[i] + 1:
+                        c = C('slate', 5)                           # the lower bed's lit lip
+                    elif y == yl[i] + 2:
+                        c = C('slate_warm', 4)
+            out[y, x] = c
+            m[y, x] = True
+    # one fissure, from the top down to the ledge or the foot, leaning; its west lip lit
+    if xf is not None:
+        i0 = int(xf - x0)
+        y = int(ytf[i0]) + 1
+        yend = int(yl[i0]) if yl is not None else int(yfo[i0]) - 2
+        x = xf
+        while y < yend:
+            xi = int(round(x))
+            if 0 <= xi < W and m[y, xi]:
+                out[y, xi] = C('slate_cool', 0)
+                if m[y, xi - 1] and out[y, xi - 1] % 8 < 5:
+                    out[y, xi - 1] = C(fam, 4)
+            y += 1
+            x += 0.35
+    # the outline: the stone's darkest, a tone lighter along the lit top where it meets the sky
+    edge = m & ~ndi.binary_erosion(m)
+    sky = np.zeros_like(m)
+    sky[1:] = ~m[:-1]
+    out[edge] = C('slate_cool', 0)
+    lit_top = edge & sky & (np.arange(W)[None, :] < x0 + w - fe)
+    out[lit_top] = C('slate', 2)
+    stone |= m
+    # a load of snow on part of the top: heaped toward its back and west, its front the snow's mid
+    # tone, a shade row on the stone under it
+    if load > 0:
+        full = hsh(seed, 87) > 0.4                                 # over the whole plane, or a shallow load at its front
+        n = max(5, int((w - fe) * (max(load, 0.6) if full else load)))
+        s0 = int((w - fe - n) * hsh(seed, 83) * 0.7)
+        heap = 1 + int(hsh(seed, 84) > 0.45)                       # rows it heaps above the plane's back
+        D0 = dtop - 1 if full else 2 + int(hsh(seed, 88) * 2)
+        for i in range(s0, min(w - fe, s0 + n)):
+            x = x0 + i
+            if not 0 <= x < W:
+                continue
+            e = min(i - s0, s0 + n - 1 - i)
+            # the rows of the plane it covers, from its front: the whole depth in its body (and a row
+            # or two heaped over the back toward its west), fewer toward its rounded ends
+            v = 1.0 - (i - s0) / max(1, n)
+            D = D0 + (heap if full and v > 0.45 and e >= 4 else 0) - int(hsh(seed, x // 5, 89) > 0.8)
+            depth = int(max(1, min(D, 1 + 2.0 * e)))
+            for j in range(depth):
+                y = ytf[i] - j
+                if not 0 <= y < H:
+                    continue
+                if j == 0:
+                    c = C('snow', 2) if v < 0.5 else C('snow_cool', 3)   # its front in shade, bluer to the east
+                elif j == depth - 1 or (v > 0.6 and j > depth // 2):
+                    c = C('snow', 5)                               # its lit top and west
+                elif v > 0.3:
+                    c = C('snow', 4)
+                else:
+                    c = C('snow_cool', 3)                          # its east end turning from the light
+                out[y, x] = c
+            if ytf[i] + 1 < H and m[ytf[i] + 1, x]:
+                out[ytf[i] + 1, x] = C('slate_cool', 1)            # the shade under its front
+    return ytb
+
+
+def _mass(out, stone, x0, yb, layers, seed, dip=0.16, loads=(), fissure=-1, chamfer=1):
+    """A mass of the face's strata: `layers` from the bottom up, each (dx, w, h, dtop, fam), the one
+    above standing on the back of the one under it, set back and stepping (so each shows its own lit
+    top as a ledge); drawn top down so each lower bed overlaps the foot of the one above it.
+    `loads` the snow on each layer's top (0 bare)."""
+    feet = []
+    ytbs = []
+    for li, (dx, w, h, dtop, fam) in enumerate(layers):
+        if li == 0:
+            yfo_i = np.full(w, yb)
+        else:
+            pdx, pw = layers[li - 1][0], layers[li - 1][1]
+            xa = x0 + dx
+            yfo_i = np.array([ytbs[-1][int(np.clip(xa + i - (x0 + pdx), 0, pw - 1))] for i in range(w)])
+        # dry run to find this layer's back edge (for the layer above), then paint top down
+        H, W = out.shape
+        tmp = np.full((H, W), -1, np.int32)
+        ytb = _slab(tmp, np.zeros((H, W), bool), x0 + dx, yfo_i, h, dtop, seed + 17 * li, fam=fam,
+                    dip=dip if li == 0 else 0.0, chamfer=chamfer)
+        ytbs.append(ytb)
+        feet.append(yfo_i)
+    for li in range(len(layers) - 1, -1, -1):
+        dx, w, h, dtop, fam = layers[li]
+        _slab(out, stone, x0 + dx, feet[li], h, dtop, seed + 17 * li, fam=fam, dip=dip if li == 0 else 0.0,
+              load=loads[li] if li < len(loads) else 0.0, ledge=(h >= 26), fissure=(li == fissure), chamfer=chamfer)
+
+
+def _ground_contact(out, stone, seed):
+    """Where the rock meets the ground: one row of the ground's shade under the east two thirds of
+    each foot, joined to the rock (no stray texels)."""
+    H, W = out.shape
+    foot = stone & ~np.vstack([stone[1:], np.zeros((1, W), bool)])
+    for y, x in zip(*np.nonzero(foot)):
+        if y + 1 < H and 0 < x and foot[y, x - 1] and out[y + 1, x] < 0:
+            out[y + 1, x] = C('snow_cool', 3)
+
+
+def _rockpaint(masses, seed, canvas=(260, 190), origin=(130, 170), drifts=(), chips=()):
+    """Masses ((x, depth, layers, loads, fissure)) relative to the piece's foot, drawn back to front,
+    with its grain in clusters, drifts and the ground's contact; returns a Pic cropped to them."""
+    Wc, Hc = canvas
+    ox, oy = origin
+    out = np.full((Hc, Wc), -1, np.int32)
+    stone = np.zeros((Hc, Wc), bool)
+    for k, (x, dep, layers, loads, fis) in enumerate(sorted(masses, key=lambda m_: m_[1])):
+        _mass(out, stone, ox + x, oy + dep, layers, seed + 101 * k, dip=0.15 + 0.06 * hsh(seed, k, 86), loads=loads, fissure=fis,
+              chamfer=2 if len(layers) == 1 and layers[0][1] < 24 else 1)
+    for (x, dep, w, h) in chips:
+        _slab(out, stone, ox + x, np.full(w, oy + dep), h, max(3, h // 2), seed + 7 * (x + 200), fam='slate_warm', dip=0.15, chamfer=2)
+    rock = stone & (out >= 0) & ~np.isin(out // 8, list(SNOWS)) & (out % 8 >= 2)
+    inner = rock & ndi.binary_erosion(stone)
+    # the fronts' grain keeps their value (so the dark flank and the lit top stay apart), the other planes'
+    # steps away from the front's
+    _cgrain(out, inner & (out % 8 == 3), seed, step=3, p=0.9, sib=0.7, keep_value=True)
+    _cgrain(out, inner & (out % 8 != 3), seed + 1, step=3, p=0.9, lit=(out % 8 >= 4), sib=0.5)
+    _unlone(out, stone & (out % 8 > 0) & ndi.binary_erosion(stone))
+    for (dx, hw, hh) in drifts:
+        _drift(out, ox + dx, oy, hw, hh, seed + dx + 200, stone=stone)
+    _ground_contact(out, stone, seed)
+    return K.crop(out, ox, oy)
+
+
+def boulder(kind='a', seed=43):
+    """A Frostline granite boulder (round 7, A1: the face's strata as broken slabs, findings 10 and
+    11): `a` a block of two beds with a piece split off its east side, `b` a tilted slab on a lower
+    block, `large` a big block of two beds with two smaller in its lee and a chip in front; `small`
+    the round 2 stone, a cell across."""
+    if kind == 'small':
+        return _boulder_r3('small', seed)
+    if kind == 'a':
+        ms = [(-16, -2, [(0, 26, 12, 6, 'slate'), (3, 17, 7, 5, 'slate')], (0.0, 0.6), -1),
+              (8, 1, [(0, 13, 8, 5, 'slate_warm')], (0.0,), -1)]
+        return _rockpaint(ms, seed, canvas=(90, 70), origin=(45, 60), drifts=[(-17, 5, 3)])
+    if kind == 'b':
+        ms = [(-18, -1, [(0, 24, 7, 5, 'slate')], (0.0,), -1),
+              (-14, -6, [(0, 28, 9, 6, 'slate_warm')], (0.5,), -1),
+              (9, 2, [(0, 10, 6, 4, 'slate')], (0.0,), -1)]
+        return _rockpaint(ms, seed, canvas=(90, 70), origin=(45, 60))
+    ms = [(-34, -10, [(0, 38, 18, 8, 'slate'), (4, 28, 12, 7, 'slate_warm')], (0.0, 0.55), 0),
+          (4, -8, [(0, 26, 15, 7, 'slate_warm')], (0.4,), -1),
+          (22, 0, [(0, 18, 9, 5, 'slate')], (0.0,), -1)]
+    return _rockpaint(ms, seed, canvas=(120, 90), origin=(60, 78), drifts=[(-36, 6, 3.5)])
+
+
+def crag(kind='a', seed=61):
+    """A crag of the headwall's foot (round 7, A1; the #536 detail audit, finding 10): broken slabs
+    of the face's own strata dipping east at the face's angle, stacked bed on bed into masses of very
+    different sizes (the tall ones behind, low ones stepping down in front), each bed with a lit top
+    plane of bare rock, a front at tone 3 and a flat dark east flank, occlusion where one stands on
+    another; snow lying as loads on some of the tops; at most one fissure a mass. Its rock keeps
+    inside its collision rect (within a few texels; the #536 logic audit, finding 3). The zone's
+    north frame (B8, Z1)."""
+    if kind == 'a':
+        ms = [(-58, -28, [(0, 48, 26, 9, 'slate'), (5, 38, 22, 8, 'slate_warm'), (9, 24, 14, 6, 'slate')], (0.0, 0.5, 0.0), 1),
+              (-12, -32, [(0, 56, 30, 10, 'slate_warm'), (4, 46, 26, 9, 'slate'), (10, 30, 18, 7, 'slate_warm')], (0.35, 0.0, 0.6), 0),
+              (34, -16, [(0, 38, 26, 9, 'slate'), (6, 24, 16, 7, 'slate')], (0.0, 0.45), -1),
+              (-70, -6, [(0, 36, 20, 8, 'slate_warm'), (4, 22, 10, 6, 'slate')], (0.0, 0.0), -1),
+              (-28, -2, [(0, 40, 15, 7, 'slate')], (0.4,), -1),
+              (18, 0, [(0, 34, 12, 6, 'slate_warm')], (0.0,), -1)]
+        return _rockpaint(ms, seed, drifts=[(-72, 8, 4.5), (14, 6, 3)], chips=[(-2, 0, 12, 6)])
+    ms = [(-54, -30, [(0, 64, 28, 10, 'slate'), (8, 50, 24, 9, 'slate_warm'), (16, 30, 14, 7, 'slate')],
+           (0.0, 0.55, 0.4), 1),
+          (10, -24, [(0, 50, 28, 10, 'slate_warm'), (5, 36, 20, 8, 'slate')], (0.3, 0.0), 0),
+          (-74, -12, [(0, 32, 18, 8, 'slate'), (3, 20, 10, 6, 'slate_warm')], (0.0, 0.5), -1),
+          (40, -10, [(0, 32, 16, 7, 'slate')], (0.0,), -1),
+          (-34, -4, [(0, 42, 14, 7, 'slate_warm')], (0.0,), -1),
+          (14, 0, [(0, 26, 10, 6, 'slate')], (0.5,), -1)]
+    return _rockpaint(ms, seed + 9, drifts=[(-60, 7, 4)], chips=[(-58, 0, 10, 5)])
 
 
 def rockface(width_cells=6, seed=101, ends=(True, True)):

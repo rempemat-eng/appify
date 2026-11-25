@@ -14,7 +14,7 @@
    "png": "res://kit/props/art/frost/frost_boulder_a.png",
    "foot": [
     21,
-    28
+    30
    ]
   },
   {
@@ -22,8 +22,8 @@
    "weight": 0.6,
    "png": "res://kit/props/art/frost/frost_boulder_b.png",
    "foot": [
-    20,
-    23
+    18,
+    20
    ]
   }
  ],
@@ -37,14 +37,14 @@
  "geometry": {
   "size_px": [
    42,
-   32
+   33
   ],
   "size_cells": [
    3,
    2
   ],
   "z_sort": "foot",
-  "height_px": 32,
+  "height_px": 33,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -56,7 +56,7 @@
   },
   "foot": [
    21,
-   28
+   30
   ],
   "footprint": [
    [

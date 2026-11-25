@@ -15205,7 +15205,7 @@
   "deck": null,
   "foot": [
    21,
-   28
+   30
   ],
   "footprint": [
    [
@@ -15238,7 +15238,7 @@
    "mask": {
     "offset": [
      -21,
-     -9
+     -10
     ],
     "png": "res://kit/props/art/shadow_frost_boulder.png"
    },
@@ -15260,27 +15260,27 @@
    "a": {
     "foot": [
      21,
-     28
+     30
     ],
     "png": "res://kit/props/art/frost/frost_boulder_a.png",
     "shadow": {
      "offset": [
       -21,
-      -9
+      -10
      ],
      "png": "res://kit/props/art/shadow_frost_boulder.png"
     }
    },
    "b": {
     "foot": [
-     20,
-     23
+     18,
+     20
     ],
     "png": "res://kit/props/art/frost/frost_boulder_b.png",
     "shadow": {
      "offset": [
-      -20,
-      -10
+      -18,
+      -14
      ],
      "png": "res://kit/props/art/shadow_frost_boulder__b.png"
     }
@@ -15299,8 +15299,8 @@
   ],
   "deck": null,
   "foot": [
-   45,
-   54
+   41,
+   53
   ],
   "footprint": [
    [
@@ -15356,7 +15356,7 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -45,
+     -41,
      -14
     ],
     "png": "res://kit/props/art/shadow_frost_boulder_large.png"
@@ -15378,13 +15378,13 @@
   "variants": {
    "still": {
     "foot": [
-     45,
-     54
+     41,
+     53
     ],
     "png": "res://kit/props/art/frost/frost_boulder_large.png",
     "shadow": {
      "offset": [
-      -45,
+      -41,
       -14
      ],
      "png": "res://kit/props/art/shadow_frost_boulder_large.png"
@@ -15720,8 +15720,8 @@
   ],
   "deck": null,
   "foot": [
-   97,
-   121
+   79,
+   128
   ],
   "footprint": [
    [
@@ -15793,7 +15793,7 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -97,
+     -79,
      -43
     ],
     "png": "res://kit/props/art/shadow_frost_crag.png"
@@ -15815,13 +15815,13 @@
   "variants": {
    "a": {
     "foot": [
-     97,
-     121
+     79,
+     128
     ],
     "png": "res://kit/props/art/frost/frost_crag_a.png",
     "shadow": {
      "offset": [
-      -97,
+      -79,
       -43
      ],
      "png": "res://kit/props/art/shadow_frost_crag.png"
@@ -15829,8 +15829,8 @@
    },
    "b": {
     "foot": [
-     88,
-     119
+     74,
+     118
     ],
     "png": "res://kit/props/art/frost/frost_crag_b.png",
     "shadow": {
