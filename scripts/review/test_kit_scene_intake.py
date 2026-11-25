@@ -88,8 +88,10 @@ class RealSource(unittest.TestCase):
     def test_legacy_woodland_and_crossroads_are_byte_unchanged(self):
         expected = {
             # #513 (the stair redrawn in a cut) changes the woodland ground only: 11,448 composite
-            # pixels, all at x 288..425, y 756..873, the audited ground change (was ed0afbae...)
-            'woodland': '5a7553ce9f1a0a9a0226ad4e7da33a7dfabb60549d8bd827813e1e1a6e8b59c3',
+            # pixels, all at x 288..425, y 756..873, the audited ground change (was ed0afbae...).
+            # #535 round 2 places the thaw band's woodland half (frost_woodland_thaw, Claude A): 8,374
+            # composite pixels, all at x 0..620, y 0..137, inside the band's 624 x 216 box (was 5a7553ce...)
+            'woodland': '4fea5f4f055a47a9730f78122a83317aff7bbc1b7e7890c0bae6a64f0b65cb50',
             # #499 (the bell tower) adds cupola_empty/cupola_hung, cupola_shadow, fallen_bell and
             # fallen_bell_shadow; every changed pixel lies within those pictures (was 1b38e86c...)
             'crossroads': '68cbf3c7676aa18c2f35271d2319b54bb980244df18d7748a988ec1fa7131cc5',
