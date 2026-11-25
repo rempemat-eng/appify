@@ -23,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The woodland's half of the thaw at the Frostline door (round 1 audits of #535), drawn over the woodland's own ground.png: old snow in the scree's lee and along the north edge, wet scree, meltwater rivulets to the brook, flattened brown grass on the lawn's first row, old snow under the north pines. Its foot is its top-left corner, the woodland's origin. Not yet placed: the woodland scene is touched by the open PR #421, so placement waits for Claude A."
+  "note": "The woodland's half of the thaw at the Frostline door (round 1 audits of #535), drawn over the woodland's own ground.png: old snow in the scree's lee and along the north edge with no halo, meltwater channels to the brook's rim, flattened brown grass on the lawn's first row. Its foot is its top-left corner, the woodland's origin, where woodland_base.tscn places it (Claude A, round 2). It is registered to ground.png: regenerate it if that picture changes (draft #421)."
  },
  "geometry": {
   "size_px": [

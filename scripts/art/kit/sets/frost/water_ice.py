@@ -99,27 +99,54 @@ FALL_FRAMES, FALL_FPS = 8, 10.0
 
 SHEET_X = (30, 86)            # the sheet's columns at the lip (the outlet narrows to them; rock either side)
 
-WINTER = {0: C('slate_cool', 0), 1: C('slate_cool', 1), 2: C('slate_warm', 1), 3: C('slate', 2), 4: C('slate', 3),
-          5: C('snow_cool', 2)}  # the house water's tones as the outlet's winter water (outlet.RAMPS['winter'])
+# the house water's tones as the outlet's winter water (round 2 detail audit of #535, R1): the plunge's foam
+# and pool on the outlet's own ramp (water_winter), tone for tone
+WINTER = {0: C('water_winter', 1), 1: C('water_winter', 2), 2: C('water_winter', 3), 3: C('water_winter', 4),
+          4: C('water_winter', 5), 5: C('snow_cool', 2)}
+# the sheet's: the same water speeding up and aerated, a step lighter, so the pool climbs in value through
+# the tongue into it in one hue (R1), and its blues are not the tarn ice's (R3, logic P5)
+SHEET = {0: C('water_winter', 1), 1: C('water_winter', 2), 2: C('water_thaw', 3), 3: C('water_thaw', 4),
+         4: C('water_thaw', 5), 5: C('snow_cool', 3)}
 
 
 
-def _winter(a):
+def _winter(a, ramp=None):
     """The house painters' water (water, water_cool) recoloured to the outlet's winter ramp, tone for tone."""
+    ramp = WINTER if ramp is None else ramp
+    src = a.copy()
     for fam in ('water', 'water_cool'):
         for t in range(6):
-            a[a == C(fam, t)] = WINTER[t]
+            a[src == C(fam, t)] = ramp[t]
 
 
 
-def _icicles(a, c0, c1, x0, x1, seed):
+def sheet_edges(x0=SHEET_X[0], x1=SHEET_X[1]):
+    """The sheet's edges per row of the face (picture rows LIP_PX .. LIP_PX + FACE_PX - 1), after the
+    round 2 detail audit's R3: exactly the lip's width at the rim, widening 5 to 6 texels by the foot
+    (2.5 west, 3 east), each edge wobbling a texel or two at its own period (the house sheet's
+    widening and wobbling edges, eastward-edges 5.3b, at this piece's scale). {row: (xl, xr)}, xr
+    exclusive."""
+    out = {}
+    for Y in range(LIP_PX, LIP_PX + FACE_PX):
+        k = Y - LIP_PX
+        f = k / float(FACE_PX - 1)
+        g = min(1.0, f * 5.0)
+        wl = 2.5 * f ** 0.8 + g * (1.1 * math.sin(k / 4.3 + 0.7) + 0.5 * math.sin(k / 1.9))
+        wr = 3.0 * f ** 0.8 + g * (1.2 * math.sin(k / 6.1 + 2.1) + 0.5 * math.sin(k / 2.3 + 1.0))
+        out[Y] = (int(round(x0 - wl)), int(round(x1 + wr)))
+    return out
+
+
+
+def _icicles(a, c0, c1, edges, seed):
     """What is left of the winter's ice beside the open fall (round 1 logic audit, F1): a fringe of
     four to seven icicles of uneven length (3 to 10 texels) hanging from the snow lip in the face's
     top quarter, joined at the root under the lip, each lit on its west flank, blue in its body and
     shaded east; and a glaze of one or two texels on the wet rock right beside the sheet, in short
-    runs, stopping well above the plunge (nothing white reaches it)."""
+    runs, following its edge, stopping well above the plunge (nothing white reaches it)."""
     H, W = a.shape
     rng = np.random.default_rng(seed + 31)
+    x0, x1 = edges[LIP_PX]
     spots = sorted(set(int(v) for v in rng.choice(np.arange(c0 + 2, x0 - 3), size=int(rng.integers(3, 5)), replace=False)))
     spots += sorted(set(int(v) for v in rng.choice(np.arange(x1 + 2, c1 - 1), size=int(rng.integers(1, 3)), replace=False)))
     for x in spots:
@@ -136,16 +163,20 @@ def _icicles(a, c0, c1, x0, x1, seed):
         if LIP_PX + ln < H:
             a[LIP_PX + ln, x] = C('sky_cool', 3)                    # the drip at its tip
         a[LIP_PX - 1, max(0, x - 1):min(W, x + 2)] = C('snow', 4)    # the root under the lip
-    # the glaze beside the sheet: short runs of one or two texels, a darker wet streak between
+    # the glaze beside the sheet: short runs of one or two texels along its edge, a darker wet streak between
     yf = LIP_PX + FACE_PX
-    for side, xs in ((0, (x0 - 2, x0 - 1)), (1, (x1, x1 + 1))):
+    for side in (0, 1):
         y = LIP_PX + 2
         while y < yf - 22:
             n = int(rng.integers(3, 9))
             if rng.random() < 0.6:
                 for k in range(n):
+                    if y + k >= yf - 22:
+                        break
+                    xl, xr = edges[y + k]
+                    xs = (xl - 2, xl - 1) if side == 0 else (xr, xr + 1)
                     for j, X in enumerate(xs):
-                        if 0 <= X < W and y + k < yf - 22 and (j == (1 - side) or k % 3 != 2):
+                        if 0 <= X < W and (j == (1 - side) or k % 3 != 2):
                             a[y + k, X] = C('sky_cool', 4) if (j + side) % 2 else C('sky_cool', 3)
             y += n + int(rng.integers(2, 7))
 
@@ -153,25 +184,28 @@ def _icicles(a, c0, c1, x0, x1, seed):
 
 def _icefall(a, fall, seed):
     """The tarn's outlet over the cirque's step (Matt, 23 Nov: the outlet open, thawing water), after
-    the round 1 audits of #535: an open fall, the house's one sheet (rocks.sheet, eastward-edges.md
+    the round 2 audits of #535: an open fall, the house's one sheet (rocks.sheet, eastward-edges.md
     5.3b) exactly as wide as the channel the outlet narrows to at the lip, frame `_FALL_T` of an
-    8-frame loop. The rock shows 4 to 10 texels either side, wet (a tone darker) and glazed in short
-    runs; the face's own stones break over the sheet's edges here and there, so it narrows and
-    widens down the face; its navy east band follows that wobble and is broken by pale streaks. A
-    fringe of short icicles hangs from the lip beside it (_icicles). Above the rim nothing is drawn
-    in the channel's columns: the outlet piece's water runs to the lip."""
+    8-frame loop. Below the rim it widens 5 to 6 texels by the foot and each edge wobbles a texel or
+    two at its own period (sheet_edges, R3): the house sheet's rows are laid into those edges column
+    for column, so its streaks, value ladder and navy east band are its own. Its blues are the
+    outlet's water a step lighter (SHEET, R1 and R3: one water from the pool through the tongue into
+    the sheet, not the tarn ice's). The rock shows 4 to 10 texels either side of the edges, wet (a
+    tone darker) and glazed in short runs. A fringe of short icicles hangs from the lip beside it
+    (_icicles). Above the rim nothing is drawn in the channel's columns: the outlet piece's water runs
+    to the lip."""
     from scripts.art.native import rocks as RK
     H, W = a.shape
     f0, f1 = fall
     yf = LIP_PX + FACE_PX
     x0, x1 = f0 + SHEET_X[0], f0 + SHEET_X[1]
-    rock0 = a.copy()
+    edges = sheet_edges(x0, x1)
     a[:LIP_PX, x0 - 1:x1 + 1] = -1
-    # the wet rock either side of the sheet: a tone darker, 4 to 10 texels out
-    rng = np.random.default_rng(seed + 5)
+    # the wet rock either side of the sheet's edges: a tone darker, 4 to 10 texels out
     for y in range(LIP_PX, yf):
-        for side, xs in ((0, range(max(0, x0 - 4 - int(6 * hsh(seed, y // 7, 1))), x0)),
-                         (1, range(x1, min(W, x1 + 4 + int(6 * hsh(seed, y // 7, 2)))))):
+        xl, xr = edges[y]
+        for side, xs in ((0, range(max(0, xl - 4 - int(6 * hsh(seed, y // 7, 1))), xl)),
+                         (1, range(xr, min(W, xr + 4 + int(6 * hsh(seed, y // 7, 2)))))):
             for X in xs:
                 c = a[y, X]
                 if c >= 0 and (c // 8) in (FI['slate'], FI['slate_cool'], FI['slate_warm']) and c % 8 > 0:
@@ -183,47 +217,44 @@ def _icefall(a, fall, seed):
     RK.sheet(a, x0, x1, LIP_PX, yf, LIP_PX / 3.0, np.random.default_rng(seed), seed, water=mask, t=_FALL_T[0],
              n=FALL_FRAMES, phase_y=LIP_PX, stagger=True)
     a[mask & (a == C('water', 2))] = -1
-    sheet = (a != wet) & ~mask
-    # the face's stones breaking over the sheet's edges: per stretch of 6 to 14 rows, up to 3 texels
-    y = LIP_PX + 4
-    while y < yf - 2:
-        n = int(rng.integers(6, 15))
-        for side in (0, 1):
-            d = int(rng.choice([0, 0, 1, 2, 3]))
-            for k in range(n):
-                Y = y + k
-                if Y >= yf - 1:
-                    break
-                cols = np.nonzero(sheet[Y])[0]
-                if not len(cols) or d == 0:
-                    continue
-                dd = d if 1 < k < n - 2 else max(0, d - 1)
-                xs = range(cols.min(), cols.min() + dd) if side == 0 else range(cols.max() - dd + 1, cols.max() + 1)
-                for X in xs:
-                    a[Y, X] = wet[Y, X] if wet[Y, X] >= 0 else C('slate_cool', 1)
-        y += n
-    # the navy east band: recoloured greyer and broken by two or three short pale streaks
-    for fam in ('water', 'water_cool'):
-        a[sheet & (a == C(fam, 0))] = C('slate_cool', 1)
-    for _k in range(3):
-        Y = int(rng.integers(LIP_PX + 8, yf - 16))
-        cols = np.nonzero(sheet[Y])[0]
+    drawn = (a != wet) & ~mask
+    # the house sheet's rows laid into the widening, wobbling edges, column for column
+    src = a.copy()
+    for y in range(LIP_PX, yf):
+        cols = np.nonzero(drawn[y])[0]
         if not len(cols):
             continue
-        X = int(cols.max()) - int(rng.integers(2, 7))
-        for k in range(int(rng.integers(5, 10))):
-            if Y + k < yf and sheet[Y + k, X]:
-                a[Y + k, X] = C('water', 3)
-    _icicles(a, f0, f1, x0, x1, seed)
+        sl, sr = int(cols.min()), int(cols.max()) + 1
+        xl, xr = edges[y]
+        wa, eb = sl + 3, max(sl + 4, sr - 9)              # the lit west edge and the navy east band
+        a[y, max(0, min(xl, sl)):min(W, max(xr, sr))] = wet[y, max(0, min(xl, sl)):min(W, max(xr, sr))]
+        for X in range(xl, xr):
+            if not 0 <= X < W:
+                continue
+            if X < wa:                                   # the west edge stretched or squeezed to the new edge
+                s = sl + int((X - xl) * (wa - sl) / float(max(1, wa - xl)))
+            elif X >= eb:                                # the east band follows the east edge's wobble
+                s = eb + int((X - eb) * (sr - eb) / float(max(1, xr - eb)))
+            else:                                        # the ribbon's streaks stay where the house sheet put them
+                s = X
+            a[y, X] = src[y, min(sr - 1, max(sl, s))]
+    # its blues: the outlet's water a step lighter (the tongue too)
+    sheet = np.zeros((H, W), bool)
+    for y in range(LIP_PX, yf):
+        xl, xr = edges[y]
+        sheet[y, max(0, xl):min(W, xr)] = True
+    sheet |= mask & (a >= 0)
+    sub = a[sheet]
+    _winter(sub, SHEET)
+    a[sheet] = sub
+    _icicles(a, f0, f1, edges, seed)
 
 
 
 def sheet_foot(seed=113):
     """The sheet's foot columns (picture texels of the fall piece) on its last row."""
-    from scripts.art.native import rocks as RK
-    rows = RK.sheet_rows(SHEET_X[0], SHEET_X[1], LIP_PX, LIP_PX + FACE_PX, phase_y=LIP_PX)
-    _y, xl, xr = rows[-1]
-    return int(math.floor(xl)), int(math.ceil(xr))
+    xl, xr = sheet_edges()[LIP_PX + FACE_PX - 1]
+    return int(xl), int(xr)
 
 
 
@@ -314,9 +345,9 @@ def _floe(a, x, y, rx, ry, seed):
     nz = K.vhash(X // 2, Y // 2, seed)
     f = (((X - x) / rx) ** 2 + ((Y - y) / ry) ** 2 + 0.35 * (nz - 0.5)) < 1.0
     ring = ndi.binary_dilation(f, iterations=1) & ~f
-    a[ring] = C('slate_cool', 1)
+    a[ring] = C('water_winter', 2)
     arc = _sh(ring, 2, 0) & ~f & ~ring & (Y > y)
-    a[arc & (K.vhash(X, Y, seed + 3) > 0.2)] = C('slate', 3)
+    a[arc & (K.vhash(X, Y, seed + 3) > 0.2)] = C('water_winter', 4)
     a[f] = C('snow_cool', 4)
     a[f & (K.vhash(X // 2, Y, seed + 4) > 0.65)] = C('sky_cool', 5)
     a[f & ~_sh(f, 1, 0)] = C('snow', 5)
@@ -345,25 +376,38 @@ def pressure_ridge(kind='long', seed=191):
     kink = float(rng.uniform(0.35, 0.65)) * L
     slabs = []
     t = 2.0
+    gap_at = float(rng.uniform(0.62, 0.75)) * L if vertical else -99.0   # the side ridge broken once (P1)
     while t < L - 3:
+        if abs(t - gap_at) < 4.0:                            # the side ridge's one clear gap, 6 to 8 texels
+            t += float(rng.uniform(6, 8))
+            gap_at = -99.0
+            continue
         if rng.random() < 0.12:                              # a gap in the heap
             t += float(rng.uniform(3, 7))
             continue
-        sl = float(rng.choice([rng.uniform(4, 6), rng.uniform(6, 9), rng.uniform(9, 13)], p=[0.4, 0.35, 0.25]))
-        flat = sl > 9 and rng.random() < 0.5
-        ang = float(rng.uniform(-0.3, 0.3)) if flat else float(rng.choice([-1, 1]) * rng.uniform(0.25, 1.2))
+        end = t < 5 or t > L - 13                            # the heap's ends: an angular plate, never a bead (P1)
+        if end:
+            sl = float(rng.uniform(7, 10))
+            flat, ang = True, float(rng.uniform(-0.35, 0.35))
+        else:
+            sl = float(rng.choice([rng.uniform(5, 7), rng.uniform(7, 9), rng.uniform(9, 13)], p=[0.35, 0.4, 0.25]))
+            flat = sl > 9 and rng.random() < 0.5
+            ang = float(rng.uniform(-0.3, 0.3)) if flat else float(rng.choice([-1, 1]) * rng.uniform(0.25, 1.2))
         lift = 1 if flat else int(rng.integers(2, 6))
-        th = float(rng.uniform(1.8, 3.0)) if flat else float(rng.uniform(1.2, 2.2))
-        bend = 3.5 * math.sin(math.pi * t / L) + (2.5 if t > kink else 0.0)
+        th = float(rng.uniform(1.8, 3.0)) if flat else float(rng.uniform(1.4, 2.2))
+        if vertical:                                         # the side ridge bends once: a 5-texel jog at its kink
+            bend = 1.5 * math.sin(math.pi * t / L) + 5.0 * min(1.0, max(0.0, (t - kink + 5) / 10.0))
+        else:
+            bend = 3.5 * math.sin(math.pi * t / L) + (2.5 if t > kink else 0.0)
         off = bend + float(rng.uniform(-1.5, 1.5))
         if vertical:
-            cx, cy = W / 2.0 + off - 2, t + 7
+            cx, cy = W / 2.0 + off - 4.5, t + 7
         else:
             cx, cy = t + 4, H - 10 + off * 0.6
         slabs.append((cy, cx, sl, ang, lift, th))
         if abs(t - kink) < 6:                                # piled up where the line kinks
             for _p in range(int(rng.integers(1, 3))):
-                slabs.append((cy + rng.uniform(-2, 1), cx + rng.uniform(-3, 3), rng.uniform(4, 8),
+                slabs.append((cy + rng.uniform(-2, 1), cx + rng.uniform(-3, 3), rng.uniform(5, 8),
                               float(rng.uniform(-1.2, 1.2)), int(rng.integers(3, 6)), float(rng.uniform(1.2, 2.0))))
         t += sl * float(rng.uniform(0.3, 1.0))
     slabs.sort()
@@ -395,6 +439,25 @@ def pressure_ridge(kind='long', seed=191):
     a[drift & ~_sh(drift, 1, 0)] = C('snow', 5)
     a[drift & ~_sh(drift, -1, 0)] = C('snow_cool', 3)
     o = a >= 0
+    if vertical:
+        # the side ridge's gap is a gap in the plates, not in the heap: a low bank of drifted snow runs on
+        # through it on the ice, so the ridge stays one heap (lit west, its east edge in the ice's shade)
+        rows = np.nonzero(o.any(1))[0]
+        for y in range(rows.min(), rows.max() + 1):
+            if o[y].any():
+                continue
+            ya, yb = y - 1, y + 1
+            while ya > 0 and not o[ya].any():
+                ya -= 1
+            while yb < H - 1 and not o[yb].any():
+                yb += 1
+            xa = np.nonzero(o[ya])[0].mean()
+            xb = np.nonzero(o[yb])[0].mean()
+            xc = int(round(xa + (xb - xa) * (y - ya) / float(max(1, yb - ya))))
+            a[y, xc - 1:xc + 2] = C('snow_cool', 4)
+            a[y, xc - 2] = C('snow', 5)
+            a[y, xc + 2] = C('snow_cool', 3)
+        o = a >= 0
     # the shade: short, east and south of the heap, on the ice
     shade = (_sh(_sh(o, 2, 0), 2, 1) | _sh(_sh(o, 1, 0), 1, 1)) & ~o
     a[shade] = C('sky_cool', 3)

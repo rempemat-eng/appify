@@ -13,7 +13,7 @@
    "weight": 1.0,
    "png": "res://kit/props/art/frost/frost_outlet.png",
    "foot": [
-    189,
+    190,
     0
    ]
   }
@@ -23,24 +23,24 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The tarn's outlet open and thawing (Matt, 23 Nov), painted from the zone's plan over its water cells: calm winter water with depth bands along the flow, a dark band stepping back under the north banks, paired glints; soft-grid banks that wander off the cells, a face only on north banks and a rim on every other shore; the tarn's one lead fanning into the pool; shelf ice and floes near the tarn; the brook's own colours over the last cells before the woodland. Its foot is the top of its box (it lies under every other ground piece); regenerate after changing the zone's water cells."
+  "note": "The tarn's outlet open and thawing (Matt, 23 Nov), painted from the zone's plan over its water cells: calm winter water (water_winter) with a darker thalweg, a dark band stepping back under the north banks, the snow's broken reflection under the south banks, paired lit streaks along the flow lanes; soft-grid banks that wander off the cells on every reach, a face only on north banks and a rim on every other shore; the tarn's one lead fanning into a ragged mouth; the pool climbing in value into the fall's tongue; shelf ice and floes near the tarn; the ice-cutter's hole in the same water; the climb to the brook's own colours in tongues along the flow below the bridge. Its foot is the top of its box (it lies under every other ground piece); regenerate after changing the zone's water cells."
  },
  "geometry": {
   "size_px": [
-   378,
-   874
+   380,
+   928
   ],
   "size_cells": [
    16,
    36
   ],
   "z_sort": "ground",
-  "height_px": 874,
+  "height_px": 928,
   "collision": {
    "shape": "none"
   },
   "foot": [
-   189,
+   190,
    0
   ],
   "footprint": []

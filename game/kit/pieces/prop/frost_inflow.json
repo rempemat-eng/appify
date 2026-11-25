@@ -13,7 +13,7 @@
    "weight": 1.0,
    "png": "res://kit/props/art/frost/frost_inflow.png",
    "foot": [
-    41,
+    111,
     0
    ]
   }
@@ -23,24 +23,24 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The rill into the tarn frozen over: clear dark ice down its middle, snow banked over both banks, cracks along the flow, its runnel choked with snow at the frame's top."
+  "note": "The rill into the tarn frozen over, its banks wandering and its jog a bend: one body tone, clear dark ice in short lenses down its middle, wandering cracks, snow banked over both banks, running in under a drift's scalloped lip at the frame's top."
  },
  "geometry": {
   "size_px": [
-   82,
-   124
+   222,
+   122
   ],
   "size_cells": [
    3,
    5
   ],
   "z_sort": "ground",
-  "height_px": 124,
+  "height_px": 122,
   "collision": {
    "shape": "none"
   },
   "foot": [
-   41,
+   111,
    0
   ],
   "footprint": []

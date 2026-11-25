@@ -23,19 +23,19 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The short thaw band at the woodland's north seam (Matt, 23 Nov) across the zone's last three rows: wet greying snow, lobed patches of bare earth and flattened grass growing toward the seam, slush rims, rivulets running to the water, slush and puddles on the Col Path, the snow pulled back round the trees' feet."
+  "note": "The short thaw band at the woodland's north seam (Matt, 23 Nov) across the zone's width, its top edge wandering: a calm wet crust, bare hollows lit from the upper left growing and merging toward the seam, earth in clusters with combed flattened grass, meandering rivulets to the water, a trodden slush lane on the Col Path to the door, the snow pulled back round the trees' feet."
  },
  "geometry": {
   "size_px": [
    1128,
-   84
+   120
   ],
   "size_cells": [
    47,
-   3
+   5
   ],
   "z_sort": "ground",
-  "height_px": 84,
+  "height_px": 120,
   "collision": {
    "shape": "none"
   },

@@ -16265,7 +16265,7 @@
   "collision": null,
   "deck": null,
   "foot": [
-   41,
+   111,
    0
   ],
   "footprint": [],
@@ -16288,7 +16288,7 @@
   "variants": {
    "still": {
     "foot": [
-     41,
+     111,
      0
     ],
     "png": "res://kit/props/art/frost/frost_inflow.png"
@@ -16526,7 +16526,7 @@
   "collision": null,
   "deck": null,
   "foot": [
-   189,
+   190,
    0
   ],
   "footprint": [],
@@ -16549,7 +16549,7 @@
   "variants": {
    "still": {
     "foot": [
-     189,
+     190,
      0
     ],
     "png": "res://kit/props/art/frost/frost_outlet.png"
@@ -17573,7 +17573,7 @@
   "shadow": null,
   "size_cells": [
    47,
-   3
+   5
   ],
   "snap": "cell",
   "story": {

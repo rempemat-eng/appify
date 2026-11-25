@@ -528,9 +528,10 @@ def ice(seed: int = 1404, P: int = PERIOD) -> np.ndarray:
     """A frozen tarn (Matt, 23 Nov: the tarn frozen, its outlet open), after the round 1 detail
     audit of #535: lake ice as a calm plane.
 
-    - One body tone (sky_cool 4) with broad swells laid by the wind in long clustered steps: darker
-      clear ice where the snow has blown off (water_cool 4, its deepest runs sky_cool 3), greyer
-      snow-ice where slush froze (sky_cool 5). The swells are long and thin, never ovals.
+    - One body tone (sky_cool 4) with broad swells laid by the wind in one neighbouring tone (sky 4),
+      their edges stepped in clusters of two or three texels (round 2, R6); darker clear ice
+      (water_cool 4) only where a drift has blown it bare, in the drift's lee. The swells are long
+      and thin, never ovals.
     - Snow dusting in long thin drifts with the snow's own crisp edge: a lit lip on the north, a
       shaded two-texel underside on the south, no single-texel fray.
     - Glints in pairs: a streak of two or three texels and a shorter one beside it.
@@ -540,15 +541,14 @@ def ice(seed: int = 1404, P: int = PERIOD) -> np.ndarray:
     Periodic: every mark is laid by world position modulo P, so the fill tiles exactly."""
     rng = np.random.default_rng(seed)
     yy, xx = np.mgrid[0:P, 0:P]
-    v = aniso(P, 150.0, 26.0, seed + 1) + 0.35 * aniso(P, 60.0, 14.0, seed + 3)     # the clear ice's swells
+    v = aniso(P, 150.0, 26.0, seed + 1) + 0.35 * aniso(P, 60.0, 14.0, seed + 3)     # the ice's swells
     w = aniso(P, 130.0, 16.0, seed) + 0.25 * aniso(P, 40.0, 8.0, seed + 2)          # the wind's drifts
     cv = np.full((P, P), C('sky_cool', 4), np.int32)
-    clear = _no_specks(v < -0.5, 160)
-    deepest = _no_specks(v < -1.25, 90) & clear
-    milky = _no_specks(v > 0.85, 140)
-    cv[clear] = C('water_cool', 4)
-    cv[deepest] = C('sky_cool', 3)
-    cv[milky] = C('sky_cool', 5)
+    # round 2 (R6): the swells in one neighbouring tone only (sky 4, a few Y over the body), their edges
+    # stepped in clusters of two or three texels (the field read once per run of three columns)
+    vq = v[:, (xx[0] // 3) * 3]
+    swell = _no_specks(vq > 0.55, 160)
+    cv[swell] = C('sky', 4)
     drift = _no_specks(w > 0.75, 120)
     drift = ndi.binary_closing(np.pad(drift, 4, mode='wrap'), iterations=2)[4:-4, 4:-4]
     cv[drift] = C('snow_cool', 4)
@@ -560,6 +560,14 @@ def ice(seed: int = 1404, P: int = PERIOD) -> np.ndarray:
     s2 = drift & np.roll(s1, -1, 0) & ~s1
     cv[s1] = C('snow_cool', 3)
     cv[s2 & ~north] = C('snow_cool', 3)
+    # darker clear ice only where a drift has blown it bare: in a drift's lee, a few texels south of it,
+    # in clusters (R6)
+    lee = np.zeros((P, P), bool)
+    for k in range(3, 11):
+        lee |= np.roll(drift, k, 0)
+    lee &= ~drift & ~np.roll(drift, 1, 0) & ~np.roll(drift, 2, 0)
+    bare = _no_specks(lee & (aniso(P, 70.0, 10.0, seed + 5)[:, (xx[0] // 3) * 3] > 0.2), 60)
+    cv[bare & ~drift] = C('water_cool', 4)
     # glints in pairs on the clear and body ice
     for _ in range(P * P // 5000):
         y, x = int(rng.integers(0, P)), int(rng.integers(0, P))

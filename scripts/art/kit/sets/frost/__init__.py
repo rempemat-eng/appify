@@ -353,8 +353,9 @@ def prop_jobs():
             size_class='unsized (the outlet falling over the face, 32 world px)', eastward='- (the house fall, eastward-edges 5.3b)',
             fn='open_fall',
             note='The tarn\'s outlet open and thawing (Matt, 23 Nov) where it falls over the cirque\'s step: the house\'s '
-                 'sheet as wide as the channel at the lip, its 8-frame loop; wet granite either side, the face\'s stones '
-                 'breaking over its edges, a glaze in short runs, and a fringe of short icicles from the lip beside it.')),
+                 'sheet as wide as the channel at the lip, widening 5 to 6 texels by its foot with each edge wobbling at its '
+                 'own period, in the outlet\'s winter water a step lighter, its 8-frame loop; wet granite either side '
+                 'following its edges, a glaze in short runs, and a fringe of short icicles from the lip beside it.')),
         ('frost_rock_stair', [('still', lambda: rock_stair())], dict(
             name='Granite stair', purpose='climb', role='rock_steps', cells=(5, 5), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='axis', z_sort='ground',
@@ -367,17 +368,20 @@ def prop_jobs():
             size_class='unsized (the outlet\'s water surface: ground dressing over the zone\'s water cells)',
             eastward='- (eastward-edges 5.3, 5.3a, 5.3c)', fn='outlet',
             note='The tarn\'s outlet open and thawing (Matt, 23 Nov), painted from the zone\'s plan over its water cells: '
-                 'calm winter water with depth bands along the flow, a dark band stepping back under the north banks, '
-                 'paired glints; soft-grid banks that wander off the cells, a face only on north banks and a rim on every '
-                 'other shore; the tarn\'s one lead fanning into the pool; shelf ice and floes near the tarn; the brook\'s '
-                 'own colours over the last cells before the woodland. Its foot is the top of its box (it lies under every '
+                 'calm winter water (water_winter) with a darker thalweg, a dark band stepping back under the north banks, '
+                 'the snow\'s broken reflection under the south banks, paired lit streaks along the flow lanes; soft-grid '
+                 'banks that wander off the cells on every reach, a face only on north banks and a rim on every other '
+                 'shore; the tarn\'s one lead fanning into a ragged mouth; the pool climbing in value into the fall\'s '
+                 'tongue; shelf ice and floes near the tarn; the ice-cutter\'s hole in the same water; the climb to the '
+                 'brook\'s own colours in tongues along the flow below the bridge. Its foot is the top of its box (it lies under every '
                  'other ground piece); regenerate after changing the zone\'s water cells.')),
         ('frost_inflow', [('still', lambda: inflow())], dict(
             name='Frozen rill', purpose='mark', role='water', cells=(3, 5), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='axis', z_sort='ground',
             size_class='unsized (the frozen inflow: ground dressing on the ice)', eastward='-', fn='inflow',
-            note='The rill into the tarn frozen over: clear dark ice down its middle, snow banked over both banks, cracks '
-                 'along the flow, its runnel choked with snow at the frame\'s top.')),
+            note='The rill into the tarn frozen over, its banks wandering and its jog a bend: one body tone, clear dark ice '
+                 'in short lenses down its middle, wandering cracks, snow banked over both banks, running in under a '
+                 'drift\'s scalloped lip at the frame\'s top.')),
         ('frost_plunge', [('still', lambda: plunge())], dict(
             name='Plunge under the thawing fall', purpose='mark', role='water', cells=(5, 2), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='axis', z_sort='ground',
@@ -385,22 +389,23 @@ def prop_jobs():
             note='The house\'s foam churning where the open fall lands (8 frames, held still under reduced motion), in the '
                  'outlet\'s winter blues, and two floes with their wet contact.')),
         ('frost_thaw', [('band', lambda: thaw_band())], dict(
-            name='Thaw at the woodland seam', purpose='mark', role='ground', cells=(47, 3), fp=[], blocks=False,
+            name='Thaw at the woodland seam', purpose='mark', role='ground', cells=(47, 5), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='edge', z_sort='ground',
             size_class='unsized (wet snow and bare ground: ground dressing)', eastward='-', fn='thaw_band',
-            note='The short thaw band at the woodland\'s north seam (Matt, 23 Nov) across the zone\'s last three rows: wet '
-                 'greying snow, lobed patches of bare earth and flattened grass growing toward the seam, slush rims, rivulets '
-                 'running to the water, slush and puddles on the Col Path, the snow pulled back round the trees\' feet.')),
+            note='The short thaw band at the woodland\'s north seam (Matt, 23 Nov) across the zone\'s width, its top edge '
+                 'wandering: a calm wet crust, bare hollows lit from the upper left growing and merging toward the seam, '
+                 'earth in clusters with combed flattened grass, meandering rivulets to the water, a trodden slush lane '
+                 'on the Col Path to the door, the snow pulled back round the trees\' feet.')),
         ('frost_woodland_thaw', [('band', lambda: woodland_seam())], dict(
             name='Thaw at the Frostline door (woodland side)', purpose='mark', role='ground', cells=(26, 9), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='edge', z_sort='ground',
             size_class='unsized (old snow, wet scree and flattened grass over the woodland\'s baked ground: dressing)',
             eastward='-', fn='woodland_seam',
             note='The woodland\'s half of the thaw at the Frostline door (round 1 audits of #535), drawn over the '
-                 'woodland\'s own ground.png: old snow in the scree\'s lee and along the north edge, wet scree, meltwater '
-                 'rivulets to the brook, flattened brown grass on the lawn\'s first row, old snow under the north pines. '
-                 'Its foot is its top-left corner, the woodland\'s origin. Not yet placed: the woodland scene is touched by '
-                 'the open PR #421, so placement waits for Claude A.')),
+                 'woodland\'s own ground.png: old snow in the scree\'s lee and along the north edge with no halo, meltwater '
+                 'channels to the brook\'s rim, flattened brown grass on the lawn\'s first row. Its foot is its top-left '
+                 'corner, the woodland\'s origin, where woodland_base.tscn places it (Claude A, round 2). It is registered '
+                 'to ground.png: regenerate it if that picture changes (draft #421).')),
         ('frost_pressure_ridge', [(v, (lambda v=v: pressure_ridge(v))) for v in ('long', 'short', 'side')], dict(
             name='Pressure ridge', purpose='mark', role='water', cells=(3, 1), fp=[], blocks=False,
             collision={'shape': 'none'}, shadow=None, composition='edge', z_sort='ground',

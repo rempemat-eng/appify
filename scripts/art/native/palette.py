@@ -84,11 +84,14 @@ FAMS = ['crag', 'crag_warm', 'crag_cool', 'grass', 'grass_warm', 'grass_cool', '
         # appended for the Undercroft's middle band (round 10, G-38): one named-only tone of lamplit's
         'lamplit_dusk',
         # appended for the Crossroads stall (XR6-S1): one named-only tone of plaster's, the cream cloth's deep fold
-        'plaster_fold']
+        'plaster_fold',
+        # appended for the Frostline's open water (#535 round 2, R1): two named-only tones of water's, its
+        # winter water and the same water thawing toward the woodland's brook
+        'water_winter', 'water_thaw']
 FI = {n: i for i, n in enumerate(FAMS)}
 # families a painter names on purpose and nearest-colour mapping never picks (lamplit, the lamp's light on
 # stone: the Undercroft's torchlit floor and walls), so adding them moves no other picture's colours
-NAMED_ONLY = ('lamplit', 'lamplit_warm', 'lamplit_cool', 'lamplit_dusk', 'plaster_fold')
+NAMED_ONLY = ('lamplit', 'lamplit_warm', 'lamplit_cool', 'lamplit_dusk', 'plaster_fold', 'water_winter', 'water_thaw')
 PICKABLE = np.array([n not in NAMED_ONLY for n in FAMS for _ in range(8)])
 
 LUT = np.zeros((len(FAMS) * 8, 3), np.uint8)
