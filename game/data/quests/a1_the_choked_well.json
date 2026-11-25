@@ -3,7 +3,7 @@
   "title": "The choked well",
   "kind": "village",
   "region": "valley",
-  "summary": "The well on the square is still choked with rubble from the storm.",
+  "summary": "The shard lantern's light clears the storm rubble from the well on the square.",
   "start": {
     "on": "talk:moss",
     "if": {
@@ -15,11 +15,16 @@
   "steps": [
     {
       "id": "well",
-      "text": "Clear the well on the square",
-      "on": "restore:well",
+      "text": "Let the shard lantern clear the well on the square",
+      "on": "talk:shard_lantern",
       "done_if": {
-        "restored": [
-          "well"
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "if": {
+        "flags": [
+          "shard_home:woodland"
         ]
       }
     },
