@@ -15,6 +15,7 @@ camp_id = "fells_ibex"
 [node name="Dresser" type="Node" parent="Camp"]
 script = ExtResource("dresser")
 with_den = false
+look_set = {}
 
 [node name="Rusher1" type="CharacterBody2D" parent="Camp"]
 position = Vector2(-72, 24)

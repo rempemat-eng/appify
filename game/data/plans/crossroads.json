@@ -102,6 +102,19 @@
         ]
       },
       "why": "the library's bell cupola (game-design.md 7.2; act 1's restore id and the 50 Glint its mark's lines quote, docs/story/act1.md). Optional (Matt, 13 Nov, decision (d): the bell tower is optional, and its cupola is drawn so that paying visibly changes the square): no quest of the slice waits on it and the closing card does not. Offered from the first night's win (game/data/raids/first_night.json, `reward.offers`), as before; held here since 16 Nov so its mark is the plan's, as every restore's, and core/raids.gd's fallback for a plan without it no longer applies. Paying shows the bell hung in the cupola (`cupola_hung`) in place of the empty one, and takes the bell out of the street. Act 1's The wolf moon (a1_the_wolf_moon.json) waits on restore:bell_tower for its first step, and its `done_if` counts a tower paid for in the slice"
+    },
+    {
+      "id": "training_yard",
+      "name": "The ring on the green",
+      "cost": {
+        "glint": 40
+      },
+      "if": {
+        "started": [
+          "a1_the_training_yard"
+        ]
+      },
+      "why": "Act 1's authored training yard: 40 Glint in a1_valley.json. Offered once the hut warden has asked for it; its look remains a separate art task."
     }
   ],
   "tiers": [
@@ -991,6 +1004,23 @@
         ]
       },
       "why": "in front of the library's door (248, 200), where the raid's mark stood (world/raid_night.gd set it out until 16 Nov); shown once the first night is won, gone once the bell is hung"
+    },
+    {
+      "id": "training_yard_site",
+      "restore": "training_yard",
+      "at": [
+        184,
+        472
+      ],
+      "if": {
+        "started": [
+          "a1_the_training_yard"
+        ],
+        "not_restored": [
+          "training_yard"
+        ]
+      },
+      "why": "At the existing green_lane entrance to the green's ring; no new art or geometry."
     }
   ],
   "spawns": [
