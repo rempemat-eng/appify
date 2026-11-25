@@ -15204,8 +15204,8 @@
   ],
   "deck": null,
   "foot": [
-   21,
-   30
+   16,
+   29
   ],
   "footprint": [
    [
@@ -15237,7 +15237,7 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -21,
+     -16,
      -10
     ],
     "png": "res://kit/props/art/shadow_frost_boulder.png"
@@ -15259,13 +15259,13 @@
   "variants": {
    "a": {
     "foot": [
-     21,
-     30
+     16,
+     29
     ],
     "png": "res://kit/props/art/frost/frost_boulder_a.png",
     "shadow": {
      "offset": [
-      -21,
+      -16,
       -10
      ],
      "png": "res://kit/props/art/shadow_frost_boulder.png"
@@ -15273,13 +15273,13 @@
    },
    "b": {
     "foot": [
-     18,
-     20
+     23,
+     19
     ],
     "png": "res://kit/props/art/frost/frost_boulder_b.png",
     "shadow": {
      "offset": [
-      -18,
+      -23,
       -14
      ],
      "png": "res://kit/props/art/shadow_frost_boulder__b.png"
@@ -15299,8 +15299,8 @@
   ],
   "deck": null,
   "foot": [
-   41,
-   53
+   34,
+   63
   ],
   "footprint": [
    [
@@ -15356,8 +15356,8 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -41,
-     -14
+     -34,
+     -13
     ],
     "png": "res://kit/props/art/shadow_frost_boulder_large.png"
    },
@@ -15378,14 +15378,14 @@
   "variants": {
    "still": {
     "foot": [
-     41,
-     53
+     34,
+     63
     ],
     "png": "res://kit/props/art/frost/frost_boulder_large.png",
     "shadow": {
      "offset": [
-      -41,
-      -14
+      -34,
+      -13
      ],
      "png": "res://kit/props/art/shadow_frost_boulder_large.png"
     }
@@ -15720,7 +15720,7 @@
   ],
   "deck": null,
   "foot": [
-   79,
+   78,
    128
   ],
   "footprint": [
@@ -15793,7 +15793,7 @@
    "kind": "footprint",
    "mask": {
     "offset": [
-     -79,
+     -78,
      -43
     ],
     "png": "res://kit/props/art/shadow_frost_crag.png"
@@ -15815,13 +15815,13 @@
   "variants": {
    "a": {
     "foot": [
-     79,
+     78,
      128
     ],
     "png": "res://kit/props/art/frost/frost_crag_a.png",
     "shadow": {
      "offset": [
-      -79,
+      -78,
       -43
      ],
      "png": "res://kit/props/art/shadow_frost_crag.png"

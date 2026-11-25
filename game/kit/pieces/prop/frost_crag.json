@@ -13,7 +13,7 @@
    "weight": 1.0,
    "png": "res://kit/props/art/frost/frost_crag_a.png",
    "foot": [
-    79,
+    78,
     128
    ]
   },
@@ -36,7 +36,7 @@
  },
  "geometry": {
   "size_px": [
-   151,
+   150,
    130
   ],
   "size_cells": [
@@ -55,7 +55,7 @@
    ]
   },
   "foot": [
-   79,
+   78,
    128
   ],
   "footprint": [
