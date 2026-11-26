@@ -7078,70 +7078,140 @@
      106,
      247
     ],
-    "png": "res://zones/crossroads/art/oak_13.png"
+    "png": "res://zones/crossroads/art/oak_13.png",
+    "shadow": {
+     "offset": [
+      -55,
+      -76
+     ],
+     "png": "res://kit/props/art/shadow_crossroads_oak.png"
+    }
    },
    "oak_21": {
     "foot": [
      106,
      247
     ],
-    "png": "res://zones/crossroads/art/oak_21.png"
+    "png": "res://zones/crossroads/art/oak_21.png",
+    "shadow": {
+     "offset": [
+      -55,
+      -76
+     ],
+     "png": "res://kit/props/art/shadow_crossroads_oak__oak_21.png"
+    }
    },
    "oak_40": {
     "foot": [
      106,
      247
     ],
-    "png": "res://zones/crossroads/art/oak_40.png"
+    "png": "res://zones/crossroads/art/oak_40.png",
+    "shadow": {
+     "offset": [
+      -55,
+      -76
+     ],
+     "png": "res://kit/props/art/shadow_crossroads_oak__oak_40.png"
+    }
    },
    "oak_41": {
     "foot": [
      96,
      264
     ],
-    "png": "res://zones/crossroads/art/oak_41.png"
+    "png": "res://zones/crossroads/art/oak_41.png",
+    "shadow": {
+     "offset": [
+      -46,
+      -81
+     ],
+     "png": "res://kit/props/art/shadow_crossroads_oak__oak_41.png"
+    }
    },
    "oak_42": {
     "foot": [
      106,
      247
     ],
-    "png": "res://zones/crossroads/art/oak_42.png"
+    "png": "res://zones/crossroads/art/oak_42.png",
+    "shadow": {
+     "offset": [
+      -55,
+      -76
+     ],
+     "png": "res://kit/props/art/shadow_crossroads_oak__oak_42.png"
+    }
    },
    "oak_43": {
     "foot": [
      106,
      247
     ],
-    "png": "res://zones/crossroads/art/oak_43.png"
+    "png": "res://zones/crossroads/art/oak_43.png",
+    "shadow": {
+     "offset": [
+      -55,
+      -76
+     ],
+     "png": "res://kit/props/art/shadow_crossroads_oak__oak_43.png"
+    }
    },
    "oak_44": {
     "foot": [
      96,
      264
     ],
-    "png": "res://zones/crossroads/art/oak_44.png"
+    "png": "res://zones/crossroads/art/oak_44.png",
+    "shadow": {
+     "offset": [
+      -46,
+      -81
+     ],
+     "png": "res://kit/props/art/shadow_crossroads_oak__oak_44.png"
+    }
    },
    "oak_45": {
     "foot": [
      96,
      264
     ],
-    "png": "res://zones/crossroads/art/oak_45.png"
+    "png": "res://zones/crossroads/art/oak_45.png",
+    "shadow": {
+     "offset": [
+      -46,
+      -81
+     ],
+     "png": "res://kit/props/art/shadow_crossroads_oak__oak_45.png"
+    }
    },
    "oak_46": {
     "foot": [
      96,
      264
     ],
-    "png": "res://zones/crossroads/art/oak_46.png"
+    "png": "res://zones/crossroads/art/oak_46.png",
+    "shadow": {
+     "offset": [
+      -46,
+      -81
+     ],
+     "png": "res://kit/props/art/shadow_crossroads_oak__oak_46.png"
+    }
    },
    "oak_6": {
     "foot": [
      122,
      227
     ],
-    "png": "res://zones/crossroads/art/oak_6.png"
+    "png": "res://zones/crossroads/art/oak_6.png",
+    "shadow": {
+     "offset": [
+      -64,
+      -70
+     ],
+     "png": "res://kit/props/art/shadow_crossroads_oak__oak_6.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16308,7 +16378,7 @@
   "deck": null,
   "foot": [
    62,
-   106
+   95
   ],
   "footprint": [
    [
@@ -16343,8 +16413,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -60,
-     -34
+     -63,
+     -30
     ],
     "png": "res://kit/props/art/shadow_frost_krummholz.png"
    }
@@ -16360,45 +16430,87 @@
   "variants": {
    "low": {
     "foot": [
-     49,
-     88
+     46,
+     84
     ],
-    "png": "res://kit/props/art/frost/frost_krummholz_low.png"
+    "png": "res://kit/props/art/frost/frost_krummholz_low.png",
+    "shadow": {
+     "offset": [
+      -47,
+      -27
+     ],
+     "png": "res://kit/props/art/shadow_frost_krummholz__low.png"
+    }
    },
    "low_b": {
     "foot": [
-     51,
-     88
+     48,
+     83
     ],
-    "png": "res://kit/props/art/frost/frost_krummholz_low_b.png"
+    "png": "res://kit/props/art/frost/frost_krummholz_low_b.png",
+    "shadow": {
+     "offset": [
+      -49,
+      -27
+     ],
+     "png": "res://kit/props/art/shadow_frost_krummholz__low_b.png"
+    }
    },
    "still": {
     "foot": [
      62,
-     106
+     95
     ],
-    "png": "res://kit/props/art/frost/frost_krummholz_still.png"
+    "png": "res://kit/props/art/frost/frost_krummholz_still.png",
+    "shadow": {
+     "offset": [
+      -63,
+      -30
+     ],
+     "png": "res://kit/props/art/shadow_frost_krummholz.png"
+    }
    },
    "still_b": {
     "foot": [
-     61,
-     106
+     59,
+     94
     ],
-    "png": "res://kit/props/art/frost/frost_krummholz_still_b.png"
+    "png": "res://kit/props/art/frost/frost_krummholz_still_b.png",
+    "shadow": {
+     "offset": [
+      -60,
+      -30
+     ],
+     "png": "res://kit/props/art/shadow_frost_krummholz__still_b.png"
+    }
    },
    "wide": {
     "foot": [
-     70,
-     124
+     64,
+     110
     ],
-    "png": "res://kit/props/art/frost/frost_krummholz_wide.png"
+    "png": "res://kit/props/art/frost/frost_krummholz_wide.png",
+    "shadow": {
+     "offset": [
+      -64,
+      -35
+     ],
+     "png": "res://kit/props/art/shadow_frost_krummholz__wide.png"
+    }
    },
    "wide_b": {
     "foot": [
-     70,
-     124
+     67,
+     112
     ],
-    "png": "res://kit/props/art/frost/frost_krummholz_wide_b.png"
+    "png": "res://kit/props/art/frost/frost_krummholz_wide_b.png",
+    "shadow": {
+     "offset": [
+      -67,
+      -35
+     ],
+     "png": "res://kit/props/art/shadow_frost_krummholz__wide_b.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16589,8 +16701,8 @@
   ],
   "deck": null,
   "foot": [
-   51,
-   233
+   42,
+   232
   ],
   "footprint": [
    [
@@ -16621,8 +16733,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -43,
-     -72
+     -21,
+     -71
     ],
     "png": "res://kit/props/art/shadow_frost_pine.png"
    }
@@ -16639,23 +16751,44 @@
    "b": {
     "foot": [
      50,
-     233
+     232
     ],
-    "png": "res://kit/props/art/frost/frost_pine_b.png"
+    "png": "res://kit/props/art/frost/frost_pine_b.png",
+    "shadow": {
+     "offset": [
+      -21,
+      -71
+     ],
+     "png": "res://kit/props/art/shadow_frost_pine__b.png"
+    }
    },
    "c": {
     "foot": [
-     50,
-     233
+     51,
+     230
     ],
-    "png": "res://kit/props/art/frost/frost_pine_c.png"
+    "png": "res://kit/props/art/frost/frost_pine_c.png",
+    "shadow": {
+     "offset": [
+      -21,
+      -71
+     ],
+     "png": "res://kit/props/art/shadow_frost_pine__c.png"
+    }
    },
    "still": {
     "foot": [
-     51,
-     233
+     42,
+     232
     ],
-    "png": "res://kit/props/art/frost/frost_pine_still.png"
+    "png": "res://kit/props/art/frost/frost_pine_still.png",
+    "shadow": {
+     "offset": [
+      -21,
+      -71
+     ],
+     "png": "res://kit/props/art/shadow_frost_pine.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -16671,8 +16804,8 @@
   ],
   "deck": null,
   "foot": [
-   59,
-   174
+   61,
+   176
   ],
   "footprint": [
    [
@@ -16703,8 +16836,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -54,
-     -54
+     -56,
+     -55
     ],
     "png": "res://kit/props/art/shadow_frost_pine_squat.png"
    }
@@ -16720,24 +16853,45 @@
   "variants": {
    "b": {
     "foot": [
-     58,
-     174
+     49,
+     175
     ],
-    "png": "res://kit/props/art/frost/frost_pine_squat_b.png"
+    "png": "res://kit/props/art/frost/frost_pine_squat_b.png",
+    "shadow": {
+     "offset": [
+      -41,
+      -54
+     ],
+     "png": "res://kit/props/art/shadow_frost_pine_squat__b.png"
+    }
    },
    "c": {
     "foot": [
      58,
-     174
+     143
     ],
-    "png": "res://kit/props/art/frost/frost_pine_squat_c.png"
+    "png": "res://kit/props/art/frost/frost_pine_squat_c.png",
+    "shadow": {
+     "offset": [
+      -54,
+      -45
+     ],
+     "png": "res://kit/props/art/shadow_frost_pine_squat__c.png"
+    }
    },
    "still": {
     "foot": [
-     59,
-     174
+     61,
+     176
     ],
-    "png": "res://kit/props/art/frost/frost_pine_squat_still.png"
+    "png": "res://kit/props/art/frost/frost_pine_squat_still.png",
+    "shadow": {
+     "offset": [
+      -56,
+      -55
+     ],
+     "png": "res://kit/props/art/shadow_frost_pine_squat.png"
+    }
    }
   },
   "z_sort": "foot"
@@ -17468,8 +17622,8 @@
   ],
   "deck": null,
   "foot": [
-   49,
-   247
+   52,
+   251
   ],
   "footprint": [
    [
@@ -17501,7 +17655,7 @@
    "mask": {
     "offset": [
      -40,
-     -76
+     -77
     ],
     "png": "res://kit/props/art/shadow_frost_spruce.png"
    }
@@ -17517,24 +17671,45 @@
   "variants": {
    "b": {
     "foot": [
-     49,
-     247
+     38,
+     215
     ],
-    "png": "res://kit/props/art/frost/frost_spruce_b.png"
+    "png": "res://kit/props/art/frost/frost_spruce_b.png",
+    "shadow": {
+     "offset": [
+      -30,
+      -66
+     ],
+     "png": "res://kit/props/art/shadow_frost_spruce__b.png"
+    }
    },
    "c": {
     "foot": [
-     48,
-     247
+     47,
+     251
     ],
-    "png": "res://kit/props/art/frost/frost_spruce_c.png"
+    "png": "res://kit/props/art/frost/frost_spruce_c.png",
+    "shadow": {
+     "offset": [
+      -33,
+      -77
+     ],
+     "png": "res://kit/props/art/shadow_frost_spruce__c.png"
+    }
    },
    "still": {
     "foot": [
-     49,
-     247
+     52,
+     251
     ],
-    "png": "res://kit/props/art/frost/frost_spruce_still.png"
+    "png": "res://kit/props/art/frost/frost_spruce_still.png",
+    "shadow": {
+     "offset": [
+      -40,
+      -77
+     ],
+     "png": "res://kit/props/art/shadow_frost_spruce.png"
+    }
    }
   },
   "z_sort": "foot"

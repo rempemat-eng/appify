@@ -501,9 +501,9 @@
     1056
    ],
    "facing": "s",
-   "id": "krummholz",
-   "piece": "frost_krummholz",
-   "variant": "wide_b"
+   "id": "pine_squat_7",
+   "piece": "frost_pine_squat",
+   "variant": "b"
   },
   {
    "at": [
@@ -513,7 +513,7 @@
    "facing": "s",
    "id": "pine_squat_2",
    "piece": "frost_pine_squat",
-   "variant": "b"
+   "variant": "still"
   },
   {
    "at": [
@@ -603,7 +603,7 @@
    "facing": "s",
    "id": "pine_squat_5",
    "piece": "frost_pine_squat",
-   "variant": "c"
+   "variant": "still"
   },
   {
    "at": [
@@ -621,9 +621,9 @@
     1056
    ],
    "facing": "s",
-   "id": "krummholz_2",
-   "piece": "frost_krummholz",
-   "variant": "low_b"
+   "id": "pine_squat_8",
+   "piece": "frost_pine_squat",
+   "variant": "c"
   },
   {
    "at": [

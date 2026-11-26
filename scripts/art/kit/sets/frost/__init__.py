@@ -139,7 +139,6 @@ from .structures_props import (
 )
 from .trees import (
     CONIFERS as CONIFERS,
-    _shelves as _shelves,
     conifer as conifer,
     snag as snag,
 )
@@ -237,8 +236,9 @@ def prop_jobs():
             note='The hut warden\'s bothy: rubble granite under slate at the Frostline hut scale (door leaf 87 art px, eaves '
                  '123), snow lying on the roof as a mass with a cornice, icicles at the corners and over the door, a drift '
                  'at the foot with the doorway dug clear; the stove\'s plume loops (8 frames) over the still.')),
-        ('frost_spruce', [('still', lambda: conifer('spruce', load=1.0)), ('b', lambda: conifer('spruce', seed=613)),
-                          ('c', lambda: conifer('spruce', seed=727))], dict(
+        ('frost_spruce', [('still', lambda: conifer('spruce', build=dict(wf=1.0, lean=-2.0))),
+                          ('b', lambda: conifer('spruce', seed=613, build=dict(wf=0.72, top=0.12, lean=6.0))),
+                          ('c', lambda: conifer('spruce', seed=727, build=dict(wf=0.86, base=0.17, lean=-6.0)))], dict(
             name='Snowy spruce', cells=(3, 2), fp=B._fp(2, 1), collision={'shape': 'rect', 'rect': [-5.0, -4.0, 10, 4]},
             size_class='conifer (a tall spruce)', fn='conifer',
             note='A tall narrow spruce in tiers of boughs, snow lying in a lump on each bough (three variants).', **trees)),
@@ -247,8 +247,9 @@ def prop_jobs():
             name='Snowy pine', cells=(4, 2), fp=B._fp(2, 1), collision={'shape': 'rect', 'rect': [-5.0, -4.0, 10, 4]},
             size_class='conifer (the woodland\'s pine, 79 world px)', fn='conifer',
             note='A pine in tiers of boughs, snow lying on each bough heaped west and thinning east (three variants).', **trees)),
-        ('frost_pine_squat', [('still', lambda: conifer('squat')), ('b', lambda: conifer('squat', seed=631)),
-                              ('c', lambda: conifer('squat', seed=743))], dict(
+        ('frost_pine_squat', [('still', lambda: conifer('squat', build=dict(wf=1.0, lean=2.0))),
+                              ('b', lambda: conifer('squat', seed=631, build=dict(wf=0.78, top=0.1, base=0.08, lean=-5.0))),
+                              ('c', lambda: conifer('squat', seed=743, build=dict(wf=0.92, top=0.2, lean=4.0)))], dict(
             name='Wind-cropped pine', cells=(4, 2), fp=B._fp(2, 1), collision={'shape': 'rect', 'rect': [-5.0, -4.0, 10, 4]},
             size_class='conifer (wind-cropped, three quarters of the pine)', fn='conifer',
             note='A squat pine cropped by the wind, its snow heaped on the west of each bough (three variants).', **trees)),
