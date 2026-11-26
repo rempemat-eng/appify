@@ -256,7 +256,8 @@ def _pads_pine(rng, H, W, yt, yb, x0, x1, cxm):
 def _pads_krummholz(rng, H, W, yt, yb, x0, x1, cxm, mat_h):
     """A krummholz: a mat of wide low pads hugging the snow, its top undulating, and over it two or
     three flag branches streaming east from a crooked stem on the windward side, pads on their lee
-    side only, the top flag reaching the picture's top; the dead windward stubs come back as `stubs`
+    side only, the top flag reaching a little over the master crown's top (the krummholz keeps the
+    conifer size guide's height); the dead windward stubs come back as `stubs`
     and the stem as a polyline."""
     pads = []
     pid = 0
@@ -268,7 +269,7 @@ def _pads_krummholz(rng, H, W, yt, yb, x0, x1, cxm, mat_h):
     for j in range(1, nseg + 1):
         t = j / nseg
         y_s = mat_top + mat_h * 0.5
-        stem.append((sx0 + t * rng.uniform(4, 9) + rng.uniform(-1.5, 1.5), y_s - t * (y_s - yt - 1)))
+        stem.append((sx0 + t * rng.uniform(4, 9) + rng.uniform(-1.5, 1.5), y_s - t * (y_s - yt + 5)))
     nflag = int(rng.integers(2, 4))
     flag_t = sorted(rng.uniform(0.35, 0.9, nflag - 1).tolist() + [1.0])
     stubs = []
@@ -568,7 +569,7 @@ def conifer(form='pine', load=1.0, seed=None, build=None):
                 x = int(round(sx_)) - 2 - j
                 yy = y0 - j // 2
                 if 0 <= yy < code.shape[0] and 0 <= x < code.shape[1] and code[yy, x] < 0:
-                    code[yy, x] = C('ash', 4) if j < ln - 1 else C('ash', 2)
+                    code[yy, x] = C('ash', 4) if j < ln - 1 else C('stone_warm', 4)    # a pale broken end
         mask = code >= 0
     # a gap closed in by pads (or a pocket a texel wide) is the deep shade between them, never sky
     if form == 'pine':

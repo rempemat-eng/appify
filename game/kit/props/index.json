@@ -16378,7 +16378,7 @@
   "deck": null,
   "foot": [
    62,
-   95
+   101
   ],
   "footprint": [
    [
@@ -16414,7 +16414,7 @@
    "mask": {
     "offset": [
      -63,
-     -30
+     -32
     ],
     "png": "res://kit/props/art/shadow_frost_krummholz.png"
    }
@@ -16431,13 +16431,13 @@
    "low": {
     "foot": [
      46,
-     84
+     90
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_low.png",
     "shadow": {
      "offset": [
       -47,
-      -27
+      -29
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__low.png"
     }
@@ -16445,13 +16445,13 @@
    "low_b": {
     "foot": [
      48,
-     83
+     89
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_low_b.png",
     "shadow": {
      "offset": [
       -49,
-      -27
+      -29
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__low_b.png"
     }
@@ -16459,13 +16459,13 @@
    "still": {
     "foot": [
      62,
-     95
+     101
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_still.png",
     "shadow": {
      "offset": [
       -63,
-      -30
+      -32
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz.png"
     }
@@ -16473,13 +16473,13 @@
    "still_b": {
     "foot": [
      59,
-     94
+     100
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_still_b.png",
     "shadow": {
      "offset": [
       -60,
-      -30
+      -32
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__still_b.png"
     }
@@ -16487,13 +16487,13 @@
    "wide": {
     "foot": [
      64,
-     110
+     116
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_wide.png",
     "shadow": {
      "offset": [
       -64,
-      -35
+      -37
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__wide.png"
     }
@@ -16501,13 +16501,13 @@
    "wide_b": {
     "foot": [
      67,
-     112
+     118
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_wide_b.png",
     "shadow": {
      "offset": [
       -67,
-      -35
+      -37
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__wide_b.png"
     }
