@@ -225,8 +225,8 @@ def _mask_key(text, seed=401):
     H, W = g.shape[0] * CELL, g.shape[1] * CELL
     w = np.kron(_water_cells(g), np.ones((CELL, CELL), bool))
     sd = ndi.distance_transform_edt(w) - ndi.distance_transform_edt(~w)
-    sd = ndi.gaussian_filter(sd, 6.0)
-    off = 4.4 * _noise((H, W), 11.0, seed + 1) + 1.7 * _noise((H, W), 4.5, seed + 2)
+    sd = ndi.gaussian_filter(sd, 8.5)                          # (polish round, P4: the diagonal's cell teeth smoothed)
+    off = 4.4 * _noise((H, W), 11.0, seed + 1) + 1.7 * _noise((H, W), 4.5, seed + 2) + 2.2 * _noise((H, W), 7.0, seed + 5)
     m = (sd + 8.0 * np.tanh(off / 8.0)) > 0
     m = _round(m, 6)
     mouth = OUTLET_TOP * CELL
@@ -257,7 +257,9 @@ def _mask_key(text, seed=401):
     # the last 4 rows at the zone's edge: the brook's cells, where the woodland's brook carries on
     last = np.nonzero(w[H - 1])[0]
     if len(last):
-        _pin_rows(m, H - 4, H, 26, int(last.min()), int(last.max()) + 1, (last.min() + last.max() + 1) / 2.0, seed + 1)
+        # (polish round, P7) narrowed toward the woodland brook's width over the last 2.5 cells, its banks
+        # 10 texels inside the cells at the edge (the walk grid's edge, as everywhere on the banks)
+        _pin_rows(m, H - 4, H, 60, int(last.min()) + 10, int(last.max()) + 1 - 10, (last.min() + last.max() + 1) / 2.0, seed + 1)
     # the lead: down the tarn's ice from LEAD_TOP into the mouth, jagged, narrowing northward
     rng = np.random.default_rng(seed + 7)
     top, mouth = LEAD_TOP * CELL + 6, OUTLET_TOP * CELL
@@ -294,17 +296,9 @@ def _hole_key(text, seed=411):
     for (yy, out_) in ((y0, y0 - 1), (y1 - 1, y1)):                 # the north and south saw cuts
         jog = _runs1d(x1 - x0, rng, -1, 1, (5, 12))
         for i, x in enumerate(range(x0, x1)):
-            if jog[i] > 0:
-                m[out_, x] = True
-            elif jog[i] < 0:
+            if jog[i] < 0:
                 m[yy, x] = False
-    for (xx, out_) in ((x0, x0 - 1), (x1 - 1, x1)):                 # the west and east cuts
-        jog = _runs1d(y1 - y0, rng, -1, 1, (5, 12))
-        for i, y in enumerate(range(y0, y1)):
-            if jog[i] > 0:
-                m[y, out_] = True
-            elif jog[i] < 0:
-                m[y, xx] = False
+    _jog = _runs1d(y1 - y0, rng, -1, 1, (5, 12))                     # (the west and east cuts stay straight)
     Y, X = np.mgrid[0:H, 0:W]
     for (cy, cx) in ((y0, x0), (y0, x1 - 1), (y1 - 1, x0), (y1 - 1, x1 - 1)):
         r = int(rng.integers(2, 4))
@@ -378,6 +372,7 @@ def _paint_water(out, m, landmat, H, W, seed):
     northf = first & (gy / gn > 0.8)                   # land to the north, the bank level within 37 degrees
     southf = lastw & (gy / gn < -0.8)
     # a north bank runs at least bank_h + 3 texels (5.3a): shorter lumps get no face
+    northf = northf | (first & (gy / gn > 0.55) & ndi.binary_dilation(northf, structure=np.ones((3, 9), bool)))   # (P1: bridge breaks)
     lab, n = ndi.label(ndi.binary_dilation(northf, structure=np.ones((3, 3), bool)) & first)
     sizes = ndi.sum(np.ones_like(lab), lab, index=np.arange(1, n + 1)) if n else []
     keep = np.zeros(n + 1, bool)
@@ -495,6 +490,8 @@ def _streaks(out, m, dist, top, st, north, hw, H, W, seed):
                 if 0 <= Yt < H and 0 <= Xt < W and ok[Yt, Xt]:
                     out[Yt, Xt] = stg['lit']
         taken[max(0, y - 6):y + 10, max(0, x - 6):x + 7] = True
+        if dx == 0:                                        # a straight-down streak keeps no twin (P1: no "||" ticks)
+            continue
         side = 1 if rng.random() < 0.5 else -1
         sy, sx = y + dy * int(rng.integers(1, 3)) + side * 2 * py, x + dx * int(rng.integers(1, 3)) + side * 2 * px
         for (Y_, X_) in lane(sy, sx, dy, dx, max(2, len(pts) - int(rng.integers(2, 4)))):
@@ -601,7 +598,24 @@ def _hole(out, hm, H, W, seed):
         top[y] = run
     rng = np.random.default_rng(seed + 61)
     depth = _runs1d(W, rng, 3, 7, (6, 12))[None, :].repeat(H, 0)
+    Y, X = np.mgrid[0:H, 0:W]
+    # depth (polish round, P2): darker toward the middle, a lighter shallow rim inside the cut
+    dh = ndi.gaussian_filter(ndi.distance_transform_edt(hm), 3.0) + 2.2 * _noise((H, W), 2.5, seed + 63) - 0.08 * top
     out[hm] = C('water_winter', 3)
+    out[hm & (dh >= 8)] = C('water_winter', 2)
+    out[hm & (dh >= 13)] = C('water_winter', 1)
+    rimh = hm & (ndi.distance_transform_edt(hm) <= 2.2) & (top > 4)
+    out[rimh & (K.vhash(X // 2, Y // 2, seed + 64) > 0.3)] = C('water_winter', 4)
+    # one lit reflection streak across the deep water, and its short twin
+    ys_, xs_ = np.nonzero(hm & (dh >= 10))
+    if len(ys_):
+        j = int(rng.integers(0, len(ys_)))
+        for k in range(6):
+            if hm[ys_[j] + k // 3, xs_[j] + k]:
+                out[ys_[j] + k // 3, xs_[j] + k] = C('water_winter', 4)
+        for k in range(3):
+            if hm[ys_[j] + 2 + k // 3, xs_[j] + 2 + k]:
+                out[ys_[j] + 2 + k // 3, xs_[j] + 2 + k] = C('water_winter', 4)
     out[hm & (top == 1)] = C('snow', 5)
     out[hm & (top == 2)] = C('sky_cool', 3)
     b = top - 2
@@ -741,9 +755,9 @@ def inflow(seed=421):
             xa, xb = int(round(mid[yy] + dx - half)), int(round(mid[yy] + dx + half))
             for xx in range(xa, xb + 1):
                 if body[yy, xx]:
-                    out[yy, xx] = C('water_cool', 4)
+                    out[yy, xx] = C('water_cool', 3)               # (polish round, P6: a step darker, to read at 1x)
             if half > 1.6 and body[yy, int(round(mid[yy] + dx))]:
-                out[yy, int(round(mid[yy] + dx))] = C('sky_cool', 3)
+                out[yy, int(round(mid[yy] + dx))] = C('water_cool', 2)
         y += L + int(rng.integers(6, 16))
     # two or three wandering cracks, continuous, each its own length and slant, a lit texel on their west
     # side: one long down the flow, the others shorter and leaving it at a slant
@@ -931,10 +945,30 @@ def thaw_band(seed=441):
     # the door's lane: the Col Path's middle 36 texels, straight to the door cells
     trod_cols = np.nonzero((gw[-1] == 'b'))[0]
     lc = (trod_cols.min() + trod_cols.max() + 1) / 2.0 if len(trod_cols) else W / 2.0
-    # the lane tapers into the trod above it over its top 24 texels, its sides wandering 2 to 3 texels
-    taper = np.clip((Y - edge[None, :]) / 24.0, 0.0, 1.0)
-    half = np.maximum(6.0 + 12.5 * taper + np.round(2.0 * _noise((H, W), 4.0, seed + 3)), np.where(taper >= 1.0, 18.0, 0.0))
-    lane = (np.abs(X - lc) <= half) & (Y >= edge[None, :]) & land
+    # the lane (polish round): each side wanders on its own, 3 to 4 texels out and back over runs of 8 to
+    # 16 rows, never inside 18 texels of the trod's middle over the door, so it stays 36 or more wide; its
+    # top a rounded, frayed dome that merges into the trod above it
+    def side_walk(sd):
+        r = np.random.default_rng(sd)
+        v = np.zeros(H)
+        y, cur = 0, 0.0
+        while y < H:
+            k = int(r.integers(8, 17))
+            nxt = float(r.uniform(-3.0, 4.0))
+            for i in range(k):
+                if y + i < H:
+                    f = i / float(k)
+                    v[y + i] = cur + (nxt - cur) * f * f * (3 - 2 * f)
+            cur = nxt
+            y += k
+        return np.round(v)
+    lw = side_walk(seed + 31)[:, None]
+    rw = side_walk(seed + 32)[:, None]
+    lane_top = edge[None, :] + 6.0
+    dome = lane_top + 12.0 * (1.0 - np.sqrt(np.clip(1.0 - ((X - lc) / 21.0) ** 2, 0.0, 1.0)))
+    fray = np.round(2.5 * _noise((1, W), 1.2, seed + 33))
+    lane = (X >= lc - 21 - lw) & (X <= lc + 21 + rw) & (Y >= dome + fray) & land
+    lane_head = lane & (Y < dome + 10)
     # where the patches open: large and merging near the seam, a few small ones north
     nb = _noise((H, W), 9.0, seed + 4)
     ns = _noise((H, W), 3.5, seed + 5)
@@ -958,14 +992,22 @@ def thaw_band(seed=441):
     crust = land & (t + 0.18 * _noise((H, W), 9.0, seed + 6) > 0.02)
     crust = _round(crust, 3) & land
     out[crust] = C('snow_cool', 3)
-    stain = crust & (_noise((H, W), 4.0, seed + 7) + 0.6 * t > 1.1)
-    stain = ndi.binary_opening(stain, structure=np.ones((2, 2), bool))
-    out[stain] = C('snow_cool', 2)
+    # grey staining (polish round, P3): fewer, larger stains whose edges step out in 2 x 2 clusters, not a
+    # hard line
+    sfield = _noise((H, W), 7.0, seed + 7) + 0.5 * t
+    stain = crust & (sfield > 1.35)
+    soft = crust & (sfield > 1.05) & ~stain & (K.vhash(X // 2, Y // 2, seed + 34) > 0.55)
+    out[stain | soft] = C('snow_cool', 2)
     # the lane: trodden slush, wetter and darker than the crust, ruts along it, a puddle or two
     out[lane] = C('snow_cool', 2)
-    slush = lane & (_noise((H, W), 3.0, seed + 8) > 0.6)
-    slush = ndi.binary_opening(slush, structure=np.ones((2, 2), bool))
-    out[slush] = C('snow_cool', 1)
+    out[lane_head & (K.vhash(X // 2, Y // 2, seed + 35) > 0.4)] = C('snow_cool', 3)   # its head fraying into the trod
+    # slush ruts worn along the walk: two wandering ruts, 2 texels wide, broken here and there
+    for (dx, sd) in ((-8, seed + 36), (7, seed + 37)):
+        wob = np.round(2.0 * _noise((H, 1), 6.0, sd)[:, 0])
+        for y in range(H):
+            x = int(round(lc + dx + wob[y]))
+            if lane[y, x] and not lane_head[y, x] and K.vhash(x, y // 5, sd) > 0.2:
+                out[y, x:x + 2] = C('snow_cool', 1)
     yy, side = float(rng.uniform(0, 4)), 1                              # one walker's prints pressed into it
     while yy < H - 3:
         fx = int(round(lc + side * rng.uniform(2, 4) + 3 * math.sin(yy / 23.0)))

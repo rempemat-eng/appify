@@ -16526,7 +16526,7 @@
   "collision": null,
   "deck": null,
   "foot": [
-   190,
+   186,
    0
   ],
   "footprint": [],
@@ -16549,7 +16549,7 @@
   "variants": {
    "still": {
     "foot": [
-     190,
+     186,
      0
     ],
     "png": "res://kit/props/art/frost/frost_outlet.png"

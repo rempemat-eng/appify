@@ -386,7 +386,10 @@ def pressure_ridge(kind='long', seed=191):
             t += float(rng.uniform(3, 7))
             continue
         end = t < 5 or t > L - 13                            # the heap's ends: an angular plate, never a bead (P1)
-        if end:
+        if end and vertical:                                 # the side ridge's ends tilted and heaved (P5: no "E")
+            sl = float(rng.uniform(7, 10))
+            flat, ang = False, float(rng.choice([-1, 1]) * rng.uniform(0.45, 0.75))
+        elif end:
             sl = float(rng.uniform(7, 10))
             flat, ang = True, float(rng.uniform(-0.35, 0.35))
         else:
