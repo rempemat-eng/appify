@@ -16307,8 +16307,8 @@
   ],
   "deck": null,
   "foot": [
-   61,
-   108
+   62,
+   101
   ],
   "footprint": [
    [
@@ -16344,7 +16344,7 @@
    "mask": {
     "offset": [
      -59,
-     -34
+     -32
     ],
     "png": "res://kit/props/art/shadow_frost_krummholz.png"
    }
@@ -16360,22 +16360,22 @@
   "variants": {
    "low": {
     "foot": [
-     42,
-     90
+     50,
+     83
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_low.png"
    },
    "still": {
     "foot": [
-     61,
-     108
+     62,
+     101
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_still.png"
    },
    "wide": {
     "foot": [
-     68,
-     125
+     69,
+     119
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_wide.png"
    }
@@ -16568,8 +16568,8 @@
   ],
   "deck": null,
   "foot": [
-   47,
-   236
+   51,
+   228
   ],
   "footprint": [
    [
@@ -16600,8 +16600,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -39,
-     -73
+     -40,
+     -70
     ],
     "png": "res://kit/props/art/shadow_frost_pine.png"
    }
@@ -16617,8 +16617,8 @@
   "variants": {
    "still": {
     "foot": [
-     47,
-     236
+     51,
+     228
     ],
     "png": "res://kit/props/art/frost/frost_pine.png"
    }
@@ -16636,8 +16636,8 @@
   ],
   "deck": null,
   "foot": [
-   49,
-   175
+   59,
+   169
   ],
   "footprint": [
    [
@@ -16668,8 +16668,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -39,
-     -54
+     -54,
+     -53
     ],
     "png": "res://kit/props/art/shadow_frost_pine_squat.png"
    }
@@ -16685,8 +16685,8 @@
   "variants": {
    "still": {
     "foot": [
-     49,
-     175
+     59,
+     169
     ],
     "png": "res://kit/props/art/frost/frost_pine_squat.png"
    }
@@ -17271,7 +17271,7 @@
   ],
   "deck": null,
   "foot": [
-   23,
+   24,
    155
   ],
   "footprint": [
@@ -17299,7 +17299,7 @@
   "shadow": {
    "mask": {
     "offset": [
-     -25,
+     -26,
      -48
     ],
     "png": "res://kit/props/art/shadow_frost_snag.png"
@@ -17316,7 +17316,7 @@
   "variants": {
    "still": {
     "foot": [
-     23,
+     24,
      155
     ],
     "png": "res://kit/props/art/frost/frost_snag.png"
@@ -17419,8 +17419,8 @@
   ],
   "deck": null,
   "foot": [
-   51,
-   250
+   49,
+   242
   ],
   "footprint": [
    [
@@ -17451,8 +17451,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -34,
-     -77
+     -41,
+     -74
     ],
     "png": "res://kit/props/art/shadow_frost_spruce.png"
    }
@@ -17468,8 +17468,8 @@
   "variants": {
    "still": {
     "foot": [
-     51,
-     250
+     49,
+     242
     ],
     "png": "res://kit/props/art/frost/frost_spruce.png"
    }
