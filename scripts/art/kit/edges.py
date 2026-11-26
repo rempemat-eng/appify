@@ -714,105 +714,148 @@ def snow_fray(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0))
 
 def _bank_stones(prof: int) -> list:
     """The granite bank's stones along one cell edge, a function of its profile only (so the two
-    tiles sharing the cell edge agree): (start, end) in texels along it (t = 0 .. 23), each stone 6 to
-    11 long, a joint of one texel between neighbours."""
-    rng = np.random.default_rng(5200 + 7 * prof)
+    tiles sharing the cell edge agree): (start, end, depth, drop, cap, kind) in texels along it (t =
+    0 .. 23): each stone 3 to 9 long and 2 to 4 deep (the short ones shallower), set 0 or 1 texel
+    further from the shore
+    (`drop`), a few with a cap of snow, its granite one of three siblings (`kind`)."""
+    rng = np.random.default_rng(5300 + 7 * prof)
     out, x = [], int(rng.integers(-4, 1))
     while x < CELL:
-        L = int(rng.integers(6, 12))
-        out.append((x, x + L))
-        x += L + 1
+        L = int(rng.integers(3, 10))
+        dd = int(rng.integers(3, 5)) if L >= 4 else 2 + int(rng.random() < 0.5)
+        out.append((x, x + L, dd, int(rng.random() < 0.35), bool(L >= 6 and rng.random() < 0.2), int(rng.integers(0, 3))))
+        x += L
     return out
 
 
-BANK_TOP = 51       # the stone course's top row in the working canvas: one level for every profile,
-BANK_H = 3          # so the course runs on without a step (the outline's lowest lobe is row 51)
+def _stone_run(m2: np.ndarray, cfg_l: bool, cfg_r: bool, p_l: int, p_r: int, end_l: bool, end_r: bool) -> dict:
+    """A run of bank stones along a shore with its land to the north (the canvas is turned for other
+    shores), following the shoreline column by column so it never stands off it: each column's
+    distance from the land (`rt`) places the snow's lip (rt 1, and the rows a dropped stone leaves),
+    then the stone (its depth across the shore), then a texel of contact shade on the water.
+    `cfg_l`/`cfg_r`: which halves (west of the vertex, east of it) carry this shore; `end_l`/`end_r`:
+    the run ends at the vertex coming from that half (no shore carries on round the corner), so its
+    stones taper there on a quarter round 5 texels long. A stone's outer corners are rounded off into
+    the water's shade."""
+    rt = GD.runs_from_top(m2)
+    xs = np.arange(N) + 0.5
+    yy_ = np.arange(N)[:, None] + 0.5
+    cfg = np.where(xs < MID, cfg_l, cfg_r)[None, :]
+    band = (yy_ > MID - 5) & (yy_ < MID + 10)
+    u = np.zeros(N, np.int64)
+    w = np.ones(N, np.int64)
+    D = np.zeros(N, np.int64)
+    jit = np.zeros(N, np.int64)
+    cap = np.zeros(N, bool)
+    kind = np.zeros(N, np.int64)
+    for half, pr in ((0, p_l), (1, p_r)):
+        cols = np.arange(N)[(xs < MID) if half == 0 else (xs >= MID)]
+        t = cols - (T0 if half == 0 else T1) + HALF
+        for (s0, s1, dd, jj, cc, kk) in _bank_stones(pr):
+            sel = (t >= s0) & (t < s1)
+            u[cols[sel]] = t[sel] - s0
+            w[cols[sel]] = s1 - s0
+            D[cols[sel]] = dd
+            jit[cols[sel]] = jj
+            cap[cols[sel]] = cc
+            kind[cols[sel]] = kk
+    d = np.ceil(np.abs(xs - MID))
+    fac = np.sqrt(np.clip(1 - (1 - (d - 0.5) / 5.5) ** 2, 0, 1))
+    tap = np.where(xs < MID, end_l, end_r) & (d <= 5)
+    D = np.where(tap, np.maximum(1, np.round(D * fac)).astype(np.int64), D)
+    jit = np.where(tap, 0, jit)
+    U, Wd, Dd = u[None, :], w[None, :], D[None, :]
+    v = rt - 2 - jit[None, :]
+    valid = m2 & cfg & band & (rt >= 1)
+    lip = valid & ((rt == 1) | ((rt >= 2) & (v < 0)))
+    stone = valid & (v >= 0) & (v < Dd)
+    c_out = stone & (v == Dd - 1) & ((U == 0) | (U == Wd - 1)) & (Dd >= 3)
+    stone &= ~c_out
+    shade = (valid & ~stone & ~lip & (v == Dd)) | c_out
+    sh = m2.shape
+    return dict(stone=stone, lip=lip, top=valid & (rt == 1), shade=shade, u=np.broadcast_to(U, sh),
+                w=np.broadcast_to(Wd, sh), v=v, D=np.broadcast_to(Dd, sh), cap=np.broadcast_to(cap[None, :], sh),
+                kind=np.broadcast_to(kind[None, :], sh))
 
 
 def cornice_bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), rim: str = 'ice') -> np.ndarray:
-    """Snow (upper) over water or ice in a cold country, edges.bank's geometry with the Frostline's
-    materials. Under a north lip (the Frostline A4 pass, after the tarn's bank read as a sawtooth: its
-    face copied every step of the lumped outline in six ruled bands with clods at an even pitch):
-    the snow hangs over the shore as a cornice that follows the outline (a lit row, then its cool
-    underside, thicker under a lobe), a row of blue shade under its lip, and under that one level
-    course of granite stones 3 texels tall (eastward-edges.md 5.3, banks of stones), every stone in
-    mid tones: a lit top edge from the upper left, the body, a tone down along its foot and east
-    end, its top corners rounded, darkest only in the joints between stones (each 6 to 11 long, set
-    by the cell edge's own profile). The course is level for every profile, so it runs on without a
-    step; where it ends (beside open water or ice, or the side shore's snow at a corner) its last
-    texels round off under the snow, which wraps down over the end in shade. Below it a wet foot, a
-    lit line where the bank meets the water or ice, and two rows of shade on it. Every other shore:
-    the snow's lip lit and, with rim 'ice', a rim of shore ice two texels wide (lit on its land side)
-    on the open water; with rim 'lip', a cool row."""
+    """Snow (upper) over water or ice in a cold country (the Frostline A4 pass; round 3 after the
+    stone course read as kerbs of identical bricks standing off the shore). Along every north shore
+    (land to the north) and every east shore (land to the east) the snow's lip runs on unbroken (a
+    lit row, thicker where a stone sits a texel lower) and under it, sitting on the shoreline and
+    following its wave column by column, a run of irregular rounded granite stones 3 to 9 texels long
+    and 2 to 4 deep (eastward-edges.md 5.3, banks of stones), each set 0 or 1 texel off the line, a
+    few with a cap of snow: mid tones, lit on its top (north) and west edges from the upper left, a
+    tone down at its foot and east end, its corners rounded; a texel of contact shade on the water
+    under a north shore's stones. A north shore turning into an east shore carries the stones on
+    round the corner; where a run really ends at a corner its stones taper on a quarter round 5
+    texels long. Every other shore and the water beyond the stones: with rim 'ice', a rim of shore
+    ice two texels wide (lit on its land side) on the open water; with rim 'lip', a cool row. The
+    snow's south lip is lit."""
     m2 = soft_lower(k, prof)
     land = ~m2
     ops = Ops(land, fill_u, fill_l)
-    rt = GD.runs_from_top(m2)
-    q = [bool((k >> b) & 1) for b in range(4)]
-    xs_ = np.arange(N) + 0.5
-    left = (xs_ < MID)[None, :]
-    nb_cfg = np.where(left, q[0] and not q[2], q[1] and not q[3]).astype(bool)
-    yy_ = np.arange(N)[:, None] + 0.5
-    pos = np.zeros(N, np.int64)                    # 1 a stone's west end, 2 its east end, 3 a joint
-    for half, pr in ((0, prof[3]), (1, prof[1])):
-        cols = np.arange(N)[(xs_ < MID) if half == 0 else (xs_ >= MID)]
-        t = cols - (T0 if half == 0 else T1) + HALF
-        for (s0, s1) in _bank_stones(pr):
-            pos[cols[t == s0]] = 1
-            pos[cols[t == s1 - 1]] = 2
-            pos[cols[t == s1]] = 3
-    yy = np.arange(N)[:, None]
-    rel = np.broadcast_to(yy - BANK_TOP, m2.shape)
-    col_bank = m2 & nb_cfg & (yy_ > MID - 5) & (yy_ < MID + 10) & (rt >= 1) & (rel <= BANK_H + 3)
-    P2 = np.broadcast_to(pos[None, :], m2.shape)
-    # the cornice: a lit row that follows the outline, its cool underside down to a row of shade
-    # on the stones' tops
-    sel = col_bank & (rt == 1)
-    ops.own[sel] = 0
-    ops.dl[sel] = 1
-    sel = col_bank & (rt >= 2) & (rel < -1)
-    ops.own[sel] = 2
-    ops.ab[sel] = C('snow_cool', 3)
-    sel = col_bank & (rt >= 2) & (rel == -1)
-    ops.own[sel] = 2
-    ops.ab[sel] = C('sky_cool', 2)
-    # the stones, in mid tones
-    stone = col_bank & (rt >= 2) & (rel >= 0) & (rel < BANK_H)
-    body = np.where(rel == 0, C('slate', 4), np.where(rel == BANK_H - 1, C('slate', 2), C('slate', 3)))
-    body = np.where((P2 == 2) & (rel > 0), C('slate', 2), body)
-    body = np.where(P2 == 3, C('slate_cool', 1), body)
-    body = np.where((rel == 0) & ((P2 == 1) | (P2 == 2)), C('sky_cool', 2), body)   # rounded top corners
-    ops.own[stone] = 2
-    ops.ab[stone] = body[stone]
-    sel = col_bank & (rt >= 2) & (rel == BANK_H)
-    ops.own[sel] = 2
-    ops.ab[sel] = np.where(P2[sel] == 3, C('slate_cool', 0), C('slate_cool', 1))
-    ops.shift(col_bank & (rel == BANK_H + 1), 2)
-    ops.shift(col_bank & ((rel == BANK_H + 2) | (rel == BANK_H + 3)), -1)
-    nb = col_bank
+    q = [bool((k >> b) & 1) for b in range(4)]          # nw, ne, sw, se (True = land)
+    north_l, north_r = q[0] and not q[2], q[1] and not q[3]
+    east_n, east_s = q[1] and not q[0], q[3] and not q[2]
+    # the north shore's run; it carries on round a corner into an east shore
+    nr = _stone_run(m2, north_l, north_r, prof[3], prof[1],
+                    north_l and not north_r and not east_s, north_r and not north_l and not east_n)
+    # the east shore's run, drawn with the canvas turned so its land lies north (rot90: the east
+    # column becomes the top row, and down the turned columns runs north to south)
+    er = _stone_run(np.rot90(m2), east_n, east_s, prof[0], prof[2],
+                    east_n and not east_s and not north_r, east_s and not east_n and not north_l)
+    er = {key: np.rot90(val, -1) for key, val in er.items()}
+
+    fams = (('slate', 'slate'), ('slate_warm', 'slate'), ('slate', 'slate_cool'))   # (lit and body, shade)
+
+    def stone_code(r, north):
+        u, w, v, dd, kd = r['u'], r['w'], r['v'], r['D'], r['kind']
+        code = np.zeros(m2.shape, np.int32)
+        for i, (fl_, fs) in enumerate(fams):
+            body, lit, shade = C(fl_, 3), C(fl_, 4), C(fs, 2)
+            k_ = kd == i
+            c = np.full(m2.shape, body, np.int32)
+            if north:      # u runs west to east, v down from the shore
+                c[u == 0] = lit
+                c[u == w - 1] = shade
+                c[(v == 0) & (u < w - 1)] = lit
+                c[v == dd - 1] = shade
+            else:          # turned back: u runs north to south, v west from the shore
+                c[u == w - 1] = shade
+                c[v == dd - 1] = lit
+                c[(u == 0) & (v > 0)] = lit
+            code[k_] = c[k_]
+        if north:
+            capm = r['cap'] & (v == 0) & (u >= 1) & (u <= w - 2)
+            code[capm] = np.where(u[capm] < w[capm] / 2, C('snow', 5), C('snow', 4))
+        return code
+
+    used = np.zeros(m2.shape, bool)
+    for r, north in ((er, False), (nr, True)):           # the north shore wins where the two meet
+        sel = r['lip'] & ~r['top']
+        ops.own[sel] = 2
+        ops.ab[sel] = C('snow_cool', 3)
+        ops.own[r['top']] = 0
+        ops.dl[r['top']] = 1
+        ops.own[r['stone']] = 2
+        ops.ab[r['stone']] = stone_code(r, north)[r['stone']]
+        if north:
+            sh = r['shade'] & ~r['stone'] & ~r['lip']
+            ops.own[sh] = 1
+            ops.dl[sh] = 0
+            ops.shift(sh, -1)
+            used |= sh
+        used |= r['stone'] | r['lip']
+    # the rim beyond: round the land, and round the stones away from the tile's border strips (what
+    # reaches a border strip must depend on that border alone: test_kit)
     yy2, xx2 = np.mgrid[0:N, 0:N]
     away = ((yy2 >= T0 + CALM + 1) & (yy2 < T1 - CALM - 1) & (xx2 >= T0 + CALM + 1) & (xx2 < T1 - CALM - 1))
-    face = nb & (rel <= BANK_H)
-    # where the course ends (beside open water or the side shore's snow): its last texels round off
-    # and the snow wraps down over the end in shade (a taper 5 texels long)
-    beyond = (m2 & ~nb) | (land & (rel >= -1))          # open water or the side shore's snow
-    dend = np.full((N, N), 9, np.int32)
-    for d in (5, 4, 3, 2, 1):
-        dend[face & (GD.right(beyond, d) | GD.right(beyond, -d))] = d
-    # a quarter round 5 texels long: the snow covers the course down to row `cut` of its distance
-    cut = np.array([9, BANK_H + 1, BANK_H, 2, 1, 0, -1, -1, -1, -1])[dend]
-    wrap = face & away & (rel < cut)
-    ops.own[wrap] = 0
-    ops.dl[wrap] = np.where(rel[wrap] >= 0, -1, 0)
-    # the stone's last column under the snow a tone down (it turns away), the foot beyond it in shade
-    endc = face & away & ~wrap & GD.right(wrap, 1) | face & away & ~wrap & GD.right(wrap, -1)
-    endc &= (rel >= 0) & (rel < BANK_H)
-    ops.own[endc] = 2
-    ops.ab[endc] = C('slate', 2)
     cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
-    edge1 = m2 & ~nb & ndi.binary_dilation(land | wrap, structure=cross)
+    edge1 = m2 & ~used & ndi.binary_dilation(land | (used & away), structure=cross)
     if rim == 'ice':
-        edge2 = m2 & ~nb & ~edge1 & ndi.binary_dilation(edge1 | (face & away), structure=cross)
+        edge2 = m2 & ~used & ~edge1 & ndi.binary_dilation(edge1 & (away | ndi.binary_dilation(land, structure=cross)),
+                                                          structure=cross)
         ops.own[edge1] = 2
         ops.ab[edge1] = C('sky_cool', 5)
         ops.own[edge2] = 2
