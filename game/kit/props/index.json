@@ -16377,8 +16377,8 @@
   ],
   "deck": null,
   "foot": [
-   62,
-   101
+   65,
+   110
   ],
   "footprint": [
    [
@@ -16413,8 +16413,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -63,
-     -32
+     -64,
+     -35
     ],
     "png": "res://kit/props/art/shadow_frost_krummholz.png"
    }
@@ -16430,13 +16430,13 @@
   "variants": {
    "low": {
     "foot": [
-     46,
-     90
+     48,
+     89
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_low.png",
     "shadow": {
      "offset": [
-      -47,
+      -49,
       -29
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__low.png"
@@ -16444,41 +16444,41 @@
    },
    "low_b": {
     "foot": [
-     48,
-     89
+     53,
+     93
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_low_b.png",
     "shadow": {
      "offset": [
-      -49,
-      -29
+      -53,
+      -30
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__low_b.png"
     }
    },
    "still": {
     "foot": [
-     62,
-     101
+     65,
+     110
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_still.png",
     "shadow": {
      "offset": [
-      -63,
-      -32
+      -64,
+      -35
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz.png"
     }
    },
    "still_b": {
     "foot": [
-     59,
-     100
+     65,
+     102
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_still_b.png",
     "shadow": {
      "offset": [
-      -60,
+      -64,
       -32
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__still_b.png"
@@ -16486,14 +16486,14 @@
    },
    "wide": {
     "foot": [
-     64,
-     116
+     68,
+     102
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_wide.png",
     "shadow": {
      "offset": [
-      -64,
-      -37
+      -66,
+      -32
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__wide.png"
     }
@@ -16501,13 +16501,13 @@
    "wide_b": {
     "foot": [
      67,
-     118
+     114
     ],
     "png": "res://kit/props/art/frost/frost_krummholz_wide_b.png",
     "shadow": {
      "offset": [
-      -67,
-      -37
+      -62,
+      -36
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__wide_b.png"
     }
@@ -16701,8 +16701,8 @@
   ],
   "deck": null,
   "foot": [
-   42,
-   232
+   61,
+   217
   ],
   "footprint": [
    [
@@ -16733,8 +16733,8 @@
   "shadow": {
    "mask": {
     "offset": [
-     -21,
-     -71
+     -42,
+     -67
     ],
     "png": "res://kit/props/art/shadow_frost_pine.png"
    }
@@ -16750,42 +16750,42 @@
   "variants": {
    "b": {
     "foot": [
-     50,
-     232
+     56,
+     217
     ],
     "png": "res://kit/props/art/frost/frost_pine_b.png",
     "shadow": {
      "offset": [
-      -21,
-      -71
+      -40,
+      -67
      ],
      "png": "res://kit/props/art/shadow_frost_pine__b.png"
     }
    },
    "c": {
     "foot": [
-     51,
-     230
+     60,
+     219
     ],
     "png": "res://kit/props/art/frost/frost_pine_c.png",
     "shadow": {
      "offset": [
-      -21,
-      -71
+      -38,
+      -68
      ],
      "png": "res://kit/props/art/shadow_frost_pine__c.png"
     }
    },
    "still": {
     "foot": [
-     42,
-     232
+     61,
+     217
     ],
     "png": "res://kit/props/art/frost/frost_pine_still.png",
     "shadow": {
      "offset": [
-      -21,
-      -71
+      -42,
+      -67
      ],
      "png": "res://kit/props/art/shadow_frost_pine.png"
     }

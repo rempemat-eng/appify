@@ -198,112 +198,121 @@ def _pads_cone(rng, H, W, yt, yb, x0, x1, cxm, kind, build=None):
 
 
 def _pads_pine(rng, H, W, yt, yb, x0, x1, cxm):
-    """A pine's high crown: four to six storeys of rounded clumps (each three to five overlapping pads)
-    on limbs from the bole, the top storey a broad flattish clump, the lower storeys reaching wider
-    with gaps between their clumps where the bole and the limbs show; returns (pads, limbs, the row
-    under the lowest storey)."""
+    """A Scots pine's crown (director's note on round 3): six to nine overlapping rounded clumps that
+    merge into one irregular, flat-topped mass over the upper two thirds of the tree, wider than it is
+    deep: a top row of two or three clumps at nearly one height (the flat top), a fuller middle row,
+    and one or two clumps low on the sides; one or two small gaps where clumps part and a limb shows,
+    and one broken limb on the variant. Returns (pads, limbs, the row under the crown, the broken
+    limb or None)."""
     pads = []
     limbs = []
     pid = 0
     clump = 0
     Hc = yb - yt
-    lean = rng.uniform(-5.0, 5.0)
-    nst = int(rng.integers(4, 7))
-    low = yt + Hc * rng.uniform(0.5, 0.62)
-    ys = np.linspace(yt + 9, low, nst)
-    ys[1:-1] += rng.uniform(-5, 5, nst - 2)
-    stor = []
-    for k, y in enumerate(ys):
-        f = (y - yt) / max(1.0, low - yt)
-        reach_w = (cxm - x0) * min(1.0, 0.45 + 0.75 * f) * rng.uniform(0.75, 1.05)
-        reach_e = (x1 - cxm) * min(1.0, 0.45 + 0.75 * f) * rng.uniform(0.75, 1.05)
-        cx = cxm + lean * (1 - f)
-        stor.append((y, f, cx, reach_w, reach_e))
-    for k in range(nst - 1, -1, -1):
-        y, f, cx, rw, re_ = stor[k]
-        if k == 0:
-            spots = [cx + rng.uniform(-3, 3)]
-        else:
-            spots = []
-            for sgn in (-1, 1):
-                if rng.random() < 0.12:
-                    continue                                        # a missing limb
-                reach = rw if sgn < 0 else re_
-                spots.append(cx + sgn * reach * rng.uniform(0.5, 0.75))
-            if rng.random() < 0.55:
-                spots.append(cx + rng.uniform(-6, 6))                # a clump at the bole
-        for xc in spots:
-            clump += 1
-            yc = y + rng.uniform(-4, 4)
-            cw = rng.uniform(26, 38) * (0.85 if k == 0 else 1.0)
-            ch = cw * rng.uniform(0.45, 0.6)
-            if abs(xc - cx) > 6:
-                limbs.append((cx, yc + ch * 0.45, xc, yc + ch * 0.3))
-            nq = int(rng.integers(3, 6))
-            for q in range(nq):
-                w = cw * rng.uniform(0.42, 0.62)
-                h = w * rng.uniform(0.55, 0.75)
-                px = xc + rng.uniform(-cw * 0.32, cw * 0.32)
-                py = yc + rng.uniform(-ch * 0.35, ch * 0.35) + q * 1.2
-                side = -1 if px < cx else 1
-                tip = rng.choice(['blunt', 'splay', 'long'], p=[0.5, 0.35, 0.15])
-                m = _pad_mask(w, h, rng, side, tip)
-                _place_pad(pads, pid, m, int(round(px - w / 2 - 5)), int(round(py - h / 2 - 2)), side, 100 + clump, H, W)
-                pid += 1
-    return pads, limbs, int(ys[-1] + 10)
+    lean = rng.uniform(-6.0, 6.0)
+    hw_w, hw_e = cxm - x0, x1 - cxm
+    rows = [(yt + Hc * 0.15, int(rng.integers(2, 4)), 0.6), (yt + Hc * 0.42, int(rng.integers(3, 5)), 0.92),
+            (yt + Hc * 0.7, int(rng.integers(2, 4)), 1.0)]
+    spots = []
+    for r_, (y, n, spread) in enumerate(rows):
+        cx = cxm + lean * (1 - (y - yt) / Hc)
+        xs_ = np.linspace(-1, 1, n) if n > 1 else np.array([0.0])
+        if r_ == 2:
+            xs_ = np.array([-1.0, 1.0])[:n] if n > 1 else np.array([rng.choice((-1.0, 1.0))])
+        for u in xs_:
+            reach = hw_w if u < 0 else hw_e
+            xc = cx + u * reach * spread * rng.uniform(0.62, 0.8) + rng.uniform(-3, 3)
+            spots.append((r_, xc, y + rng.uniform(-3, 3), cx))
+    # the crown's back mass: pads across its middle, drawn first, so the clumps in front merge into
+    # one irregular crown; one or two windows are left where the limbs show
+    cxc = cxm + lean * 0.5
+    gaps = [(cxc + rng.choice((-1, 1)) * rng.uniform(0.3, 0.6) * hw_w, yt + Hc * rng.uniform(0.45, 0.6))
+            for _ in range(int(rng.integers(1, 3)))]
+    for k in range(int(rng.integers(15, 20))):
+        w = rng.uniform(22, 32)
+        h = w * rng.uniform(0.55, 0.7)
+        py = yt + Hc * rng.uniform(0.14, 0.8)
+        f_ = (py - yt) / Hc
+        px = cxc + rng.uniform(-1.0, 1.0) * (hw_w + hw_e) / 2 * (0.55 + 0.3 * min(1.0, f_ * 1.6))
+        if any(abs(px - gx) < 9 and abs(py - gy) < 7 for gx, gy in gaps):
+            continue
+        m = _pad_mask(w, h, rng, -1 if px < cxc else 1, 'blunt')
+        _place_pad(pads, pid, m, int(round(px - w / 2 - 5)), int(round(py - h / 2 - 2)), -1 if px < cxc else 1, 99, H, W)
+        pid += 1
+    # bottom row first, so an upper clump hangs in front of the one below
+    for r_, xc, yc, cx in sorted(spots, key=lambda q: -q[2]):
+        clump += 1
+        cw = rng.uniform(34, 46) * (0.85 if r_ == 2 else 1.0)
+        ch = cw * rng.uniform(0.6, 0.75)
+        if abs(xc - cx) > 8:
+            limbs.append((cx, yc + ch * 0.4, xc, yc + ch * 0.25))
+        for q in range(int(rng.integers(5, 8))):
+            w = cw * rng.uniform(0.42, 0.62)
+            h = w * rng.uniform(0.55, 0.72)
+            px = xc + rng.uniform(-cw * 0.34, cw * 0.34)
+            py = yc + rng.uniform(-ch * 0.35, ch * 0.35) + q * 1.0
+            side = -1 if px < cx else 1
+            tip = rng.choice(['blunt', 'splay', 'long'], p=[0.5, 0.35, 0.15])
+            m = _pad_mask(w, h, rng, side, tip)
+            _place_pad(pads, pid, m, int(round(px - w / 2 - 5)), int(round(py - h / 2 - 2)), side, 100 + clump, H, W)
+            pid += 1
+    # the broken limb: a bare stub out of the crown's lower side, its end snapped
+    sgn = rng.choice((-1, 1))
+    yb_ = yt + Hc * rng.uniform(0.72, 0.82)
+    cxb = cxm + lean * (1 - (yb_ - yt) / Hc)
+    broken = (cxb, yb_, cxb + sgn * rng.uniform(12, 20), yb_ - rng.uniform(1, 5))
+    low = int(max(q[2] for q in spots) + 14)
+    return pads, limbs, low, broken
 
 
 def _pads_krummholz(rng, H, W, yt, yb, x0, x1, cxm, mat_h):
-    """A krummholz: a mat of wide low pads hugging the snow, its top undulating, and over it two or
-    three flag branches streaming east from a crooked stem on the windward side, pads on their lee
-    side only, the top flag reaching a little over the master crown's top (the krummholz keeps the
-    conifer size guide's height); the dead windward stubs come back as `stubs`
-    and the stem as a polyline."""
+    """A krummholz as a shrub (director's note on round 3): a dense low mat of wide pads in three rows,
+    most of the tree's mass, its top uneven; at most one short stem leaning east out of it, mostly
+    hidden in the foliage; one flag of growth streaming east from the stem's top as a ragged wedge
+    (deep at the stem, thinning and breaking up downwind); the dead windward stubs on the stem's west.
+    Returns (pads, the stem as a polyline, stubs, the mat's top row)."""
     pads = []
     pid = 0
     mat_top = yb - mat_h
-    sx0 = x0 + (x1 - x0) * rng.uniform(0.22, 0.34)
-    # the stem: from inside the mat up to the top, leaning east and kinking
-    stem = [(sx0, mat_top + mat_h * 0.5)]
-    nseg = 4
-    for j in range(1, nseg + 1):
-        t = j / nseg
-        y_s = mat_top + mat_h * 0.5
-        stem.append((sx0 + t * rng.uniform(4, 9) + rng.uniform(-1.5, 1.5), y_s - t * (y_s - yt + 5)))
-    nflag = int(rng.integers(2, 4))
-    flag_t = sorted(rng.uniform(0.35, 0.9, nflag - 1).tolist() + [1.0])
-    stubs = []
-    for k, t in enumerate(flag_t[::-1]):
-        # the point on the stem at t
-        i = min(nseg - 1, int(t * nseg))
-        (ax, ay), (bx, by) = stem[i], stem[i + 1]
-        tt = t * nseg - i
-        fx, fy = ax + (bx - ax) * tt, ay + (by - ay) * tt
-        ln = (x1 - fx) * rng.uniform(0.5, 0.95) * (0.65 + 0.35 * t)
-        npad = max(1, int(ln / rng.uniform(8, 11)))
-        for j in range(npad):
-            w = rng.uniform(10, 16) * (1.0 - 0.25 * j / max(1, npad))
-            h = rng.uniform(5, 8.5)
-            px = fx + 1 + j * (ln / npad) * rng.uniform(0.85, 1.1)
-            py = fy - 1 + j * rng.uniform(0.0, 1.0) + rng.uniform(-1, 1)
-            m = _pad_mask(w, h, rng, 1, rng.choice(['blunt', 'splay', 'long'], p=[0.3, 0.4, 0.3]))
-            _place_pad(pads, pid, m, int(round(px - 5)), int(round(py - 2)), 1, k, H, W)
-            pid += 1
-        for _ in range(int(rng.integers(1, 3))):
-            stubs.append((fy + rng.uniform(-4, 5), fx, rng.uniform(3, 7)))
-    # the mat: wide low pads in two rows, the back row higher and uneven, the front on the snow
-    for row in (0, 1):
-        xa = x0 + (x1 - x0) * (0.04 if row else 0.1) + rng.uniform(-2, 2)
-        xe = x1 - (x1 - x0) * (0.02 if row else 0.06)
+    rise = rng.uniform(10, 22)
+    sx0 = x0 + (x1 - x0) * rng.uniform(0.26, 0.38)
+    y_base = mat_top + mat_h * 0.35
+    top = (sx0 + rng.uniform(3, 7), mat_top - rise)
+    stem = [(sx0, y_base), (sx0 + (top[0] - sx0) * 0.5 + rng.uniform(-1, 1), (y_base + top[1]) / 2), top]
+    stubs = [(top[1] + rng.uniform(2, 6), top[0] - 1, rng.uniform(3, 6)),
+             (top[1] + rng.uniform(8, 13), (top[0] + sx0) / 2 - 1, rng.uniform(3, 7))]
+    # the flag: a wedge of pads from the stem's top streaming east, deep at the stem, thinning,
+    # ragged in height and breaking into a last small pad or two
+    ln = (x1 - top[0]) * rng.uniform(0.55, 0.85)
+    n = max(3, int(ln / rng.uniform(7, 9)))
+    for j in range(n):
+        t = j / max(1, n - 1)
+        w = rng.uniform(11, 16) * (1.0 - 0.45 * t)
+        h = rng.uniform(9, 13) * (1.0 - 0.55 * t) + 2
+        px = top[0] - 3 + t * ln + rng.uniform(-1.5, 1.5)
+        py = top[1] - 2 + t * rng.uniform(1, 6) + rng.uniform(-2.5, 2.5)
+        if t > 0.75 and rng.random() < 0.3:
+            continue                                                 # the wedge breaks up downwind
+        m = _pad_mask(w, h, rng, 1, rng.choice(['blunt', 'splay', 'long'], p=[0.25, 0.45, 0.3]))
+        _place_pad(pads, pid, m, int(round(px - 5)), int(round(py - 2)), 1, 5, H, W)
+        pid += 1
+    # the mat: a mound of wide pads in three staggered rows, highest near the stem on the windward
+    # side and falling away to the lee end, the back row up to the mound's line, the front on the snow
+    span = x1 - x0
+    for row in (0, 1, 2):
+        xa = x0 + span * (0.08, 0.04, 0.02)[row] + rng.uniform(-3, 3)
+        xe = x1 - span * (0.05, 0.03, 0.01)[row]
         while xa < xe - 6:
-            w = rng.uniform(16, 28)
-            h = min(w * rng.uniform(0.42, 0.6), mat_h * (0.55 if row == 0 else 0.6) * rng.uniform(0.8, 1.15))
-            y_top = mat_top + row * mat_h * 0.42 + rng.uniform(-2.5, 2.5)
-            side = -1 if xa + w / 2 < cxm else 1
+            w = rng.uniform(18, 30)
+            h = min(w * rng.uniform(0.5, 0.7), mat_h * rng.uniform(0.45, 0.6))
+            xc = xa + w / 2
+            mound = 1.0 - 0.45 * abs((xc - (sx0 + span * 0.12)) / span) ** 1.3 - 0.15 * max(0.0, (xc - cxm) / span)
+            y_top = yb - mat_h * mound + row * mat_h * 0.26 + rng.uniform(-0.1, 0.1) * mat_h
+            side = -1 if xc < cxm else 1
             m = _pad_mask(w, h, rng, side, rng.choice(['blunt', 'splay', 'long'], p=[0.5, 0.35, 0.15]))
             _place_pad(pads, pid, m, int(round(xa - 5)), int(round(y_top - 2)), side, 10 + row, H, W)
             pid += 1
-            xa += w * rng.uniform(0.55, 0.8)
+            xa += w * rng.uniform(0.5, 0.75)
     return pads, stem, stubs, mat_top
 
 
@@ -471,13 +480,16 @@ def frost_crown(S, form, seed, load=1.0, foot_y=None, build=None):
     hw = (x1 - x0) / 2.0
     extra = {}
     if form == 'pine':
-        pads, limbs, open_row = _pads_pine(rng, H, W, yt, yb, x0, x1, cxm)
-        extra.update(limbs=limbs, open_row=open_row, top_row=yt + 20)
+        if foot_y is not None:
+            # the crown fills the upper 65 to 70 % of the tree; the bare bole is the lower third
+            yb = int(round(yt + (foot_y - yt) * rng.uniform(0.8, 0.86)))
+        pads, limbs, open_row, broken = _pads_pine(rng, H, W, yt, yb, x0, x1, cxm)
+        extra.update(limbs=limbs, open_row=open_row, top_row=int(yt + (yb - yt) * 0.3), broken=broken)
         heavy, n_range = 1.0, (10, 15)
     elif form.startswith('krummholz'):
-        mat_h = (yb - yt) * rng.uniform(0.42, 0.55)
         if foot_y is not None:
             yb = int(round(foot_y)) - 1                              # the mat lies on the snow at the foot
+        mat_h = (yb - yt) * rng.uniform(0.76, 0.84)                  # the mat is most of the shrub
         pads, stem, stubs, mat_top = _pads_krummholz(rng, H, W, yt, yb, x0, x1, cxm, mat_h)
         extra.update(stem=stem, stubs=stubs, mat_top=mat_top)
         heavy, n_range = 0.9 * load, (6, 10)
@@ -573,12 +585,14 @@ def conifer(form='pine', load=1.0, seed=None, build=None):
         mask = code >= 0
     # a gap closed in by pads (or a pocket a texel wide) is the deep shade between them, never sky
     if form == 'pine':
-        # the pine's crown stays open: only a small hole closed in by its clumps is filled
+        # the pine's crown keeps one or two small windows where a limb shows (30 to 150 texels); a
+        # smaller hole or a larger one closed in by its clumps is filled with the deep shade inside
         holes = ndi.binary_fill_holes(mask) & ~mask
         hl, hn = ndi.label(holes)
         if hn:
             hs = ndi.sum(holes, hl, range(1, hn + 1))
-            holes = np.isin(hl, 1 + np.nonzero(hs <= 30)[0])
+            keep_win = sorted([i for i in range(hn) if 30 < hs[i] <= 150], key=lambda i: -hs[i])[:2]
+            holes = np.isin(hl, [1 + i for i in range(hn) if i not in keep_win])
     else:
         pm = np.pad(mask, 3)
         holes = (ndi.binary_fill_holes(ndi.binary_closing(pm, structure=np.ones((3, 3), bool), iterations=1))[3:-3, 3:-3]
@@ -629,9 +643,14 @@ def conifer(form='pine', load=1.0, seed=None, build=None):
             lim = np.full_like(out, -1)
             for (lx0, ly0, lx1, ly1) in extra['limbs']:
                 _limb(lim, lx0 + pad - x0_, ly0 + pad - y0_, lx1 + pad - x0_, ly1 + pad - y0_, rng)
+            bx0, by0, bx1, by1 = extra['broken']
+            _limb(lim, bx0 + pad - x0_, by0 + pad - y0_, bx1 + pad - x0_, by1 + pad - y0_, rng)
+            ex_, ey_ = int(round(bx1 + pad - x0_)), int(round(by1 + pad - y0_))
+            if 0 <= ey_ < lim.shape[0] and 0 <= ex_ < lim.shape[1]:
+                lim[ey_, ex_] = C('stone_warm', 4)                    # the snapped end, pale wood
             out[(lim >= 0)] = lim[lim >= 0]
             # the upper bole warms to a pine's orange-brown above the lowest storey, through a few rows
-            warm = {FI['timber_cool']: FI['timber_warm'], FI['earth_cool']: FI['clay'], FI['earth']: FI['timber']}
+            warm = {FI['timber_cool']: FI['timber_warm'], FI['earth_cool']: FI['timber_warm'], FI['earth']: FI['timber']}
             yw = extra['open_row'] + pad - y0_ + 18
             for y in range(0, min(out.shape[0], yw)):
                 row = out[y]
@@ -694,6 +713,25 @@ def conifer(form='pine', load=1.0, seed=None, build=None):
     low[max(0, fy - 14):fy + 1] = True
     gap = ndi.binary_fill_holes(ndi.binary_closing(al, structure=np.ones((3, 3), bool), iterations=2)) & ~al & low
     out[gap] = C('timber_cool', 0)
+    # no pinhole of a few texels left anywhere in the picture: it takes its darkest neighbour
+    al = out >= 0
+    pin = ndi.binary_fill_holes(al) & ~al
+    pl, pn = ndi.label(pin)
+    for i in range(1, pn + 1):
+        hm = pl == i
+        if form == 'pine' and hm.sum() > 150:
+            # a pine's window larger than a limb's gap, closed in by clumps and the bole: the crown's
+            # deep interior (the pocket band), a band lighter in its top two rows where light gets in
+            Yh, Xh = np.nonzero(hm)
+            top_r = np.full(out.shape[1], 10 ** 6)
+            np.minimum.at(top_r, Xh, Yh)
+            out[Yh, Xh] = np.where(Yh - top_r[Xh] < 2, _band(2, 0), _band(1, 0))
+            continue
+        if hm.sum() > 6:
+            continue
+        ring = ndi.binary_dilation(hm) & al
+        vals = out[ring]
+        out[hm] = int(vals[np.argmin(vals % 8)])
     pic = K.crop(out.astype(np.int32), fx, fy)
     return pic
 
