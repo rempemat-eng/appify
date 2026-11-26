@@ -5,13 +5,19 @@ extends GdUnitTestSuite
 const PATH := "user://test_slice_save.json"
 const CHAIN := ["woodland_stones", "road_to_crossroads", "cold_forge", "under_the_stones", "home_again"]
 
+var _save_path_before_test: String
+
 func before_test() -> void:
+	_save_path_before_test = SaveGame.path
+	SaveGame.path = PATH
 	SaveGame.reset()
 
 func after_test() -> void:
-	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
+	for file: String in [PATH, PATH + ".tmp"]:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(file))
 	Zones.current = null
 	Zones.root = null
+	SaveGame.path = _save_path_before_test
 
 func _step(q: String) -> String:
 	return Quests.current_step(q).get("id", "")

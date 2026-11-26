@@ -37,6 +37,11 @@ var _legacy_import_error: Error = OK
 ## Synchronous restoration boundary: nested autosaves defer to its one commit.
 ## The caller's later success notification is outside it. No queued retry.
 var _transaction_active := false
+var _transaction_target := ""
+var _transaction_rolling_back := false
+var _in_memory_depth := 0
+## Tests may record expected transaction errors. Production keeps real push_error.
+var error_sink := Callable()
 
 ## Where the game resumes while the player is in a lab zone (Zones.go_to sets it on entering one and
 ## clears it on leaving): a save made meanwhile names this zone and spawn, never the lab's.
@@ -196,36 +201,62 @@ func setting(key: String, default: Variant = null) -> Variant:
 	return data.settings.get(key, default)
 
 # --- disk ----------------------------------------------------------------------
+func _transaction_error(message: String) -> void:
+	if error_sink.is_valid():
+		error_sink.call(message)
+	else:
+		push_error(message)
+
+## Existing picture/demo/lab restores still notify synchronously, but even a
+## lab resume-migration observer must not persist their temporary progress.
+func apply_in_memory(apply_change: Callable) -> void:
+	_in_memory_depth += 1
+	apply_change.call()
+	_in_memory_depth -= 1
+
 ## The caller stages one change without await. Quest observers may run while it
 ## is staged; all their save() calls defer to this single write. Success observers
 ## run after this returns and keep their existing ordinary autosave behavior.
 func commit_transaction(apply_change: Callable) -> Error:
 	if _transaction_active:
-		push_error("SaveGame: nested transaction refused")
+		_transaction_error("SaveGame: nested transaction refused")
 		return ERR_BUSY
 	var snapshot := data.duplicate(true)
 	var old_resume := resume.duplicate(true)
 	var old_resume_unsaved := resume_unsaved
 	var migrated := _migrate(data)
 	if migrated.is_empty():
-		push_error("SaveGame: transaction has invalid save data")
+		_transaction_error("SaveGame: transaction has invalid save data")
 		return ERR_INVALID_DATA
 	data = migrated
 	_transaction_active = true
+	_transaction_target = path
 	apply_change.call()
-	var err := _save_now()
+	var err := _save_now(_transaction_target)
 	if err != OK:
 		data = snapshot
 		resume = old_resume
 		resume_unsaved = old_resume_unsaved
-		# The existing load observers resync once; their saves also stay deferred.
+		# Rollback observers resync once. Their save requests must not publish or retry.
+		_transaction_rolling_back = true
 		loaded.emit()
-		push_error("SaveGame: transaction save failed (%s)" % error_string(err))
+		_transaction_error("SaveGame: transaction save failed (%s)" % error_string(err))
+	_transaction_rolling_back = false
 	_transaction_active = false
+	_transaction_target = ""
 	return err
 
 func save(to: String = "") -> Error:
 	if _transaction_active:
+		if _transaction_rolling_back:
+			_transaction_error("SaveGame: save during transaction rollback refused")
+			return ERR_BUSY
+		var target := to if to != "" else path
+		if ProjectSettings.globalize_path(target) != ProjectSettings.globalize_path(_transaction_target):
+			_transaction_error("SaveGame: nested save to a different path refused")
+			return ERR_BUSY
+		return OK
+	if _in_memory_depth > 0:
 		return OK
 	return _save_now(to)
 
@@ -282,7 +313,7 @@ func load_save(from: String = "") -> Error:
 	var json := JSON.new()
 	if json.parse(text) != OK or typeof(json.data) != TYPE_DICTIONARY:
 		return ERR_PARSE_ERROR
-	var err := _document_error(json.data)
+	var err := _document_error(json.data, false)
 	if err != OK:
 		return err
 	resume = {}
@@ -296,10 +327,15 @@ func load_save(from: String = "") -> Error:
 ## before sound loads with effects and ambience on and Gentle sound off, whatever else it holds.
 ## Empty means refused; accepted documents are detached copies, including unknown fields.
 func _migrate(doc: Dictionary) -> Dictionary:
-	if _document_error(doc) != OK:
+	if _document_error(doc, false) != OK:
 		return {}
 	var out := doc.duplicate(true)
 	var from_version := int(out.get("version", 0))
+	if out.has("ledger") and _ledger_error(out.ledger) != OK:
+		var damaged: Variant = out.ledger
+		out["ledger_quarantine"] = damaged.duplicate(true) if (damaged is Dictionary or damaged is Array) else damaged
+		out.erase("ledger")
+		push_warning("SaveGame: damaged ledger quarantined; other progress kept")
 	var v := from_version
 	while v < VERSION:
 		match v:
@@ -378,7 +414,7 @@ func _fill_missing(out: Dictionary, defaults: Dictionary) -> void:
 
 ## Validate structure, not story IDs, balances or game rules. Unknown keys stay opaque.
 ## A future version is refused even when its known fields look compatible.
-func _document_error(doc: Dictionary) -> Error:
+func _document_error(doc: Dictionary, check_ledger := true) -> Error:
 	var version: Variant = doc.get("version", 0)
 	if not _whole_number(version) or version < 0:
 		return ERR_INVALID_DATA
@@ -401,7 +437,7 @@ func _document_error(doc: Dictionary) -> Error:
 			return ERR_INVALID_DATA
 	if doc.has("glint") and not _whole_number(doc.glint):
 		return ERR_INVALID_DATA
-	if doc.has("ledger") and _ledger_error(doc.ledger) != OK:
+	if check_ledger and doc.has("ledger") and _ledger_error(doc.ledger) != OK:
 		return ERR_INVALID_DATA
 	var player: Dictionary = doc.get("player", {})
 	for key in ["hp", "max_hp"]:

@@ -586,12 +586,19 @@ func test_ledger_opening_preserves_signed_legacy_provenance_once() -> void:
 		assert_dict(again.ledger.opening).is_equal(opening)
 		assert_dict(again).is_equal(migrated)
 
-func test_malformed_ledger_is_refused_without_replaying_or_changing_the_purse() -> void:
+func test_malformed_ledger_is_quarantined_without_replaying_or_losing_progress() -> void:
 	for bad: Variant in [null, [], {"schema_version": 2},
 			{"schema_version": 1, "opening": {"glint": 0, "restored": {}, "from_version": 2}, "receipts": [{}]}]:
 		var doc := SaveGame.fresh()
 		doc.glint = -3
+		doc.village.restored.forge = 1
 		doc.ledger = bad
 		var before := doc.duplicate(true)
-		assert_dict(SaveGame._migrate(doc)).is_empty()
+		var migrated: Dictionary = SaveGame._migrate(doc)
+		assert_bool(migrated.is_empty()).is_false()
+		assert_bool(migrated.ledger_quarantine == bad).is_true()
+		assert_int(migrated.glint).is_equal(-3)
+		assert_int(migrated.village.restored.forge).is_equal(1)
+		assert_array(migrated.ledger.receipts).is_empty()
+		assert_int(migrated.ledger.opening.glint).is_equal(-3)
 		assert_dict(doc).is_equal(before)
