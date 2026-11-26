@@ -102,6 +102,12 @@ BASES = {
     # the deep fold of cream cloth (Claude A's XR6-S1 ruling, Crossroads stall round 6): one named-only tone of
     # plaster's, warm and chromatic where plaster 1 reads grey-taupe; a tone, not a family
     'plaster_fold': ('sibling-tone:plaster', '#AA8A5C'),
+    # winter water (Claude A, round 2 of the Frostline's water, #535 R1): open water under snow, greyed in
+    # water's own hue (OKLCH 0.386 / 0.056 / 250), where every water and slate tone is either summer-bright
+    # (C 0.10) or the rock's violet (h 280+); and the same water a step toward the woodland's brook where it
+    # thaws at the seam (0.450 / 0.080 / 251). Named-only tones of water's, not families
+    'water_winter': ('sibling-tone:water', '#2C4661'),
+    'water_thaw': ('sibling-tone:water', '#315880'),
 }
 
 # A cast shadow steps the ground this many tones down its own ramp, so it stays on the

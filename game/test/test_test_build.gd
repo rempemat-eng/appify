@@ -20,25 +20,18 @@ class SeededSave:
 	func _test_build_seed() -> String:
 		return real_source
 
-## The real test-build save of whoever runs this suite (user:// is the game's own folder in an editor run):
-## its bytes before the suite, or a sentinel written for the suite when there was none. The last test checks
-## that no test touched it; after() removes only a sentinel this suite wrote.
-var _real_before := PackedByteArray()
-var _sentinel := false
+## The real test-build save of whoever runs this suite (user:// is the game's own folder in an editor run),
+## and its two temporary files (save_game.gd's .tmp and the copy's .name-migration.tmp, which a crash of the
+## player's own game can leave): for each, whether it existed before the suite and, if so, its bytes. Nothing
+## is written: the last test checks that each is exactly as it was.
+const GUARDED := [TestBuild.SAVE_PATH, TestBuild.SAVE_PATH + ".tmp", TestBuild.SAVE_PATH + ".name-migration.tmp"]
+var _before := {}          ## path -> its bytes, for each guarded file that existed before the suite
 
 func before() -> void:
-	if FileAccess.file_exists(TestBuild.SAVE_PATH):
-		_real_before = FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH)
-	else:
-		_sentinel = true
-		var f := FileAccess.open(TestBuild.SAVE_PATH, FileAccess.WRITE)
-		f.store_string(JSON.stringify({"version": 2, "glint": 4242, "_about": "test_test_build.gd sentinel"}))
-		f.close()
-		_real_before = FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH)
-
-func after() -> void:
-	if _sentinel and FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH) == _real_before:
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(TestBuild.SAVE_PATH))
+	_before.clear()
+	for f: String in GUARDED:
+		if FileAccess.file_exists(f):
+			_before[f] = FileAccess.get_file_as_bytes(f)
 
 var _holder: Node2D
 var _player: Player
@@ -387,10 +380,13 @@ func test_the_tag_shows_only_in_the_test_build() -> void:
 
 # --- last: the real test-build save is untouched -------------------------------------------------
 ## Runs last (gdUnit keeps file order): every test above left the test-build save in user:// as it was.
+## It must stay the last test function in this file: gdUnit4 runs tests in declaration order, not by name.
 func test_zz_the_real_test_build_save_survives_the_suite_untouched() -> void:
-	assert_bool(FileAccess.file_exists(TestBuild.SAVE_PATH)).override_failure_message(
-		"a test deleted user://test_build_save.json").is_true()
-	assert_bool(FileAccess.get_file_as_bytes(TestBuild.SAVE_PATH) == _real_before).override_failure_message(
-		"a test changed user://test_build_save.json").is_true()
-	for f: String in [TestBuild.SAVE_PATH + ".tmp", TestBuild.SAVE_PATH + ".name-migration.tmp"]:
-		assert_bool(FileAccess.file_exists(f)).is_false()
+	for f: String in GUARDED:
+		if not _before.has(f):
+			assert_bool(FileAccess.file_exists(f)).override_failure_message(
+				"a test wrote %s, which did not exist before the suite" % f).is_false()
+		else:
+			assert_bool(FileAccess.file_exists(f)).override_failure_message("a test deleted " + f).is_true()
+			assert_bool(FileAccess.get_file_as_bytes(f) == _before[f]).override_failure_message(
+				"a test changed " + f).is_true()

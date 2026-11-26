@@ -1,4 +1,4 @@
-[gd_scene load_steps=168 format=3]
+[gd_scene load_steps=169 format=3]
 
 [ext_resource type="Texture2D" path="res://zones/woodland/art/ground.png" id="ground"]
 [ext_resource type="Texture2D" path="res://zones/woodland/art/flow.png" id="flow"]
@@ -29,6 +29,7 @@
 [ext_resource type="Texture2D" path="res://zones/woodland/art/stone_top.png" id="t_stone_top"]
 [ext_resource type="Texture2D" path="res://zones/woodland/art/stump.png" id="t_stump"]
 [ext_resource type="Texture2D" path="res://zones/woodland/art/willow.png" id="t_willow"]
+[ext_resource type="PackedScene" path="res://kit/props/frost_woodland_thaw.tscn" id="frost_thaw"]
 
 [sub_resource type="RectangleShape2D" id="r0"]
 size = Vector2(960, 60)
@@ -469,6 +470,9 @@ centered = false
 hframes = 2
 vframes = 4
 script = ExtResource("flow_anim")
+
+[node name="FrostThaw" parent="." instance=ExtResource("frost_thaw")]
+z_index = -9
 
 [node name="Objects" type="Node2D" parent="."]
 y_sort_enabled = true

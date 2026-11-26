@@ -11,7 +11,7 @@ extends Node
 signal loaded
 signal saved(path: String)
 
-const VERSION := 2
+const VERSION := 3
 # JSON numbers must retain exact whole values through Godot's float-based parser.
 const MAX_EXACT_INTEGER := 9007199254740991
 const DEFAULT_PATH := "user://save_0.json"
@@ -33,6 +33,15 @@ var boot_error: Error = OK
 ## Explicit saves to other paths remain available; boot retries the import next time.
 var _legacy_import_target := ""
 var _legacy_import_error: Error = OK
+
+## Synchronous restoration boundary: nested autosaves defer to its one commit.
+## The caller's later success notification is outside it. No queued retry.
+var _transaction_active := false
+var _transaction_target := ""
+var _transaction_rolling_back := false
+var _in_memory_depth := 0
+## Tests may record expected transaction errors. Production keeps real push_error.
+var error_sink := Callable()
 
 ## Where the game resumes while the player is in a lab zone (Zones.go_to sets it on entering one and
 ## clears it on leaving): a save made meanwhile names this zone and spawn, never the lab's.
@@ -159,6 +168,8 @@ static func fresh() -> Dictionary:
 		"tracked": "",
 		"player": {"hp": 5, "max_hp": 5},
 		"village": {"restored": {}},
+		"ledger": {"schema_version": 1,
+			"opening": {"glint": 0, "restored": {}, "from_version": VERSION}, "receipts": []},
 		"paid": {},          # creatures that have paid their Glint (core/glint_cache.gd), "<camp>/<name>": true
 		"caches": [],        # Glint left where the player went down: {zone, x, y, glint}
 		# the one raid on the town (core/raids.gd): older saves load with this, no raid pending
@@ -190,7 +201,66 @@ func setting(key: String, default: Variant = null) -> Variant:
 	return data.settings.get(key, default)
 
 # --- disk ----------------------------------------------------------------------
+func _transaction_error(message: String) -> void:
+	if error_sink.is_valid():
+		error_sink.call(message)
+	else:
+		push_error(message)
+
+## Existing picture/demo/lab restores still notify synchronously, but even a
+## lab resume-migration observer must not persist their temporary progress.
+func apply_in_memory(apply_change: Callable) -> void:
+	_in_memory_depth += 1
+	apply_change.call()
+	_in_memory_depth -= 1
+
+## The caller stages one change without await. Quest observers may run while it
+## is staged; all their save() calls defer to this single write. Success observers
+## run after this returns and keep their existing ordinary autosave behavior.
+func commit_transaction(apply_change: Callable) -> Error:
+	if _transaction_active:
+		_transaction_error("SaveGame: nested transaction refused")
+		return ERR_BUSY
+	var snapshot := data.duplicate(true)
+	var old_resume := resume.duplicate(true)
+	var old_resume_unsaved := resume_unsaved
+	var migrated := _migrate(data)
+	if migrated.is_empty():
+		_transaction_error("SaveGame: transaction has invalid save data")
+		return ERR_INVALID_DATA
+	data = migrated
+	_transaction_active = true
+	_transaction_target = path
+	apply_change.call()
+	var err := _save_now(_transaction_target)
+	if err != OK:
+		data = snapshot
+		resume = old_resume
+		resume_unsaved = old_resume_unsaved
+		# Rollback observers resync once. Their save requests must not publish or retry.
+		_transaction_rolling_back = true
+		loaded.emit()
+		_transaction_error("SaveGame: transaction save failed (%s)" % error_string(err))
+	_transaction_rolling_back = false
+	_transaction_active = false
+	_transaction_target = ""
+	return err
+
 func save(to: String = "") -> Error:
+	if _transaction_active:
+		if _transaction_rolling_back:
+			_transaction_error("SaveGame: save during transaction rollback refused")
+			return ERR_BUSY
+		var target := to if to != "" else path
+		if ProjectSettings.globalize_path(target) != ProjectSettings.globalize_path(_transaction_target):
+			_transaction_error("SaveGame: nested save to a different path refused")
+			return ERR_BUSY
+		return OK
+	if _in_memory_depth > 0:
+		return OK
+	return _save_now(to)
+
+func _save_now(to: String = "") -> Error:
 	# Validate a copy before opening the temporary file or changing the live version.
 	var err := _document_error(data)
 	if err != OK:
@@ -221,6 +291,7 @@ func save(to: String = "") -> Error:
 		return err
 	resume_unsaved = false
 	data.version = VERSION
+	data.ledger = document.ledger.duplicate(true)
 	saved.emit(target)
 	return OK
 
@@ -242,7 +313,7 @@ func load_save(from: String = "") -> Error:
 	var json := JSON.new()
 	if json.parse(text) != OK or typeof(json.data) != TYPE_DICTIONARY:
 		return ERR_PARSE_ERROR
-	var err := _document_error(json.data)
+	var err := _document_error(json.data, false)
 	if err != OK:
 		return err
 	resume = {}
@@ -256,10 +327,16 @@ func load_save(from: String = "") -> Error:
 ## before sound loads with effects and ambience on and Gentle sound off, whatever else it holds.
 ## Empty means refused; accepted documents are detached copies, including unknown fields.
 func _migrate(doc: Dictionary) -> Dictionary:
-	if _document_error(doc) != OK:
+	if _document_error(doc, false) != OK:
 		return {}
 	var out := doc.duplicate(true)
-	var v := int(out.get("version", 0))
+	var from_version := int(out.get("version", 0))
+	if out.has("ledger") and _ledger_error(out.ledger) != OK:
+		var damaged: Variant = out.ledger
+		out["ledger_quarantine"] = damaged.duplicate(true) if (damaged is Dictionary or damaged is Array) else damaged
+		out.erase("ledger")
+		push_warning("SaveGame: damaged ledger quarantined; other progress kept")
+	var v := from_version
 	while v < VERSION:
 		match v:
 			0:
@@ -273,7 +350,16 @@ func _migrate(doc: Dictionary) -> Dictionary:
 						if not out.settings.has(key):
 							out.settings[key] = SOUND_SETTINGS[key]
 				v = 2
+			2:
+				# v2 -> v3: opening provenance, not reconstructed earnings/spends.
+				if not out.has("ledger"):
+					out.ledger = _opening_ledger(out, from_version)
+				v = 3
 		out.version = v
+	# Partial current-version documents keep the loader's existing defaulting
+	# contract, but their opening must describe their own purse/restores.
+	if not out.has("ledger"):
+		out.ledger = _opening_ledger(out, from_version)
 	_fill_missing(out, fresh())
 	# a sound setting that is not a switch (a damaged or hand-edited save) goes back to its default: three
 	# switches are no reason to refuse a save and the progress in it (15 Nov)
@@ -304,7 +390,19 @@ func _migrate(doc: Dictionary) -> Dictionary:
 		out.village.restored[r] = int(out.village.restored[r])
 	for q in out.quests.values():
 		q.step = int(q.get("step", 0))
+	out.ledger.schema_version = int(out.ledger.schema_version)
+	out.ledger.opening.glint = int(out.ledger.opening.glint)
+	out.ledger.opening.from_version = int(out.ledger.opening.from_version)
+	for id: String in out.ledger.opening.restored:
+		out.ledger.opening.restored[id] = int(out.ledger.opening.restored[id])
+	for index: int in out.ledger.receipts.size():
+		out.ledger.receipts[index] = GlintEconomy.validate_restore_receipt(out.ledger.receipts[index]).receipt
 	return out
+
+func _opening_ledger(doc: Dictionary, from_version: int) -> Dictionary:
+	return {"schema_version": 1, "opening": {"glint": int(doc.get("glint", 0)),
+		"restored": doc.get("village", {}).get("restored", {}).duplicate(true),
+		"from_version": from_version}, "receipts": []}
 
 func _fill_missing(out: Dictionary, defaults: Dictionary) -> void:
 	for key in defaults:
@@ -316,7 +414,7 @@ func _fill_missing(out: Dictionary, defaults: Dictionary) -> void:
 
 ## Validate structure, not story IDs, balances or game rules. Unknown keys stay opaque.
 ## A future version is refused even when its known fields look compatible.
-func _document_error(doc: Dictionary) -> Error:
+func _document_error(doc: Dictionary, check_ledger := true) -> Error:
 	var version: Variant = doc.get("version", 0)
 	if not _whole_number(version) or version < 0:
 		return ERR_INVALID_DATA
@@ -338,6 +436,8 @@ func _document_error(doc: Dictionary) -> Error:
 		if doc.has(key) and not doc[key] is Dictionary:
 			return ERR_INVALID_DATA
 	if doc.has("glint") and not _whole_number(doc.glint):
+		return ERR_INVALID_DATA
+	if check_ledger and doc.has("ledger") and _ledger_error(doc.ledger) != OK:
 		return ERR_INVALID_DATA
 	var player: Dictionary = doc.get("player", {})
 	for key in ["hp", "max_hp"]:
@@ -374,6 +474,27 @@ func _document_error(doc: Dictionary) -> Error:
 				if not kind is String:
 					return ERR_INVALID_DATA
 	# the settings inside are not checked here: `_migrate` puts a damaged one back to its default
+	return OK
+
+func _ledger_error(value: Variant) -> Error:
+	if not value is Dictionary or not _whole_number(value.get("schema_version")) or value.schema_version != 1:
+		return ERR_INVALID_DATA
+	if not value.get("opening") is Dictionary or not value.get("receipts") is Array:
+		return ERR_INVALID_DATA
+	var opening: Dictionary = value.opening
+	if not _whole_number(opening.get("glint")) or not opening.get("restored") is Dictionary:
+		return ERR_INVALID_DATA
+	if not _whole_number(opening.get("from_version")) or opening.from_version < 0 or opening.from_version > VERSION:
+		return ERR_INVALID_DATA
+	for tier: Variant in opening.restored.values():
+		if not _whole_number(tier):
+			return ERR_INVALID_DATA
+	var ids := {}
+	for receipt: Variant in value.receipts:
+		var checked := GlintEconomy.validate_restore_receipt(receipt)
+		if not checked.ok or ids.has(checked.receipt.id):
+			return ERR_INVALID_DATA
+		ids[checked.receipt.id] = true
 	return OK
 
 func _target_error(target: String) -> Error:

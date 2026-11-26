@@ -191,6 +191,14 @@
     "plaster_fold": {
       "kind": "sibling-tone:plaster",
       "body": "#AA8A5C"
+    },
+    "water_winter": {
+      "kind": "sibling-tone:water",
+      "body": "#2C4661"
+    },
+    "water_thaw": {
+      "kind": "sibling-tone:water",
+      "body": "#315880"
     }
   },
   "ramps": {
@@ -302,7 +310,9 @@
     "lamplit_warm": ["#513120", "#725130", "#937244", "#B1935A", "#CEAD6F", "#E5C58C"],
     "lamplit_cool": ["#43211D", "#653F2E", "#855F42", "#A47F57", "#BE9A69", "#D2B382"],
     "lamplit_dusk": ["#250F22", "#3B2230", "#51363E", "#654B4B", "#80635A", "#967A68"],
-    "plaster_fold": ["#492A21", "#6B4932", "#8B6946", "#AA8A5C", "#C4A56F", "#DABE8A"]
+    "plaster_fold": ["#492A21", "#6B4932", "#8B6946", "#AA8A5C", "#C4A56F", "#DABE8A"],
+    "water_winter": ["#101339", "#182449", "#213556", "#2C4661", "#465E70", "#647477"],
+    "water_thaw": ["#0C1042", "#15285A", "#22406F", "#315880", "#4D728F", "#6E8893"]
   },
   "edges": {
     "grass": "#242924",
@@ -449,7 +459,9 @@
     "lamplit_warm": "sibling:lamplit",
     "lamplit_cool": "sibling:lamplit",
     "lamplit_dusk": "sibling-tone:lamplit",
-    "plaster_fold": "sibling-tone:plaster"
+    "plaster_fold": "sibling-tone:plaster",
+    "water_winter": "sibling-tone:water",
+    "water_thaw": "sibling-tone:water"
   },
   "from_materials": {
     "grass": {

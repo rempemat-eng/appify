@@ -152,6 +152,25 @@ static func apply(snapshot: Variant, value: Variant) -> Dictionary:
 			return {"ok": true, "state": state, "applied": false, "receipt": receipt.duplicate(true)}
 	return _step(state, event)
 
+## SaveGame stores an applied restoration payload with its tier, without storing
+## this isolated model's balance. Validation is detached and never replays money.
+static func validate_restore_receipt(value: Variant) -> Dictionary:
+	if typeof(value) != TYPE_DICTIONARY:
+		return _error("invalid_receipt", "A restoration receipt must be an object")
+	var tier: int = _number(value.get("tier"))
+	if tier <= 0:
+		return _error("invalid_receipt", "A restoration receipt needs a positive exact tier")
+	var payload: Dictionary = value.duplicate(true)
+	payload.erase("tier")
+	var checked: Dictionary = _event(payload)
+	if not checked.ok:
+		return checked
+	if checked.event.kind != "spend" or checked.event.category != "restoration" or not checked.event.eligible:
+		return _error("invalid_receipt", "Only an applied eligible restoration spend is a restoration receipt")
+	var receipt: Dictionary = checked.event
+	receipt.tier = tier
+	return {"ok": true, "receipt": receipt}
+
 ## Item identity and unlock provenance come from the supplied folk document.
 ## Price/access remain explicit caller assumptions; prose prices are not parsed.
 static func quote_cosmetic(folk: Variant, item_id: Variant, price: Variant, eligible: Variant) -> Dictionary:

@@ -15,8 +15,11 @@ const FIXTURES := "res://test/fixtures/saves/"
 var _now := 0
 var _heard: Array[StringName] = []
 var _was_table: Dictionary
+var _save_path_before_test: String
 
 func before_test() -> void:
+	_save_path_before_test = SaveGame.path
+	SaveGame.path = PATH
 	SaveGame.reset()
 	get_tree().paused = false
 	_now = 100000
@@ -36,6 +39,7 @@ func after_test() -> void:
 	SaveGame.reset()
 	for file: String in [PATH, PATH + ".tmp"]:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(file))
+	SaveGame.path = _save_path_before_test
 
 func _on_cue(cue: StringName) -> void:
 	_heard.append(cue)
@@ -397,7 +401,7 @@ func test_a_fresh_game_has_effects_and_ambience_on_and_gentle_off() -> void:
 	assert_bool(SaveGame.setting("sound_effects")).is_true()
 	assert_bool(SaveGame.setting("ambience")).is_true()
 	assert_bool(SaveGame.setting("gentle_sound")).is_false()
-	assert_int(SaveGame.VERSION).is_equal(2)
+	assert_int(SaveGame.VERSION).is_equal(3)
 
 func test_a_save_from_before_sound_loads_with_the_defaults() -> void:
 	# a save written by main on 13 Nov (version 1, before this), and the first night route's own
@@ -410,7 +414,7 @@ func test_a_save_from_before_sound_loads_with_the_defaults() -> void:
 		file.close()
 		SaveGame.data.settings.gentle_sound = true                 # the running game's choice does not leak in
 		assert_int(SaveGame.load_save(PATH)).is_equal(OK)
-		assert_int(SaveGame.data.version).is_equal(2)
+		assert_int(SaveGame.data.version).is_equal(3)
 		assert_bool(SaveGame.data.settings.sound_effects).is_true()
 		assert_bool(SaveGame.data.settings.ambience).is_true()
 		assert_bool(SaveGame.data.settings.gentle_sound).is_false()
@@ -479,7 +483,7 @@ func test_a_damaged_sound_setting_loads_at_its_default_and_keeps_the_progress() 
 		assert_dict(SaveGame.data.player).is_equal(whole.player)
 		assert_bool(SaveGame.data.settings.reduced_motion).is_true()
 		assert_str(SaveGame.data.settings.pixel_scale).is_equal("whole")
-		assert_int(SaveGame.data.version).is_equal(2)
+		assert_int(SaveGame.data.version).is_equal(3)
 		# and the mended save is written back as a good one
 		assert_int(SaveGame.save(PATH)).is_equal(OK)
 		var again: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(PATH))
