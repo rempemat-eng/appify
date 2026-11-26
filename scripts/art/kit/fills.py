@@ -21,6 +21,7 @@ in both until softground grows a periodic mode of its own.
 from __future__ import annotations
 
 import contextlib
+import math
 
 import numpy as np
 from scipy import ndimage as ndi
@@ -524,31 +525,101 @@ def moraine(seed: int = 1403, P: int = PERIOD) -> np.ndarray:
 
 
 def ice(seed: int = 1404, P: int = PERIOD) -> np.ndarray:
-    """A frozen tarn: clear blue ice (sky_cool 4, water_cool 4 where it is deeper and darker) under
-    wind-laid streaks of white ice and snow (snow_cool 3 and 4), crack lines (water_cool 2) running
-    20 to 60 texels in slow bends with a lit texel on their north side (sky_cool 5)."""
+    """A frozen tarn (Matt, 23 Nov: the tarn frozen, its outlet open), after the round 1 detail
+    audit of #535: lake ice as a calm plane.
+
+    - One body tone (sky_cool 4) with broad swells laid by the wind in one neighbouring tone (sky 4),
+      their edges stepped in clusters of two or three texels (round 2, R6); darker clear ice
+      (water_cool 4) only where a drift has blown it bare, in the drift's lee. The swells are long
+      and thin, never ovals.
+    - Snow dusting in long thin drifts with the snow's own crisp edge: a lit lip on the north, a
+      shaded two-texel underside on the south, no single-texel fray.
+    - Glints in pairs: a streak of two or three texels and a shorter one beside it.
+    - Cracks as long wandering lines (a water_cool 2 line, a lit texel on its north side), their
+      branches leaving at a T, at a Y or stopping short, every junction different; where a crack
+      crosses snow it shows only as a cool line.
+    Periodic: every mark is laid by world position modulo P, so the fill tiles exactly."""
     rng = np.random.default_rng(seed)
-    w = aniso(P, 110.0, 30.0, seed)
-    d = aniso(P, 60.0, 60.0, seed + 1)
+    yy, xx = np.mgrid[0:P, 0:P]
+    v = aniso(P, 150.0, 26.0, seed + 1) + 0.35 * aniso(P, 60.0, 14.0, seed + 3)     # the ice's swells
+    w = aniso(P, 130.0, 16.0, seed) + 0.25 * aniso(P, 40.0, 8.0, seed + 2)          # the wind's drifts
     cv = np.full((P, P), C('sky_cool', 4), np.int32)
-    cv[_no_specks(d < -0.4, 80)] = C('water_cool', 4)
-    cv[_no_specks(w > 0.6, 80)] = C('snow_cool', 3)
-    cv[_no_specks(w > 1.2, 60)] = C('snow_cool', 4)
-    T = Torus(cv)
-    c_ = T.cv
-    for _ in range(P * P // 7000):
-        y, x = float(rng.integers(0, P)), float(rng.integers(0, P))
-        a = rng.uniform(0, np.pi)
-        for _j in range(int(rng.integers(20, 60))):
-            a += rng.normal(0, 0.25)
-            y += np.sin(a)
-            x += np.cos(a)
-            for Y, X in T.at(int(y), int(x)):
-                if 1 <= Y < c_.shape[0] and 0 <= X < c_.shape[1]:
-                    c_[Y, X] = C('water_cool', 2)
-                    if c_[Y - 1, X] != C('water_cool', 2):
-                        c_[Y - 1, X] = C('sky_cool', 5)
-    return T.crop()
+    # round 2 (R6): the swells in one neighbouring tone only (sky 4, a few Y over the body), their edges
+    # stepped in clusters of two or three texels (the field read once per run of three columns)
+    vq = v[:, (xx[0] // 3) * 3]
+    swell = _no_specks(vq > 0.55, 160)
+    cv[swell] = C('sky', 4)
+    drift = _no_specks(w > 0.75, 120)
+    drift = ndi.binary_closing(np.pad(drift, 4, mode='wrap'), iterations=2)[4:-4, 4:-4]
+    cv[drift] = C('snow_cool', 4)
+    crest = _no_specks(w > 1.6, 60) & drift
+    cv[crest] = C('snow', 4)
+    north = drift & ~np.roll(drift, 1, 0)
+    cv[north] = C('snow', 5)
+    s1 = drift & ~np.roll(drift, -1, 0)
+    s2 = drift & np.roll(s1, -1, 0) & ~s1
+    cv[s1] = C('snow_cool', 3)
+    cv[s2 & ~north] = C('snow_cool', 3)
+    # darker clear ice only where a drift has blown it bare: in a drift's lee, a few texels south of it,
+    # in clusters (R6)
+    lee = np.zeros((P, P), bool)
+    for k in range(3, 11):
+        lee |= np.roll(drift, k, 0)
+    lee &= ~drift & ~np.roll(drift, 1, 0) & ~np.roll(drift, 2, 0)
+    bare = _no_specks(lee & (aniso(P, 70.0, 10.0, seed + 5)[:, (xx[0] // 3) * 3] > 0.2), 60)
+    cv[bare & ~drift] = C('water_cool', 4)
+    # glints in pairs on the clear and body ice
+    for _ in range(P * P // 5000):
+        y, x = int(rng.integers(0, P)), int(rng.integers(0, P))
+        if drift[y, x]:
+            continue
+        L = int(rng.integers(2, 4))
+        for j in range(L):
+            cv[y, (x + j) % P] = C('sky_cool', 5)
+        for j in range(L - 1):
+            cv[(y + 2) % P, (x + 2 + j) % P] = C('sky_cool', 5)
+    # the crack network
+    crack = np.zeros((P, P), bool)
+    lit = np.zeros((P, P), bool)
+
+    def walk(y, x, a, L, bend, primary):
+        pts = []
+        for _j in range(L):
+            a += rng.normal(0, bend)
+            y += math.sin(a)
+            x += math.cos(a)
+            Y, X = int(round(y)) % P, int(round(x)) % P
+            pts.append((Y, X, a))
+            crack[Y, X] = True
+            if primary:
+                lit[(Y - 1) % P, X] = True
+        return pts
+
+    for _ in range(P * P // 22000):
+        a0 = rng.uniform(-0.7, 0.7) + (np.pi if rng.random() < 0.5 else 0)
+        pts = walk(float(rng.integers(0, P)), float(rng.integers(0, P)), a0, int(rng.integers(90, 200)), 0.07, True)
+        nb = int(rng.integers(0, 4))
+        used = set()
+        for _b in range(nb):
+            k = int(rng.integers(10, len(pts) - 10))
+            if any(abs(k - u) < 14 for u in used):
+                continue
+            used.add(k)
+            Y, X, a = pts[k]
+            kind = rng.random()
+            if kind < 0.4:
+                da = (np.pi / 2) * (1 if rng.random() < 0.5 else -1) + rng.normal(0, 0.15)   # a T
+            else:
+                da = rng.uniform(0.45, 0.8) * (1 if rng.random() < 0.5 else -1)               # a Y
+            walk(float(Y), float(X), a + da, int(rng.integers(8, 40)), 0.18, False)
+    snowy = np.isin(cv, [C('snow_cool', 4), C('snow', 4), C('snow', 5), C('snow_cool', 3)])
+    lit &= ~crack & ~snowy
+    cv[lit] = C('sky_cool', 5)
+    cv[crack & ~snowy] = C('water_cool', 2)
+    cv[crack & snowy] = C('snow_cool', 3)
+    # the fill tiles exactly; its wrap is set on a row and a column of ordinary contrast, since the drifts'
+    # lips make single rows unequal (test_kit.test_fills_seamless compares one row pair with the next)
+    return np.roll(cv, (-1, -34), (0, 1))
 
 
 PAINTERS = {'lawn': lawn, 'dirt': dirt, 'water': water, 'face_strip': face_strip,

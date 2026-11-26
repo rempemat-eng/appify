@@ -53,7 +53,7 @@
   "c": "moraine",
   "i": "ice"
  },
- "note": "LAB ZONE until Matt approves its pieces. The Frostline's first screens (docs/vision/regions/home-valley-frostline-brackens.md; game/data/plans/frostline.json): the Col Path in at the south, the Col hut and its yard on the lower shelf, the tarn's outlet under a footbridge, the cirque's granite step climbed by a stair, the frozen tarn with the ice-cut and the ice-cutter's sledge on the upper bench, and the High Fells' moraine where the shardstruck ibex are, under the headwall's crags. Built from the Frostline set's candidate pieces (scripts/art/kit/sets/frost.py). Not in data/zones.json: nothing leads to it yet.",
+ "note": "LAB ZONE until Matt approves its pieces. The Frostline's first screens (docs/vision/regions/home-valley-frostline-brackens.md; game/data/plans/frostline.json): the Col Path in at the south, the Col hut and its yard on the lower shelf, the tarn's outlet, open and thawing, under a footbridge, the cirque's granite step climbed by a stair, the frozen tarn (its one open lead where the outlet leaves, the outlet's water painted over its cells by frost_outlet) with the ice-cut and the ice-cutter's sledge on the upper bench, and the High Fells' moraine where the shardstruck ibex are, under the headwall's crags. Built from the Frostline set's candidate pieces (scripts/art/kit/sets/frost.py). Not in data/zones.json: nothing leads to it yet.",
  "pieces": [
   {
    "at": [
@@ -707,103 +707,73 @@
   },
   {
    "at": [
-    312,
-    72
-   ],
-   "facing": "s",
-   "id": "lead_inflow",
-   "piece": "frost_lead",
-   "variant": "gap"
-  },
-  {
-   "at": [
     228,
-    384
+    570
    ],
    "facing": "s",
-   "id": "lead_1",
-   "piece": "frost_lead",
-   "variant": "run"
+   "id": "plunge",
+   "piece": "frost_plunge",
+   "variant": "still"
   },
   {
    "at": [
-    252,
-    480
+    180,
+    143
    ],
    "facing": "s",
-   "id": "lead_2",
-   "piece": "frost_lead",
+   "id": "ridge_north",
+   "piece": "frost_pressure_ridge",
+   "variant": "long"
+  },
+  {
+   "at": [
+    108,
+    239
+   ],
+   "facing": "s",
+   "id": "ridge_west",
+   "piece": "frost_pressure_ridge",
+   "variant": "side"
+  },
+  {
+   "at": [
+    384,
+    311
+   ],
+   "facing": "s",
+   "id": "ridge_south",
+   "piece": "frost_pressure_ridge",
    "variant": "short"
   },
   {
    "at": [
-    240,
-    576
+    357,
+    176
    ],
    "facing": "s",
-   "id": "plunge_pool",
-   "piece": "frost_lead",
-   "variant": "pool"
+   "id": "outlet",
+   "piece": "frost_outlet",
+   "variant": "still"
   },
   {
    "at": [
-    312,
-    648
+    241,
+    0
    ],
    "facing": "s",
-   "id": "lead_3",
-   "piece": "frost_lead",
-   "variant": "short"
+   "id": "inflow",
+   "piece": "frost_inflow",
+   "variant": "still"
   },
   {
    "at": [
-    372,
-    720
+    564,
+    960
    ],
    "facing": "s",
-   "id": "lead_4",
-   "piece": "frost_lead",
-   "variant": "short"
-  },
-  {
-   "at": [
-    432,
-    792
-   ],
-   "facing": "s",
-   "id": "lead_5",
-   "piece": "frost_lead",
-   "variant": "run"
-  },
-  {
-   "at": [
-    432,
-    888
-   ],
-   "facing": "s",
-   "id": "lead_6",
-   "piece": "frost_lead",
-   "variant": "short"
-  },
-  {
-   "at": [
-    468,
-    1008
-   ],
-   "facing": "s",
-   "id": "lead_8",
-   "piece": "frost_lead",
-   "variant": "strip"
-  },
-  {
-   "at": [
-    468,
-    1104
-   ],
-   "facing": "s",
-   "id": "lead_9",
-   "piece": "frost_lead",
-   "variant": "strip_long"
+   "id": "thaw",
+   "piece": "frost_thaw",
+   "variant": "band"
   }
  ],
  "rows": [
@@ -820,39 +790,39 @@
   ".....iiiiiiiiiiii.......bb....ccccccccccccccccc",
   "......iiiiiiiiiii.......bb.....cccccccccccccccc",
   "........iiiiiiiii..bbbbbbb........ccccccccccccc",
-  "........iii..ii....bbbbbbb..........ccccccccccc",
-  "........iii.............bb................ccccc",
-  "........iii.............bb.....................",
-  ".........iii............bb.....................",
-  ".........iii............bb.....................",
-  ".........iii............bb.....................",
-  "........iiii............bb.....................",
-  "........iiii............bb.....................",
-  "........iiii............bb.....................",
-  "........iiii............bb.....................",
-  "........iiiii...........bb.....................",
-  ".........iiiii..........bb.....................",
-  "...........iiii.........bb.....................",
-  "............iiii........bb.....................",
-  ".............iii........bb.....................",
-  ".............iiii.......bb.....................",
-  "..............iiiii.....bb.....................",
-  "...............iiiii....bb.....................",
-  "................iiiii...bb.....................",
-  ".................iii....bb.....................",
-  "................iii.....bb.....................",
-  "...............iiii.....bb.....................",
-  "................iiii....bb.....................",
-  ".................iiii...bb.....................",
-  "..................iii...bb.....................",
-  "......bbbbbbbbbbbbiiibbbbb.....................",
-  "......bbbbbbbbbbbbiaibbbbb.....................",
-  "..................iai...bb.....................",
-  "..................iai...bb.....................",
-  "..................iaii..bb.....................",
-  "...................aii..bb.....................",
-  "..................iaii..bb.....................",
-  "..................iai...bb....................."
+  "........aaa..ii....bbbbbbb..........ccccccccccc",
+  "........aaa.............bb................ccccc",
+  "........aaa.............bb.....................",
+  ".........aaa............bb.....................",
+  ".........aaa............bb.....................",
+  ".........aaa............bb.....................",
+  "........aaaa............bb.....................",
+  "........aaaa............bb.....................",
+  "........aaaa............bb.....................",
+  "........aaaa............bb.....................",
+  "........aaaaa...........bb.....................",
+  ".........aaaaa..........bb.....................",
+  "...........aaaa.........bb.....................",
+  "............aaaa........bb.....................",
+  ".............aaa........bb.....................",
+  ".............aaaa.......bb.....................",
+  "..............aaaaa.....bb.....................",
+  "...............aaaaa....bb.....................",
+  "................aaaaa...bb.....................",
+  ".................aaa....bb.....................",
+  "................aaa.....bb.....................",
+  "...............aaaa.....bb.....................",
+  "................aaaa....bb.....................",
+  ".................aaaa...bb.....................",
+  "..................aaa...bb.....................",
+  "......bbbbbbbbbbbbaaabbbbb.....................",
+  "......bbbbbbbbbbbbaaabbbbb.....................",
+  "..................aaa...bb.....................",
+  "..................aaa...bb.....................",
+  "..................aaaa..bb.....................",
+  "...................aaa..bb.....................",
+  "..................aaaa..bb.....................",
+  "..................aaa...bb....................."
  ],
  "spawns": {
   "start": [

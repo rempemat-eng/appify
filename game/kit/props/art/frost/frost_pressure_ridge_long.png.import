@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cq4odna78hctu"
-path="res://.godot/imported/frost_lead_strip.png-eda60a88080636bc1d2d95b8f274366a.ctex"
+uid="uid://betg64hv21rw0"
+path="res://.godot/imported/frost_pressure_ridge_long.png-748d203b202b54d6e45b8e31e84f4f4e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/props/art/frost/frost_lead_strip.png"
-dest_files=["res://.godot/imported/frost_lead_strip.png-eda60a88080636bc1d2d95b8f274366a.ctex"]
+source_file="res://kit/props/art/frost/frost_pressure_ridge_long.png"
+dest_files=["res://.godot/imported/frost_pressure_ridge_long.png-748d203b202b54d6e45b8e31e84f4f4e.ctex"]
 
 [params]
 
