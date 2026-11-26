@@ -14,7 +14,7 @@
    "png": "res://kit/props/art/frost/frost_pine_squat.png",
    "foot": [
     59,
-    169
+    174
    ]
   }
  ],
@@ -28,14 +28,14 @@
  "geometry": {
   "size_px": [
    126,
-   170
+   175
   ],
   "size_cells": [
    4,
    2
   ],
   "z_sort": "foot",
-  "height_px": 170,
+  "height_px": 175,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,7 +47,7 @@
   },
   "foot": [
    59,
-   169
+   174
   ],
   "footprint": [
    [

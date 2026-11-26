@@ -133,7 +133,7 @@ def _tier_plan(rng, yt, yb, x0, x1, cxm, form):
                 aw = min(aw + rng.uniform(3.0, 6.0), cx - x0)
             else:
                 ae = min(ae + rng.uniform(3.0, 6.0), x1 - cx)
-        top = yt + 3 if prev is None else prev - (bot - prev) * rng.uniform(0.5, 0.62)
+        top = yt if prev is None else prev - (bot - prev) * rng.uniform(0.5, 0.62)
         n = max(2, int(round((aw + ae) / rng.uniform(6.5, 9.5))))
         tips = np.linspace(cx - aw, cx + ae, n + 1)
         tips[1:-1] += rng.uniform(-1.8, 1.8, n - 1)
@@ -201,9 +201,9 @@ def frost_crown(S, form, seed, load=1.0):
         V_[m] = geo[k][3][m]
     # the leader: a short spike over the top tier, leaning with it
     lx = int(round(tiers[0]['cx']))
-    for y in range(yt, int(tiers[0]['top']) + 3):
+    for y in range(yt - 5, int(tiers[0]['top']) + 3):
         owner[y, lx] = 0
-        if y > yt + 1:
+        if y > yt - 3:
             owner[y, lx - 1] = 0
     mask = owner >= 0
     Y, X = np.mgrid[0:H, 0:W]
@@ -259,7 +259,7 @@ def frost_crown(S, form, seed, load=1.0):
             hh, ww = sm.shape
             yy0, xx0 = ay - 1, ax_ - ww // 2
             quiet = under[ay, ax_] >= 3
-            lit = (u < 0.3 or rr < 0.3) and not quiet
+            lit = (u < 0.3 or rr < 0.15) and not quiet
             for dy in range(hh):
                 for dx in range(ww):
                     if not sm[dy, dx]:
@@ -270,7 +270,7 @@ def frost_crown(S, form, seed, load=1.0):
                     bb = b[yy, xx]
                     if cap[dy, dx] and lit:
                         c = _band(bb + 1, fam_j)
-                    elif rim[dy, dx]:
+                    elif rim[dy, dx] and (rr > 0.3 or quiet):
                         c = _band(bb - 1, (fam_j + 1) % 4)
                     else:
                         c = _band(bb, fam_j)
@@ -318,7 +318,7 @@ def _shelves(code, owner, tiers, geo, U, above, rng, load, form):
             if rng.random() < 0.12 and 0 < i < len(tips) - 1:
                 continue                                                  # a bare bough
             half = 0.5 * ((tips[min(i + 1, len(tips) - 1)] - tips[max(i - 1, 0)]) / (2 if 0 < i < len(tips) - 1 else 1))
-            half = max(2.5, half * 1.05)
+            half = max(2.5, half * 0.9)
             ui = float(np.clip((tp - t['cx']) / (t['aw'] if tp < t['cx'] else t['ae']), -1, 1))
             side = max(0.0, 1.2 - 0.6 * (ui + 1))
             if t['f'] > 0.45 and ui > 0.4:
@@ -405,6 +405,13 @@ def conifer(form='pine', load=1.0, seed=None):
     rng = np.random.default_rng(seed * 7 + 31)
     S, foot, _ = WT.master_crown(arr, d, size=scale)
     code, mask = frost_crown(S, form, seed, load)
+    # a gap closed in by two tiers (or a pocket a texel wide between a tip and the tier below) is the
+    # deep shade between them, never sky with an outline round it
+    pm = np.pad(mask, 3)
+    holes = (ndi.binary_fill_holes(ndi.binary_closing(pm, structure=np.ones((3, 3), bool), iterations=1))[3:-3, 3:-3]
+             & ~mask)
+    code[holes] = C('leaf_cool', 1)
+    mask = mask | holes
     # the crown's silhouette closed in each material's own edge tone (lit edges in its tone 1)
     pad = 2
     big = np.full((code.shape[0] + 2 * pad, code.shape[1] + 2 * pad), -1, np.int32)

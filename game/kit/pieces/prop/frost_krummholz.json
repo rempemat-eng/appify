@@ -14,7 +14,7 @@
    "png": "res://kit/props/art/frost/frost_krummholz_still.png",
    "foot": [
     62,
-    101
+    106
    ]
   },
   {
@@ -23,7 +23,7 @@
    "png": "res://kit/props/art/frost/frost_krummholz_low.png",
    "foot": [
     50,
-    83
+    88
    ]
   },
   {
@@ -32,7 +32,7 @@
    "png": "res://kit/props/art/frost/frost_krummholz_wide.png",
    "foot": [
     69,
-    119
+    124
    ]
   }
  ],
@@ -46,14 +46,14 @@
  "geometry": {
   "size_px": [
    146,
-   120
+   125
   ],
   "size_cells": [
    4,
    2
   ],
   "z_sort": "foot",
-  "height_px": 120,
+  "height_px": 125,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -65,7 +65,7 @@
   },
   "foot": [
    62,
-   101
+   106
   ],
   "footprint": [
    [

@@ -14,7 +14,7 @@
    "png": "res://kit/props/art/frost/frost_pine.png",
    "foot": [
     51,
-    228
+    233
    ]
   }
  ],
@@ -28,14 +28,14 @@
  "geometry": {
   "size_px": [
    107,
-   229
+   234
   ],
   "size_cells": [
    4,
    2
   ],
   "z_sort": "foot",
-  "height_px": 229,
+  "height_px": 234,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,7 +47,7 @@
   },
   "foot": [
    51,
-   228
+   233
   ],
   "footprint": [
    [
