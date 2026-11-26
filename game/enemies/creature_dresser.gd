@@ -8,6 +8,8 @@ extends Node
 ## The bramble den and its clumps belong to the woodland's camp; a camp elsewhere (the Undercroft's
 ## rooms) takes only the creatures' looks.
 @export var with_den := true
+## Region's role -> character overrides; omitted roles keep their woodland looks.
+@export var look_set: Dictionary = {}
 @export var den_offset := Vector2(0, -150)
 @export var clump_offsets: Array[Vector2] = [Vector2(-170, -60), Vector2(150, -100), Vector2(120, 90)]
 
@@ -40,4 +42,5 @@ func _on_node_added(node: Node) -> void:
 	if node is SliceEnemy and get_parent() != null and get_parent().is_ancestor_of(node):
 		var look := CreatureLook.new()
 		look.name = "Look"
+		look.look_set = look_set.duplicate()
 		node.add_child.call_deferred(look)

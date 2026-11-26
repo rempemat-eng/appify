@@ -1905,6 +1905,19 @@ verb = "Restore"
 [node name="Shape" type="CollisionShape2D" parent="Actors/If_bell_tower_site/BellTowerSite"]
 shape = SubResource("s35")
 
+[node name="If_training_yard_site" type="Node2D" parent="Actors"]
+script = ExtResource("cond")
+only_if = "{\"started\":[\"a1_the_training_yard\"],\"not_restored\":[\"training_yard\"]}"
+
+[node name="TrainingYardSite" type="Area2D" parent="Actors/If_training_yard_site"]
+position = Vector2(552, 1416)
+script = ExtResource("site")
+restore_id = "training_yard"
+verb = "Restore"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_training_yard_site/TrainingYardSite"]
+shape = SubResource("s35")
+
 [node name="BuildingDoors" type="Node2D" parent="."]
 
 [node name="Hut" type="Marker2D" parent="BuildingDoors"]

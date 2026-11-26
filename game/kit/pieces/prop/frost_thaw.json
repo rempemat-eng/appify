@@ -1,0 +1,79 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "frost_thaw",
+ "name": "Thaw at the woodland seam",
+ "kind": "prop",
+ "biomes": [
+  "frostline"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "band",
+   "weight": 1.0,
+   "png": "res://kit/props/art/frost/frost_thaw_band.png",
+   "foot": [
+    564,
+    0
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
+  "note": "The short thaw band at the woodland's north seam (Matt, 23 Nov) across the zone's width, its top edge wandering: a calm wet crust, bare hollows lit from the upper left growing and merging toward the seam, earth in clusters with combed flattened grass, meandering rivulets to the water, a trodden slush lane on the Col Path to the door, the snow pulled back round the trees' feet."
+ },
+ "geometry": {
+  "size_px": [
+   1128,
+   144
+  ],
+  "size_cells": [
+   47,
+   5
+  ],
+  "z_sort": "ground",
+  "height_px": 144,
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   564,
+   0
+  ],
+  "footprint": []
+ },
+ "placement": {
+  "snap": "cell",
+  "purpose": "mark",
+  "role": "ground",
+  "composition": "edge"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "none"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": "unsized (wet snow and bare ground: ground dressing)",
+  "eastward_ref": "-",
+  "painter": {
+   "module": "scripts.art.kit.sets.frost",
+   "fn": "thaw_band",
+   "args": {}
+  },
+  "seeded_from": "scripts/art/kit/sets/frost.py",
+  "todo": []
+ }
+}

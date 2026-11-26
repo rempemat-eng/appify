@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://3b14xpbwrar6"
-path="res://.godot/imported/frost_lead_strip_long.png-b3d01effe4ed54c5fe2265a66d01f86d.ctex"
+uid="uid://b747scfrbxq0p"
+path="res://.godot/imported/frost_plunge_loop.png-6a6c5f9a323c8f0496aee718fd964d93.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/props/art/frost/frost_lead_strip_long.png"
-dest_files=["res://.godot/imported/frost_lead_strip_long.png-b3d01effe4ed54c5fe2265a66d01f86d.ctex"]
+source_file="res://kit/props/art/frost/frost_plunge_loop.png"
+dest_files=["res://.godot/imported/frost_plunge_loop.png-6a6c5f9a323c8f0496aee718fd964d93.ctex"]
 
 [params]
 

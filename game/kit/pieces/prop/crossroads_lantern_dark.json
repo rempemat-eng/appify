@@ -6,7 +6,7 @@
  "biomes": [
   "village"
  ],
- "version": 3,
+ "version": 4,
  "variants": [
   {
    "id": "lantern_dark",
@@ -127,6 +127,7 @@
    }
   },
   "quests": [
+   "res://data/quests/a1_the_choked_well.json",
    "res://data/quests/a1_the_circle_wakes.json",
    "res://data/quests/a1_the_cut_rope.json",
    "res://data/quests/a1_under_the_snout.json",
