@@ -62,21 +62,26 @@ STONES = {'density': 0.85, 'south': ['bankstone_0', 'bankstone_1', 'pebble_2', '
 def terrain_pieces():
     t = [
         _terrain('snow', 'Lying snow', 13, 31, 'snow', False, SNOW_FILL, 1.2,
-                 'The cirque\'s floor: lying snow, a calm plane in three tones laid by the wind in long soft drifts.'),
+                 'The cirque\'s floor: lying snow, wind-laid drifts lit on their north-west faces with cool shade in '
+                 'their lee, sastrugi in clusters, the odd stone tip or dry tussock where a crest is scoured.'),
         _terrain('snow_trod', 'Trodden snow', 14, 22, 'snow', True, TROD_FILL, 0.9,
-                 'The Col Path trodden into the snow: a packed plane a tone cooler, worn patches, bootprints.'),
+                 'The Col Path trodden into the snow: a packed grey-blue plane, compacted walking lanes, soft-edged '
+                 'boot and hoof prints, old ones half filled.'),
         _terrain('moraine', 'Moraine', 15, 16, 'rock', False, MORAINE_FILL, 1.0,
-                 'The High Fells\' moraine: cold grey granite grit with stones of three sizes, old snow in their lee.'),
+                 'The High Fells\' moraine: graded granite stones (boulders knee high to gravel) with volume and '
+                 'contact shade on a calm cold grit, old snow on the boulders\' tops.'),
         _terrain('ice', 'Lake ice', 16, 12, 'water', False, ICE_FILL, 9.0,
                  'The tarn frozen over: clear blue ice under wind-laid white, cracks. Kept off (the white ice breaks).',
                  walkable=False),
     ]
     tr = [
-        _transition('snow', 'snow_trod', 'snow_lip', None, 'The snow hanging over the trod\'s north side, lit on its south.'),
+        _transition('snow', 'snow_trod', 'snow_lip', None, 'The snow hanging over the trod\'s north side, lit on its south, '
+                    'loose snow frayed over its other edges.'),
         _transition('snow', 'moraine', 'snow_fray', STONES, 'Snow thinning over the moraine, stones breaking through.'),
         _transition('snow', 'water', 'cornice_bank', None, 'A snow cornice over a granite bank, shore ice on the open water.',
                     {'rim': 'ice'}),
-        _transition('snow', 'ice', 'cornice_bank', None, 'A snow cornice over the tarn\'s granite bank.', {'rim': 'lip'}),
+        _transition('snow', 'ice', 'cornice_bank', None, 'A snow cornice over the tarn\'s bank of level granite stones.',
+                    {'rim': 'lip'}),
         _transition('snow_trod', 'water', 'cornice_bank', None, 'The trod\'s end at the water, shore ice.', {'rim': 'ice'}),
         _transition('ice', 'water', 'ice_edge', None, 'The ice cut back from open water: its thickness on the north edge.'),
     ]
