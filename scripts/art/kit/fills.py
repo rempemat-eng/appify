@@ -409,6 +409,21 @@ def _wrap_grad(h: np.ndarray):
     return (np.roll(h, -1, 0) - np.roll(h, 1, 0)) * 0.5, (np.roll(h, -1, 1) - np.roll(h, 1, 1)) * 0.5
 
 
+def _hruns(m: np.ndarray, n: int) -> np.ndarray:
+    """A periodic mask keeping only its texels in horizontal runs of at least n."""
+    left = np.zeros(m.shape, np.int32)
+    right = np.zeros(m.shape, np.int32)
+    cur = m.copy()
+    for k in range(1, n):
+        cur = cur & np.roll(m, k, 1)
+        left += cur
+    cur = m.copy()
+    for k in range(1, n):
+        cur = cur & np.roll(m, -k, 1)
+        right += cur
+    return m & (left + right + 1 >= n)
+
+
 def _calm(cv: np.ndarray, codes, area: int) -> np.ndarray:
     """Each tone's regions under `area` texels merged into their surroundings (the commonest
     neighbouring tone), so the planes stay calm: no lone flecks or two-texel crumbs of a shade."""
@@ -449,11 +464,11 @@ def snow(seed: int = 1401, P: int = PERIOD) -> np.ndarray:
     drifts as long pillows (56 to 200 texels west to east) gathered in fields over the plane's own broad
     swells, shaded by their slope from the upper left, so a drift's north and west faces are lit (snow
     5), its lee falls away a tone (snow 3) and the steepest lee and the deepest hollows lie in cool
-    shade (snow_cool 3), each tone a calm plane with soft curved edges and no flecks. Across it, in clusters where the wind
-    scours, sastrugi: wind-cut ripples, 1-texel crests lit a step over their plane with a lee a step
-    under it, broken into runs of 5 to 18 texels that wander with the drift, never an even stipple.
-    Where a crest is scoured thin, a stone tip, a dry tussock or a little grit shows through, in small
-    groups with their own contact shade. Every placement is laid by world position modulo P."""
+    shade (snow_cool 3), each tone a calm plane with soft curved edges and no flecks. Across it, in
+    clusters where the wind scours, sastrugi: wind-cut ripples, a crest a step over its plane above
+    a lee a step under it, each run at least 4 texels with no stray texel at its ends. Nothing dark
+    lies on the open snow (round 2: scattered stone tips and tussocks read as litter at 1x); stones
+    break through only at the moraine's edge, as its dressing. Every field is periodic in P."""
     rng = np.random.default_rng(seed)
     # the drifts: long pillows of snow (40 to 150 texels west to east, 10 to 30 north to south), their
     # height summed on the torus with a low swell under them, a steeper fall on the lee (south and east)
@@ -516,82 +531,14 @@ def snow(seed: int = 1401, P: int = PERIOD) -> np.ndarray:
     phase = (yy + 6.0 * aniso(P, 90.0, 40.0, seed + 4) + 3.0 * h) / lam
     crest_row = np.abs(phase - np.round(phase)) < 0.5 / lam
     runs = aniso(P, 22.0, 2.5, seed + 5) > 0.2
-    crest = _no_specks(crest_row & clus & runs & (cv == C('snow', 4)), 5)
-    lee = np.roll(crest, 1, 0) & ~crest & (cv == C('snow', 4))
+    crest = _hruns(crest_row & clus & runs & (cv == C('snow', 4)), 5)
+    lee = _hruns(np.roll(crest, 1, 0) & ~crest & (cv == C('snow', 4)), 4)
+    for _k in range(2):                                     # each crest over its own lee, ends aligned
+        crest = _hruns(crest & np.roll(lee, -1, 0), 4)
+        lee = _hruns(lee & np.roll(crest, 1, 0), 4)
     cv[crest] = C('snow', 5)
     cv[lee] = C('snow', 3)
-    # scoured spots: stone tips, dry tussocks and grit showing through, in small groups
-    T = Torus(cv)
-    c_ = T.cv
-    S = c_.shape[0]
-
-    def put(Y, X, code):
-        if 0 <= Y < S and 0 <= X < S:
-            c_[Y, X] = code
-
-    def stone(y, x):
-        # a stone's rounded tip: snow on its top row, a lit west end, a dark east end and foot, a
-        # contact shade on the snow at its south and east
-        w, hh = int(rng.integers(4, 7)), int(rng.integers(3, 5))
-        for Y, X in T.at(y, x):
-            for dx in range(1, w + 1):
-                put(Y + hh, X + dx, C('snow_cool', 3))
-            put(Y + hh - 1, X + w, C('snow_cool', 3))
-            for dy in range(hh):
-                for dx in range(w):
-                    if (dy == 0 or dy == hh - 1) and dx in (0, w - 1):
-                        continue                            # the rounded corners
-                    if dy == 0:
-                        code = C('snow', 5) if dx < w // 2 else C('snow', 4)
-                    elif dy == hh - 1 or dx == w - 1:
-                        code = C('slate_cool', 1)
-                    elif dx == 0:
-                        code = C('slate', 4)
-                    else:
-                        code = C('slate', 3)
-                    put(Y + dy, X + dx, code)
-
-    def tussock(y, x):
-        # a dry tussock: five to seven blades fanning from a dark base, lit tips on the west blades
-        n = int(rng.integers(5, 8))
-        for Y, X in T.at(y, x):
-            for dx in range(n // 3 + 1, n - n // 3 + 1):
-                put(Y + 1, X + dx, C('snow_cool', 3))
-            for i in range(n):
-                tall = 3 + int(abs(i - (n - 1) / 2) < 1.5) + int(rng.random() < 0.4)
-                lean = -1 if i < n // 3 else 1 if i >= n - n // 3 else 0
-                for dy in range(tall):
-                    xx_ = X + i + (lean if dy >= tall - 1 else 0)
-                    if dy == 0:
-                        if lean:
-                            continue                        # the outer blades splay from the clump
-                        code = C('earth_warm', 1)
-                    elif dy == tall - 1:
-                        code = C('sand', 3) if i < n * 0.6 else C('sand_cool', 2)
-                    else:
-                        code = C('sand_cool', 2) if i < n * 0.6 else C('earth_warm', 2)
-                    put(Y - dy, xx_, code)
-
-    def grit(y, x):
-        for _k in range(int(rng.integers(2, 4))):
-            oy, ox = int(rng.integers(-3, 4)), int(rng.integers(-4, 5))
-            for Y, X in T.at(y + oy, x + ox):
-                put(Y, X, C('slate_cool', 2))
-                put(Y, X + 1, C('slate_cool', 3))
-
-    hm = h > 0.9
-    placed, tries = 0, 0
-    while placed < P * P // 14000 and tries < 20000:
-        tries += 1
-        y, x = int(rng.integers(0, P)), int(rng.integers(0, P))
-        if not hm[y, x] or rng.random() > 0.6:
-            continue
-        for _j in range(int(rng.integers(1, 4))):
-            oy, ox = int(rng.integers(-6, 7)), int(rng.integers(-9, 10))
-            r = rng.random()
-            (stone if r < 0.4 else tussock if r < 0.75 else grit)(y + oy, x + ox)
-        placed += 1
-    return T.crop()
+    return _calm(cv, SNOW_STEPS, 3)                         # no lone texel left where planes meet
 
 
 def snow_trod(seed: int = 1402, P: int = PERIOD) -> np.ndarray:
