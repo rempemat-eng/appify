@@ -92,7 +92,7 @@ def _tier_plan(rng, yt, yb, x0, x1, cxm, form):
     acc = 0.0
     while acc < span:
         f = acc / max(1.0, span)
-        st = pitch * rng.uniform(0.82, 1.18) * (0.7 + 0.55 * f)
+        st = pitch * rng.uniform(0.6, 1.45) * (0.7 + 0.55 * f)
         steps.append(st)
         acc += st
     n_steps = max(1, len(steps) - (1 if acc - span > 0.5 * steps[-1] else 0))
@@ -101,6 +101,11 @@ def _tier_plan(rng, yt, yb, x0, x1, cxm, form):
     bots = [y_first] + list(y_first + np.cumsum(steps))
     # the leader leans a little; a krummholz's upper tiers are pushed to the lee (east) by the wind
     tilt = (rng.uniform(4.0, 7.0) if krum else rng.choice((-1, 1)) * rng.uniform(1.5, 3.0))
+    # the tree's own lean of growth: one side a little fuller than the other, and one or two tiers
+    # set off the axis or tipped (a tier is never level and centred on every tree)
+    side_w, side_e = rng.uniform(0.86, 1.0), rng.uniform(0.86, 1.0)
+    lop = set(int(k) for k in rng.choice(np.arange(1, max(2, len(bots) - 1)), size=min(2, max(1, len(bots) - 2)),
+                                          replace=False))
     notched = set()
     if len(bots) > 4:
         notched = set(int(k) for k in rng.choice(np.arange(2, len(bots) - 1), size=min(2, len(bots) - 3), replace=False))
@@ -110,14 +115,16 @@ def _tier_plan(rng, yt, yb, x0, x1, cxm, form):
         g = 0.14 + 0.86 * f ** power
         # the wind's flagging is strongest high up, where the tree stands out of the snowpack
         wind = 1.0 - f if krum else 1.0
-        aw = g * rng.uniform(0.9, 1.05) * (1 - (1 - fw) * (0.6 + 1.2 * wind))
-        ae = g * rng.uniform(0.9, 1.05) * (1 + (fe - 1) * (0.6 + 1.2 * wind))
+        aw = g * side_w * rng.uniform(0.82, 1.1) * (1 - (1 - fw) * (0.6 + 1.2 * wind))
+        ae = g * side_e * rng.uniform(0.82, 1.1) * (1 + (fe - 1) * (0.6 + 1.2 * wind))
         if k in notched:
             if rng.random() < 0.5:
                 aw *= 0.8
             else:
                 ae *= 0.82
         cx = cxm + tilt * (1 - f) ** 2 + (rng.uniform(-1.0, 1.0) if k else 0.0)
+        if k in lop:
+            cx += rng.choice((-1, 1)) * rng.uniform(1.5, 3.0)
         raw.append([bot, f, cx, aw, ae])
     # fit: the widest reach either side meets the master crown's extent
     sw = (cxm - x0) / max(r[3] for r in raw)
@@ -128,24 +135,29 @@ def _tier_plan(rng, yt, yb, x0, x1, cxm, form):
         aw = max(3.0, min(aw * sw, cx - x0))
         ae = max(3.0, min(ae * se, x1 - cx))
         # now and then one bough reaches past the cone line (a tier is never a clean triangle)
-        if 1 < k < len(raw) - 1 and rng.random() < 0.4:
+        if 0 < k < len(raw) - 1 and rng.random() < 0.55:
             if rng.random() < 0.5:
-                aw = min(aw + rng.uniform(3.0, 6.0), cx - x0)
+                aw = min(aw + rng.uniform(3.0, 8.0), cx - x0)
             else:
-                ae = min(ae + rng.uniform(3.0, 6.0), x1 - cx)
+                ae = min(ae + rng.uniform(3.0, 8.0), x1 - cx)
         top = yt if prev is None else prev - (bot - prev) * rng.uniform(0.5, 0.62)
+        # the bough tips at uneven spacing, each notch its own depth, the odd gap where a bough is
+        # missing, each tip hanging its own way (the outline never an even sawtooth)
         n = max(2, int(round((aw + ae) / rng.uniform(6.5, 9.5))))
-        tips = np.linspace(cx - aw, cx + ae, n + 1)
-        tips[1:-1] += rng.uniform(-1.8, 1.8, n - 1)
+        gaps = rng.uniform(0.55, 1.5, n)
+        tips = cx - aw + np.concatenate([[0.0], np.cumsum(gaps)]) * (aw + ae) / gaps.sum()
         size = min(1.0, (aw + ae) / 40.0)
-        deps = rng.uniform(2.2, 5.0, n) * (0.55 + 0.45 * size)
-        # each tip hangs its own way: most a texel or so, the odd bough reaching longer and lower
-        hangs = rng.uniform(-0.6, 1.2, n + 1) * (0.5 + 0.5 * size)
-        long_ = rng.random(n + 1) < 0.18
-        hangs[long_] += rng.uniform(1.5, 3.0, long_.sum()) * size
+        deps = rng.uniform(1.4, 6.0, n) * (0.55 + 0.45 * size)
+        if n > 2 and rng.random() < 0.4 and k < len(raw) - 1:
+            deps[int(rng.integers(0, n))] *= rng.uniform(1.8, 2.4)
+        hangs = rng.uniform(-1.0, 1.6, n + 1) * (0.5 + 0.5 * size)
+        long_ = rng.random(n + 1) < 0.22
+        hangs[long_] += rng.uniform(1.5, 3.5, long_.sum()) * size
         droop = 1.0 + 2.5 * f
+        slope = 0.0 if k == len(raw) - 1 else (rng.uniform(-0.1, 0.1) if k in lop else rng.normal(0.0, 0.03))
         tiers.append(dict(top=float(top), bot=float(bot), cx=float(cx), aw=float(aw), ae=float(ae), tips=tips,
-                          deps=deps, hangs=hangs, droop=float(droop), f=float(f), last=k == len(raw) - 1))
+                          deps=deps, hangs=hangs, droop=float(droop), f=float(f), last=k == len(raw) - 1,
+                          slope=float(slope), dw=float(rng.uniform(0.6, 1.4)), de=float(rng.uniform(0.6, 1.4))))
         prev = bot
     return tiers
 
@@ -167,7 +179,8 @@ def _tier_geometry(t, H, W, rng):
         notch[inside] -= hg * np.abs(2 * s[inside] - 1) ** 3
     if t.get('last'):
         notch *= np.clip(np.abs(xs - cx) / 6.0, 0, 1)            # the lowest skirt hangs whole over the trunk
-    bottom = t['bot'] + t['droop'] * np.clip(np.abs(xs - cx) / reach, 0, 1) ** 2 - notch
+    dr = t['droop'] * np.where(xs < cx, t.get('dw', 1.0), t.get('de', 1.0))
+    bottom = t['bot'] + dr * np.clip(np.abs(xs - cx) / reach, 0, 1) ** 2 - notch + t.get('slope', 0.0) * (xs - cx)
     # the skirt widens from a narrow top to its full reach, its sides frayed a texel by needle tips
     tt = np.clip((Y - t['top']) / max(1.0, t['bot'] - t['top']), 0, 1)
     rch = np.where(X < cx, aw, ae)
@@ -376,6 +389,19 @@ def _shelves(code, owner, tiers, geo, U, above, rng, load, form):
     c = np.where(~rgt & ~top, C('snow_cool', 3), c)
     c = np.where((U > 0.5) & ~top, np.where(row == nrows - 1, C('snow_cool', 2), C('snow_cool', 3)), c)
     code[snow] = c[snow]
+    # every deep shelf turns through its front face to its foot (snow_cool 3, then 2), so no column of
+    # snow drops from its lit body straight into the needles
+    H_, W_ = snow.shape
+    for x in range(W_):
+        ys_ = np.nonzero(snow[:, x])[0]
+        if not len(ys_):
+            continue
+        for run in np.split(ys_, np.nonzero(np.diff(ys_) > 1)[0] + 1):
+            if len(run) >= 4:
+                code[run[-1], x] = C('snow_cool', 2)
+                code[run[-2], x] = C('snow_cool', 3)
+            elif len(run) >= 2:
+                code[run[-1], x] = C('snow_cool', 3)
     # the needles under each shelf: deep shade, a second row on the east
     below = np.zeros_like(snow)
     below[1:] = snow[:-1]
@@ -412,6 +438,12 @@ def conifer(form='pine', load=1.0, seed=None):
              & ~mask)
     code[holes] = C('leaf_cool', 1)
     mask = mask | holes
+    # no needle tip left floating off the crown (a speck in the sky)
+    lab, nl = ndi.label(mask)
+    if nl > 1:
+        sizes = ndi.sum(mask, lab, range(1, nl + 1))
+        mask = np.isin(lab, 1 + np.nonzero(sizes >= sizes.max())[0])
+        code[~mask] = -1
     # the crown's silhouette closed in each material's own edge tone (lit edges in its tone 1)
     pad = 2
     big = np.full((code.shape[0] + 2 * pad, code.shape[1] + 2 * pad), -1, np.int32)

@@ -11,9 +11,27 @@
   {
    "id": "still",
    "weight": 1.0,
-   "png": "res://kit/props/art/frost/frost_pine.png",
+   "png": "res://kit/props/art/frost/frost_pine_still.png",
    "foot": [
     51,
+    233
+   ]
+  },
+  {
+   "id": "b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_pine_b.png",
+   "foot": [
+    50,
+    233
+   ]
+  },
+  {
+   "id": "c",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_pine_c.png",
+   "foot": [
+    50,
     233
    ]
   }
@@ -23,7 +41,7 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "The woodland pine's painter with snow as shelves on its tiers (thick west, thinning east)."
+  "note": "A pine in tiers of boughs, snow lying on each bough heaped west and thinning east (three variants)."
  },
  "geometry": {
   "size_px": [

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bct2gykpi8f1l"
-path="res://.godot/imported/frost_spruce.png-bf6813aaa25f061241ae2db8e6af74db.ctex"
+uid="uid://ccmp5ss5t0unr"
+path="res://.godot/imported/frost_krummholz_wide_b.png-6d5359bdca3fb4ebe84b9c3bcfefe0e1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/props/art/frost/frost_spruce.png"
-dest_files=["res://.godot/imported/frost_spruce.png-bf6813aaa25f061241ae2db8e6af74db.ctex"]
+source_file="res://kit/props/art/frost/frost_krummholz_wide_b.png"
+dest_files=["res://.godot/imported/frost_krummholz_wide_b.png-6d5359bdca3fb4ebe84b9c3bcfefe0e1.ctex"]
 
 [params]
 
