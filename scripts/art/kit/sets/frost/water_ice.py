@@ -261,12 +261,17 @@ def sheet_foot(seed=113):
 def open_fall(seed=113):
     """The fall piece's picture as an open fall, and its loop: the sheet's 8 frames over the face
     (rock.rockface_fall paints the face and calls _icefall for the water)."""
-    from .rock import rockface_fall
+    # (after #536) the fall is painted into the same granite face as the panels either side of it
+    # (rock._granite_face, whose panel seams and lip meet at every edge), not the older block face
+    from .rock import _granite_face
     pics = []
     try:
         for t in range(FALL_FRAMES):
             _FALL_T[0] = t
-            pics.append(rockface_fall())
+            pic, a = _granite_face(4 * 24, seed)
+            _icefall(a, (0, 96), seed)
+            pic.a[:] = a
+            pics.append(pic)
     finally:
         _FALL_T[0] = 0
     p0 = pics[0]
