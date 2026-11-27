@@ -2032,8 +2032,11 @@ class Sun(unittest.TestCase):
         idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
         for k, e in idx.items():
             sh = e.get('shadow') or {}
-            if sh.get('kind') == 'footprint':
+            if sh.get('kind') == 'footprint' or 'mask' in sh:
+                # footprint, crown and volume masks alike (Matt, 27 Nov: one sun, south-east)
                 self.assertEqual(tuple(sh['sun']), CAST, '%s: masks made for another sun (run props)' % k)
+        from scripts.art.native import volume as VO
+        self.assertEqual((VO.KX, VO.KY), CAST)
         gd = open(os.path.join(S.ROOT, 'game', 'world', 'terrain', 'terrain_ground.gd')).read()
         self.assertIn('"res://data/sun.json"', gd)
         # the biomes' old copies are no longer read; they must not drift from the sun meanwhile
@@ -2561,7 +2564,16 @@ class HouseVolume(unittest.TestCase):
             east = (lv > 0) & (X > half)
             cols = np.nonzero(east.any(0))[0]
             self.assertGreaterEqual(int(X[0, cols.max()] - half), int(0.25 * 25 * 3), hid)
-            if look.get('gable') == 'front':
+            if look.get('gable') == 'front' and VO.KY >= 0:
+                # the one sun east and south (game/data/sun.json; Matt, 27 Nov): a front gable's east
+                # eave runs back at one height, so the column's east outline reaches its full width
+                # near the back and holds it, straight, down to the foot line (no verge slants it);
+                # the same house side-gabled peaks at its ridge's line instead (the branch below)
+                reach = [int(X[0, np.nonzero(r)[0].max()]) for r in east if r.any()]
+                top = int(np.argmax(reach))
+                self.assertLess(top, len(reach) // 4, hid)
+                self.assertEqual(min(reach[top:]), max(reach), hid)
+            elif look.get('gable') == 'front':
                 # a front gable's ridge runs back over the middle at the gable's height: its shadow
                 # reaches furthest north there, more than over either eave
                 north = [int(Y[np.nonzero(c)[0].min(), 0]) if c.any() else None for c in (lv > 0).T]

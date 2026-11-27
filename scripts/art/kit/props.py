@@ -27,24 +27,29 @@ def _res(path: str) -> str:
     return path if path.startswith('res://') else 'res://' + os.path.relpath(path, os.path.join(ROOT, 'game'))
 
 
-SQUASH, SHEAR, RIM = 0.3, 0.2, 6
+from scripts.art.sun import CAST  # noqa: E402  (kx, ky), the one sun (game/data/sun.json)
+
+RIM = 6
 
 
 def crown_shadow(png_res: str, foot, out_name: str):
     """A tree's cast shadow from its own silhouette (Claude A, 27 Oct: shaped from the crown, not
-    an ellipse): every opaque texel at height h above the foot lands on the ground squashed to
-    SQUASH of its height and pushed east by SHEAR of it (light from the upper left), its core two
-    ramp steps down and its outer RIM texels one (house-style 6). Written as an R8 mask with its
-    offset from the foot; TerrainGround and compose.shadows lay it like the ellipses."""
+    an ellipse), thrown by the one sun (Matt, 27 Nov: one sun, south-east; game/data/sun.json):
+    every opaque texel at height h above the foot lands CAST[0] h east and CAST[1] h south of the
+    foot (light from the upper left), its core two ramp steps down and its outer RIM texels one
+    (house-style 6). Written as an R8 mask with its offset from the foot; TerrainGround and
+    compose.shadows lay it like the ellipses."""
     from PIL import Image
     from scipy import ndimage as ndi
     a = np.asarray(Image.open(os.path.join(ROOT, 'game', png_res[len('res://'):])).convert('RGBA'))[..., 3] > 0
     H, W = a.shape
     fx, fy = foot
+    kx, ky = CAST
     ys, xs = np.nonzero(a)
     h = fy - ys - 0.5
-    sx = np.round(xs + 0.5 + h * SHEAR - fx).astype(int)
-    sy = np.round(h * -SQUASH).astype(int)
+    up = np.maximum(0.0, h)                         # a texel drawn below the foot lies on the ground
+    sx = np.round(xs + 0.5 + up * kx - fx).astype(int)   # on its own row (a drift, a root)
+    sy = np.round(up * ky + np.maximum(0.0, -h)).astype(int)
     x0, y0 = sx.min() - 2, sy.min() - 2
     m = np.zeros((sy.max() - y0 + 3, sx.max() - x0 + 3), bool)
     m[sy - y0, sx - x0] = True
@@ -73,7 +78,6 @@ def crown_shadow(png_res: str, foot, out_name: str):
 #    contact, and east of the picture nothing south of the foot line (11.6).
 #  - The ramp: two steps down in the core, one in the rim, the core chosen from the local thickness
 #    (a distance transform), so every shadow at least 3 texels thick keeps a core.
-from scripts.art.sun import CAST  # noqa: E402  (kx, ky), the one sun
 
 BASE_BAND = 6            # columns whose lowest row lies within this of the foot (2 world px) stand on the ground
 CONTACT = 3              # texels of contact shown below the base in the core tone (1 world px)
@@ -522,12 +526,13 @@ def entry(p: dict) -> dict:
             for i, v in enumerate(p['variants']):
                 vshadow[v['id']] = crown_shadow(v['png'], v.get('foot', foot), 'shadow_%s.png' % p['id'] if i == 0 else
                                                 'shadow_%s__%s.png' % (p['id'], v['id']))
-            shadow = {'mask': vshadow[p['variants'][0]['id']]}
+            shadow = {'mask': vshadow[p['variants'][0]['id']], 'sun': list(CAST)}
         else:
             v0 = p['variants'][0]
-            shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'])}
+            shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id']),
+                      'sun': list(CAST)}
     elif vol:
-        shadow = {'mask': vol, 'kind': 'volume'}
+        shadow = {'mask': vol, 'kind': 'volume', 'sun': list(CAST)}
     elif cs.get('shape') == 'ellipse' and p.get('variants'):
         # by the footprint rule (footprint_shadow), one mask per variant: the placed variant's mask is
         # laid (KitPiece.shadow, compose.shadows), and `mask` (the first variant's) stays for readers of

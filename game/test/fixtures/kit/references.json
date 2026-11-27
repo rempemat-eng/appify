@@ -5,7 +5,7 @@
    "id": "kitlab",
    "plan": "game/kit/zones/kitlab.json",
    "plan_sha256": "6acb44fb54d7b2ccc6e85eb62cf283af1d31f58208d7e78b2cc2bd940f5d2513",
-   "rgba_sha256": "b4b67297bc9a7d6e9f16486675b421c28a5f8990e3fc4ac4beec331f0d10a86f",
+   "rgba_sha256": "9d849f9977e08d12f1a70cd6ec83275ffcfd22b6b9da4477d1a6d6bca15274b1",
    "size": [
     960,
     552
@@ -52,7 +52,7 @@
  "cell_texels": 24,
  "feature_pixels": {
   "dressing": 6390,
-  "shadows": 12248
+  "shadows": 10306
  },
  "negative": {
   "file": "three_materials_shifted_profile.png",
@@ -66,9 +66,9 @@
   "game/kit/props/art/shadow_woodland_boulder__b1.png": "0a6663879cea0447199d658b973f8cb64e45d9a6379147a8588b0424c9e10819",
   "game/kit/props/art/shadow_woodland_boulder__b4.png": "5dc9900ad4fd136ca6aa2b1b2c0cf8de89190f79975c2c67f59322978f9b31e6",
   "game/kit/props/art/shadow_woodland_forest_bench.png": "767b2c4f9d723cf33dfa809b0950754087517075d404a90b6d93ecb30d5b8cfb",
-  "game/kit/props/art/shadow_woodland_oak.png": "e9ab78ed9e778a2f1b86342439f97b731bf6ed13b2961dcbdc572e5d2bacca88",
+  "game/kit/props/art/shadow_woodland_oak.png": "49a322b05f83494ec2296d8ffe4386689c965dd447bff35a84af849fb32408a5",
   "game/kit/props/art/shadow_woodland_stump.png": "4f4d9c9e3fee1c471962cfd9ae35815c3235db0e376842196e7de0485875ddb2",
-  "game/kit/props/index.json": "a468d29f69f8fedf00a8c1dfa844ad5f106fb5b009c59ed9319e9da0415bbb49",
+  "game/kit/props/index.json": "e0b124a9e7b06b012be161055eaadbef5dabaadfbdffdf2c9ad8a7984280ee1b",
   "game/kit/terrain/decal_bankstone_0.png": "8d1222c1b4221595ff5761db4c38310958c9ccb5fe23c44ac85184f73a204888",
   "game/kit/terrain/decal_bankstone_1.png": "ff6e6e4534c777c8d97798f24621fc0d84997f2a871006fdd5c82c35cf6facb8",
   "game/kit/terrain/decal_bankstone_2.png": "e7c654f3980aeb16378897d9cc92e1274e784642a9bcf4da60db845da68ade6d",

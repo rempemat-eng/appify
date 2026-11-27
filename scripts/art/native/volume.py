@@ -14,8 +14,10 @@ Every house that `houses.building` paints gets these as rules, never hand-painte
 - protrusions (11.5): a sign, a pipe, a plate or a bundle hung on the wall throws an L of shade
   east of it and under it, offset by how far it stands off the wall;
 - the ground cast shadow (11.6): the house as solids (walls, a 45 degree roof, its stacks),
-  projected on the ground east and a little north (`KX`, `KY` per world px of height), a column
-  beside the east wall that ends in its gable's verges, one, two and three tones from its edge in.
+  projected on the ground by the one sun, east and south (`KX`, `KY` per world px of height, read
+  from game/data/sun.json through scripts/art/sun.py; Matt, 27 Nov), a column beside the east wall
+  that ends in its gable's verges and stops at the front's foot line, one, two and three tones
+  from its edge in.
 
 Building volume uses the measured depth (eastward-edges 11, house-style 6): each drop is a
 luminance ratio read off Eastward, reached by the fewest steps (one to three) down the texel's own
@@ -30,6 +32,8 @@ from __future__ import annotations
 
 import numpy as np
 from scipy import ndimage as ndi
+
+from scripts.art.sun import CAST
 
 # --- measured rules (eastward-edges.md 11; E native px at an adult of 54, ours world px at 25) ----
 # Building volume uses the measured depth (eastward-edges 11, house-style 6): each shadow is a
@@ -61,7 +65,7 @@ RECESS = (1.0, 0.7)      # world px of an opening's dark head and west reveal (E
 HEAD_DROP, REVEAL_DROP = 0.55, 0.4
 DRIP = 1.0               # world px of a sill's drip shadow (E 2 to 3 px)
 DRIP_DROP = 0.4
-KX, KY = 0.19, -0.10     # the ground cast shadow per world px of height: east, a little north
+KX, KY = CAST            # the ground cast shadow per world px of height: the one sun, east and south
 RIM = 3.0                # world px of the cast shadow's outer band, one tone (E fades over 3 to 10 px)
 MID = 2.6                # world px of the band two tones down inside it; deeper in, three (B3's core)
 GLOWS = ('lamp', 'lava', 'glowflora')
@@ -386,7 +390,8 @@ def house_cast(spec: dict, d: float, kx: float = KX, ky: float = KY):
     steps and its top-left corner in texels from the house's foot (the middle of its front foot
     line). Each solid (the walls, the roof, every stack) is projected (x + kx h, g + ky h) and
     filled as its convex hull, so the column east of the house ends in its gable's slanted verges
-    or its hip and a stack beyond the roof's shadow shows as its own notch. The steps follow
+    or its hip and a stack beyond the roof's shadow shows as its own notch. (kx, ky) is the one sun
+    (game/data/sun.json), east and south. The steps follow
     Eastward's soft edge and dark core (B3): the outer RIM one tone, the next MID two, deeper in
     three; nothing falls south of the foot line, before the lit front."""
     vol = volume_of(spec)
