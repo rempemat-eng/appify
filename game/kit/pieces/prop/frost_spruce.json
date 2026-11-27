@@ -11,10 +11,28 @@
   {
    "id": "still",
    "weight": 1.0,
-   "png": "res://kit/props/art/frost/frost_spruce.png",
+   "png": "res://kit/props/art/frost/frost_spruce_still.png",
    "foot": [
-    51,
-    250
+    52,
+    251
+   ]
+  },
+  {
+   "id": "b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_spruce_b.png",
+   "foot": [
+    40,
+    219
+   ]
+  },
+  {
+   "id": "c",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_spruce_c.png",
+   "foot": [
+    47,
+    251
    ]
   }
  ],
@@ -23,19 +41,19 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "A tall narrow spruce from the woodland pine's tiered painter, snow as shelves on its tiers."
+  "note": "A tall narrow spruce in tiers of boughs, snow lying in a lump on each bough (three variants)."
  },
  "geometry": {
   "size_px": [
-   107,
-   251
+   103,
+   252
   ],
   "size_cells": [
    3,
    2
   ],
   "z_sort": "foot",
-  "height_px": 251,
+  "height_px": 252,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -46,8 +64,8 @@
    ]
   },
   "foot": [
-   51,
-   250
+   52,
+   251
   ],
   "footprint": [
    [

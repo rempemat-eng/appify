@@ -13,8 +13,8 @@
    "weight": 1.0,
    "png": "res://kit/props/art/frost/frost_krummholz_still.png",
    "foot": [
-    61,
-    108
+    75,
+    111
    ]
   },
   {
@@ -22,8 +22,8 @@
    "weight": 0.6,
    "png": "res://kit/props/art/frost/frost_krummholz_low.png",
    "foot": [
-    42,
-    90
+    64,
+    94
    ]
   },
   {
@@ -31,8 +31,35 @@
    "weight": 0.6,
    "png": "res://kit/props/art/frost/frost_krummholz_wide.png",
    "foot": [
-    68,
-    125
+    73,
+    114
+   ]
+  },
+  {
+   "id": "still_b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_krummholz_still_b.png",
+   "foot": [
+    79,
+    98
+   ]
+  },
+  {
+   "id": "low_b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_krummholz_low_b.png",
+   "foot": [
+    63,
+    94
+   ]
+  },
+  {
+   "id": "wide_b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_krummholz_wide_b.png",
+   "foot": [
+    79,
+    106
    ]
   }
  ],
@@ -41,19 +68,19 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "A pine at the tree line grown low and wide, snow on its tiers."
+  "note": "A spruce at the tree line grown low and wide, flagged to the lee, snow on its boughs (two of each form)."
  },
  "geometry": {
   "size_px": [
-   137,
-   126
+   162,
+   115
   ],
   "size_cells": [
    4,
    2
   ],
   "z_sort": "foot",
-  "height_px": 126,
+  "height_px": 115,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -64,8 +91,8 @@
    ]
   },
   "foot": [
-   61,
-   108
+   75,
+   111
   ],
   "footprint": [
    [

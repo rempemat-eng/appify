@@ -515,8 +515,17 @@ def entry(p: dict) -> dict:
         # its volume's shadow, and only that one
         vol = volume_shadow(p, 'shadow_%s.png' % p['id'])
     if is_tree:
-        v0 = p['variants'][0]
-        shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'])}
+        # every variant of a tree casts its own crown (logic audit of #540, F1): KitPiece.shadow and
+        # compose.shadows prefer a variant's own mask; `mask` (the first variant's) stays for readers
+        # of the piece as a whole. A tree of one variant keeps its single mask as before.
+        if len(p['variants']) > 1:
+            for i, v in enumerate(p['variants']):
+                vshadow[v['id']] = crown_shadow(v['png'], v.get('foot', foot), 'shadow_%s.png' % p['id'] if i == 0 else
+                                                'shadow_%s__%s.png' % (p['id'], v['id']))
+            shadow = {'mask': vshadow[p['variants'][0]['id']]}
+        else:
+            v0 = p['variants'][0]
+            shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'])}
     elif vol:
         shadow = {'mask': vol, 'kind': 'volume'}
     elif cs.get('shape') == 'ellipse' and p.get('variants'):
