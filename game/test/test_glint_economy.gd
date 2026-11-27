@@ -6,6 +6,27 @@ const Ledger = preload("res://core/glint_economy.gd")
 const Sim = preload("res://tools/sim_glint.gd")
 const MAX_AMOUNT: int = 9007199254740991
 
+func test_restore_receipt_validation_is_detached_and_has_no_purse() -> void:
+	var value := {"id": "restore:forge:t1", "kind": "spend", "amount": 30.0,
+		"source": "restore:forge", "category": "restoration", "item": "forge", "eligible": true, "tier": 1.0}
+	var before := value.duplicate(true)
+	var checked: Dictionary = Ledger.validate_restore_receipt(value)
+	assert_bool(checked.ok).is_true()
+	assert_int(typeof(checked.receipt.amount)).is_equal(TYPE_INT)
+	assert_int(typeof(checked.receipt.tier)).is_equal(TYPE_INT)
+	assert_bool(checked.has("state") or checked.receipt.has("balance")).is_false()
+	checked.receipt.amount = 99
+	assert_dict(value).is_equal(before)
+
+func test_restore_receipt_rejects_refusals_and_unvalidated_payloads() -> void:
+	var good := {"id": "restore:forge:t1", "kind": "spend", "amount": 30,
+		"source": "restore:forge", "category": "restoration", "item": "forge", "eligible": true, "tier": 1}
+	for mutation: Dictionary in [{"tier": 0}, {"tier": 1.5}, {"eligible": false},
+			{"amount": -1}, {"category": "shop"}, {"balance": 70}, {"kind": "earn"}]:
+		var value := good.duplicate(true)
+		value.merge(mutation, true)
+		assert_bool(Ledger.validate_restore_receipt(value).ok).is_false()
+
 func _read(path: String) -> Dictionary:
 	var value: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	assert_bool(value is Dictionary).is_true()

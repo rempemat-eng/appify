@@ -46,18 +46,26 @@ const SILENT := {
 }
 const ARROW_REACH := 330.0
 const MAX_STATES := 60000
+const SAVE_PATH := "user://test_story_model_save.json"
 
 var _things := {}       ## zone id -> Array of things (Dictionaries)
 var _conds := {}        ## zone id -> Array of every Conditional's only_if in the zone (parsed, distinct)
 var _reach := {}        ## "zone|truth of each cond" -> Array[bool], one per thing
 var _shown := {}        ## "speaker|first line" -> true, every dialogue entry the walk showed
 
+var _save_path_before_test: String
+
 func before_test() -> void:
+	_save_path_before_test = SaveGame.path
+	SaveGame.path = SAVE_PATH
 	SaveGame.reset()
 
 func after_test() -> void:
 	SaveGame.reset()
 	Raids.offer_restores()          # a raid won in the walk leaves no offered site behind
+	for file: String in [SAVE_PATH, SAVE_PATH + ".tmp"]:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(file))
+	SaveGame.path = _save_path_before_test
 
 # --- what the zones offer -----------------------------------------------------------------------
 func _scan() -> void:
