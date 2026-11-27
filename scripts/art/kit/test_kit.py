@@ -2033,10 +2033,40 @@ class Sun(unittest.TestCase):
         for k, e in idx.items():
             sh = e.get('shadow') or {}
             if sh.get('kind') == 'footprint' or 'mask' in sh:
-                # footprint, crown and volume masks alike (Matt, 27 Nov: one sun, south-east)
+                # footprint, crown and volume masks alike (one fixed sun: shadows fall south-east)
                 self.assertEqual(tuple(sh['sun']), CAST, '%s: masks made for another sun (run props)' % k)
         from scripts.art.native import volume as VO
         self.assertEqual((VO.KX, VO.KY), CAST)
+
+    def test_crown_masks_fall_with_the_sun(self):
+        # the geometry, not the label (logic audit of #545, F6): every tree variant's mask lies with
+        # the sun from its foot (nothing more than 2 texels north of the foot row, its centroid within
+        # 15 to 60 degrees of east towards south, and the sun's own angle is inside that band), and its
+        # core touches the foot (within 3 texels, as the footprint rule's contact): no loose crown blob
+        from PIL import Image
+        from scripts.art.sun import CAST
+        idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
+        sun = np.degrees(np.arctan2(CAST[1], CAST[0]))
+        self.assertTrue(15 <= sun <= 60)
+        n = 0
+        for k, e in idx.items():
+            sh = e.get('shadow') or {}
+            if e.get('role') != 'tree' or 'mask' not in sh:
+                continue
+            for vid, v in e['variants'].items():
+                m = v.get('shadow') or sh['mask']
+                mk = np.asarray(Image.open(os.path.join(S.ROOT, 'game', m['png'][len('res://'):])))
+                ox, oy = m['offset']
+                ys, xs = np.nonzero(mk)
+                self.assertGreaterEqual(int((ys + oy).min()), -2, '%s %s: north of its foot' % (k, vid))
+                ang = np.degrees(np.arctan2((ys + oy + 0.5).mean(), (xs + ox + 0.5).mean()))
+                self.assertTrue(15 <= ang <= 60, '%s %s: centroid at %.1f degrees' % (k, vid, ang))
+                cy, cx = np.nonzero(mk >= 2)
+                self.assertTrue(len(cx), '%s %s: no core' % (k, vid))
+                self.assertLessEqual(float(np.hypot(cx + ox + 0.5, cy + oy + 0.5).min()), 3.0,
+                                     '%s %s: the core does not reach the foot' % (k, vid))
+                n += 1
+        self.assertGreaterEqual(n, 30)
         gd = open(os.path.join(S.ROOT, 'game', 'world', 'terrain', 'terrain_ground.gd')).read()
         self.assertIn('"res://data/sun.json"', gd)
         # the biomes' old copies are no longer read; they must not drift from the sun meanwhile
@@ -2565,14 +2595,21 @@ class HouseVolume(unittest.TestCase):
             cols = np.nonzero(east.any(0))[0]
             self.assertGreaterEqual(int(X[0, cols.max()] - half), int(0.25 * 25 * 3), hid)
             if look.get('gable') == 'front' and VO.KY >= 0:
-                # the one sun east and south (game/data/sun.json; Matt, 27 Nov): a front gable's east
-                # eave runs back at one height, so the column's east outline reaches its full width
-                # near the back and holds it, straight, down to the foot line (no verge slants it);
-                # the same house side-gabled peaks at its ridge's line instead (the branch below)
-                reach = [int(X[0, np.nonzero(r)[0].max()]) for r in east if r.any()]
-                top = int(np.argmax(reach))
-                self.assertLess(top, len(reach) // 4, hid)
-                self.assertEqual(min(reach[top:]), max(reach), hid)
+                # the sun leaning south (game/data/sun.json: shadows fall south-east): the column is
+                # thrown by the roof, not by a box. Its east reach past the wall is the furthest throw
+                # of the volume's solids (the eave's overhang plus kx times its height), and the
+                # roofed cast covers more ground than the walls alone would throw
+                vol = VO.volume_of(look)
+                w = vol['w']
+                reach = max((x - w / 2 + VO.KX * hh) * 3.0 for part in vol['parts'] for (x, g, hh) in part) - half
+                self.assertLessEqual(abs(int(X[0, cols.max()] + 1 - half) - reach), 2, hid)
+                walls = VO._hull(np.array([((x - w / 2 + VO.KX * hh) * 3.0, (g + VO.KY * hh) * 3.0)
+                                           for (x, g, hh) in vol['parts'][0]]))
+                Xc = np.broadcast_to(X + 0.5, lv.shape)
+                Yc = np.broadcast_to(Y + 0.5, lv.shape)
+                wall_only = VO._inside(walls, Xc, Yc) & (Yc < 0)
+                self.assertGreater(int((lv > 0).sum()), int(wall_only.sum()) + 200, hid)
+                self.assertGreater(int(((lv > 0) & ~wall_only).sum()), 200, hid)
             elif look.get('gable') == 'front':
                 # a front gable's ridge runs back over the middle at the gable's height: its shadow
                 # reaches furthest north there, more than over either eave

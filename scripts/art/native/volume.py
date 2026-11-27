@@ -14,9 +14,10 @@ Every house that `houses.building` paints gets these as rules, never hand-painte
 - protrusions (11.5): a sign, a pipe, a plate or a bundle hung on the wall throws an L of shade
   east of it and under it, offset by how far it stands off the wall;
 - the ground cast shadow (11.6): the house as solids (walls, a 45 degree roof, its stacks),
-  projected on the ground by the one sun, east and south (`KX`, `KY` per world px of height, read
-  from game/data/sun.json through scripts/art/sun.py; Matt, 27 Nov), a column beside the east wall
-  that ends in its gable's verges and stops at the front's foot line, one, two and three tones
+  projected on the ground by the one sun (`KX`, `KY` per world px of height, read from
+  game/data/sun.json through scripts/art/sun.py: shadows fall south-east; light from the upper
+  left), a column beside the east wall that ends in its gable's verges and stops at the front's
+  foot line (11.6), one, two and three tones
   from its edge in.
 
 Building volume uses the measured depth (eastward-edges 11, house-style 6): each drop is a

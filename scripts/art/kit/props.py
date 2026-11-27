@@ -30,33 +30,106 @@ def _res(path: str) -> str:
 from scripts.art.sun import CAST  # noqa: E402  (kx, ky), the one sun (game/data/sun.json)
 
 RIM = 6
+TRUNK_CORE, TRUNK_RIM = 1, 3   # the trunk's run: a core 3 texels thick, a rim of 3 each side (9 in all)
+PAD_DEEP = 3                   # the contact pad under the base: 3 texels deep, the base's width + 2
+BASE_ROWS = 6                  # rows over the foot whose opaque columns are the base (2 world px)
+DEEP_MIN = 40                  # the third step's parts on snow: at least this many texels
+DRIFT_L = 200                  # a drift at the foot: texels this bright (luma) joined to the base rows
+SNOW_BIOMES = ('frostline',)   # a tree on snow steps its core one tone further (eastward-edges 7.1)
 
 
-def crown_shadow(png_res: str, foot, out_name: str):
+def _runs(row: np.ndarray) -> list:
+    """The runs of True in a 1D array as (first, last) pairs."""
+    d = np.diff(np.concatenate([[0], row.astype(np.int8), [0]]))
+    return list(zip(np.nonzero(d == 1)[0], np.nonzero(d == -1)[0] - 1))
+
+
+def crown_shadow(png_res: str, foot, out_name: str, deep: bool = False):
     """A tree's cast shadow from its own silhouette (Claude A, 27 Oct: shaped from the crown, not
-    an ellipse), thrown by the one sun (Matt, 27 Nov: one sun, south-east; game/data/sun.json):
-    every opaque texel at height h above the foot lands CAST[0] h east and CAST[1] h south of the
-    foot (light from the upper left), its core two ramp steps down and its outer RIM texels one
-    (house-style 6). Written as an R8 mask with its offset from the foot; TerrainGround and
-    compose.shadows lay it like the ellipses."""
+    an ellipse), thrown by the one sun (game/data/sun.json: shadows fall south-east; light from the
+    upper left): every opaque texel at height h above the foot lands CAST[0] h east and CAST[1] h
+    south of the foot. What is drawn below the foot (a drift, a root) casts nothing. The shadow is
+    tied to its tree (detail and logic audits of #545):
+      - a contact pad in the core tone under the base, the base's width + 2 and PAD_DEEP deep, as the
+        footprint rule's contact;
+      - the trunk's run thrown along the sun's ray from the foot, its core TRUNK_CORE texels each side
+        of the axis and its rim TRUNK_RIM beyond, wherever the tree's axis is drawn, so the core runs
+        unbroken from the foot into the crown's shadow and a thin snag or sapling keeps a core;
+      - the outer RIM texels one ramp step down, the rest two (house-style 6). On snow (`deep`) a
+        third step lies 3 texels further in, along the trunk's axis and on the pad, so the shade
+        reads as shade and not as a drift (snow's tones lie 5 % apart at the top of its ramp).
+    Written as an R8 mask with its offset from the foot; TerrainGround and compose.shadows lay it
+    like the ellipses."""
     from PIL import Image
     from scipy import ndimage as ndi
-    a = np.asarray(Image.open(os.path.join(ROOT, 'game', png_res[len('res://'):])).convert('RGBA'))[..., 3] > 0
+    rgba = np.asarray(Image.open(os.path.join(ROOT, 'game', png_res[len('res://'):])).convert('RGBA'))
+    a = rgba[..., 3] > 0
     H, W = a.shape
     fx, fy = foot
     kx, ky = CAST
-    ys, xs = np.nonzero(a)
+    fr = int(np.ceil(fy - 0.5))                     # rows above it stand over the ground
+    # a snow drift drawn at the foot lies on the ground: bright texels joined to the bottom rows cast
+    # nothing and are not the base (the krummholz's west drifts threw a band west of the shrub)
+    luma = rgba[..., :3].astype(float) @ np.array([0.2126, 0.7152, 0.0722])
+    lab, _n = ndi.label(a & (luma > DRIFT_L))
+    low = np.unique(lab[max(0, fr - BASE_ROWS):fr])
+    drift = ndi.binary_dilation(np.isin(lab, low[low > 0]), np.ones((3, 3), bool), iterations=2)   # and its outline
+    a = a & ~drift
+    # the base: the run of the bottom rows' opaque columns at the foot (or the nearest one)
+    band = a[max(0, fr - BASE_ROWS):fr].any(0)
+    runs = _runs(band)
+    bx0, bx1 = min(runs, key=lambda r: 0 if r[0] <= fx < r[1] + 1 else min(abs(r[0] - fx), abs(r[1] + 1 - fx)))
+    bw = bx1 - bx0 + 1
+    # the trunk's axis from the foot up: it follows a narrow run (a leaning trunk), holds its line
+    # through the crown, and is drawn where the tree is drawn there
+    cx, axis = (bx0 + bx1 + 1) / 2.0, []
+    for y in range(fr - 1, -1, -1):
+        row = a[y]
+        c = int(np.clip(np.floor(cx), 0, W - 1))
+        near = [r for r in _runs(row) if r[0] - 1 <= c <= r[1] + 1]
+        if not near:
+            break                                   # the axis ends where the tree does: no loose stamps
+        r0, r1 = near[0]
+        if r1 - r0 + 1 <= bw + 4:
+            cx = (r0 + r1 + 1) / 2.0
+        axis.append((cx, fy - y - 0.5))
+    # the silhouette thrown
+    ys, xs = np.nonzero(a[:fr])
     h = fy - ys - 0.5
-    up = np.maximum(0.0, h)                         # a texel drawn below the foot lies on the ground
-    sx = np.round(xs + 0.5 + up * kx - fx).astype(int)   # on its own row (a drift, a root)
-    sy = np.round(up * ky + np.maximum(0.0, -h)).astype(int)
-    x0, y0 = sx.min() - 2, sy.min() - 2
-    m = np.zeros((sy.max() - y0 + 3, sx.max() - x0 + 3), bool)
+    sx = np.round(xs + 0.5 + h * kx - fx).astype(int)
+    sy = np.round(h * ky).astype(int)
+    ax = np.array([(np.round(x + h_ * kx - fx), np.round(h_ * ky)) for x, h_ in axis], int).reshape(-1, 2)
+    px0, px1 = int(np.floor(bx0 - fx)) - 1, int(np.ceil(bx1 + 1 - fx)) + 1     # the pad's columns
+    M = 8 + TRUNK_RIM + TRUNK_CORE
+    xs_all = np.concatenate([sx, ax[:, 0], [px0, px1 - 1]])
+    ys_all = np.concatenate([sy, ax[:, 1], [0, PAD_DEEP - 1]])
+    x0, y0 = int(xs_all.min()) - M, int(ys_all.min()) - M
+    shape = (int(ys_all.max()) - y0 + M + 1, int(xs_all.max()) - x0 + M + 1)
+    m = np.zeros(shape, bool)
     m[sy - y0, sx - x0] = True
     m = ndi.binary_closing(m, iterations=2)
     m = ndi.binary_fill_holes(m)
-    core = ndi.binary_erosion(m, iterations=RIM)
+    line = np.zeros(shape, bool)
+    line[ax[:, 1] - y0, ax[:, 0] - x0] = True
+    pad = np.zeros(shape, bool)
+    pad[-y0:-y0 + PAD_DEEP, px0 - x0:px1 - x0] = True
+    sq = np.ones((3, 3), bool)
+    tcore = ndi.binary_dilation(line, sq, iterations=TRUNK_CORE) if len(ax) else line
+    trim = ndi.binary_dilation(tcore, sq, iterations=TRUNK_RIM)
+    m |= trim | pad
+    core = ndi.binary_erosion(m, iterations=RIM) | tcore | pad
     out = np.where(core, 2, np.where(m, 1, 0)).astype(np.uint8)
+    if deep:
+        # the third step: deep in the crown's core (opened, and only parts of some size, so no
+        # loose blocks), along the trunk's axis and on the pad
+        inner = ndi.binary_opening(ndi.binary_erosion(m, iterations=RIM + 3) & core, sq)
+        lab3, n3 = ndi.label(inner)
+        if n3:
+            size = ndi.sum(inner, lab3, range(1, n3 + 1))
+            inner = np.isin(lab3, 1 + np.nonzero(size >= DEEP_MIN)[0])
+        out[inner | tcore | pad] = 3
+        out[ndi.binary_dilation(out == 3, sq) & (out == 1)] = 2     # never three tones beside one
+    out[:max(0, -y0)] = 0                           # nothing north of the foot row (the trunk's rim at the foot)
     Image.fromarray(out, 'L').save(os.path.join(OUT, 'art', out_name))
     return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(x0), int(y0)]}
 
@@ -522,14 +595,15 @@ def entry(p: dict) -> dict:
         # every variant of a tree casts its own crown (logic audit of #540, F1): KitPiece.shadow and
         # compose.shadows prefer a variant's own mask; `mask` (the first variant's) stays for readers
         # of the piece as a whole. A tree of one variant keeps its single mask as before.
+        deep = any(b in SNOW_BIOMES for b in p.get('biomes') or [])
         if len(p['variants']) > 1:
             for i, v in enumerate(p['variants']):
                 vshadow[v['id']] = crown_shadow(v['png'], v.get('foot', foot), 'shadow_%s.png' % p['id'] if i == 0 else
-                                                'shadow_%s__%s.png' % (p['id'], v['id']))
+                                                'shadow_%s__%s.png' % (p['id'], v['id']), deep=deep)
             shadow = {'mask': vshadow[p['variants'][0]['id']], 'sun': list(CAST)}
         else:
             v0 = p['variants'][0]
-            shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id']),
+            shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'], deep=deep),
                       'sun': list(CAST)}
     elif vol:
         shadow = {'mask': vol, 'kind': 'volume', 'sun': list(CAST)}

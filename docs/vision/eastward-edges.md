@@ -311,7 +311,7 @@ Ours (`volume.house_cast`):
   - deeper in, three.
 
   The ground keeps its own texture under it, its tufts and patches stepped down, never replaced.
-- **One sun (Matt, 27 Nov).** Every cast shadow follows `game/data/sun.json`, east and south with light from the upper left: props (7.2), trees' crown masks (`scripts/art/kit/props.crown_shadow`) and houses' volumes alike. Night never rotates a shadow; it only softens or fades it under the night tint. A house's column still stops at the front's foot line, so no band lies across its own lit front and doorstep, as no Eastward shot shows.
+- **One fixed sun (Matt, 27 Nov).** Every cast shadow follows `game/data/sun.json`: shadows fall south-east; light from the upper left. That holds for props (7.2), trees' crown masks (`scripts/art/kit/props.crown_shadow`) and houses' volumes alike. Night never rotates a shadow; it only softens or fades it under the night tint. A house's column still stops at the front's foot line (the existing rule above, not part of that decision; its shape under the new sun waits for Matt), so no band lies across its own lit front and doorstep.
 
 Where it is drawn:
 
