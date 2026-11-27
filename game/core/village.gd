@@ -96,9 +96,11 @@ func _restore_forge(id: String) -> Dictionary:
 	# remains authoritative; a negative purse never reaches fresh().
 	var initial := GlintEconomy.fresh(SaveGame.data.glint)
 	if not initial.ok:
+		initial.applied = false
 		return initial
 	var applied := GlintEconomy.apply(initial.state, event)
 	if not applied.ok:
+		applied.applied = false
 		return applied
 	var stored: Dictionary = applied.receipt.duplicate(true)
 	stored.tier = 1

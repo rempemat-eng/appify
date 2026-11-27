@@ -401,7 +401,7 @@ func test_a_fresh_game_has_effects_and_ambience_on_and_gentle_off() -> void:
 	assert_bool(SaveGame.setting("sound_effects")).is_true()
 	assert_bool(SaveGame.setting("ambience")).is_true()
 	assert_bool(SaveGame.setting("gentle_sound")).is_false()
-	assert_int(SaveGame.VERSION).is_equal(3)
+	assert_int(SaveGame.data.version).is_equal(SaveGame.VERSION)
 
 func test_a_save_from_before_sound_loads_with_the_defaults() -> void:
 	# a save written by main on 13 Nov (version 1, before this), and the first night route's own
@@ -414,7 +414,7 @@ func test_a_save_from_before_sound_loads_with_the_defaults() -> void:
 		file.close()
 		SaveGame.data.settings.gentle_sound = true                 # the running game's choice does not leak in
 		assert_int(SaveGame.load_save(PATH)).is_equal(OK)
-		assert_int(SaveGame.data.version).is_equal(3)
+		assert_int(SaveGame.data.version).is_equal(SaveGame.VERSION)
 		assert_bool(SaveGame.data.settings.sound_effects).is_true()
 		assert_bool(SaveGame.data.settings.ambience).is_true()
 		assert_bool(SaveGame.data.settings.gentle_sound).is_false()
@@ -483,7 +483,7 @@ func test_a_damaged_sound_setting_loads_at_its_default_and_keeps_the_progress() 
 		assert_dict(SaveGame.data.player).is_equal(whole.player)
 		assert_bool(SaveGame.data.settings.reduced_motion).is_true()
 		assert_str(SaveGame.data.settings.pixel_scale).is_equal("whole")
-		assert_int(SaveGame.data.version).is_equal(3)
+		assert_int(SaveGame.data.version).is_equal(SaveGame.VERSION)
 		# and the mended save is written back as a good one
 		assert_int(SaveGame.save(PATH)).is_equal(OK)
 		var again: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(PATH))

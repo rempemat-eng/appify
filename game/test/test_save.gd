@@ -602,3 +602,53 @@ func test_malformed_ledger_is_quarantined_without_replaying_or_losing_progress()
 		assert_array(migrated.ledger.receipts).is_empty()
 		assert_int(migrated.ledger.opening.glint).is_equal(-3)
 		assert_dict(doc).is_equal(before)
+
+func test_an_existing_raw_ledger_quarantine_is_never_overwritten_by_later_damage() -> void:
+	for first: Variant in [null, "first raw ledger", ["first", {"keep": true}], {"first": ["opaque"]}]:
+		var doc := SaveGame.fresh()
+		doc.glint = -3
+		doc.village.restored.forge = 1
+		doc.extension = {"keep": "progress"}
+		doc.ledger_quarantine = first
+		doc.ledger = {"second": "damaged ledger"}
+		var before := doc.duplicate(true)
+		var migrated: Dictionary = SaveGame._migrate(doc)
+		assert_bool(migrated.has("ledger_quarantine")).is_true()
+		assert_bool(migrated.ledger_quarantine == first).is_true()
+		assert_int(migrated.glint).is_equal(-3)
+		assert_int(migrated.village.restored.forge).is_equal(1)
+		assert_dict(migrated.extension).is_equal(doc.extension)
+		assert_array(migrated.ledger.receipts).is_empty()
+		assert_int(migrated.ledger.opening.glint).is_equal(-3)
+		assert_int(migrated.ledger.opening.restored.forge).is_equal(1)
+		assert_dict(doc).is_equal(before)
+		assert_dict(SaveGame._migrate(migrated)).is_equal(migrated)
+
+func test_first_ledger_quarantine_survives_another_damaged_load_and_round_trip() -> void:
+	var first := {"first": ["raw", {"keep": true}]}
+	var doc := SaveGame.fresh()
+	doc.glint = -3
+	doc.village.restored.forge = 1
+	doc.extension = {"keep": "progress"}
+	doc.ledger = first.duplicate(true)
+	_write_document(doc)
+	assert_int(SaveGame.load_save(PATH)).is_equal(OK)
+	assert_dict(SaveGame.data.ledger_quarantine).is_equal(first)
+	assert_int(SaveGame.save(PATH)).is_equal(OK)
+	var damaged_again: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(PATH))
+	damaged_again.ledger = {"second": "later damage"}
+	_write_document(damaged_again)
+	var bytes := FileAccess.get_file_as_bytes(PATH)
+	SaveGame.reset()
+	assert_int(SaveGame.load_save(PATH)).is_equal(OK)
+	assert_dict(SaveGame.data.ledger_quarantine).is_equal(first)
+	assert_int(SaveGame.data.glint).is_equal(-3)
+	assert_int(SaveGame.data.village.restored.forge).is_equal(1)
+	assert_dict(SaveGame.data.extension).is_equal(doc.extension)
+	assert_array(SaveGame.data.ledger.receipts).is_empty()
+	assert_bool(FileAccess.get_file_as_bytes(PATH) == bytes).is_true()
+	var loaded := SaveGame.data.duplicate(true)
+	assert_int(SaveGame.save(PATH)).is_equal(OK)
+	SaveGame.reset()
+	assert_int(SaveGame.load_save(PATH)).is_equal(OK)
+	assert_dict(SaveGame.data).is_equal(loaded)

@@ -65,6 +65,15 @@ func after_test() -> void:
 			MISSING_PATH + ".tmp", MISSING_PATH + ".name-migration.tmp"]:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(target))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(DIRECTORY_PATH))
+	assert_array(_errors).is_empty()
+
+func _assert_and_consume_errors(expected: Array[String]) -> void:
+	assert_array(_errors).is_equal(expected)
+	# Consume only the named messages. An extra or different error remains for after_test.
+	for message: String in expected:
+		var index := _errors.find(message)
+		if index >= 0:
+			_errors.remove_at(index)
 
 func _listen(event: Signal, callback: Callable) -> void:
 	event.connect(callback)
@@ -101,7 +110,7 @@ func test_real_restore_save_new_session_load_and_repeat_has_one_receipt() -> voi
 	# One atomic restore write, then the existing success observer's normal save.
 	assert_array(events).is_equal([["saved", PATH], ["changed", "forge"], ["saved", PATH]])
 	assert_array(nested_results).is_equal([OK, ERR_BUSY, OK])
-	assert_array(_errors).is_equal(["SaveGame: nested save to a different path refused"])
+	_assert_and_consume_errors(["SaveGame: nested save to a different path refused"])
 	assert_bool(FileAccess.get_file_as_bytes(NESTED_PATH) == nested_bytes).is_true()
 	assert_int(SaveGame.data.ledger.receipts.size()).is_equal(1)
 	assert_dict(SaveGame.data.ledger.receipts[0]).is_equal(result.receipt)
@@ -219,7 +228,7 @@ func test_failed_write_restores_snapshot_resyncs_once_and_plain_retry_applies() 
 	assert_array(saved_events).is_empty()
 	assert_array(changed_events).is_empty()
 	assert_array(nested_results).is_equal([ERR_BUSY, ERR_BUSY])
-	assert_array(_errors).is_equal([
+	_assert_and_consume_errors([
 		"SaveGame: nested save to a different path refused",
 		"SaveGame: save during transaction rollback refused",
 		"SaveGame: transaction save failed (%s)" % error_string(write_error)])
@@ -232,6 +241,7 @@ func test_failed_write_restores_snapshot_resyncs_once_and_plain_retry_applies() 
 	assert_int(saved_events.size()).is_equal(1)
 	assert_int(changed_events.size()).is_equal(1)
 	assert_int(loaded_events.size()).is_equal(1)
+	_assert_and_consume_errors(["SaveGame: nested save to a different path refused"])
 
 func _watch_restore() -> Dictionary:
 	var trace := {"data": SaveGame.data.duplicate(true), "resume": SaveGame.resume.duplicate(true),
@@ -261,6 +271,10 @@ func test_failed_rename_rolls_back_without_publishing_and_removes_temp() -> void
 	SaveGame.resume_unsaved = true
 	var trace := _watch_restore()
 	_assert_failed_restore(trace)
+	# The OS supplies the rename code; the helper asserts one transaction-save failure.
+	# Consume only that matching message, leaving unrelated errors for after_test.
+	if _errors.size() == 1 and _errors[0].begins_with("SaveGame: transaction save failed ("):
+		_errors.remove_at(0)
 	assert_bool(DirAccess.dir_exists_absolute(DIRECTORY_PATH)).is_true()
 	assert_bool(FileAccess.file_exists(DIRECTORY_PATH + ".tmp")).is_false()
 	assert_bool(FileAccess.get_file_as_bytes(PATH) == bytes).is_true()
@@ -270,7 +284,7 @@ func test_newer_disk_save_refuses_restore_and_preserves_every_byte() -> void:
 	var bytes := FileAccess.get_file_as_bytes(PATH)
 	var trace := _watch_restore()
 	_assert_failed_restore(trace)
-	assert_array(_errors).is_equal([
+	_assert_and_consume_errors([
 		"SaveGame: transaction save failed (%s)" % error_string(ERR_UNAVAILABLE)])
 	assert_bool(FileAccess.get_file_as_bytes(PATH) == bytes).is_true()
 	assert_bool(FileAccess.file_exists(PATH + ".tmp")).is_false()
@@ -284,7 +298,7 @@ func test_failed_legacy_import_blocks_restore_without_replacing_old_progress() -
 	SaveGame.path = MISSING_PATH
 	var trace := _watch_restore()
 	_assert_failed_restore(trace)
-	assert_array(_errors).is_equal([
+	_assert_and_consume_errors([
 		"SaveGame: transaction save failed (%s)" % error_string(import_error)])
 	assert_bool(FileAccess.get_file_as_bytes(LEGACY_PATH) == bytes).is_true()
 	assert_bool(FileAccess.file_exists(MISSING_PATH)).is_false()
@@ -301,15 +315,14 @@ func test_busy_and_invalid_transactions_do_not_invoke_rejected_callbacks() -> vo
 	assert_int(SaveGame.commit_transaction(outer)).is_equal(OK)
 	assert_array(calls).is_empty()
 	assert_array(nested).is_equal([ERR_BUSY])
-	assert_array(_errors).is_equal(["SaveGame: nested transaction refused"])
+	_assert_and_consume_errors(["SaveGame: nested transaction refused"])
 	assert_int(SaveGame.data.glint).is_equal(69)
 	var bytes := FileAccess.get_file_as_bytes(PATH)
 	SaveGame.data.player = []
 	var invalid := SaveGame.data.duplicate(true)
-	_errors.clear()
 	assert_int(SaveGame.commit_transaction(inner)).is_equal(ERR_INVALID_DATA)
 	assert_array(calls).is_empty()
-	assert_array(_errors).is_equal(["SaveGame: transaction has invalid save data"])
+	_assert_and_consume_errors(["SaveGame: transaction has invalid save data"])
 	assert_dict(SaveGame.data).is_equal(invalid)
 	assert_bool(FileAccess.get_file_as_bytes(PATH) == bytes).is_true()
 	assert_bool(FileAccess.file_exists(PATH + ".tmp")).is_false()
