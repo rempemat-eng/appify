@@ -333,7 +333,8 @@ func _migrate(doc: Dictionary) -> Dictionary:
 	var from_version := int(out.get("version", 0))
 	if out.has("ledger") and _ledger_error(out.ledger) != OK:
 		var damaged: Variant = out.ledger
-		out["ledger_quarantine"] = damaged.duplicate(true) if (damaged is Dictionary or damaged is Array) else damaged
+		if not out.has("ledger_quarantine"):
+			out["ledger_quarantine"] = damaged.duplicate(true) if (damaged is Dictionary or damaged is Array) else damaged
 		out.erase("ledger")
 		push_warning("SaveGame: damaged ledger quarantined; other progress kept")
 	var v := from_version
