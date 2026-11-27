@@ -237,27 +237,33 @@ def prop_jobs():
                  '123), snow lying on the roof as a mass with a cornice, icicles at the corners and over the door, a drift '
                  'at the foot with the doorway dug clear; the stove\'s plume loops (8 frames) over the still.')),
         ('frost_spruce', [('still', lambda: conifer('spruce', build=dict(wf=1.0, lean=-2.0))),
-                          ('b', lambda: conifer('spruce', seed=613, build=dict(wf=0.72, top=0.12, lean=6.0))),
+                          ('b', lambda: conifer('spruce', seed=613, build=dict(wf=0.8, top=0.14, lean=6.0, spire=True))),
                           ('c', lambda: conifer('spruce', seed=727, build=dict(wf=0.86, base=0.17, lean=-6.0)))], dict(
             name='Snowy spruce', cells=(3, 2), fp=B._fp(2, 1), collision={'shape': 'rect', 'rect': [-5.0, -4.0, 10, 4]},
             size_class='conifer (a tall spruce)', fn='conifer',
             note='A tall narrow spruce in tiers of boughs, snow lying in a lump on each bough (three variants).', **trees)),
-        ('frost_pine', [('still', lambda: conifer('pine')), ('b', lambda: conifer('pine', seed=619)),
+        ('frost_pine', [('still', lambda: conifer('pine')), ('b', lambda: conifer('pine', seed=619, build=dict(limbs_behind=True, window_pads=True, marks=True, caps=True))),
                         ('c', lambda: conifer('pine', seed=733))], dict(
             name='Snowy pine', cells=(4, 2), fp=B._fp(2, 1), collision={'shape': 'rect', 'rect': [-5.0, -4.0, 10, 4]},
             size_class='conifer (the woodland\'s pine, 79 world px)', fn='conifer',
             note='A pine in tiers of boughs, snow lying on each bough heaped west and thinning east (three variants).', **trees)),
         ('frost_pine_squat', [('still', lambda: conifer('squat', build=dict(wf=1.0, lean=2.0))),
-                              ('b', lambda: conifer('squat', seed=631, build=dict(wf=0.78, top=0.1, base=0.08, lean=-5.0))),
+                              ('b', lambda: conifer('squat', seed=631, build=dict(wf=0.78, top=0.0, base=0.08, lean=-5.0, merge_top=True))),
                               ('c', lambda: conifer('squat', seed=743, build=dict(wf=0.92, top=0.2, lean=4.0)))], dict(
             name='Wind-cropped pine', cells=(4, 2), fp=B._fp(2, 1), collision={'shape': 'rect', 'rect': [-5.0, -4.0, 10, 4]},
             size_class='conifer (wind-cropped, three quarters of the pine)', fn='conifer',
             note='A squat pine cropped by the wind, its snow heaped on the west of each bough (three variants).', **trees)),
-        ('frost_krummholz', [('still', lambda: conifer('krummholz', load=0.8)), ('low', lambda: conifer('krummholz_b', load=0.8)),
-                             ('wide', lambda: conifer('krummholz_c', load=0.8)),
-                             ('still_b', lambda: conifer('krummholz', load=0.8, seed=653)),
-                             ('low_b', lambda: conifer('krummholz_b', load=0.8, seed=661)),
-                             ('wide_b', lambda: conifer('krummholz_c', load=0.8, seed=677))], dict(
+        # each krummholz its own wind-cut profile (round 5): where the windward crest stands, how the lee
+        # tapers (long and hollow, or full then falling), a second lower mound to the lee, a lower mat
+        ('frost_krummholz', [('still', lambda: conifer('krummholz', load=0.8, build=dict(tp=0.2, ex_e=0.7))),
+                             ('low', lambda: conifer('krummholz_b', load=0.8, build=dict(tp=0.16, ex_e=0.6))),
+                             ('wide', lambda: conifer('krummholz_c', load=0.8, build=dict(tp=0.22, ex_e=0.85))),
+                             ('still_b', lambda: conifer('krummholz', load=0.8, seed=653,
+                                                         build=dict(tp=0.27, ex_e=1.25, mat=0.85))),
+                             ('low_b', lambda: conifer('krummholz_b', load=0.8, seed=661,
+                                                       build=dict(tp=0.3, ex_e=1.0, hump=(0.74, 0.5)))),
+                             ('wide_b', lambda: conifer('krummholz_c', load=0.8, seed=677,
+                                                        build=dict(tp=0.12, ex_e=0.5, mat=0.85, hump=(0.62, 0.55))))], dict(
             name='Krummholz', cells=(4, 2), fp=B._fp(3, 1), collision={'shape': 'rect', 'rect': [-9.0, -4.0, 18, 4]},
             size_class='conifer (krummholz: a wind-flattened spruce at the tree line)', fn='conifer',
             note='A spruce at the tree line grown low and wide, flagged to the lee, snow on its boughs (two of each form).', **trees)),
@@ -431,6 +437,24 @@ def prop_jobs():
 
 
 
+# a tree's foot (its anchor and y-sort point) within this many texels of its picture's lowest opaque
+# row (A3 round 5, R2-1: a krummholz drawn 12 texels above its foot); the snag's drift runs below its
+# foot on purpose
+FOOT_SLACK = 2
+FOOT_EXEMPT = {'frost_snag'}
+
+
+def _feet_grounded(pid, pics):
+    if pid in FOOT_EXEMPT:
+        return
+    for vid, r, _frames, _png in pics:
+        rows = np.nonzero((np.asarray(r.a) >= 0).any(1))[0]
+        if not len(rows) or abs(int(rows.max()) - int(r.ay)) > FOOT_SLACK:
+            raise ValueError('frost: %s/%s foot row %s is %s texels from its lowest opaque row %s (at most %d)'
+                             % (pid, vid, r.ay, abs(int(rows.max()) - int(r.ay)) if len(rows) else '?',
+                                rows.max() if len(rows) else '?', FOOT_SLACK))
+
+
 def build(write=True, force=False, only=None):
     out = {}
     pieces = []
@@ -448,6 +472,8 @@ def build(write=True, force=False, only=None):
             out[os.path.join(ART, png)] = to_rgba(r.a)
             if frames:
                 out[os.path.join(ART, png[:-4] + '_loop.png')] = to_rgba(K.strip(frames['frames']))
+        if kw.get('role') == 'tree':
+            _feet_grounded(pid, pics)
         kw = dict(kw)
         name, purpose, role = kw.pop('name'), kw.pop('purpose'), kw.pop('role')
         cells, fp = kw.pop('cells'), kw.pop('fp')

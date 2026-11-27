@@ -25,7 +25,7 @@ from ._shared import (
 # ------------------------------------------------------------------------------------------------
 # (scale of the woodland pine's master crown (x, y), seed): the picture's size and the variant's seed
 CONIFERS = {'spruce': ((0.95, 1.06), 507), 'pine': ((1.0, 1.0), 511), 'squat': ((1.18, 0.74), 521),
-            'krummholz': ((1.25, 0.44), 531), 'krummholz_b': ((1.0, 0.36), 547), 'krummholz_c': ((1.4, 0.52), 559)}
+            'krummholz': ((1.25, 0.44), 531), 'krummholz_b': ((1.0, 0.36), 547), 'krummholz_c': ((1.27, 0.52), 559)}
 
 # the crown's value bands, pocket to cap, cooled towards the snow (round 3, F8): each band lists
 # siblings at nearly one value, so a pad can change family without stepping a tone
@@ -143,7 +143,18 @@ def _tiers_cone(rng, yt, yb, x0, x1, cxm, kind, build=None):
         out.append([b, f, cx, aw, ae])
     sw = (cxm - x0) / max(r[3] for r in out)
     se = (x1 - cxm) / max(r[4] for r in out)
-    return [(b, f, cx, min(aw * sw, cx - x0), min(ae * se, x1 - cx)) for b, f, cx, aw, ae in out]
+    res = [(b, f, cx, min(aw * sw, cx - x0), min(ae * se, x1 - cx)) for b, f, cx, aw, ae in out]
+    if bd.get('spire'):
+        # (round 5) a spire: the top third of the crown narrows into the leader instead of a blunt column
+        res = [(b, f, cx, aw * (0.38 + 0.62 * min(1.0, f / 0.34)) ** 1.2, ae * (0.38 + 0.62 * min(1.0, f / 0.34)) ** 1.2)
+               for b, f, cx, aw, ae in res]
+    if bd.get('merge_top') and len(res) > 2:
+        # (round 5) one continuous crown: the top tier hangs down over the tier below, nearly as wide,
+        # so no cap dome sits on a stalk with sky under it
+        b0, f0, c0, w0, e0 = res[0]
+        b1, f1, c1, w1, e1 = res[1]
+        res[0] = (b0 + (b1 - b0) * 0.55, f0, (c0 + c1) / 2, max(w0, w1 * 0.78), max(e0, e1 * 0.78))
+    return res
 
 
 def _pads_cone(rng, H, W, yt, yb, x0, x1, cxm, kind, build=None):
@@ -265,7 +276,7 @@ def _pads_pine(rng, H, W, yt, yb, x0, x1, cxm):
     return pads, limbs, low, broken
 
 
-def _pads_krummholz(rng, H, W, yt, yb, x0, x1, cxm, mat_h):
+def _pads_krummholz(rng, H, W, yt, yb, x0, x1, cxm, mat_h, build=None):
     """A krummholz as a shrub (director's note on round 3): a dense low mat of wide pads in three rows,
     most of the tree's mass, its top uneven; at most one short stem leaning east out of it, mostly
     hidden in the foliage; one flag of growth streaming east from the stem's top as a ragged wedge
@@ -275,7 +286,7 @@ def _pads_krummholz(rng, H, W, yt, yb, x0, x1, cxm, mat_h):
     pid = 0
     mat_top = yb - mat_h
     rise = rng.uniform(10, 22)
-    sx0 = x0 + (x1 - x0) * rng.uniform(0.26, 0.38)
+    sx0 = x0 + (x1 - x0) * rng.uniform(0.2, 0.28)
     y_base = mat_top + mat_h * 0.35
     top = (sx0 + rng.uniform(3, 7), mat_top - rise)
     stem = [(sx0, y_base), (sx0 + (top[0] - sx0) * 0.5 + rng.uniform(-1, 1), (y_base + top[1]) / 2), top]
@@ -287,32 +298,71 @@ def _pads_krummholz(rng, H, W, yt, yb, x0, x1, cxm, mat_h):
     n = max(3, int(ln / rng.uniform(7, 9)))
     for j in range(n):
         t = j / max(1, n - 1)
-        w = rng.uniform(11, 16) * (1.0 - 0.45 * t)
-        h = rng.uniform(9, 13) * (1.0 - 0.55 * t) + 2
+        w = rng.uniform(11, 16) * (1.0 - 0.4 * t)
+        h = rng.uniform(10, 13) * (1.0 - 0.6 * t) + 1.5
         px = top[0] - 3 + t * ln + rng.uniform(-1.5, 1.5)
-        py = top[1] - 2 + t * rng.uniform(1, 6) + rng.uniform(-2.5, 2.5)
+        py = top[1] + 3 + t * rng.uniform(2, 5) - h / 2 + rng.uniform(-2.0, 2.0)
         if t > 0.75 and rng.random() < 0.3:
             continue                                                 # the wedge breaks up downwind
         m = _pad_mask(w, h, rng, 1, rng.choice(['blunt', 'splay', 'long'], p=[0.25, 0.45, 0.3]))
         _place_pad(pads, pid, m, int(round(px - 5)), int(round(py - 2)), 1, 5, H, W)
+        pads[-1]['marks'] = True
         pid += 1
-    # the mat: a mound of wide pads in three staggered rows, highest near the stem on the windward
-    # side and falling away to the lee end, the back row up to the mound's line, the front on the snow
+    # the mat (round 5): a wind-cut wedge, highest and densest on the windward west by the stem,
+    # tapering to the lee with the flag; a back layer of pads a band deeper behind everything (so no
+    # void shows between rows), then rows of spruce-sized pads of mixed widths, the lowest row first
+    # and seated on the snow, each row above hanging in front with its pocket on the row below
     span = x1 - x0
-    for row in (0, 1, 2):
-        xa = x0 + span * (0.08, 0.04, 0.02)[row] + rng.uniform(-3, 3)
-        xe = x1 - span * (0.05, 0.03, 0.01)[row]
-        while xa < xe - 6:
-            w = rng.uniform(18, 30)
-            h = min(w * rng.uniform(0.5, 0.7), mat_h * rng.uniform(0.45, 0.6))
+    bd = build or {}
+    tp = bd.get('tp', rng.uniform(0.17, 0.26))
+    lo_w, lo_e = rng.uniform(0.14, 0.24), rng.uniform(0.07, 0.13)
+    ex_e = bd.get('ex_e', 0.75)
+    hump = bd.get('hump')                                            # (where, how high): a second lee mound
+
+    def env(x):
+        t = (x - x0) / span
+        if t < tp:
+            return lo_w + (1 - lo_w) * (max(0.0, t) / tp) ** 0.8
+        e = 1.0 - (1 - lo_e) * (min(1.0, (t - tp) / (1 - tp))) ** ex_e
+        if hump:
+            e = max(e, hump[1] * max(0.0, 1 - ((t - hump[0]) / 0.16) ** 2))
+        return e
+
+    def place(w, h, xl, pb, side, tier, shade=0, tip='blunt'):
+        nonlocal pid
+        m = _pad_mask(w, h, rng, side, tip)
+        _place_pad(pads, pid, m, int(round(xl - 5)), int(round(pb - h - 2)), side, tier, H, W)
+        pads[-1].update(marks=True, shade=shade)
+        pid += 1
+
+    yy = yb - 2.0
+    while yy > yb - mat_h - 4:
+        xa = x0 + rng.uniform(-2, 3)
+        while xa < x1 - 4:
+            w = rng.uniform(14, 22)
             xc = xa + w / 2
-            mound = 1.0 - 0.45 * abs((xc - (sx0 + span * 0.12)) / span) ** 1.3 - 0.15 * max(0.0, (xc - cxm) / span)
-            y_top = yb - mat_h * mound + row * mat_h * 0.26 + rng.uniform(-0.1, 0.1) * mat_h
-            side = -1 if xc < cxm else 1
-            m = _pad_mask(w, h, rng, side, rng.choice(['blunt', 'splay', 'long'], p=[0.5, 0.35, 0.15]))
-            _place_pad(pads, pid, m, int(round(xa - 5)), int(round(y_top - 2)), side, 10 + row, H, W)
-            pid += 1
-            xa += w * rng.uniform(0.5, 0.75)
+            if yb - mat_h * env(xc) <= yy - 4:
+                place(w, float(np.clip(w * 0.6, 7, 12)), xa, yy + 2, -1 if xc < sx0 else 1, 9, shade=1)
+            xa += w * rng.uniform(0.55, 0.75)
+        yy -= rng.uniform(7, 9)
+    pitch = rng.uniform(9.5, 11.0)
+    nrows = int(np.ceil(mat_h / pitch)) + 1
+    for r in range(nrows):
+        base = yb - r * pitch
+        xa = x0 + (rng.uniform(-3, 0) if r == 0 else rng.uniform(-1, 6))
+        xe = x1 + (1 if r == 0 else -2)
+        while xa < xe - 4:
+            w = float(np.clip(rng.gamma(5.0, 3.4), 10, 24))
+            h = float(np.clip(w * rng.uniform(0.55, 0.72), 8.0, 13.0))
+            xc = xa + w / 2
+            if r == 0:
+                h = min(h, max(6.0, mat_h * env(xc) + 3))
+            top_ok = yb - mat_h * env(xc) - 3
+            if r == 0 or base - h >= top_ok:
+                pb = base - (rng.uniform(0.0, 1.0) if r == 0 else rng.uniform(-3.0, 3.0))
+                tip = rng.choice(['blunt', 'splay', 'long'], p=[0.4, 0.4, 0.2])
+                place(max(8.0, w), h, xa, pb, -1 if xc < sx0 else 1, 10 + r, tip=tip)
+            xa += w * rng.uniform(0.55, 0.8)
     return pads, stem, stubs, mat_top
 
 
@@ -351,6 +401,7 @@ def _paint_pads(pads, H, W, xmid, hw, yt, yb, rng, seed):
         tree_u = (xs - xmid) / max(1.0, hw)
         Lb = 0.5 - 0.42 * float(np.mean(tree_u)) + 0.1 * (0.5 - (cyp - yt) / max(1, yb - yt))
         b0 = 3 if Lb > 0.62 else (2 if Lb > 0.3 else 1)
+        b0 = max(1, b0 - p.get('shade', 0))                           # a back pad sits a band deeper
         b = np.full(len(ys), b0)
         b = np.where(u + v > 0.75, np.maximum(1, b0 - 1), b)
         top_of = np.full(W, 10 ** 6)
@@ -379,11 +430,49 @@ def _paint_pads(pads, H, W, xmid, hw, yt, yb, rng, seed):
                 if 0 <= yy < H and 0 <= xx < W and pm[yy, xx] and code[yy, xx] >= 0:
                     bb = int(b[k]) + (1 if (u[k] < -0.2 and v[k] < 0.3 and rng.random() < 0.5) else 0)
                     code[yy, xx] = _band(max(1, bb), fam + 1)
+        if p.get('marks'):
+            _needle_marks(code, pm, ys, xs, b, cap, rim, u, p, fam, seed)
         owner[ys, xs] = p['id']
     return code, code >= 0, owner
 
 
-def _loads(code, owner, pads, rng, xmid, hw, heavy, n_range):
+def _needle_marks(code, pm, ys, xs, b, cap, rim, u, p, fam, seed):
+    """Needle marks on a pad (A3 round 5): two to four drooping strokes of 2 or 3 texels a band down
+    across its body, leaning to the pad's outer end, and a short lit stroke a band up on its cap, so
+    no pad is a flat field; a broken tuft or two hanging from its lower edge."""
+    H, W = code.shape
+    r = np.random.default_rng(seed * 1009 + p['id'] * 7 + 3)
+    sg = p['side']
+    body = np.nonzero(~cap & ~rim)[0]
+    n = int(np.clip(len(ys) / 22, 2, 5))
+    for _ in range(n if len(body) else 0):
+        k = int(body[int(r.integers(0, len(body)))])
+        y, x, bb = int(ys[k]), int(xs[k]), int(b[k])
+        ln = int(r.integers(2, 4))
+        for j in range(ln):
+            yy, xx = y + j, x + (sg if j == 2 else 0)
+            if 0 <= yy < H and 0 <= xx < W and pm[yy, xx]:
+                code[yy, xx] = _band(max(0, bb - 1), fam)
+    capi = np.nonzero(cap & (u < 0.1))[0]
+    for _ in range(int(r.integers(1, 3)) if len(capi) else 0):
+        k = int(capi[int(r.integers(0, len(capi)))])
+        y, x, bb = int(ys[k]) + 1, int(xs[k]), int(b[k])
+        for dx in (0, sg):
+            if 0 <= y < H and 0 <= x + dx < W and pm[y, x + dx]:
+                code[y, x + dx] = _band(min(5, bb), fam + 1)
+    # a tuft or two breaking the lower edge: a two-texel needle point under the rim
+    bot_of = np.full(W, -1)
+    np.maximum.at(bot_of, xs, ys)
+    cols = np.nonzero(bot_of >= 0)[0]
+    for _ in range(int(r.integers(1, 3)) if len(cols) > 4 else 0):
+        x = int(cols[int(r.integers(1, len(cols) - 1))])
+        y = int(bot_of[x])
+        for j in range(1, int(r.integers(2, 4))):
+            if y + j < H and not pm[y + j, x]:
+                code[y + j, x] = _band(1, fam)
+
+
+def _loads(code, owner, pads, rng, xmid, hw, heavy, n_range, mat=False):
     """Snow in a few long loads (round 3, F2): each lies along the visible top of one tier's pads, 12
     to 30 texels long from that side's tip inward, thick at its trunk end and on the west (5 to 8
     texels), thinning to 1 or 2 at the tip; the east and some tiers bare; the lengths drawn from a
@@ -413,6 +502,9 @@ def _loads(code, owner, pads, rng, xmid, hw, heavy, n_range):
                 continue
             tu = (np.mean(side_cols) - xmid) / max(1.0, hw)
             w = (1.6 if sg < 0 else 0.45) * (1.3 if tu < 0 else 0.8)
+            if mat:
+                # a krummholz in deep snow: the top rows and the flag catch most, both sides of a row
+                w = (1.0 if sg < 0 else 0.4) * (1.0 + 0.3 * max(0, t - 10) if t >= 10 else 1.6)
             runs.append((w * rng.uniform(0.5, 1.5), t, sg, side_cols, top, tu))
     runs.sort(key=lambda r: -r[0])
     n = int(rng.integers(*n_range))
@@ -423,6 +515,12 @@ def _loads(code, owner, pads, rng, xmid, hw, heavy, n_range):
         if rng.random() < 0.15:
             continue                                                 # a bare bough among the loaded
         tip_end = min(side_cols) if sg < 0 else max(side_cols)
+        if mat:
+            # on a mat the snow lies on the surface open to the sky: the windward ramp, the top, the flag
+            side_cols = [c for c in side_cols if top[c] == 0 or code[top[c] - 1, c] < 0]
+            if len(side_cols) < 8:
+                continue
+            tip_end = min(side_cols) if sg < 0 else max(side_cols)
         length = int(np.clip(rng.gamma(4.0, 5.0), 12, 30))
         span = sorted((c for c in side_cols if abs(c - tip_end) <= length), key=lambda c: abs(c - tip_end))
         # the load stops where the tier's top jumps (a gap between pads under the overhang)
@@ -468,6 +566,62 @@ def _loads(code, owner, pads, rng, xmid, hw, heavy, n_range):
     return snow
 
 
+def _mat_snow(code, seed, xmid, hw, y_max=None):
+    """(round 5) A krummholz in deep snow: snow lying along the surface open to the sky, the windward
+    ramp and the top heaviest (2 to 5 texels), the lee end thin and often bare, in runs broken by bare
+    boughs; lit on top, cooler on its front, the needles under it in deep shade."""
+    H, W = code.shape
+    r = np.random.default_rng(seed * 13 + 5)
+    m = code >= 0
+    cols = np.nonzero(m.any(0))[0]
+    if not len(cols):
+        return np.zeros((H, W), bool)
+    up = np.zeros_like(m)
+    up[1:] = m[:-1]
+    exposed = m & ~up                                                # a texel with open sky above it
+    if y_max is not None:
+        exposed[int(y_max):] = False                                 # (a pine) only its top storeys
+    snow = np.zeros((H, W), bool)
+    rowi = np.full((H, W), -1, int)
+    nrow = np.zeros((H, W), int)
+    c = int(cols.min()) + int(r.integers(0, 3))
+    c1 = int(cols.max())
+    while c < c1:
+        tu = (c - xmid) / max(1.0, hw)
+        ln = int(r.integers(6, 17))
+        if r.random() < (0.85 if tu < 0.1 else 0.45):
+            tmax = r.uniform(3.0, 5.2) if tu < 0.1 else r.uniform(1.6, 3.0)
+            for i in range(ln):
+                x = c + i
+                if x > c1:
+                    break
+                e = min(i, ln - 1 - i)
+                th = max(2 if tu < 0.1 else 1, int(round(tmax * min(1.0, 0.45 + 0.3 * e))))
+                for y0 in np.nonzero(exposed[:, x])[0]:
+                    yy = np.arange(y0, min(H, y0 + th))
+                    yy = yy[m[yy, x]]
+                    if not len(yy):
+                        continue
+                    snow[yy, x] = True
+                    rowi[yy, x] = yy - yy.min()
+                    nrow[yy, x] = len(yy)
+            c += ln + int(r.integers(2, 7))
+        else:
+            c += ln
+    X = np.mgrid[0:H, 0:W][1]
+    tu = (X - xmid) / max(1.0, hw)
+    col = np.where(tu < 0.3, C('snow', 4), C('snow_cool', 4))
+    col = np.where((rowi == 0) & (tu < 0.25), C('snow', 5), col)
+    col = np.where((rowi == nrow - 1) & (nrow >= 3), C('snow_cool', 3), col)
+    col = np.where((rowi == nrow - 1) & (nrow == 2) & (tu > 0.3), C('snow_cool', 3), col)
+    code[snow] = col[snow]
+    below = np.zeros_like(snow)
+    below[1:] = snow[:-1]
+    sh = below & ~snow & (code >= 0) & (code // 8 != FI['snow']) & (code // 8 != FI['snow_cool'])
+    code[sh] = _band(1, 0)
+    return snow
+
+
 def frost_crown(S, form, seed, load=1.0, foot_y=None, build=None):
     """A Frostline conifer's crown in the canvas of S (the woodland pine's master crown at this
     form's size): (codes, mask, extra) with extra the pine's limbs and open row or the krummholz's
@@ -484,22 +638,25 @@ def frost_crown(S, form, seed, load=1.0, foot_y=None, build=None):
             # the crown fills the upper 65 to 70 % of the tree; the bare bole is the lower third
             yb = int(round(yt + (foot_y - yt) * rng.uniform(0.8, 0.86)))
         pads, limbs, open_row, broken = _pads_pine(rng, H, W, yt, yb, x0, x1, cxm)
+        if (build or {}).get('marks'):
+            for p_ in pads:
+                p_['marks'] = p_['tier'] >= 100                       # (round 5, R2-4) needles on each clump
         extra.update(limbs=limbs, open_row=open_row, top_row=int(yt + (yb - yt) * 0.3), broken=broken)
         heavy, n_range = 1.0, (10, 15)
     elif form.startswith('krummholz'):
         if foot_y is not None:
             yb = int(round(foot_y)) - 1                              # the mat lies on the snow at the foot
-        mat_h = (yb - yt) * rng.uniform(0.76, 0.84)                  # the mat is most of the shrub
-        pads, stem, stubs, mat_top = _pads_krummholz(rng, H, W, yt, yb, x0, x1, cxm, mat_h)
+        mat_h = (yb - yt) * rng.uniform(0.76, 0.84) * (build or {}).get('mat', 1.0)   # the mat is most of the shrub
+        pads, stem, stubs, mat_top = _pads_krummholz(rng, H, W, yt, yb, x0, x1, cxm, mat_h, build)
         extra.update(stem=stem, stubs=stubs, mat_top=mat_top)
-        heavy, n_range = 0.9 * load, (6, 10)
+        heavy, n_range = 1.05 * load, (10, 15)
     else:
         kind = 'spruce' if form == 'spruce' else 'squat'
         pads, _tiers = _pads_cone(rng, H, W, yt, yb, x0, x1, cxm, kind, build)
         heavy, n_range = load, ((12, 19) if kind == 'spruce' else (10, 15))
     code, mask, owner = _paint_pads(pads, H, W, cxm, hw, yt, yb, rng, seed)
     # the leader: a spire on a spruce or a squat, a short leader on a pine
-    if form in ('spruce', 'squat', 'pine'):
+    if form in ('spruce', 'squat', 'pine') and not (build or {}).get('spire'):
         top_ys = np.nonzero(mask.any(1))[0]
         if len(top_ys):
             ty = int(top_ys.min())
@@ -515,11 +672,66 @@ def frost_crown(S, form, seed, load=1.0, foot_y=None, build=None):
                     code[y, lx + 1] = _band(2, 0)
             mask = code >= 0
             owner[mask & (owner < 0)] = -2
-    snow = _loads(code, owner, pads, rng, cxm, hw, heavy, n_range)
+    snow = _loads(code, owner, pads, rng, cxm, hw, heavy, n_range, mat=form.startswith('krummholz'))
+    if form.startswith('krummholz'):
+        snow |= _mat_snow(code, seed, cxm, hw)
+    elif form == 'pine' and (build or {}).get('caps'):
+        # (round 5, R2-4) every clump top of the upper two storeys catches a cap, heaped west
+        snow |= _mat_snow(code, seed, cxm, hw, y_max=yt + (yb - yt) * 0.4)
     mask = mask | snow
     code[~mask] = -1
+    if form.startswith('krummholz'):
+        _no_checker(code)
     V.tidy(code, passes=2)
     return code, mask, extra
+
+
+def _back_clumps(out, hm, seed):
+    """(round 5, pine_b) A window closed in by clumps and the bole, filled with the crown's back
+    clumps: small pads of the two darkest bands, each with a lit rim on its top, its body, a pocket line
+    under it, the lowest row first so each hangs over the one below; no flat field over 5 x 5."""
+    r = np.random.default_rng(seed * 17 + 9)
+    Yh, Xh = np.nonzero(hm)
+    y0, y1, x0, x1 = Yh.min(), Yh.max(), Xh.min(), Xh.max()
+    out[hm] = _band(0, 0)
+    y = y1 + 2
+    while y > y0 - 4:
+        x = x0 - int(r.integers(2, 7))
+        while x < x1 + 2:
+            w = float(r.uniform(7, 12))
+            h = float(r.uniform(5, 7))
+            m = _pad_mask(w, h, r, -1 if (x + w / 2) < (x0 + x1) / 2 else 1, 'blunt')
+            ys, xs = np.nonzero(m)
+            ys = ys + int(round(y - h - 2))
+            xs = xs + int(round(x - 5))
+            ok = (ys >= 0) & (ys < out.shape[0]) & (xs >= 0) & (xs < out.shape[1])
+            ys, xs = ys[ok], xs[ok]
+            inn = hm[ys, xs]
+            ys, xs = ys[inn], xs[inn]
+            if len(ys):
+                top_of = np.full(out.shape[1], 10 ** 6)
+                np.minimum.at(top_of, xs, ys)
+                bot_of = np.full(out.shape[1], -1)
+                np.maximum.at(bot_of, xs, ys)
+                d = ys - top_of[xs]
+                c = np.where(d < 1, _band(2, 1), np.where(d < 2, _band(2, 0), _band(1, int(r.integers(0, 3)))))
+                c = np.where(bot_of[xs] - ys < 1, _band(0, 0), c)
+                out[ys, xs] = c
+            x += w * r.uniform(0.6, 0.85)
+        y -= r.uniform(4.5, 6.0)
+
+
+def _no_checker(code):
+    """(round 5) No 2 x 2 checker of single texels in a crown: the off pair takes the diagonal's tone."""
+    for _ in range(2):
+        p, q, r, s_ = code[:-1, :-1], code[:-1, 1:], code[1:, :-1], code[1:, 1:]
+        chk = (p >= 0) & (q >= 0) & (p == s_) & (q == r) & (p != q)
+        ys, xs = np.nonzero(chk)
+        if not len(ys):
+            return
+        for y, x in zip(ys, xs):
+            if code[y, x] == code[y + 1, x + 1] and code[y, x + 1] == code[y + 1, x] != code[y, x]:
+                code[y, x + 1] = code[y, x]
 
 
 def _limb(code, x0, y0, x1, y1, rng):
@@ -555,6 +767,7 @@ def conifer(form='pine', load=1.0, seed=None, build=None):
     S, foot, _ = WT.master_crown(arr, d, size=scale)
     code, mask, extra = frost_crown(S, form, seed, load, foot_y=foot[1], build=build)
     krum = form.startswith('krummholz')
+    bd = build or {}
     if krum:
         # the krummholz sits on the snow: its mat's foot on the foot row, no bole below it
         rows = np.nonzero(mask.any(1))[0]
@@ -607,6 +820,48 @@ def conifer(form='pine', load=1.0, seed=None, build=None):
             keep = 1 + np.nonzero(sizes >= 0.15 * sizes.max())[0]
         mask = np.isin(lab, keep)
         code[~mask] = -1
+    if bd.get('spire'):
+        # (round 5) the spire's leader, drawn on the crown that is left after the island filter: 9
+        # texels, 2 thick at its base tapering to 1, its west texel lit, rising from the narrowed top
+        rows = np.nonzero(mask.any(1))[0]
+        ty = int(rows.min())
+        hgt = 9
+        if ty < hgt + 1:
+            padt = hgt + 1 - ty
+            code = np.pad(code, ((padt, 0), (0, 0)), constant_values=-1)
+            mask = np.pad(mask, ((padt, 0), (0, 0)))
+            foot = (foot[0], foot[1] + padt)
+            ty += padt
+        cols = np.nonzero(mask[ty])[0]
+        lx = int(round(cols.mean()))
+        for j in range(hgt):
+            y = ty - 1 - j
+            code[y, lx] = _band(4 if j < hgt - 3 else 3, 0)
+            if j < hgt // 2:
+                code[y, lx + 1] = _band(2, 0)
+        for y in (ty, ty + 1):
+            code[y, lx:lx + 2] = np.where(code[y, lx:lx + 2] >= 0, code[y, lx:lx + 2], _band(2, 0))
+        mask = code >= 0
+    if krum:
+        # (round 5, R2-1) the island filter may drop the lowest pads: re-anchor the mat on the foot row
+        # after it, then seat the lowest row on the snow, a contact shade closing the scallops between
+        # its pad feet so the shrub sits in the snow across its width rather than on its tips
+        rows = np.nonzero(mask.any(1))[0]
+        shift = int(round(foot[1])) - int(rows.max()) - 1
+        if shift:
+            code = np.roll(code, shift, 0)
+            mask = np.roll(mask, shift, 0)
+            if shift > 0:
+                code[:shift] = -1
+                mask[:shift] = False
+        fr = int(round(foot[1])) - 1
+        cols = np.nonzero(mask[max(0, fr - 8):fr + 1].any(0))[0]
+        for x in cols:
+            lowest = int(np.nonzero(mask[:, x])[0].max())
+            if fr - 6 <= lowest < fr:
+                for y in range(lowest + 1, fr + 1):
+                    code[y, x] = _band(0 if y == fr else 1, x // 5)
+        mask = code >= 0
     # the outline in each material's own edge tone (tone 1 on the lit top and west)
     pad = 2
     big = np.full((code.shape[0] + 2 * pad, code.shape[1] + 2 * pad), -1, np.int32)
@@ -648,7 +903,12 @@ def conifer(form='pine', load=1.0, seed=None, build=None):
             ex_, ey_ = int(round(bx1 + pad - x0_)), int(round(by1 + pad - y0_))
             if 0 <= ey_ < lim.shape[0] and 0 <= ex_ < lim.shape[1]:
                 lim[ey_, ex_] = C('stone_warm', 4)                    # the snapped end, pale wood
-            out[(lim >= 0)] = lim[lim >= 0]
+            if bd.get('limbs_behind'):
+                # (round 5, R2-3) the limbs leave the bole from behind it: none crosses in front of the
+                # trunk, and they show only where the clumps part
+                out[(lim >= 0) & (out < 0)] = lim[(lim >= 0) & (out < 0)]
+            else:
+                out[(lim >= 0)] = lim[lim >= 0]
             # the upper bole warms to a pine's orange-brown above the lowest storey, through a few rows
             warm = {FI['timber_cool']: FI['timber_warm'], FI['earth_cool']: FI['timber_warm'], FI['earth']: FI['timber']}
             yw = extra['open_row'] + pad - y0_ + 18
@@ -687,10 +947,12 @@ def conifer(form='pine', load=1.0, seed=None, build=None):
     big = np.full((out.shape[0] + 2, out.shape[1] + 2 * padx), -1, np.int64)
     big[:out.shape[0], padx:padx + out.shape[1]] = out
     fx += padx
-    span = (22, 3) if krum else (15, 0)
+    if krum:
+        _krum_bank(big, fy, rng)
+    span = (15, 0)
     xc = fx - span[0] // 2 - 2 + int(rng.integers(-1, 2))
-    lobes = [(xc + rng.uniform(-3, 3), rng.uniform(2.6, 4.2) + (1.5 if krum else 0)) for _ in range(2)]
-    for x in range(fx - span[0] - 2, fx + span[1]):
+    lobes = [(xc + rng.uniform(-3, 3), rng.uniform(2.6, 4.2)) for _ in range(2)]
+    for x in range(fx - span[0] - 2, fx + span[1]) if not krum else ():
         h = max(max(0.0, hh_ - abs(x - lx) * 0.38) for lx, hh_ in lobes)
         h = int(round(h))
         for k_ in range(h):
@@ -712,7 +974,7 @@ def conifer(form='pine', load=1.0, seed=None, build=None):
     low = np.zeros_like(al)
     low[max(0, fy - 14):fy + 1] = True
     gap = ndi.binary_fill_holes(ndi.binary_closing(al, structure=np.ones((3, 3), bool), iterations=2)) & ~al & low
-    out[gap] = C('timber_cool', 0)
+    out[gap] = C('snow_cool', 2) if krum else C('timber_cool', 0)       # between drift lobes: snow shade
     # no pinhole of a few texels left anywhere in the picture: it takes its darkest neighbour
     al = out >= 0
     pin = ndi.binary_fill_holes(al) & ~al
@@ -722,6 +984,9 @@ def conifer(form='pine', load=1.0, seed=None, build=None):
         if form == 'pine' and hm.sum() > 150:
             # a pine's window larger than a limb's gap, closed in by clumps and the bole: the crown's
             # deep interior (the pocket band), a band lighter in its top two rows where light gets in
+            if bd.get('window_pads'):
+                _back_clumps(out, hm, seed)
+                continue
             Yh, Xh = np.nonzero(hm)
             top_r = np.full(out.shape[1], 10 ** 6)
             np.minimum.at(top_r, Xh, Yh)
@@ -734,6 +999,58 @@ def conifer(form='pine', load=1.0, seed=None, build=None):
         out[hm] = int(vals[np.argmin(vals % 8)])
     pic = K.crop(out.astype(np.int32), fx, fy)
     return pic
+
+
+def _krum_bank(big, fy, rng):
+    """(round 5) The drift banked against a krummholz's windward west foot: it rises from the snow
+    west of the mat to a lobed crest over its lowest west pads (overlapping them 3 to 6 texels) and
+    falls away east along the foot; a lit crest, snow_cool on its east fall and front, a contact shade
+    on the needles just above it."""
+    H, W = big.shape
+    al = big >= 0
+    low = al[max(0, fy - 4):fy + 1]
+    cols = np.nonzero(low.any(0))[0]
+    if not len(cols):
+        return
+    xw = int(cols.min())
+    L = int(rng.integers(22, 30))
+    # two or three lobes: the tallest against the mat's west foot, a lower one out on the snow to the
+    # west, a long low tail east along the foot
+    lobes = [(xw + rng.uniform(7, 11), rng.uniform(9.5, 12.5), rng.uniform(11.0, 14.0)),
+             (xw - rng.uniform(3, 6), rng.uniform(3.5, 5.5), rng.uniform(4.5, 6.0)),
+             (xw + rng.uniform(20, 27), rng.uniform(3.0, 5.0), rng.uniform(6.0, 9.0))]
+    prof = {}
+    for x in range(max(0, xw - 12), min(W, xw + L + 6)):
+        h = max(hh * max(0.0, 1 - ((x - cx) / wd) ** 2) for cx, hh, wd in lobes)
+        prof[x] = max(0, int(round(h)))
+    xs = sorted(prof)
+    for x in xs:
+        h = prof[x]
+        if h <= 0:
+            continue
+        # the face by its slope: rising to the east it faces the light (west), falling it faces away
+        sl = prof.get(x + 1, 0) - prof.get(x - 1, 0)
+        for k in range(h):
+            y = fy - k
+            if not (0 <= y < H):
+                continue
+            d = h - 1 - k                                            # rows below the crest
+            if sl > 0:
+                c = C('snow', 5) if d < 2 else C('snow', 4)
+            elif sl < -1:
+                c = C('snow_cool', 4) if d < 1 else C('snow_cool', 3)
+            else:
+                c = C('snow', 5) if d < 1 else (C('snow', 4) if d < 3 else C('snow_cool', 4))
+            if k == 0:
+                c = C('snow_cool', 2)
+            elif k == 1 and h > 3:
+                c = C('snow_cool', 3)
+            big[y, x] = c
+        yc = fy - h
+        if 0 <= yc < H and big[yc, x] >= 0 and big[yc, x] // 8 not in (FI['snow'], FI['snow_cool']):
+            big[yc, x] = _band(0, x)                                   # the needles' contact shade
+        elif 0 <= yc < H and big[yc, x] < 0 and h >= 2:
+            big[yc, x] = C('snow_cool', 3)                             # the crest's edge against the air
 
 
 def _snag_dress(seed, stubs, top_xy):
@@ -796,19 +1113,7 @@ def _snag_dress(seed, stubs, top_xy):
                     yy, xx = ky + dy, kx + dx
                     if 0 <= yy < H and 0 <= xx < W and wood[yy, xx]:
                         a[yy, xx] = C('ash', 3) if (dy, dx) == (0, 0) else C('soot', 2)
-        # the last bark, low on the sheltered east
-        bys = np.nonzero(inner & (Y > y1 - 34) & (Y < y1 - 6))[0]
-        if len(bys):
-            k = int(rng.integers(0, len(bys)))
-            cy = int(bys[k])
-            row = np.nonzero(wood[cy])[0]
-            cx = int(row.max()) - 2
-            rx_, ry_ = rng.uniform(1.8, 2.6), rng.uniform(3.0, 4.5)
-            rag = K.vhash(X, Y // 2, seed + 13) * 0.5
-            pm = inner & (((X - cx) / rx_) ** 2 + ((Y - cy) / ry_) ** 2 <= 1.0 + rag)
-            a[pm] = np.where(L[pm] > 0.45, C('timber_cool', 3), C('timber_cool', 2))
-            ed = pm & ~ndi.binary_erosion(pm)
-            a[ed & (X >= cx)] = C('timber_cool', 1)
+        # (round 5) no last plate of bark: it read as a red sticker on the bole
         # wolf lichen: two or three clusters of 3 to 4 texels on the lit west face
         cand = np.nonzero(inner & (L > 0.3) & (Y < y1 - 18) & (X <= np.median(xs)))
         for _ in range(int(rng.integers(2, 4))):
@@ -884,7 +1189,6 @@ def snag(seed=541):
             zz -= 2.0 * np.tan(np.radians(ang))
             th = max(1.4, th - 0.35)
         stubs_w.append((xx + side * rr * 0.75, z + 1.4, px, zz + th / 2))
-    _snowcap(sc, x - 1.3, 0.0, h + 15.5, 1.8, 1.6, th=1.3, seed=seed)
     _drift_west(sc, -10, 2, 9.5, seed)
     sc.ellipsoid(-15.5, 4.0, 0.4, 6.0, 3.8, 3.0, SNOW, base=3.8, k=1.0, tag='drift', flat=1.1)       # a second lobe
     sc.render()
@@ -900,4 +1204,47 @@ def snag(seed=541):
         for dy in (-1, 0):
             if 0 <= ey + dy < a.shape[0] and 0 <= ex < a.shape[1] and a[ey + dy, ex] >= 0:
                 a[ey + dy, ex] = C('stone_warm', 4) if dy == -1 else C('stone_warm', 3)
+    _split_top(a)
     return K.crop(a, sc.ox, sc.oy)
+
+
+def _split_top(a):
+    """(round 5) The snag's top as a split break: the thin tip cut off where the bole is still 5 or
+    more texels wide, then a tall west splinter of lit pale wood, a dark heart crack down the middle,
+    and a shorter east point in shade, at different heights, each with its dark edge."""
+    al = a >= 0
+    rows = np.nonzero(al.any(1))[0]
+    yb = None
+    for y in rows:
+        xs = np.nonzero(al[y])[0]
+        if xs.max() - xs.min() + 1 >= 7 and (xs.max() - xs.min() + 1) == len(xs):
+            yb = int(y) + 1
+            break
+    if yb is None:
+        return
+    a[:yb] = -1
+    xs = np.nonzero(a[yb] >= 0)[0]
+    xl, xr = int(xs.min()), int(xs.max())
+    w = xr - xl + 1
+    mid = xl + w // 2
+    # the west splinter: 5 rows, two texels wide at its foot narrowing to one, lit pale wood, its east
+    # edge dark; the east point: 3 rows, in shade
+    for j in range(7):
+        y = yb - 1 - j
+        for x in ((xl, xl + 1) if j < 4 else (xl + (1 if j >= 5 else 0),)):
+            a[y, x] = C('stone_warm', 4) if x == xl + (1 if j >= 5 else 0) else C('ash', 4)
+        a[y, (xl + 2) if j < 4 else (xl + 1 + (1 if j >= 5 else 0))] = C('soot', 1)
+    for j in range(4):
+        y = yb - 1 - j
+        for x in range(max(mid + 1, xr - 2 + (1 if j >= 2 else 0)), xr + 1 - (1 if j == 3 else 0)):
+            a[y, x] = C('ash', 2) if x < xr else C('soot', 2)
+    # the heart crack: a dark V down from the break between them
+    for j in range(4):
+        y = yb + j
+        x = mid if j < 2 else mid - (j - 1) % 2
+        if 0 <= y < a.shape[0] and a[y, x] >= 0:
+            a[y, x] = C('soot', 0)
+    # the broken face of the stump between the points, a lit row on top
+    for x in range(xl + 2, xr - 1):
+        if a[yb, x] >= 0 and x != mid:
+            a[yb, x] = C('stone_warm', 3)

@@ -14,7 +14,7 @@
    "png": "res://kit/props/art/frost/frost_snag.png",
    "foot": [
     24,
-    155
+    152
    ]
   }
  ],
@@ -28,14 +28,14 @@
  "geometry": {
   "size_px": [
    47,
-   165
+   162
   ],
   "size_cells": [
    2,
    2
   ],
   "z_sort": "foot",
-  "height_px": 165,
+  "height_px": 162,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -47,7 +47,7 @@
   },
   "foot": [
    24,
-   155
+   152
   ],
   "footprint": [
    [
