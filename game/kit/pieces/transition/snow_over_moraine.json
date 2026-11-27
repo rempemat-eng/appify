@@ -12,7 +12,7 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "Snow thinning over the moraine, stones breaking through."
+  "note": "Snow thinning over the moraine, frayed at its sides, the moraine's slate stones breaking through."
  },
  "transition": {
   "upper": "snow",
@@ -24,25 +24,7 @@
   },
   "variants": 1,
   "shape": "lower",
-  "dressing": {
-   "density": 0.85,
-   "south": [
-    "bankstone_0",
-    "bankstone_1",
-    "pebble_2",
-    "pebble_3"
-   ],
-   "north": [
-    "bankstone_1",
-    "bankstone_2",
-    "pebble_1"
-   ],
-   "side": [
-    "bankstone_0",
-    "pebble_2",
-    "pebble_3"
-   ]
-  }
+  "dressing": null
  },
  "audit": {
   "painter": {
