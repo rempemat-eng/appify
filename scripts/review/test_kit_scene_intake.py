@@ -185,6 +185,111 @@ position = Vector2(36, 24)
         with self.assertRaisesRegex(SN.SceneIntakeError, fragment):
             SN.load_zone('example')
 
+    def test_unregistered_kit_id_and_scene_path_reach_scene_review_without_registration(self):
+        self.write('data/zones.json', {})
+        registry = (self.game / 'data/zones.json').read_bytes()
+        self.assertEqual(SN.load_zone('example').size, (72, 48))
+        for target in ('example', str(self.game / 'zones/example/example.tscn')):
+            with self.subTest(target=target):
+                out = self.root / ('id-report' if target == 'example' else 'path-report')
+                with mock.patch.object(run, 'REPO', str(self.root)), \
+                        contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                    run.main([target, '--no-render', '--out', str(out)])
+                report = json.loads((out / 'report.json').read_text())
+                self.assertNotIn('complete', report)
+                self.assertEqual(report['scene']['zone'], 'example')
+                self.assertFalse(report['scene']['registered'])
+                self.assertEqual([p['picture'] for p in report['pictures']], ['example_zone'])
+                self.assertIn('findings', report['scene'])
+        self.assertEqual((self.game / 'data/zones.json').read_bytes(), registry)
+
+    def test_unregistered_kit_does_not_attempt_a_runtime_fallback_capture(self):
+        self.write('data/zones.json', {})
+        out = self.root / 'unregistered-capture'
+        with mock.patch.object(run, 'REPO', str(self.root)), mock.patch.object(run, 'render') as render, \
+                contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            code = run.main(['example', '--out', str(out)])
+        report = json.loads((out / 'report.json').read_text())
+        self.assertEqual(code, 2)
+        self.assertTrue(report['incomplete'])
+        self.assertIn('no capture was attempted', report['errors'][0])
+        self.assertFalse(report['scene']['registered'])
+        render.assert_not_called()
+
+    def test_unregistered_kit_checks_local_wiring_without_adding_runtime_event_sources(self):
+        self.write('data/zones.json', {})
+        z = SN.load_zone('example')
+        z.spawns.clear()
+        z.talkers.append(dict(speaker='only_in_kit', pos=(24, 24), key='People/kit_speaker'))
+        event_sources = SN.event_sources
+        captured = {}
+
+        def sources(zones, loaded, unreadable, dialogue):
+            captured['loaded'] = dict(loaded)
+            captured['sources'] = event_sources(zones, loaded, unreadable, dialogue)
+            return captured['sources']
+
+        with mock.patch.object(SN, 'load_zone', return_value=z), \
+                mock.patch.object(SN, 'event_sources', side_effect=sources):
+            findings = SN.check_wiring(['example'])
+        self.assertTrue(any(f.subject == 'example' and 'no spawn' in f.message for f in findings))
+        self.assertTrue(any(f.subject == 'only_in_kit' and 'no dialogue' in f.message for f in findings))
+        self.assertEqual(captured['loaded'], {})
+        self.assertFalse(captured['sources'].sends('talk:only_in_kit'))
+        self.assertFalse(captured['sources'].sends('enter:example'))
+
+    def test_registered_scene_path_wins_over_valid_unregistered_kit_fallback(self):
+        self.write('data/zones.json', {'example': 'res://zones/example/registered_missing.tscn'})
+        self.fails('registered_missing.tscn')
+        self.write('data/zones.json', {'example': None})
+        self.fails('registered scene path')
+
+    def test_unregistered_kit_missing_or_malformed_inputs_write_fresh_incomplete_reports(self):
+        self.write('data/zones.json', {})
+        out = self.root / 'bad-kit-report'
+        out.mkdir()
+        for bad in ('missing_plan', 'invalid_json', 'not_object', 'wrong_zone', 'bad_rows',
+                    'bad_legend', 'missing_scene', 'malformed_scene'):
+            with self.subTest(bad=bad):
+                self.flush()
+                plan = self.game / 'kit/zones/example.json'
+                scene = self.game / 'zones/example/example.tscn'
+                if bad == 'missing_plan':
+                    plan.unlink()
+                elif bad == 'invalid_json':
+                    plan.write_text('{invalid')
+                elif bad == 'not_object':
+                    plan.write_text('[]')
+                elif bad == 'wrong_zone':
+                    self.write('kit/zones/example.json', dict(self.plan, zone='another'))
+                elif bad == 'bad_rows':
+                    self.write('kit/zones/example.json', dict(self.plan, rows='...'))
+                elif bad == 'bad_legend':
+                    self.write('kit/zones/example.json', dict(self.plan, legend=[]))
+                elif bad == 'missing_scene':
+                    scene.unlink()
+                else:
+                    scene.write_text('not a Godot scene')
+                (out / 'report.json').write_text('{"stale": true}')
+                with mock.patch.object(run, 'REPO', str(self.root)), mock.patch.object(run, 'render') as render, \
+                        contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                    code = run.main(['example', '--no-render', '--out', str(out)])
+                report = json.loads((out / 'report.json').read_text())
+                self.assertEqual(code, 1)
+                self.assertFalse(report['complete'])
+                self.assertFalse(report['scene']['complete'])
+                self.assertIn('incomplete scene intake', report['scene']['error'])
+                self.assertNotIn('stale', report)
+                self.assertEqual(report['pictures'], [])
+                self.assertEqual(list(out.glob('*.png')), [])
+                render.assert_not_called()
+
+    def test_unregistered_kit_cannot_bypass_a_malformed_runtime_registry(self):
+        for content in ('[]', '{invalid'):
+            with self.subTest(registry=content):
+                (self.game / 'data/zones.json').write_text(content)
+                self.fails('incomplete scene intake')
+
     def test_vector2i_default_and_nonempty_extent(self):
         self.assertEqual(SN._val('Vector2i(-2, 3)'), (-2, 3))
         self.assertEqual(SN.load_zone('example').size, (72, 48))

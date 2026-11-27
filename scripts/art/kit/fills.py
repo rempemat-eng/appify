@@ -399,121 +399,384 @@ def _no_specks(sel: np.ndarray, area: int) -> np.ndarray:
     return p[pad:-pad, pad:-pad]
 
 
+# the snow's value ladder, darkest first (the Frostline A4 pass): the shade in a hollow's lee, a hollow
+# turned from the light, the body, a face turned to the light (upper left)
+SNOW_STEPS = (C('snow_cool', 2), C('snow_cool', 3), C('snow', 3), C('snow', 4), C('snow', 5))
+
+
+def _wrap_grad(h: np.ndarray):
+    """The periodic gradient of a field (d/dy, d/dx), central differences across the wrap."""
+    return (np.roll(h, -1, 0) - np.roll(h, 1, 0)) * 0.5, (np.roll(h, -1, 1) - np.roll(h, 1, 1)) * 0.5
+
+
+def _calm(cv: np.ndarray, codes, area: int) -> np.ndarray:
+    """Each tone's regions under `area` texels merged into their surroundings (the commonest
+    neighbouring tone), so the planes stay calm: no lone flecks or two-texel crumbs of a shade."""
+    P = cv.shape[0]
+    out = cv.copy()
+    for c in codes:
+        m = out == c
+        keep = _no_specks(m, area)
+        small = m & ~keep
+        if not small.any():
+            continue
+        # the tone the small piece sits in: the most common of its 8 neighbours' codes that is not c
+        best = np.full((P, P), -1, np.int64)
+        cnt = np.zeros((P, P), np.int32)
+        for c2 in codes:
+            if c2 == c:
+                continue
+            n = sum(np.roll(np.roll(out == c2, dy, 0), dx, 1).astype(np.int32)
+                    for dy in (-2, -1, 0, 1, 2) for dx in (-2, -1, 0, 1, 2))
+            better = small & (n > cnt)
+            best[better] = c2
+            cnt[better] = n[better]
+        fill = small & (best >= 0)
+        out[fill] = best[fill]
+    return out
+
+
+def _open_wrap(m: np.ndarray, r: int) -> np.ndarray:
+    """A periodic mask opened then closed with a disc of radius r (round lobes, no 1-texel teeth)."""
+    yy, xx = np.mgrid[-r:r + 1, -r:r + 1]
+    d = (yy * yy + xx * xx) <= r * r + r
+    m = wrap_op(m, lambda a: ndi.binary_opening(a, structure=d), r + 1)
+    return wrap_op(m, lambda a: ndi.binary_closing(a, structure=d), r + 1)
+
+
+def snow_drifts(seed: int = 1401, P: int = PERIOD):
+    """The snow fill's drift height (long pillows summed on the torus, a steeper fall on the lee) and
+    the random generator after it, so `snow` and its regression test share one field."""
+    rng = np.random.default_rng(seed)
+    # the drifts: long pillows of snow (40 to 150 texels west to east, 10 to 30 north to south), their
+    # height summed on the torus with a low swell under them, a steeper fall on the lee (south and east)
+    M = 160
+    Hc = np.zeros((P + 2 * M, P + 2 * M))
+    n_d = P * P // 3000
+    field = aniso(P, 260.0, 150.0, seed + 11)               # drifts gather in fields, with calm between
+    placed = 0
+    while placed < n_d:
+        y, x = rng.uniform(0, P), rng.uniform(0, P)
+        if rng.random() > 0.3 + 0.7 * (field[int(y), int(x)] > -0.2):
+            continue
+        placed += 1
+        rx, ry = rng.uniform(28, 100), rng.uniform(6, 18)
+        amp = rng.uniform(0.5, 1.2)
+        sk = rng.uniform(-0.25, 0.25)
+        y0, y1, x0, x1 = int(y - ry * 1.6), int(y + ry * 1.6) + 2, int(x - rx * 1.2), int(x + rx * 1.2) + 2
+        sy, sx = np.mgrid[y0:y1, x0:x1]
+        dx = (sx + 0.5 - x) / rx
+        dy = (sy + 0.5 - y - sk * (sx + 0.5 - x) * 0.25) / ry
+        dy = np.where(dy > 0, dy * 1.5, dy)                 # the lee falls steeper than the windward rise
+        dx = np.where(dx > 0, dx * 1.25, dx)
+        q = dx * dx + dy * dy
+        bump = amp * np.clip(1 - q, 0, None) ** 1.6
+        Hc[y0 + M:y1 + M, x0 + M:x1 + M] += bump
+    # fold the margins back onto the torus
+    Hh = Hc[M:M + P, M:M + P].copy()
+    Hh[:, :M] += Hc[M:M + P, P + M:P + 2 * M]
+    Hh[:, -M:] += Hc[M:M + P, :M]
+    Hh[:M, :] += Hc[P + M:P + 2 * M, M:M + P]
+    Hh[-M:, :] += Hc[:M, M:M + P]
+    Hh[:M, :M] += Hc[P + M:, P + M:]
+    Hh[:M, -M:] += Hc[P + M:, :M]
+    Hh[-M:, :M] += Hc[:M, P + M:]
+    Hh[-M:, -M:] += Hc[:M, :M]
+    return Hh, rng
+
+
+def snow_swells(seed: int = 1401, P: int = PERIOD) -> np.ndarray:
+    """The snow plane's own broad swells under the drifts (200 by 70 texels), shared with the test."""
+    return aniso(P, 210.0, 75.0, seed) + 0.4 * aniso(P, 90.0, 34.0, seed + 12)
+
+
 def snow(seed: int = 1401, P: int = PERIOD) -> np.ndarray:
-    """Lying snow: a calm plane in three tones laid by the wind. Long soft patches 40 to 120 texels
-    across: lit wind-polished crests (snow 5), the body (snow 4) and cool hollows (snow_cool 4); each
-    crest's lee (its south edge) falls away in a cool row (snow_cool 3), so the patches read as low
-    drifts, not stains. No grass stamps: tufts belong where the wind scours (the moraine's edge
-    dressing)."""
-    w = aniso(P, 90.0, 22.0, seed) + 0.35 * aniso(P, 30.0, 12.0, seed + 1)
-    crest = _no_specks(w > 0.85, 60)
-    hollow = _no_specks(w < -0.75, 60)
+    """Lying snow, after the Frostline A4 pass (Eastward's level of detail on a calm plane): wind-laid
+    drifts as long pillows (56 to 200 texels west to east) gathered in fields over the plane's own
+    broad swells, shaded by their slope from the upper left, so a drift's north and west faces are
+    lit (snow 5), its lee falls away a tone (snow 3) and the steepest lee and the deepest hollows lie
+    in cool shade (snow_cool 3), each tone a calm plane with soft curved edges and no flecks. Across
+    it, in clusters where the wind scours, sastrugi: two or three wind-cut crests a cluster, each 6
+    to 20 texels long at its own slope, half of them 2 texels tall, a crest a step over its plane
+    above a lee a step under it, spaced unevenly (never a ladder). Nothing dark lies on the open
+    snow (scattered stone tips and tussocks read as litter at 1x); stones break through only at the
+    moraine's edge. Every field is periodic in P."""
+    h, rng = snow_drifts(seed, P)
+    gy, gx = _wrap_grad(ndi.gaussian_filter(h, 1.2, mode='wrap'))
+    lit = (gx + gy * 1.3) * 14.0                           # + where height rises to the south or east: a face to the light
+    # under the drifts the plane's own broad swells (200 by 70 texels): their faces to the light a
+    # tone up, their hollows a cool tone down, in large soft patches
+    sw = snow_swells(seed, P)
+    by, bx = _wrap_grad(sw)
+    bl = bx + by * 1.3
+    bl = bl / (bl.std() + 1e-9) + 0.35 * sw
     cv = np.full((P, P), C('snow', 4), np.int32)
-    cv[hollow] = C('snow_cool', 4)
+    cv[bl > 1.25] = C('snow', 5)
+    cv[bl < -1.0] = C('snow', 3)
+    cv[(bl < -1.9) & (sw < -0.6)] = C('snow_cool', 3)
+    cv = _calm(cv, SNOW_STEPS, 120)
+    cv[lit > 0.9] = C('snow', 5)
+    cv[lit < -0.75] = C('snow', 3)
+    cv[lit < -1.8] = C('snow_cool', 3)
+    cv = _calm(cv, SNOW_STEPS, 24)
+    # sastrugi in clusters (round 4: no ladder): two or three wind-cut crests a cluster, each 6 to 20
+    # texels long at its own slope with the drift, half of them 2 texels tall (a lit crest over a cool lee),
+    # spaced 5 to 11 rows apart, laid only on the snow's body
+    zone = aniso(P, 150.0, 90.0, seed + 3)
+    body = cv == C('snow', 4)
+    crest = np.zeros((P, P), bool)
+    lee = np.zeros((P, P), bool)
+    placed, tries = 0, 0
+    while placed < P * P // 9000 and tries < 40000:
+        tries += 1
+        y0, x0 = int(rng.integers(0, P)), int(rng.integers(0, P))
+        if zone[y0, x0] < 0.3:
+            continue
+        placed += 1
+        y = y0
+        for _c in range(int(rng.integers(2, 4))):
+            x = x0 + int(rng.integers(-8, 9))
+            L = int(rng.integers(6, 21))
+            slope = float(rng.uniform(-0.12, 0.12))
+            thick = 2 if rng.random() < 0.5 else 1
+            for j in range(L):
+                yy_ = (y + int(round(slope * j))) % P
+                xx_ = (x + j) % P
+                for t in range(thick):
+                    crest[(yy_ - t) % P, xx_] = True
+                lee[(yy_ + 1) % P, xx_] = True
+            y += int(rng.integers(5, 12))
+    lee &= ~crest
+    crest &= body
+    lee &= body
     cv[crest] = C('snow', 5)
-    lee = crest & ~np.roll(crest, -1, 0)                    # the crest's last row before the fall
-    fall = np.roll(lee, 1, 0) & ~crest
-    cv[fall] = C('snow_cool', 3)
-    return cv
+    cv[lee] = C('snow', 3)
+    return _calm(cv, SNOW_STEPS, 3)                         # no lone texel left where planes meet
 
 
 def snow_trod(seed: int = 1402, P: int = PERIOD) -> np.ndarray:
-    """Trodden snow: a calm packed plane a tone cooler and greyer than the snow (snow_cool 4), worn
-    patches a tone darker (snow_cool 3), the odd lit compressed ridge, and bootprints in staggered
-    pairs (2 by 3 texels, snow_cool 2) along short runs, at a 7 texel pitch."""
+    """Trodden snow, after the Frostline A4 pass. The fill knows no direction (round 4), so a trod
+    running east to west reads as right as one running north to south. Round 5: a packed plane a
+    step greyer and bluer than the snow (snow 3) with a gentle drift of tone across it, compacted a
+    step greyer again in large soft patches with round, calm edges (snow_cool 3) whose cores are
+    packed a step further (snow 2), loose snow kicked back over it in a few soft drifts (snow_cool
+    4). In the compacted patches, boot dents in loose groups of three to six with bare stretches
+    between: round ones 5 texels across, ovals 5 by 7 lying either way, and a third of them 8 to 9
+    texels (a boot is about 12 long, an adult 74); the newest a filled pocket (a shaded north wall,
+    its floor a step down, a lit texel or two at its south lip), most of them old and half filled
+    (only a shaded crescent two texels thick on the north), never rings, rows or lanes."""
     rng = np.random.default_rng(seed)
-    w = aniso(P, 40.0, 40.0, seed)
-    cv = np.full((P, P), C('snow_cool', 4), np.int32)
-    cv[_no_specks(w > 0.7, 40)] = C('snow_cool', 3)
+    w = aniso(P, 90.0, 90.0, seed) + 0.4 * aniso(P, 34.0, 34.0, seed + 1)
+    drift = aniso(P, 260.0, 220.0, seed + 5)
+    cv = np.full((P, P), C('snow', 3), np.int32)
+    cv[_open_wrap(_no_specks(drift > 1.1, 400), 4)] = C('snow_cool', 4)       # the plane's tone drifts
+    comp = _open_wrap(_no_specks(w > 0.45, 300), 4)
+    cv[comp] = C('snow_cool', 3)
+    core = _open_wrap(_no_specks(w > 2.0, 60), 3) & comp
+    cv[core] = C('snow', 2)
+    loose = _open_wrap(_no_specks(w < -1.3, 200), 3)
+    cv[loose] = C('snow_cool', 4)
     T = Torus(cv)
     c_ = T.cv
-    # lit ridges between the worn patches
-    for _ in range(P * P // 9000):
-        y, x = int(rng.integers(0, P)), int(rng.integers(0, P))
-        L = int(rng.integers(8, 20))
+    S = c_.shape[0]
+    DENTS = ([' ### ', '#####', '#####', '#####', ' ### '],                                    # 5 round
+             [' ### ', '#####', '#####', '#####', '#####', '#####', ' ### '],                  # 5 x 7
+             [' ##### ', '#######', '#######', '#######', ' ##### '],                          # 7 x 5
+             ['  ####  ', ' ###### ', '########', '########', '########', ' ###### ', '  ####  '],  # 8
+             ['  #####  ', ' ####### ', '#########', '#########', '#########', '#########', ' ####### ',
+              '  #####  '])                                                                    # 9
+
+    def dent(y, x, shape, old):
+        rows = len(shape)
         for Y, X in T.at(y, x):
-            for j in range(L):
-                if 0 <= Y + 1 < c_.shape[0] and 0 <= X + j < c_.shape[1]:
-                    c_[Y, X + j] = C('snow', 4)
-                    c_[Y + 1, X + j] = C('snow_cool', 3)
-    # bootprint runs: vertical runs (up and down the trod) and fewer across
-    for _ in range(P * P // 5200):
-        y, x = int(rng.integers(0, P)), int(rng.integers(0, P))
-        vert = rng.random() < 0.6
-        n = int(rng.integers(4, 8))
-        for i in range(n):
-            side = (i % 2) * 2 - 1
-            py = y + (i * 7 if vert else side * 2)
-            px = x + (side * 2 if vert else i * 7)
-            h, wd = (3, 2) if vert else (2, 3)
-            for Y, X in T.at(py, px):
-                for dy in range(h):
-                    for dx in range(wd):
-                        if 0 <= Y + dy < c_.shape[0] and 0 <= X + dx < c_.shape[1]:
-                            c_[Y + dy, X + dx] = C('snow_cool', 2)
-                # the print's south lip lit by the light from above
-                for dx in range(wd):
-                    if 0 <= Y + h < c_.shape[0] and 0 <= X + dx < c_.shape[1]:
-                        c_[Y + h, X + dx] = C('snow_cool', 5)
-    return T.crop()
+            for dy, row in enumerate(shape):
+                for dx, ch in enumerate(row):
+                    if ch != '#':
+                        continue
+                    yy_, xx_ = Y + dy, X + dx
+                    if not (0 <= yy_ < S - 1 and 0 <= xx_ < S):
+                        continue
+                    n1 = dy == 0 or shape[dy - 1][dx] != '#'
+                    n2 = not n1 and (dy == 1 or shape[dy - 2][dx] != '#')
+                    south = dy == rows - 1 or shape[dy + 1][dx] != '#'
+                    if old:
+                        if n1:
+                            c_[yy_, xx_] = C('snow', 2)
+                        elif n2 and c_[yy_, xx_] != C('snow', 2):
+                            c_[yy_, xx_] = C('snow_cool', 3)
+                        continue
+                    on_core = c_[yy_, xx_] == C('snow', 2)
+                    c_[yy_, xx_] = C('snow_cool', 2) if (n1 or on_core) else C('snow', 2)
+                    if south and abs(dx - len(row) / 2 + 0.5) < len(row) / 4 and c_[yy_ + 1, xx_] in (
+                            C('snow_cool', 3), C('snow', 3)):
+                        c_[yy_ + 1, xx_] = C('snow_cool', 4)
+
+    ys, xs = np.nonzero(comp)
+    pts = []
+    for _g in range(P * P // 2600):
+        k = int(rng.integers(0, len(ys)))
+        gy, gx = int(ys[k]), int(xs[k])
+        for _d in range(int(rng.integers(3, 7))):
+            for _try in range(6):
+                y, x = gy + int(rng.integers(-12, 13)), gx + int(rng.integers(-12, 13))
+                if all(min(abs(y - py) % P, P - abs(y - py) % P) >= 9 or min(abs(x - px) % P, P - abs(x - px) % P) >= 9
+                       for py, px in pts[-40:]):
+                    break
+            else:
+                continue
+            pts.append((y, x))
+            r = rng.random()
+            shape = DENTS[3 + int(rng.integers(0, 2))] if r < 0.33 else DENTS[int(rng.integers(0, 3))]
+            dent(y % P, x % P, shape, rng.random() < 0.7)
+    # the fill tiles exactly; its wrap is set on a row and a column of ordinary contrast (as ice's), since
+    # a dent's rows make single rows unequal (test_kit.test_fills_seamless compares one row pair)
+    return np.roll(T.crop(), (-9, -7), (0, 1))
 
 
 def moraine(seed: int = 1403, P: int = PERIOD) -> np.ndarray:
-    """A granite moraine: an unsorted cold grey grit field (slate_cool and slate in 2 by 2 grains)
-    carrying stones of three size classes (3 to 5, 8 to 12 and a few 16 to 24 texels across), laid
-    in drifts with open grit between. Each stone has a lit upper-west cap, a body, a dark lower-east
-    side and a contact texel; old snow lies in the hollow on the north side of the large ones."""
+    """A granite moraine, after the Frostline A4 pass (rounds 4 and 5): graded stones on a calm grit,
+    sized against a person (an adult is 74 texels): a few boulders 26 to 40 texels across (knee high)
+    gathered in drifts, cobbles 11 to 18 and pebbles 6 to 8 over the whole field. Each stone is a
+    block of granite broken on five to seven planes (a polygon, not a lump): a flat lit top plane and
+    facets turned to or from the light, the top-west lit, the south-east falls dark, a dark rim where
+    it turns under, a contact shade on the grit at its south and east foot with dark grit gathered
+    there; some boulders carry one crack with a lit lip, and old snow lies on their top plane as a
+    load thickest in the middle, thinning to nothing at its ends, its lower row cool. The grit is
+    cold grey (slate and slate_cool) in large soft patches, with grains of two or three texels in
+    the grit's own close sibling tones, never single specks."""
     rng = np.random.default_rng(seed)
-    yy, xx = np.mgrid[0:P, 0:P]
-    # 2 by 2 grains, their grid offset a texel so the wrap falls inside a grain (as every other row pair)
-    gq = TN._fmix(((((yy + 1) // 2) % (P // 2)) * 92821 + (((xx + 1) // 2) % (P // 2)) * 68917 + seed) & 0xffffffff) / 4294967295.0
-    g = aniso(P, 9.0, 7.0, seed + 2)
-    cv = np.where(g > 0.2, C('slate', 3), C('slate_cool', 3)).astype(np.int32)
-    cv[(gq > 0.9) & (g < 0.9)] = C('slate_cool', 2)            # dark grains, 2 by 2, one in ten
-    cv[(gq < 0.04) & (g > 0.5)] = C('slate', 4)                # the odd lit grain on the rises
-    drift = aniso(P, 60.0, 40.0, seed + 1)
+    g = aniso(P, 22.0, 16.0, seed + 2)
+    base = np.where(g > 0.25, C('slate', 3), C('slate_cool', 3)).astype(np.int32)
+    cv = base.copy()
+    drift = aniso(P, 70.0, 50.0, seed + 1)
+    # the grit (round 4: no terrazzo): irregular grains of one to four texels in the grit's own close
+    # tones (a sibling a hair warmer or cooler, never darker), thick in drifts and thin between, so
+    # the ground has grain at arm's length and stays one calm plane from a step back
+    gd = aniso(P, 30.0, 24.0, seed + 4)
+    seeds = rng.random((P, P)) < np.clip(0.065 + 0.03 * gd, 0.03, 0.12)
+    # each seed grows into a grain of two or three texels (2 x 1, 1 x 2 or an L of three), round 5
+    kind_ = rng.integers(0, 4, (P, P))
+    grains = seeds.copy()
+    grains |= np.roll(seeds & (kind_ != 1), 1, 1)                 # its east texel
+    grains |= np.roll(seeds & (kind_ >= 1), 1, 0)                 # its south texel
+    alt = np.where(base == C('slate', 3), np.where(rng.random((P, P)) < 0.5, C('slate_warm', 3), C('slate_cool', 3)),
+                   C('slate', 3))
+    cv[grains] = alt[grains]
     T = Torus(cv)
     c_ = T.cv
     taken = np.zeros_like(c_, bool)
-    sets = [('slate', 'slate_cool'), ('slate', 'slate'), ('iron', 'slate_cool')]
+    sets = [('slate', 'slate_cool'), ('slate', 'slate'), ('iron', 'slate_cool'), ('slate_warm', 'slate')]
+    L = np.array([-0.55, -0.65, 0.75])
+    L = L / np.linalg.norm(L)
 
     def stone(y, x, r, fam):
-        rx, ry = r * rng.uniform(1.0, 1.3), r * rng.uniform(0.7, 0.85)
-        big = r >= 7
+        rx, ry = r * rng.uniform(1.0, 1.25), r * rng.uniform(0.72, 0.88)
+        nv = int(rng.integers(5, 8))
+        phi = np.sort((np.arange(nv) + rng.uniform(-0.3, 0.3, nv)) * 2 * np.pi / nv + rng.uniform(0, 2 * np.pi)) % (2 * np.pi)
+        phi = np.sort(phi)
+        rho = rng.uniform(0.86, 1.06, nv)
+        big, mid_ = r >= 12, r >= 5
+        snowcap = big and rng.random() < 0.7
+        crack = big and rng.random() < 0.6
+        ca = rng.uniform(-0.5, 0.5)
+        vx_, vy_ = rho * np.cos(phi), rho * np.sin(phi)
         for Y, X in T.at(y, x):
-            y0, y1 = int(Y - ry * (1.8 if big else 1.0) - 1), int(Y + ry + 3)
-            x0, x1 = int(X - rx - 1), int(X + rx + 2)
+            y0, y1 = int(Y - ry - 3), int(Y + ry + 4)
+            x0, x1 = int(X - rx - 3), int(X + rx + 4)
             if y0 < 0 or x0 < 0 or y1 >= c_.shape[0] or x1 >= c_.shape[1]:
                 continue
             sy, sx = np.mgrid[y0:y1, x0:x1]
             dy, dx = (sy + 0.5 - Y) / ry, (sx + 0.5 - X) / rx
-            q = dx * dx + dy * dy
+            th = np.arctan2(dy, dx) % (2 * np.pi)
+            # which facet each texel looks out through, and the polygon's radius along its ray
+            sec = (np.searchsorted(phi, th) - 1) % nv
+            a0, a1 = phi[sec], phi[(sec + 1) % nv]
+            d_ = (a1 - a0) % (2 * np.pi)
+            r0, r1 = rho[sec], rho[(sec + 1) % nv]
+            rp = r0 * r1 * np.sin(d_) / (r0 * np.sin((th - a0) % (2 * np.pi)) + r1 * np.sin((a1 - th) % (2 * np.pi)) + 1e-9)
+            q = np.sqrt(dx * dx + dy * dy) / np.maximum(rp, 1e-6)
             body = q <= 1.0
-            if big:   # old snow in the hollow on the north side, laid before the stone
-                sq = ((sx + 0.5 - X - rx * 0.1) / (rx * 0.8)) ** 2 + ((sy + 0.5 - (Y - ry * 1.05)) / (ry * 0.6)) ** 2
-                sn = (sq <= 1.0) & ~body
-                c_[y0:y1, x0:x1][sn] = C('snow', 4)
-                c_[y0:y1, x0:x1][sn & (sy + 1 > Y - ry * 0.75)] = C('snow_cool', 4)
-            lit = body & ((dx + dy) < -0.55)
-            dark = body & ((dx + dy) > 0.6)
+            if not body.any():
+                continue
+            # planes: a flat top, and each facet tilted out through its own edge
+            ex_, ey_ = vx_[(sec + 1) % nv] - vx_[sec], vy_[(sec + 1) % nv] - vy_[sec]
+            nx_, ny_ = ey_, -ex_
+            nl = np.sqrt(nx_ * nx_ + ny_ * ny_) + 1e-9
+            nx_, ny_ = nx_ / nl, ny_ / nl
+            tilt = np.where(q < 0.55, 0.0, 0.85)
+            n = np.stack([nx_ * np.sin(tilt), ny_ * np.sin(tilt), np.cos(tilt)], -1)
+            sh = n @ L
             reg = c_[y0:y1, x0:x1]
-            reg[body] = C(fam[1], 3)
-            reg[body & (dx + dy < -0.1)] = C(fam[0], 3)
-            reg[lit] = C(fam[0], 5 if big else 4)
-            reg[dark] = C(fam[1], 1)
-            # contact: the grit under the stone's south-east edge in deep shade
-            foot = (~body) & (q <= 1.35) & (dy > 0.35) & (dx > -0.3)
-            reg[foot] = C('slate_cool', 0)
+            # the contact shade on the grit at the south and east foot
+            foot = np.zeros_like(body)
+            foot[1:, 1:] |= body[:-1, :-1]
+            foot[1:, :] |= body[:-1, :]
+            if mid_:
+                foot[2:, 1:] |= body[:-2, :-1]
+            foot &= ~body & ~taken[y0:y1, x0:x1]
+            reg[foot] = C('slate_cool', 1) if mid_ else C('slate_cool', 2)
+            if mid_:
+                # loose grit gathered at its south and east foot: three to eight dark grains
+                ring = np.zeros_like(body)
+                ring[3:, 2:] |= body[:-3, :-2]
+                ring &= ~body & ~foot & ~taken[y0:y1, x0:x1]
+                ys_, xs_ = np.nonzero(ring)
+                if len(ys_):
+                    for j in rng.choice(len(ys_), size=min(len(ys_), int(rng.integers(3, 9))), replace=False):
+                        reg[ys_[j], xs_[j]] = C('slate_cool', 2)
+                        if xs_[j] + 1 < reg.shape[1] and rng.random() < 0.6:
+                            reg[ys_[j], xs_[j] + 1] = C('slate_cool', 2)
+            if big:
+                foot2 = np.zeros_like(body)
+                foot2[3:, 2:] |= body[:-3, :-2]
+                foot2 &= ~body & ~foot & ~taken[y0:y1, x0:x1]
+                reg[foot2] = C('slate_cool', 2)
+            light, dark = fam
+            tone = np.where(sh > 0.82, 5, np.where(sh > 0.6, 4, np.where(sh > 0.42, 3, np.where(sh > 0.22, 2, 1))))
+            if not mid_:
+                tone = np.clip(tone, 2, 4)
+            col = np.where(tone >= 3, light, dark)
+            codes = np.vectorize(lambda f, t: C(f, int(t)), otypes=[np.int32])(col, tone)
+            # the rim where the stone turns under, on its south and east
+            edge = body & ~ndi.binary_erosion(body)
+            under = edge & ((dy > 0.2) | (dx > 0.45))
+            codes[under] = C('slate_cool', 1) if mid_ else C(dark, 2)
+            if crack:
+                # one crack across the top plane and down a facet, a lit lip on its west
+                cl = body & (np.abs((sx + 0.5 - X) - ca * (sy + 0.5 - Y) - rx * 0.12) < 0.55) & (q < 0.9) & (dy > -0.5)
+                codes[cl] = C('slate_cool', 1)
+                lip = np.zeros_like(cl)
+                lip[:, :-1] = cl[:, 1:]
+                codes[lip & body & ~cl & (q < 0.9)] = C(light, 4)
+            if snowcap:
+                # old snow on the top plane as a load: up to three rows mid-top, thinning to nothing
+                # at its ends, lit on its first row, cool on its last; the stone's lit top shows past it
+                tops = np.where(body.any(0), np.argmax(body, 0), -1)
+                cols = np.nonzero(tops >= 0)[0]
+                if len(cols) >= 6:
+                    c0, c1 = cols[0] + 1, cols[-1] - 1
+                    xc, hw = (c0 + c1) / 2 - 0.15 * (c1 - c0), max(1.0, 0.42 * (c1 - c0))
+                    for cx_ in range(c0, c1 + 1):
+                        tk = int(round(3.2 * (1 - ((cx_ - xc) / hw) ** 2)))
+                        if tk <= 0:
+                            continue
+                        for rr in range(tk):
+                            yy_ = tops[cx_] + rr
+                            if yy_ < body.shape[0] and body[yy_, cx_]:
+                                codes[yy_, cx_] = (C('snow', 5) if rr == 0 and cx_ < xc else C('snow', 4)) if rr < tk - 1 \
+                                    else C('snow_cool', 3)
+            reg[body] = codes[body]
             taken[y0:y1, x0:x1] |= body
 
-    classes = [(8.0, 12.0, P * P // 11000), (4.0, 6.0, P * P // 1700), (1.6, 2.5, P * P // 500)]
+    classes = [(13.0, 20.0, P * P // 40000), (5.5, 9.0, P * P // 6500), (3.0, 4.2, P * P // 1500)]
     for lo, hi, n in classes:
         placed = 0
         tries = 0
-        while placed < n and tries < n * 30:
+        while placed < n and tries < n * 40:
             tries += 1
             y, x = int(rng.integers(0, P)), int(rng.integers(0, P))
-            if drift[y, x] < (-0.2 if hi < 3 else 0.1) or rng.random() > 0.5 + 0.5 * np.tanh(drift[y, x]):
+            need = 0.25 if hi >= 13 else -1.6                            # cobbles and pebbles everywhere
+            if drift[y, x] < need or rng.random() > (0.5 + 0.5 * np.tanh(drift[y, x] - need) if hi >= 13 else 0.7):
                 continue
             r = rng.uniform(lo, hi)
             Y, X = y + T.M, x + T.M

@@ -11,10 +11,28 @@
   {
    "id": "still",
    "weight": 1.0,
-   "png": "res://kit/props/art/frost/frost_pine_squat.png",
+   "png": "res://kit/props/art/frost/frost_pine_squat_still.png",
    "foot": [
-    49,
-    175
+    61,
+    176
+   ]
+  },
+  {
+   "id": "b",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_pine_squat_b.png",
+   "foot": [
+    47,
+    176
+   ]
+  },
+  {
+   "id": "c",
+   "weight": 0.6,
+   "png": "res://kit/props/art/frost/frost_pine_squat_c.png",
+   "foot": [
+    58,
+    143
    ]
   }
  ],
@@ -23,19 +41,19 @@
   "by": null,
   "at": null,
   "standard": "eastward-edges.md 5.1 and 5.5, art-style.md density 3; the Frostline brief (snow lying on what faces the sky, granite and slate, lake ice)",
-  "note": "A squat pine cropped by the wind, its snow shelves on the west."
+  "note": "A squat pine cropped by the wind, its snow heaped on the west of each bough (three variants)."
  },
  "geometry": {
   "size_px": [
-   112,
-   176
+   125,
+   177
   ],
   "size_cells": [
    4,
    2
   ],
   "z_sort": "foot",
-  "height_px": 176,
+  "height_px": 177,
   "collision": {
    "shape": "rect",
    "rect": [
@@ -46,8 +64,8 @@
    ]
   },
   "foot": [
-   49,
-   175
+   61,
+   176
   ],
   "footprint": [
    [

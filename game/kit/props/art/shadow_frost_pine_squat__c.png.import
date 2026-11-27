@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bljgqk8kkwebn"
-path="res://.godot/imported/frost_pine_squat.png-fd31e0ee4b573afece5eb0961775c067.ctex"
+uid="uid://obqebtx4hbi3"
+path="res://.godot/imported/shadow_frost_pine_squat__c.png-0db33f5efb9a7e4caf70ce75fc96cf07.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/props/art/frost/frost_pine_squat.png"
-dest_files=["res://.godot/imported/frost_pine_squat.png-fd31e0ee4b573afece5eb0961775c067.ctex"]
+source_file="res://kit/props/art/shadow_frost_pine_squat__c.png"
+dest_files=["res://.godot/imported/shadow_frost_pine_squat__c.png-0db33f5efb9a7e4caf70ce75fc96cf07.ctex"]
 
 [params]
 
