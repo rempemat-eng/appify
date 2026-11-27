@@ -348,7 +348,7 @@
     96
    ],
    "face": null,
-   "hash": "fe20f2cd29d29cf3"
+   "hash": "c4cf68a5c1ca9db7"
   },
   {
    "id": "path",
@@ -365,7 +365,7 @@
     96
    ],
    "face": null,
-   "hash": "da581030433bfea7"
+   "hash": "769904c093333527"
   },
   {
    "id": "cobble_road",
@@ -382,7 +382,7 @@
     96
    ],
    "face": null,
-   "hash": "cfe3351e91d5402c"
+   "hash": "34c0b7d2a71a44bb"
   },
   {
    "id": "water",
@@ -403,7 +403,7 @@
     96
    ],
    "face": null,
-   "hash": "20b446385adbca99"
+   "hash": "f5aa9efb0b56ed69"
   },
   {
    "id": "scree",
@@ -420,7 +420,7 @@
     96
    ],
    "face": null,
-   "hash": "d3ea98c236e2a8cc"
+   "hash": "cd4488fdad1500bd"
   },
   {
    "id": "worn",
@@ -437,7 +437,7 @@
     96
    ],
    "face": null,
-   "hash": "7f7bec96ea778b8f"
+   "hash": "ea3d45413a69a15a"
   },
   {
    "id": "earth_face",
@@ -457,7 +457,7 @@
     "height_cells": 2,
     "strip_px": 48
    },
-   "hash": "ad7949700d1ac530"
+   "hash": "b7586524dff47a14"
   },
   {
    "id": "heath",
@@ -474,7 +474,7 @@
     96
    ],
    "face": null,
-   "hash": "d22a8e239ce5f503"
+   "hash": "b616d80733835d67"
   },
   {
    "id": "peat",
@@ -491,7 +491,7 @@
     96
    ],
    "face": null,
-   "hash": "6f8ff70b15f16565"
+   "hash": "061d88ef85118b8e"
   },
   {
    "id": "drove",
@@ -508,7 +508,7 @@
     96
    ],
    "face": null,
-   "hash": "6d1458f77d04bbb9"
+   "hash": "8f131977b459b15e"
   },
   {
    "id": "shingle",
@@ -525,7 +525,7 @@
     96
    ],
    "face": null,
-   "hash": "7ba9fb7e02efa569"
+   "hash": "b707b83a71f8514a"
   },
   {
    "id": "quay",
@@ -542,7 +542,7 @@
     96
    ],
    "face": null,
-   "hash": "8f5f228b32eb988d"
+   "hash": "98abb2f68110e98f"
   },
   {
    "id": "snow",
@@ -559,7 +559,7 @@
     96
    ],
    "face": null,
-   "hash": "86a43043368e1862"
+   "hash": "60efed2949f4e193"
   },
   {
    "id": "snow_trod",
@@ -576,7 +576,7 @@
     96
    ],
    "face": null,
-   "hash": "9d083cc4ded55987"
+   "hash": "391764fade289d3b"
   },
   {
    "id": "moraine",
@@ -593,7 +593,7 @@
     96
    ],
    "face": null,
-   "hash": "0fa30d7008c7e0af"
+   "hash": "ad2576301c7094ed"
   },
   {
    "id": "ice",
@@ -610,7 +610,7 @@
     96
    ],
    "face": null,
-   "hash": "2b1da0b608934189"
+   "hash": "eff023462d74f99b"
   }
  ],
  "transitions": [
@@ -636,7 +636,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "d8345854aaf3879d"
+   "hash": "14e674e934df736a"
   },
   {
    "id": "heath_over_drove",
@@ -666,7 +666,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "e5380bb7d6f03088"
+   "hash": "e9cb8fb8b3b986d9"
   },
   {
    "id": "heath_over_path",
@@ -696,7 +696,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "1a0ffe7aff43e14f"
+   "hash": "7088febf11c5c1ed"
   },
   {
    "id": "heath_over_peat",
@@ -706,7 +706,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "46a7291516aa50ef"
+   "hash": "8a42eeb840d97142"
   },
   {
    "id": "heath_over_worn",
@@ -736,7 +736,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "882472a9bc45ad79"
+   "hash": "6a31eb236b8121f0"
   },
   {
    "id": "ice_over_water",
@@ -746,7 +746,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "dd858d82172564e3"
+   "hash": "66e2ebdf978b09df"
   },
   {
    "id": "lawn_over_earth_face",
@@ -756,7 +756,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "b12bad7114c9169a"
+   "hash": "202a8b18d1334a48"
   },
   {
    "id": "lawn_over_heath",
@@ -766,7 +766,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "0bcd3840460e9029"
+   "hash": "c57cc6a7ca545864"
   },
   {
    "id": "lawn_over_lower_tier",
@@ -776,7 +776,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "5d4dcde1425d0aa3"
+   "hash": "6116ee173fd170d6"
   },
   {
    "id": "lawn_over_path",
@@ -811,7 +811,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "518f5abcf311774c"
+   "hash": "4d5a81073eec976f"
   },
   {
    "id": "lawn_over_quay",
@@ -837,7 +837,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "4946f234f5cdd627"
+   "hash": "e20e03f7357dfbe2"
   },
   {
    "id": "lawn_over_scree",
@@ -867,7 +867,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "267be4a0f74cd9ea"
+   "hash": "eeec5498bb23d62d"
   },
   {
    "id": "lawn_over_shingle",
@@ -893,7 +893,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "630fa294aa46958b"
+   "hash": "325b87f0c7c66d94"
   },
   {
    "id": "lawn_over_water",
@@ -924,7 +924,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "ecd9b254db3882e0"
+   "hash": "8157bfb8e53bd1fc"
   },
   {
    "id": "lawn_over_worn",
@@ -959,7 +959,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "0e3591d5e60ee96b"
+   "hash": "e3f34a5f2916b635"
   },
   {
    "id": "path_over_drove",
@@ -969,7 +969,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "4e702c86d67b17c5"
+   "hash": "9f6a59af25f800c6"
   },
   {
    "id": "path_over_earth_face",
@@ -979,7 +979,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "286d1a2447134e92"
+   "hash": "e720b958bf834962"
   },
   {
    "id": "path_over_lower_tier",
@@ -989,7 +989,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "cd134230b8a65e63"
+   "hash": "006fcef30f27c030"
   },
   {
    "id": "path_over_quay",
@@ -999,7 +999,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "d64c713e5d4e90ae"
+   "hash": "3fb857e89df19263"
   },
   {
    "id": "path_over_water",
@@ -1022,7 +1022,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "7b221cce605f86a4"
+   "hash": "06b9851a0cd999e3"
   },
   {
    "id": "quay_over_water",
@@ -1032,7 +1032,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "4bb3410844b8da67"
+   "hash": "6266a03aad11fd91"
   },
   {
    "id": "shingle_over_quay",
@@ -1042,7 +1042,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "b90d3509c61707fa"
+   "hash": "23f85b45e1988a61"
   },
   {
    "id": "shingle_over_water",
@@ -1065,7 +1065,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "5cf9f3ad3aa31d06"
+   "hash": "1a2d89caba2ddc2a"
   },
   {
    "id": "snow_over_ice",
@@ -1075,7 +1075,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "6e879e54d036cd43"
+   "hash": "6ceacaf4285d4d91"
   },
   {
    "id": "snow_over_moraine",
@@ -1085,7 +1085,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "c50632debfbe139b"
+   "hash": "f6dbc5848a9b6567"
   },
   {
    "id": "snow_over_snow_trod",
@@ -1095,7 +1095,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "481aad856ca5a601"
+   "hash": "683f458c976af63f"
   },
   {
    "id": "snow_over_water",
@@ -1105,7 +1105,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "ffb2f18d552b9bca"
+   "hash": "33646f8e339b6725"
   },
   {
    "id": "snow_trod_over_water",
@@ -1115,7 +1115,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "220a66c181982f5c"
+   "hash": "7ac72349a0f6c7f2"
   },
   {
    "id": "water_over_earth_face",
@@ -1125,7 +1125,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "6381ee794fa81ad2"
+   "hash": "fc2d689b1d5e9714"
   },
   {
    "id": "worn_over_drove",
@@ -1135,7 +1135,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "21afc6a149e5578d"
+   "hash": "60fde204b0c73aaf"
   },
   {
    "id": "worn_over_path",
@@ -1145,7 +1145,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "76a26f283d5df892"
+   "hash": "bf70e8f785be692d"
   }
  ]
 }

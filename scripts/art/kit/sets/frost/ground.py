@@ -66,25 +66,28 @@ def terrain_pieces():
                  'The cirque\'s floor: lying snow, wind-laid drifts lit on their north-west faces with cool shade in '
                  'their lee, a few clusters of wind-cut sastrugi; nothing dark on the open snow.'),
         _terrain('snow_trod', 'Trodden snow', 14, 22, 'snow', True, TROD_FILL, 0.9,
-                 'The Col Path trodden into the snow: a packed grey-blue plane, soft compacted patches, boot-sized '
-                 'round dents (mostly old and half filled), no lanes, so it reads the same whichever way it runs.'),
+                 'The Col Path trodden into the snow: a packed grey-blue plane with a gentle drift of tone, large soft '
+                 'compacted patches packed harder at their cores, boot dents 5 to 9 texels in loose groups (filled '
+                 'pockets, most of them old crescents), no lanes, so it reads the same whichever way it runs.'),
         _terrain('moraine', 'Moraine', 15, 16, 'rock', False, MORAINE_FILL, 1.0,
-                 'The High Fells\' moraine: graded granite stones (boulders knee high to pebbles) with volume and '
-                 'contact shade on a calm cold grit with fine grain, dark grit gathered at the stones\' feet, old snow '
-                 'on the boulders\' tops.'),
+                 'The High Fells\' moraine: graded granite stones (boulders knee high to pebbles) broken on flat planes, '
+                 'contact shade on a calm cold grit of two- and three-texel grains, dark grit at the stones\' feet, a '
+                 'crack on some boulders and old snow lying on their tops.'),
         _terrain('ice', 'Lake ice', 16, 12, 'water', False, ICE_FILL, 9.0,
                  'The tarn frozen over: clear blue ice under wind-laid white, cracks. Kept off (the white ice breaks).',
                  walkable=False),
     ]
     tr = [
-        _transition('snow', 'snow_trod', 'snow_lip', None, 'The snow hanging over the trod\'s north side in scallops, '
+        _transition('snow', 'snow_trod', 'snow_lip', None, 'The snow hanging over the trod\'s north side in rounded lobes, '
                     'lit on its south, loose snow frayed over its other edges.'),
         _transition('snow', 'moraine', 'snow_fray', STONES, 'Snow thinning over the moraine, frayed at its sides, the '
                     'moraine\'s slate stones breaking through.'),
-        _transition('snow', 'water', 'cornice_bank', None, 'A snow cornice over a granite bank, shore ice on the open water.',
+        _transition('snow', 'water', 'cornice_bank', None, 'A snow cornice over open water: on its north shore a bank of '
+                    'large outlined granite stones with the light waterline in the gaps, shore ice on every other shore.',
                     {'rim': 'ice'}),
         _transition('snow', 'ice', 'cornice_bank', None, 'A snow cornice over the tarn: on its north shore a bank of large '
-                    'outlined granite stones with the light waterline in the gaps, a plain rim on every other shore.',
+                    'outlined granite stones, gaps moving from cell to cell with the light waterline in them, a plain '
+                    'rim on every other shore.',
                     {'rim': 'lip'}),
         _transition('snow_trod', 'water', 'cornice_bank', None, 'The trod\'s end at the water, shore ice.', {'rim': 'ice'}),
         _transition('ice', 'water', 'ice_edge', None, 'The ice cut back from open water: its thickness on the north edge.'),

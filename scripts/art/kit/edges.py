@@ -636,30 +636,31 @@ def _fray_depth(prof: int, salt: int = 0) -> np.ndarray:
 
 def _scallops(prof: int) -> np.ndarray:
     """The snow's north lip over a trod along one cell edge, a function of its profile only: per
-    texel along it (t = -12 .. 11) how many rows the lip hangs over the trod, in scallops 6 to 8
-    texels long (1 at a scallop's ends, 3 at its belly)."""
+    texel along it (t = -12 .. 11) how many rows the lip hangs over the trod, in rounded lobes 6 to
+    10 texels long with a flat belly (round 5: 1 at the cusp between lobes, 3 across the belly)."""
     rng = np.random.default_rng(6600 + 11 * prof)
     out = np.ones(CELL, np.int32)
     x = int(rng.integers(-5, 1))
     while x < CELL:
-        L = int(rng.integers(6, 9))
+        L = int(rng.integers(6, 11))
         for i in range(L):
             if 0 <= x + i < CELL:
-                out[x + i] = 1 + int(round(2 * np.sin(np.pi * (i + 0.5) / L)))
+                out[x + i] = 1 if i == 0 else min(3, 1 + int(round(2.4 * np.sin(np.pi * (i + 0.5) / L) ** 0.5)))
         x += L
     return out
 
 
 def snow_lip(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0)) -> np.ndarray:
     """Snow (upper) over a trod packed into it. Under a north lip (round 4, after the lip read as a
-    drawn line) the snow hangs over the trod in scallops 6 to 8 texels long (`_scallops` of the cell
-    edge's profile): its top row lit (a tone up), the hanging face in two cool rows (snow_cool 3,
-    then snow_cool 2 at its foot) and a row of shade on the trod under each scallop. On the trod's
-    south side the snow's first row is lit. Every other edge is soft (eastward-edges.md 5.1: a
-    frayed edge, no line): loose snow kicked over the trod's edge lies on it in a band 0 to 3 texels
-    wide that steps a texel at a time, with a tongue of 4 now and then, the trod there a tone
-    lighter, so the packed plane fades into the snow instead of meeting it on a line. Every band's
-    width is the cell edge's own, so neighbours agree at every border."""
+    drawn line; round 5 rounds the lobes) the snow hangs over the trod in lobes 6 to 10 texels long
+    with a flat belly and a one-texel cusp between them (`_scallops` of the cell edge's profile): its
+    top row lit (a tone up), the hanging face in two cool rows (snow_cool 3, then snow_cool 2 at its
+    foot) and a row of shade on the trod under each lobe. On the trod's south side the snow's first
+    row is lit. Every other edge is soft (eastward-edges.md 5.1: a frayed edge, no line): loose snow
+    kicked over the trod's edge lies on it in a band 0 to 3 texels wide that steps a texel at a time,
+    with a tongue of 4 now and then, the trod there a tone lighter, so the packed plane fades into
+    the snow instead of meeting it on a line. Every band's width is the cell edge's own, so
+    neighbours agree at every border."""
     m2 = soft_lower(k, prof)
     snow = ~m2
     ops = Ops(snow, fill_u, fill_l)
@@ -738,6 +739,20 @@ def snow_fray(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0))
     # the stones breaking through the snow's last texels (round 4: the moraine's own slate stones,
     # in place of the lawn kit's warm decals), from the cell edge's own profile
     stone, sid, kind, capm = _fray_stones(k, prof, snow2, vert)
+    # round 5: a corner of stones closed round by snow on three sides (a lone moraine cell is four
+    # such corners) always shows a whole stone in two of the four turns, so a small patch never reads
+    # as a flat stain; drawn within the tile's middle, it depends on the whole tile
+    if k in (7, 14):                                  # the stones only in the SE (7) or NW (14) quarter
+        sx, sy = (1, 1) if k == 7 else (-1, -1)
+        rng = np.random.default_rng(7900 + 31 * prof[0] + 17 * prof[1] + 13 * prof[2] + 7 * prof[3] + k)
+        L, d = float(rng.uniform(6.5, 8.0)), float(rng.uniform(4.6, 5.6))
+        cx, cy = MID + sx * 5.0, MID + sy * 4.5
+        yy, xx = np.mgrid[0:N, 0:N] + 0.5
+        m = (((xx - cx) / (L / 2)) ** 2 + ((yy - cy) / (d / 2)) ** 2) <= 1.0
+        stone = stone | m
+        sid = np.where(m, 99, sid)
+        kind = np.where(m, int(rng.integers(0, 3)), kind)
+        capm = capm | (m & (yy < cy - d * 0.15) & bool(rng.random() < 0.5))
     _shade_stones(ops, stone, sid, kind, capm, m2 & ~snow2)
     return ops.encode((slice(T0, T1), slice(T0, T1)))
 
@@ -830,44 +845,55 @@ def _shade_stones(ops, stone, sid, kind, capm, ground):
     ops.shift(foot, -1)
 
 
-def _bank_stones(prof: int) -> list:
-    """The tarn bank's stones along one cell edge (round 4, after the audit: stones the size of
-    Eastward's bank stones, 5.3), a function of its profile only so the two tiles sharing the cell
-    edge agree: (start, end, depth, drop, cap, kind) in texels along it (t = 0 .. 23). Two or three
-    stones fill the edge between gaps of 0 to 2 texels: mostly 10 to 15 long, now and then a small
-    one of 4 to 6 between; depth about half the length (5 to 8 for the big ones, 3 to 5 for the
-    small), set 0 or 1 texel further from the shore (`drop`), a few with a cap of snow, the granite
-    one of three siblings (`kind`). No stone crosses a vertex, so a run's end at a corner is always
-    a whole stone."""
-    rng = np.random.default_rng(5400 + 7 * prof)
-    out, x = [], int(rng.integers(0, 3))
-    end = CELL - int(rng.integers(0, 3))
-    while end - x >= 4:
-        R = end - x
-        if R <= 16:
-            L = R
-        elif rng.random() < 0.3:
-            L = int(rng.integers(4, 7))
-        else:
-            L = int(rng.integers(10, min(15, R - 5) + 1))
-        dd = int(np.clip(round(L * rng.uniform(0.42, 0.58)), 5, 8)) if L >= 9 else int(rng.integers(3, 6))
-        out.append((x, x + L, dd, int(rng.random() < 0.35), bool(L >= 9 and rng.random() < 0.3), int(rng.integers(0, 3))))
-        x += L + int(rng.integers(1, 3))
+def _mid_stone(prof: int) -> tuple:
+    """The tarn bank's stone across the middle of one cell edge (round 5), a function of its profile
+    only, so both tiles sharing the cell edge agree: (start, end, depth, drop, cap, kind) in texels
+    along it (t = 0 .. 23). It starts 3 to 8 texels in and ends 15 to 21 in (9 to 18 long, so where
+    the gaps fall moves from edge to edge), 5 to 8 deep, set 0 or 1 texel further from the shore
+    (`drop`), now and then with a cap of snow, the granite one of three siblings (`kind`)."""
+    rng = np.random.default_rng(5500 + 7 * prof)
+    s0, s1 = int(rng.integers(3, 9)), int(rng.integers(15, 22))
+    dd = int(np.clip(round((s1 - s0) * rng.uniform(0.45, 0.6)), 5, 8))
+    return (s0, s1, dd, int(rng.random() < 0.35), bool(rng.random() < 0.3), int(rng.integers(0, 3)))
+
+
+def _vertex_stones(p_w: int, p_e: int) -> list:
+    """The stones between two cell edges' middle stones, across the vertex they share (round 5: so
+    the gaps never fall on the 24-texel cell beat): a function of both edges' profiles, which only
+    the tiles centred on that vertex see whole. In texels from the vertex (negative to the west):
+    (start, end, depth, drop, cap, kind); none where the room is under 6, two where it is 15 or more.
+    They stay within 10 texels of the vertex, clear of the tile's border strips."""
+    rng = np.random.default_rng(5600 + 7 * p_w + 53 * p_e)
+    a = _mid_stone(p_w)[1] - CELL + int(rng.integers(1, 3))
+    b = _mid_stone(p_e)[0] - int(rng.integers(1, 3))
+    room = b - a
+    if room < 6:
+        return []
+    cuts = [a, b] if room < 15 else [a, a + room // 2 + int(rng.integers(-1, 2)), b]
+    out = []
+    for i in range(len(cuts) - 1):
+        c0, c1 = cuts[i] + (1 if i else 0), cuts[i + 1]
+        if c1 - c0 >= 6:
+            dd = int(np.clip(round((c1 - c0) * rng.uniform(0.5, 0.65)), 4, 7))
+            out.append((c0, c1, dd, int(rng.random() < 0.35), bool(rng.random() < 0.25), int(rng.integers(0, 3))))
     return out
 
 
 def cornice_bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), rim: str = 'ice') -> np.ndarray:
-    """Snow (upper) over water or ice in a cold country (the Frostline A4 pass, round 4 after the
-    audit). Only a north shore (land to the north) turns a face to the camera (eastward-edges.md
+    """Snow (upper) over water or ice in a cold country (the Frostline A4 pass, rounds 4 and 5 after
+    the audits). Only a north shore (land to the north) turns a face to the camera (eastward-edges.md
     5.3a): there the snow's lip runs on unbroken (a lit row, thicker where a stone sits a texel
     lower) and under it, sitting on the shoreline and following its wave, lies a bank of granite
-    stones the size of Eastward's (5.3: two or three to a cell edge, mostly 10 to 15 texels long and
-    5 to 8 deep, now and then a small one between), each a rounded block in four planes of its own
-    sibling granite (a lit top plane with a lit top edge and west edge, the front, a darker east
-    end and foot), outlined dark on its south and east, a few with a cap of snow; under each stone a row of contact shade on the
-    water or ice, and in the gaps between stones the light waterline. Every other shore keeps the one
-    rim: with rim 'ice', a rim of shore ice two texels wide (lit on its land side) on the open water;
-    with rim 'lip', a cool row. The snow's south lip is lit."""
+    stones the size of Eastward's (5.3): one across the middle of each cell edge (9 to 18 texels long,
+    5 to 8 deep, from the edge's profile) and one or two across each vertex between them (from both
+    edges' profiles), so the gaps move from cell to cell instead of beating once a cell. Each stone
+    is a rounded block in four planes of its own sibling granite (a lit top plane with a lit top
+    edge and west edge, the front, a darker east end and foot), outlined dark on its south and east,
+    a few with a cap of snow; under each a row of contact shade on the water or ice, and in every
+    gap the light waterline (a light row, a lighter one above it). Where a run ends at a corner its
+    last stone rounds off before the turn. Every other shore keeps the one rim: with rim 'ice', a
+    rim of shore ice two texels wide (lit on its land side) on the open water; with rim 'lip', a
+    cool row. The snow's south lip is lit."""
     m2 = soft_lower(k, prof)
     land = ~m2
     ops = Ops(land, fill_u, fill_l)
@@ -889,23 +915,42 @@ def cornice_bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 
     jit = np.zeros(N, np.int64)
     cap = np.zeros(N, bool)
     kind = np.zeros(N, np.int64)
-    for half, pr in ((0, prof[3]), (1, prof[1])):
-        cols = np.arange(N)[(xs < MID) if half == 0 else (xs >= MID)]
-        t = cols - (T0 if half == 0 else T1) + HALF
-        whole_t = np.arange(N) - (T0 if half == 0 else T1) + HALF
-        for i, (s0, s1, dd, jj, cc, kk) in enumerate(_bank_stones(pr)):
-            sel = (t >= s0) & (t < s1)
-            span = (whole_t >= s0) & (whole_t < s1)
-            deepest = int(ref_top[span].max()) + jj                # the stone's top row at its lowest
-            dd = int(min(dd, int(MID + 10) - deepest))             # its foot above the border strip
-            c = cols[sel]
-            sid[c] = half * 16 + i
-            u[c] = t[sel] - s0
-            w[c] = s1 - s0
-            D[c] = max(dd, 2)
-            jit[c] = jj
-            cap[c] = cc
-            kind[c] = kk
+    vx = int(MID)                                       # the vertex's column
+    stones = []                                         # (first column, end column, depth, drop, cap, kind)
+    if cfg_l:
+        s0, s1, *rest = _mid_stone(prof[3])
+        stones.append((T0 - HALF + s0, T0 - HALF + s1, *rest))
+    if cfg_r:
+        s0, s1, *rest = _mid_stone(prof[1])
+        stones.append((T1 - HALF + s0, T1 - HALF + s1, *rest))
+    if cfg_l and cfg_r:
+        for (c0, c1, *rest) in _vertex_stones(prof[3], prof[1]):
+            stones.append((vx + c0, vx + c1, *rest))
+    cols_all = np.arange(N)
+    for i, (c0, c1, dd, jj, cc, kk) in enumerate(stones):
+        c = cols_all[(cols_all >= c0) & (cols_all < c1)]
+        deepest = int(ref_top[c].max()) + jj                    # the stone's top row at its lowest
+        dd = int(min(dd, int(MID + 10) - deepest))              # its foot above the border strip
+        sid[c] = i
+        u[c] = c - c0
+        w[c] = c1 - c0
+        D[c] = max(dd, 2)
+        jit[c] = jj
+        cap[c] = cc
+        kind[c] = kk
+    # where the run ends at the vertex (the other half carries no north shore) its stone rounds off
+    # before the corner's turn, on a quarter round 3 texels long (nothing within the border strips moves)
+    lim = np.full(N, 99.0)
+    if cfg_l and not cfg_r:
+        cut = T0 - HALF + 17
+        d_ = np.clip((cols_all + 0.5 - (cut - 3)) / 3.0, 0, None)
+        lim = np.where(d_ >= 1, 0, np.sqrt(np.clip(1 - d_ ** 2, 0, 1)) * 99)
+    if cfg_r and not cfg_l:
+        cut = T1 - HALF + 7
+        d_ = np.clip(((cut + 3) - (cols_all + 0.5)) / 3.0, 0, None)
+        lim = np.where(d_ >= 1, 0, np.sqrt(np.clip(1 - d_ ** 2, 0, 1)) * 99)
+    D = np.minimum(D, np.where(lim >= 99, D, np.round(D * lim / 99)).astype(np.int64))
+    sid = np.where(D > 0, sid, -1)
     U, Wd, Dd = u[None, :], w[None, :], D[None, :]
     v = rt - 1 - jit[None, :]
     valid = m2 & cfg & band & (rt >= 1)
@@ -943,8 +988,9 @@ def cornice_bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 
     lip_low = valid & (v < 0) & has
     gap = valid & ~stone & ~lip_top & ~lip_low
     under = gap & has & (v >= 0) & (v <= Dd) & np.vstack([np.zeros((1, N), bool), stone[:-1]])
-    wline = gap & ((~has & (rt == 1)) | (has & (v == 0) & ~stone & (U <= 1) | has & (v == 0) & ~stone & (U >= Wd - 2)))
+    wline = gap & ((~has & (rt == 1)) | (has & (v == 0) & ~stone & ((U <= 1) | (U >= Wd - 2))))
     wline &= ~under
+    wline2 = gap & ~has & (rt == 2) & ~under
     ops.shift(lip_top, 1)
     ops.own[lip_low] = 2
     ops.ab[lip_low] = C('snow_cool', 3)
@@ -952,7 +998,8 @@ def cornice_bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 
     ops.ab[stone] = code[stone]
     ops.shift(under, -1)
     ops.shift(wline, 2)
-    used = lip_top | lip_low | stone | under | wline
+    ops.shift(wline2, 1)
+    used = lip_top | lip_low | stone | under | wline | wline2
     cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
     edge1 = m2 & ~used & ~(valid & has) & ndi.binary_dilation(land, structure=cross)
     if rim == 'ice':

@@ -128,6 +128,19 @@ class FrostGround(unittest.TestCase):
         self.assertGreater(float(gy[lit].mean()), 0.0)
         self.assertLess(float(face[shade].mean()), 0.0)
         self.assertLess(float(gy[shade].mean()), 0.0)
+        # the plane's broad swells under the drifts too (#541 round 2, logic P6), measured where the
+        # drifts are flat so their term cannot hide a sign flip in the swells' own
+        sw = F.snow_swells()
+        by, bx = F._wrap_grad(sw)
+        bface = bx + 1.3 * by
+        flat = np.abs(face) < 0.005
+        lit_f, shade_f = lit & flat, shade & flat
+        self.assertGreater(lit_f.sum(), 1000)
+        self.assertGreater(shade_f.sum(), 500)
+        self.assertGreater(float(bface[lit_f].mean()), 0.0)
+        self.assertGreater(float(by[lit_f].mean()), 0.0)
+        self.assertLess(float(bface[shade_f].mean()), 0.0)
+        self.assertLess(float(by[shade_f].mean()), 0.0)
 
 
 class Rules(unittest.TestCase):
