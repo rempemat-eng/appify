@@ -463,7 +463,7 @@
    "facing": "s",
    "id": "spruce",
    "piece": "frost_spruce",
-   "variant": "still"
+   "variant": "b"
   },
   {
    "at": [
@@ -483,7 +483,7 @@
    "facing": "s",
    "id": "pine_squat",
    "piece": "frost_pine_squat",
-   "variant": "still"
+   "variant": "c"
   },
   {
    "at": [
@@ -501,9 +501,9 @@
     1056
    ],
    "facing": "s",
-   "id": "krummholz",
-   "piece": "frost_krummholz",
-   "variant": "wide"
+   "id": "pine_squat_7",
+   "piece": "frost_pine_squat",
+   "variant": "c"
   },
   {
    "at": [
@@ -523,7 +523,7 @@
    "facing": "s",
    "id": "pine_3",
    "piece": "frost_pine",
-   "variant": "still"
+   "variant": "b"
   },
   {
    "at": [
@@ -553,7 +553,7 @@
    "facing": "s",
    "id": "pine_squat_4",
    "piece": "frost_pine_squat",
-   "variant": "still"
+   "variant": "b"
   },
   {
    "at": [
@@ -563,7 +563,7 @@
    "facing": "s",
    "id": "spruce_6",
    "piece": "frost_spruce",
-   "variant": "still"
+   "variant": "c"
   },
   {
    "at": [
@@ -573,7 +573,7 @@
    "facing": "s",
    "id": "pine_5",
    "piece": "frost_pine",
-   "variant": "still"
+   "variant": "b"
   },
   {
    "at": [
@@ -613,7 +613,7 @@
    "facing": "s",
    "id": "pine_6",
    "piece": "frost_pine",
-   "variant": "still"
+   "variant": "c"
   },
   {
    "at": [
@@ -621,9 +621,9 @@
     1056
    ],
    "facing": "s",
-   "id": "krummholz_2",
-   "piece": "frost_krummholz",
-   "variant": "low"
+   "id": "pine_squat_8",
+   "piece": "frost_pine_squat",
+   "variant": "b"
   },
   {
    "at": [
@@ -633,7 +633,7 @@
    "facing": "s",
    "id": "spruce_8",
    "piece": "frost_spruce",
-   "variant": "still"
+   "variant": "b"
   },
   {
    "at": [
@@ -643,7 +643,7 @@
    "facing": "s",
    "id": "pine_7",
    "piece": "frost_pine",
-   "variant": "still"
+   "variant": "c"
   },
   {
    "at": [
@@ -663,7 +663,7 @@
    "facing": "s",
    "id": "krummholz_3",
    "piece": "frost_krummholz",
-   "variant": "low"
+   "variant": "low_b"
   },
   {
    "at": [

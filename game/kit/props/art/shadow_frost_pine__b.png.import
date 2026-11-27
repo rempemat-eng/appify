@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dfpmtxwp2w26x"
-path="res://.godot/imported/frost_pine.png-b6919e74336cba2a132380dc1b5da9d5.ctex"
+uid="uid://4rsxndtvlqmt"
+path="res://.godot/imported/shadow_frost_pine__b.png-9d690dcb12dcb2d2f1372347e2534124.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://kit/props/art/frost/frost_pine.png"
-dest_files=["res://.godot/imported/frost_pine.png-b6919e74336cba2a132380dc1b5da9d5.ctex"]
+source_file="res://kit/props/art/shadow_frost_pine__b.png"
+dest_files=["res://.godot/imported/shadow_frost_pine__b.png-9d690dcb12dcb2d2f1372347e2534124.ctex"]
 
 [params]
 
