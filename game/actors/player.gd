@@ -62,6 +62,18 @@ var walk_speed := RUN_SPEED          ## replaced by the manifest's walk_speed in
 var character := CHARACTER
 var _shot_dir := Vector2.RIGHT
 var _defeat_t := 0.0
+var action_driver: AbilityActionDriver = null
+var ability_presentation_error := ""
+var _ability_drawing: Dictionary = {}
+## Explicit actor-texel support elevation; terrain integration supplies it, never inferred.
+var ability_support_height := 0.0
+var _ability_ground_body := Vector2.ZERO
+var _ability_pose_driver: AbilityActionDriver = null
+var _ability_defeat_provider := Callable()
+var _ability_defeat_driver: AbilityActionDriver = null
+var _ability_defeat: AbilityDefeatPlayback = null
+var _ability_defeat_generation := 0
+var _ability_downed := false
 
 @onready var sprite: CastSprite = $Sprite
 @onready var hitbox: Area2D = $Hitbox
@@ -72,17 +84,172 @@ func _ready() -> void:
 	hitbox.monitoring = false
 	set_character(character)
 
+func _exit_tree() -> void:
+	_clear_ability_defeat()
+	# Scene removal/reparenting must not leave presentation callbacks on a departed actor.
+	if action_driver != null:
+		action_driver.cancel("actor_exited_tree")
+
 ## Swaps the body to another cast member (keeps position, HP and facing). False if unknown.
 func set_character(id: String) -> bool:
+	if hp <= 0 or is_rolling() or is_swinging() or is_shooting() or (action_driver != null and action_driver.is_busy()):
+		return false
 	if not sprite.load_character(id):
 		return false
+	_clear_ability_defeat()
 	character = id
+	if action_driver != null:
+		action_driver.character_changed(id)
 	walk_speed = sprite.walk_speed() if sprite.walk_speed() > 0.0 else RUN_SPEED
 	state = &"idle"
 	sprite.play_clip("idle", facing, true)
 	return true
 
+## Optional C60 boundary. No driver is installed by default. Player retains input,
+## facing, collision and movement; the driver owns action clocks and combat effects.
+func attach_action_driver(driver: AbilityActionDriver) -> bool:
+	if driver == null or action_driver != null or hp <= 0 or is_rolling() or is_swinging() or is_shooting():
+		return false
+	action_driver = driver
+	action_driver.character_changed(character)
+	return true
+
+## Explicit optional binding: the provider must use this loaded body's exact manifest
+## and supply approved canonical drawing clocks. No production schedule is inferred.
+func bind_ability_presentation(provider: Callable, contact: Callable, passive_provider: Callable = Callable()) -> bool:
+	if not action_driver is AbilityArenaDriver or not provider.is_valid() or not contact.is_valid():
+		return false
+	var expected := action_driver
+	var passive := _ability_contract.bind(passive_provider, expected) if passive_provider.is_valid() else Callable()
+	var bound := (action_driver as AbilityArenaDriver).bind_presentation(
+		_ability_contract.bind(provider, expected), _present_ability_drawing.bind(expected),
+		_ability_contact.bind(contact, expected), _present_ability_pose.bind(expected), passive)
+	if bound:
+		_ability_ground_body = sprite.position
+		_ability_pose_driver = expected
+		_ability_drawing = {}
+		ability_presentation_error = ""
+	return bound
+
+## Separate explicit terminal contract: no production clocks or form flags are guessed.
+## The existing driver is cancelled before terminal playback; it can emit no contacts.
+func bind_ability_defeat(provider: Callable) -> bool:
+	if action_driver == null or not provider.is_valid() or hp <= 0 or is_defeated():
+		return false
+	_clear_ability_defeat()
+	_ability_defeat_provider = provider
+	_ability_defeat_driver = action_driver
+	return true
+
+func _clear_ability_defeat() -> void:
+	_ability_defeat_generation += 1
+	if _ability_defeat != null: _ability_defeat.cancel()
+	_ability_defeat = null
+	_ability_defeat_provider = Callable()
+	_ability_defeat_driver = null
+
+func _begin_ability_defeat() -> void:
+	if not _ability_defeat_provider.is_valid() or _ability_defeat_driver != action_driver:
+		return
+	var generation := _ability_defeat_generation
+	var supplied: Variant = _ability_defeat_provider.call()
+	if generation != _ability_defeat_generation or not is_inside_tree() or hp > 0 or not is_defeated():
+		return
+	if not supplied is Dictionary or supplied.get("manifest") != sprite.manifest or supplied.get("id") != character or supplied.get("facing") != facing:
+		ability_presentation_error = "terminal contract differs from defeated body"
+		return
+	var candidate := AbilityDefeatPlayback.new()
+	if not candidate.configure(supplied, generation + 1):
+		ability_presentation_error = "invalid explicit defeat schedule"
+		return
+	_ability_defeat = candidate
+	ability_presentation_error = ""
+	_advance_ability_defeat(0.0)
+
+func _advance_ability_defeat(delta: float) -> void:
+	var active := _ability_defeat
+	if active == null: return
+	for sample in active.advance(delta):
+		if _ability_defeat != active or hp > 0 or not is_inside_tree(): return
+		if not AbilitySpritePresenter.show_drawing(sprite, sample):
+			ability_presentation_error = "missing terminal drawing"
+			_clear_ability_defeat()
+			_set_state(&"defeat")
+			return
+	if active.finished() and active.held_for() >= DEFEAT_HOLD and not _ability_downed:
+		_ability_downed = true
+		downed.emit()
+
+## Only the body moves above its ground pivot. Colliders, actor, anchors and any
+## sibling ground shadow stay put; no authored frame or canonical value is changed.
+func _present_ability_pose(snapshot: Dictionary, expected: AbilityActionDriver) -> bool:
+	if _ability_pose_driver != expected:
+		return false
+	if snapshot.is_empty():
+		sprite.position = _ability_ground_body
+		_ability_pose_driver = null
+		return true
+	if not _ability_actor_valid(expected):
+		return false
+	var height: Variant = snapshot.get("player", {}).get("vaultHeight")
+	if not (height is int or height is float) or not is_finite(float(height)) or height < 0 or not is_finite(ability_support_height):
+		ability_presentation_error = "invalid runner/support height"
+		_ability_drawing = {}
+		return false
+	sprite.position = _ability_ground_body + Vector2.UP * (ability_support_height + float(height) * float(AbilityCatalogue.units().canonical_to_actor))
+	return true
+
+func _ability_contract(snapshot: Dictionary, action: String, provider: Callable, expected: AbilityActionDriver) -> Dictionary:
+	if not _ability_actor_valid(expected):
+		return {}
+	var supplied: Variant = provider.call(snapshot, action)
+	if not _ability_actor_valid(expected):
+		return {} # the provider may have detached/replaced/reset the actor
+	if not supplied is Dictionary or supplied.get("manifest") != sprite.manifest:
+		ability_presentation_error = "presentation manifest differs from loaded body"
+		return {}
+	return supplied
+
+func _ability_actor_valid(expected: AbilityActionDriver) -> bool:
+	return action_driver == expected and is_inside_tree() and hp > 0 and not is_defeated()
+
+func _present_ability_drawing(sample: Dictionary, expected: AbilityActionDriver) -> void:
+	if not _ability_actor_valid(expected):
+		return
+	if not AbilitySpritePresenter.show_drawing(sprite, sample):
+		_ability_drawing = {}
+		ability_presentation_error = "missing or mismatched authored drawing"
+		return
+	_ability_drawing = sample.duplicate(true)
+	ability_presentation_error = ""
+	facing = str(sample.facing)
+
+func _ability_contact(sample: Dictionary, contact: Callable, expected: AbilityActionDriver) -> void:
+	if _ability_actor_valid(expected) and ability_presentation_error == "" and _ability_drawing == sample:
+		contact.call(sample.duplicate(true)) # display callback only, never legacy _release
+
+func detach_action_driver() -> void:
+	_clear_ability_defeat()
+	if action_driver == null:
+		return
+	var old := action_driver
+	action_driver = null
+	old.cancel("detached")
+	velocity = Vector2.ZERO
+	_set_state(&"idle" if hp > 0 else &"defeat")
+
+func _driver_request(action: String, direction: Vector2 = Vector2.ZERO) -> bool:
+	if hp <= 0 or is_defeated():
+		return false
+	return action_driver.request(action, direction if direction.length() > 0.1 else aim)
+
 func reset_motion() -> void:
+	_clear_ability_defeat()
+	_ability_downed = false
+	if action_driver != null:
+		action_driver.cancel("reset_motion")
+		_ability_drawing = {}
+		_set_state(&"idle") # exact drawing callbacks do not change the legacy state field
 	velocity = Vector2.ZERO
 	_roll_t = 0.0
 	_swing_t = 0.0
@@ -108,6 +275,8 @@ func is_defeated() -> bool:
 ## The bow shot (Bramble's primary) at the aim: the body turns to the aim's facing, draws and
 ## looses; the arrow is spawned on the release frame (see _animate).
 func start_shot() -> bool:
+	if action_driver != null:
+		return _driver_request("primary")
 	if is_rolling() or is_shooting() or is_defeated() or not sprite.has_clip("primary"):
 		return false
 	_shot_dir = aim.normalized() if aim.length() > 0.1 else CastSprite.facing_vector(facing)
@@ -118,6 +287,8 @@ func start_shot() -> bool:
 
 ## Rolls toward `dir` (or the aim when standing). Spends a charge; false when none is left.
 func start_roll(dir: Vector2) -> bool:
+	if action_driver != null:
+		return _driver_request("dodge", dir)
 	if roll_charges <= 0 or is_rolling() or is_defeated():
 		return false
 	roll_charges -= 1
@@ -134,6 +305,8 @@ func start_roll(dir: Vector2) -> bool:
 
 ## Swings at the aim; chains into the combo when pressed soon after the last swing.
 func start_swing() -> bool:
+	if action_driver != null:
+		return _driver_request("primary")
 	if is_rolling() or is_swinging():
 		return false
 	combo = combo + 1 if (_since_swing < COMBO_WINDOW and combo < 3) else 1
@@ -155,16 +328,27 @@ func take_damage(amount: int, from_dir: Vector2 = Vector2.ZERO) -> bool:
 	velocity = from_dir * 60.0 * DENSITY
 	hurt.emit(amount)
 	if hp == 0:
+		if action_driver != null:
+			action_driver.cancel("defeated")
 		_set_state(&"defeat")       # downed is emitted once the fall has played (_animate)
 		_defeat_t = 0.0
+		_ability_downed = false
+		_begin_ability_defeat()
 	elif not is_rolling():
 		_set_state(&"hit")
 	return true
 
 func heal_full() -> void:
+	_clear_ability_defeat()
+	_ability_downed = false
 	hp = max_hp
 
 func _physics_process(delta: float) -> void:
+	if not is_finite(delta) or delta <= 0.0:
+		return
+	if action_driver != null:
+		_driver_physics(delta)
+		return
 	_roll_t = maxf(_roll_t - delta, 0.0)
 	_iframe_t = maxf(_iframe_t - delta, 0.0)
 	_hurt_t = maxf(_hurt_t - delta, 0.0)
@@ -207,6 +391,59 @@ func _physics_process(delta: float) -> void:
 	_animate(move, delta)
 	queue_redraw()
 
+## Default drivers tick after Player movement. Planned drivers bypass that pass
+## and resolve ordered targets through Player, never moving a second body copy.
+func _driver_physics(delta: float) -> void:
+	if is_defeated():
+		velocity = Vector2.ZERO
+		if hp > 0:
+			_clear_ability_defeat()
+			_set_state(&"idle")
+		elif _ability_defeat != null:
+			_advance_ability_defeat(delta)
+		else:
+			_animate(Vector2.ZERO, delta)
+		queue_redraw()
+		return
+	var active := input_enabled and not Dialogue.busy and hp > 0 and not is_defeated()
+	var move := Vector2.ZERO
+	if active:
+		move = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+		_update_aim()
+		facing = CastSprite.facing_for(move if move.length() > 0.1 else aim, facing)
+		if Input.is_action_just_pressed("interact") and focus != null and is_instance_valid(focus):
+			focus.interact()
+	# Existing mercy/hurt timers stay with Player; legacy roll/recharge/swing clocks do not tick.
+	_iframe_t = maxf(_iframe_t - delta, 0.0)
+	_hurt_t = maxf(_hurt_t - delta, 0.0)
+	if not action_driver.plans_movement():
+		velocity = move * walk_speed if _hurt_t <= 0.0 else velocity.move_toward(Vector2.ZERO, 900.0 * delta)
+		if not active:
+			velocity = Vector2.ZERO
+		move_and_slide()
+	else:
+		velocity = Vector2.ZERO
+	var controls := {"active": active, "move": move, "aim": aim,
+		"primary": active and Input.is_action_pressed("attack"),
+		"secondary": active and Input.is_action_pressed("ranged"),
+		"special": active and Input.is_action_pressed("special"),
+		"guard": active and InputMap.has_action("guard") and Input.is_action_pressed("guard"),
+		"dodge": active and Input.is_action_just_pressed("dodge")}
+	action_driver.tick(controls, {"position": global_position, "velocity": velocity,
+		"facing": facing, "character": character, "move_actor": _driver_move_actor}, delta)
+	queue_redraw()
+
+## The driver supplies an absolute actor-texel target; only Player applies it.
+## Explicit displacement avoids move_and_slide using the outer frame duration for
+## each canonical 1/60 substep. Resolve the remainder along a wall, at most once.
+func _driver_move_actor(target: Vector2) -> Vector2:
+	var displacement := target - global_position
+	var collision := move_and_collide(displacement)
+	if collision != null:
+		move_and_collide(collision.get_remainder().slide(collision.get_normal()))
+	velocity = (global_position - (target - displacement)) / AbilitySimulation.DT
+	return global_position
+
 func _update_aim() -> void:
 	var stick := Inputs.stick_aim()
 	if stick != Vector2.ZERO:
@@ -222,6 +459,8 @@ func _input(event: InputEvent) -> void:
 		use_mouse_aim = true
 
 func _resolve_swing() -> void:
+	if action_driver != null:
+		return
 	var heavy := combo >= 3
 	for body in hitbox.get_overlapping_bodies():
 		if body.is_in_group("enemy") and not _swing_hits.has(body) and body.has_method("take_hit"):
@@ -265,7 +504,8 @@ func _animate(move: Vector2, delta: float) -> void:
 			sprite.advance(delta)
 			if sprite.finished:
 				_defeat_t += delta
-				if _defeat_t >= DEFEAT_HOLD and hp == 0:
+				if _defeat_t >= DEFEAT_HOLD and hp == 0 and not _ability_downed:
+					_ability_downed = true
 					downed.emit()
 			if hp > 0:              # healed and moved to the zone's start by the game
 				_set_state(&"idle")
@@ -288,6 +528,8 @@ func _advance_action(delta: float) -> void:
 
 ## The arrow leaves the bow where the drawing's arrow tip is, on the release drawing.
 func _release(frame: int) -> void:
+	if action_driver != null:
+		return
 	if character != "bramble":      # the others' projectiles and effects come with the ability runner
 		shot_released.emit(null, frame)
 		return

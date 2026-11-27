@@ -1,0 +1,237 @@
+{
+  "id": "mote",
+  "name": "Mote",
+  "catalogue_prose": {
+    "role": "Genderless observatory keeper · glass and gravity",
+    "primary": "Glass volley — three precise converging shards.",
+    "secondary": "Gravity anchor — briefly draw nearby foes into a marked point.",
+    "block": "Glass crescent — hold overlapping panes toward the threat.",
+    "special": "Aphelion — the core opens; orbiting glass releases directed shard storms with each volley."
+  },
+  "planar_speed": 57,
+  "resources": {
+    "ammo_capacity": 0,
+    "initial_ammo": 0,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 0.48
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 3.1
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "glass",
+        "speed": 179.99999999999997,
+        "angle_offset_radians": -0.11,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 0.95,
+        "damage": 9,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": false
+      },
+      {
+        "kind": "glass",
+        "speed": 180,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 0.95,
+        "damage": 9,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": false
+      },
+      {
+        "kind": "glass",
+        "speed": 179.99999999999997,
+        "angle_offset_radians": 0.11,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 0.95,
+        "damage": 9,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": false
+      }
+    ]
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 0.48
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 3.1
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "glass",
+        "speed": 209.99999999999997,
+        "angle_offset_radians": -0.11,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 0.95,
+        "damage": 12,
+        "pierce_budget": 1,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      },
+      {
+        "kind": "glass",
+        "speed": 210,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 0.95,
+        "damage": 12,
+        "pierce_budget": 1,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      },
+      {
+        "kind": "glass",
+        "speed": 209.99999999999997,
+        "angle_offset_radians": 0.11,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 0.95,
+        "damage": 12,
+        "pierce_budget": 1,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      },
+      {
+        "kind": "orbit-shard",
+        "speed": 190.00000000000003,
+        "angle_offset_radians": -0.22,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 0.9,
+        "damage": 10,
+        "pierce_budget": 1,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      },
+      {
+        "kind": "orbit-shard",
+        "speed": 190.00000000000003,
+        "angle_offset_radians": 0.22,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 0.9,
+        "damage": 10,
+        "pierce_budget": 1,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      }
+    ],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {},
+  "executed_rules": {
+    "ordinary_primary": {
+      "shards": 3,
+      "angle_offsets_radians": [
+        -0.11,
+        0,
+        0.11
+      ],
+      "kind": "glass",
+      "speed": 180,
+      "damage": 9,
+      "radius": 2,
+      "lifetime_seconds": 0.95,
+      "pierce_budget": 0
+    },
+    "powered_primary": {
+      "main_shards": 3,
+      "speed": 210,
+      "damage": 12,
+      "pierce_budget": 1,
+      "extra_shards": {
+        "count": 2,
+        "kind": "orbit-shard",
+        "angle_offsets_radians": [
+          -0.22,
+          0.22
+        ],
+        "speed": 190,
+        "damage": 10,
+        "radius": 2,
+        "lifetime_seconds": 0.9,
+        "pierce_budget": 1
+      }
+    },
+    "secondary_gravity": {
+      "max_aimed_distance": 100,
+      "radius": 32,
+      "powered_radius": 39,
+      "lifetime_seconds": 1.8,
+      "powered_lifetime_seconds": 2.3,
+      "damage_per_tick": 4,
+      "initial_tick_seconds": 0.2,
+      "tick_interval_seconds": 0.45,
+      "light_pull_units_per_second": 32,
+      "heavy_pull_units_per_second": 13,
+      "heavy_kinds": [
+        "tank",
+        "dummy"
+      ],
+      "refresh_slow_seconds": 0.2
+    },
+    "powered_orbit_visual": {
+      "effect_on_activation_seconds": 0.7,
+      "effect_after_primary_seconds": 0.32,
+      "autonomous_damaging_orbit_entities": false
+    },
+    "source_functions": [
+      "E",
+      "q",
+      "M",
+      "_"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}

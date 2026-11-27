@@ -1,0 +1,183 @@
+{
+  "id": "clack",
+  "name": "Clack",
+  "catalogue_prose": {
+    "role": "Coastal launcher gunner · carried rockets",
+    "primary": "Shoulder rocket — fire a visible rocket with a bounded blast radius; reload between shots.",
+    "secondary": "Concussive vent — release a short-range space-clearing blast from the launcher’s separate pressure chamber, including while its rocket loader reloads.",
+    "block": "Blast guard — unfold the launcher shield.",
+    "special": "Siegebreaker — the loader and shoulder brace unfold; three-rocket salvos replace single shots while the gunner remains mobile."
+  },
+  "planar_speed": 49,
+  "resources": {
+    "ammo_capacity": 1,
+    "initial_ammo": 1,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.8,
+        "release_seconds": 0.384,
+        "cooldown_seconds": 0.8
+      },
+      "secondary": {
+        "duration_seconds": 0.72,
+        "release_seconds": 0.34559999999999996,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "rocket",
+        "speed": 125,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 4,
+        "lifetime_seconds": 1.45,
+        "damage": 40,
+        "pierce_budget": 0,
+        "blast_radius": 23,
+        "powered_at_launch": false
+      }
+    ]
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.7,
+        "release_seconds": 0.33599999999999997,
+        "cooldown_seconds": 0.7
+      },
+      "secondary": {
+        "duration_seconds": 0.72,
+        "release_seconds": 0.34559999999999996,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "rocket",
+        "speed": 145,
+        "angle_offset_radians": -0.09,
+        "planar_spawn_forward": 9,
+        "radius": 4,
+        "lifetime_seconds": 1.45,
+        "damage": 20,
+        "pierce_budget": 0,
+        "blast_radius": 19,
+        "powered_at_launch": true
+      },
+      {
+        "kind": "rocket",
+        "speed": 145,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 4,
+        "lifetime_seconds": 1.45,
+        "damage": 20,
+        "pierce_budget": 0,
+        "blast_radius": 19,
+        "powered_at_launch": true
+      },
+      {
+        "kind": "rocket",
+        "speed": 145,
+        "angle_offset_radians": 0.09,
+        "planar_spawn_forward": 9,
+        "radius": 4,
+        "lifetime_seconds": 1.45,
+        "damage": 20,
+        "pierce_budget": 0,
+        "blast_radius": 19,
+        "powered_at_launch": true
+      }
+    ],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "secondary": {
+      "kind": "frontal_arc",
+      "reach": 43,
+      "minimum_direction_dot": 0.05,
+      "damage": 25,
+      "knockback": 37
+    }
+  },
+  "executed_rules": {
+    "capacity": 1,
+    "ordinary_primary": {
+      "rocket_count": 1,
+      "damage_per_rocket": 40,
+      "speed": 125,
+      "blast_radius": 23,
+      "reload_seconds": 1.15
+    },
+    "powered_primary": {
+      "rocket_count": 3,
+      "angle_offsets_radians": [
+        -0.09,
+        0,
+        0.09
+      ],
+      "damage_per_rocket": 20,
+      "speed": 145,
+      "blast_radius": 19,
+      "reload_seconds": 0.7,
+      "mobile_during_salvo": true
+    },
+    "all_rockets": {
+      "radius": 4,
+      "lifetime_seconds": 1.45,
+      "blast_knockback": 6
+    },
+    "secondary_vent": {
+      "usable_during_primary_reload": true,
+      "hit": {
+        "kind": "frontal_arc",
+        "reach": 43,
+        "minimum_direction_dot": 0.05,
+        "damage": 25,
+        "knockback": 37
+      }
+    },
+    "activation": {
+      "refill_ammo": true,
+      "clear_reload": true
+    },
+    "source_functions": [
+      "E",
+      "q",
+      "M",
+      "w",
+      "T"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}
