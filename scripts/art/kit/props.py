@@ -147,8 +147,9 @@ def crown_shadow(png_res: str, foot, out_name: str, deep: bool = False):
 #    heights of their east-west section; a north-south gate its run, swept up its east-west twin's
 #    height, the open leaf from its own lower edge; the fold ruin its walls' footprint swept up an
 #    authored height, so the back wall's shadow lies on the fold's floor.
-#  - Buildings (BUILDING_ROLES) cast nothing before their front: nothing south of the base line but the
-#    contact, and east of the picture nothing south of the foot line (11.6).
+#  - Buildings (BUILDING_ROLES) cast nothing before their lit front: under the picture nothing south of
+#    the base line but the contact, and south of the foot line only the wedge east of the sun's ray through
+#    the box's front-east foot corner (11.6; Matt, 28 Nov: "Wedge, softer"), cut before the ramp.
 #  - The ramp: two steps down in the core, one in the rim, the core chosen from the local thickness
 #    (a distance transform), so every shadow at least 3 texels thick keeps a core.
 
@@ -254,6 +255,17 @@ def _ramp(m: np.ndarray, rim: int) -> np.ndarray:
     local = ndi.grey_dilation(d, size=(2 * rim + 1, 2 * rim + 1))
     core = m & (d > np.maximum(1.0, np.minimum(rim, local / 2.0)))
     return np.where(core, 2, np.where(m, 1, 0)).astype(np.uint8)
+
+
+def before_front(cols: np.ndarray, rows: np.ndarray, xe: float, fy: float) -> np.ndarray:
+    """(rows, cols) texels (sprite frame) before a building's lit front: south of the foot line fy and
+    west of the sun's ray through its front-east foot corner (xe, fy), as volume.before_front."""
+    kx, ky = CAST
+    Y = rows[:, None] + 0.5 - fy
+    X = cols[None, :] + 0.5
+    if ky <= 0:
+        return np.broadcast_to(Y > 0, (len(rows), len(cols)))
+    return (Y > 0) & (X < xe + kx / ky * Y)
 
 
 def footprint_shadow(p: dict, vid: str, out_name: str) -> dict:
@@ -440,7 +452,13 @@ def footprint_shadow(p: dict, vid: str, out_name: str) -> dict:
             lab, n = ndi.label(m, structure=np.ones((3, 3)))
             keep = np.unique(lab[pic_c & m])
             m = np.isin(lab, keep[keep > 0])
-        lv = _ramp(m, RIMS[1] if (k == 'band' or m.sum() > 600) else RIMS[0])
+        if rule == 'building' and rect is not None:
+            # the ground before the lit front is lit: cut before the ramp (see the cut below)
+            big = m.sum() > 600
+            m &= ~before_front(np.arange(c0, c1), np.arange(r0, r1), fx + rect[0] + rect[2], FY)
+            lv = _ramp(m, RIMS[1] if big else RIMS[0])
+        else:
+            lv = _ramp(m, RIMS[1] if (k == 'band' or m.sum() > 600) else RIMS[0])
         if k == 'band':
             lv = np.where(cell | (post_keep if post_m is not None else False), lv, 0).astype(np.uint8)
         out = np.maximum(out, lv)
@@ -487,11 +505,15 @@ def footprint_shadow(p: dict, vid: str, out_name: str) -> dict:
     west = x0 if (x0 is not None and rule in ('silhouette', 'building', 'block')) else pic0
     out[:, :max(0, int(np.ceil(west)) - c0)] = 0
     if rule == 'building':
-        # nothing before the front (eastward-edges 11.6): under the picture the contact only, east of it
-        # nothing south of the foot line
-        cols = np.arange(c0, c1)
+        # nothing before the front (eastward-edges 11.6; Matt, 28 Nov: "Wedge, softer"): under the
+        # picture the contact only; south of the foot line only the wedge east of the sun's ray through
+        # the front-east foot corner (the box's east wall on the foot line), which that corner throws.
+        # The cast was cut the same way before its ramp, so the rim runs along the wedge's diagonal as
+        # on every other edge and the core never meets the lit ground before the front
+        cols, rows = np.arange(c0, c1), np.arange(r0, r1)
+        xe = fx + rect[0] + rect[2] if rect is not None else float(pic1)
         lim = np.where((cols >= pic0) & (cols < pic1), G[np.clip(cols, 0, W - 1)] + CONTACT, FY)
-        out[np.arange(r0, r1)[:, None] >= lim[None, :]] = 0
+        out[(rows[:, None] >= lim[None, :]) & before_front(cols, rows, xe, FY)] = 0
     if rule in ('silhouette', 'block', 'building'):
         # what shows of the shadow is one with the picture: a piece seen apart from it (a stack's top thrown
         # past a stake, a crate's streak) is dropped (R2-2)
