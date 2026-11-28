@@ -1932,6 +1932,7 @@ class FootprintShadows(unittest.TestCase):
         # line), its west edge on the ray within 2 texels, reaching south of its box's front the sun's
         # throw of the building's height (less 3 texels), and ramped like every other edge (no core texel touches the lit ground)
         from scipy import ndimage as ndi
+        from scripts.art.kit import props as PR
         kx, ky = self.CAST
         self.assertGreater(ky, 0)
         Y, X = np.mgrid[0:self.SIZE[0], 0:self.SIZE[1]] + 0.5
@@ -1961,8 +1962,26 @@ class FootprintShadows(unittest.TestCase):
             height = self.idx[pid]['variants'][vid]['foot'][1] - top - col[3]
             front = col[1] + col[3]                       # the box's front (a shelter's stands back of the foot)
             self.assertGreaterEqual(rows.max() + 1 - fy, front + ky * height - 3, '%s: the wedge falls short' % pid)
-            lit = ndi.binary_dilation(before & ~pic, iterations=1)
-            self.assertFalse(((sh >= 2) & lit)[:, east:].any(), '%s: its core meets the lit ground' % pid)
+            # softer, as the houses (Matt, 28 Nov; detail audit of #545, round 2): along the wedge's far
+            # tip the rim, never the core, meets the lit ground; at the foot corner the core stands on
+            # the ground; the core lies only within props.CORE_W (6 world px) of the box's walls and is at most 40 %
+            # of the column east of the picture
+            un = np.hypot(kx, ky)
+            along = ((X - xe) * kx + (Y - fy) * ky) / un
+            tip = ndi.binary_dilation(before & ~pic, iterations=1) & (along >= 2 * PR.CORE_W)
+            self.assertFalse(((sh >= 2) & tip)[:, east:].any(), '%s: its core meets the lit ground' % pid)
+            r = fy + 1
+            west = np.nonzero((sh[r] > 0) & ~before[r])[0]
+            self.assertTrue(len(west) and sh[r, west.min()] == 2, '%s: no contact at the foot corner' % pid)
+            box = np.zeros(self.SIZE, bool)
+            box[int(fy + col[1]):int(fy + col[1] + col[3]), int(self.AT[0] + col[0]):int(xe)] = True
+            far = ndi.distance_transform_edt(~box) > PR.CORE_W + 1
+            self.assertFalse(((sh == 2) & far & ~pic).any(), '%s: core far from its walls' % pid)
+            column = (sh > 0) & ~pic
+            column[:, :east] = False
+            share = (sh[column] == 2).mean()
+            self.assertLessEqual(share, 0.40, '%s: a core slab (%.2f)' % (pid, share))
+            self.assertTrue((sh[column] == 2).any(), '%s: no core in its column' % pid)
             n += 1
         self.assertGreaterEqual(n, 7)
 
@@ -2638,13 +2657,21 @@ class HouseVolume(unittest.TestCase):
             self.assertLess(abs(west - (xe + kx / ky * Yc[r, 0])), 1.5, '%s: the wedge leaves the ray' % hid)
         h_eave = look.get('wall_h', 40) - (4 if look.get('roof') == 'thatch' else 0.5)
         self.assertGreaterEqual(float(Yc[rows.max(), 0]) + 0.5, ky * h_eave * d - 1, '%s: the wedge falls short' % hid)
-        # the bands: the house's own ground counts as inside, the lit ground before the front as outside
+        # the bands: the house's own ground and the ground before the front count as inside; along the
+        # wedge's diagonal the rim lies on its far tip (from twice CORE_W along the ray), never at the
+        # corner, where the core stands on the ground (detail audit of #545, round 2: the contact)
         fp = (np.abs(Xc) < xe) & (Yc > -look['depth'] * d) & (Yc < 0)
-        de = ndi.distance_transform_edt(np.pad(m | fp, 1))[1:-1, 1:-1]
+        de = ndi.distance_transform_edt(np.pad(m | fp | before, 1))[1:-1, 1:-1]
         self.assertTrue((lv[m & (de <= VO.RIM * d)] == 1).all(), '%s: no rim along an edge' % hid)
         self.assertTrue((lv[m & (de <= (VO.RIM + VO.MID) * d)] <= 2).all(), '%s: the core meets an edge' % hid)
-        lit = ndi.binary_dilation(before, iterations=2)
-        self.assertTrue((lv[m & lit] == 1).all(), '%s: no rim along the wedge' % hid)
+        un = np.hypot(kx, ky)
+        along = ((Xc - xe) * kx + Yc * ky) / un
+        tip = ndi.binary_dilation(before, iterations=2) & (along >= 2 * VO.CORE_W * d)
+        self.assertTrue((m & tip).any() and (lv[m & tip] == 1).all(), '%s: no rim along the wedge\'s tip' % hid)
+        r0 = rows.min()
+        self.assertEqual(int(lv[r0, np.nonzero(south[r0])[0].min()]), 3, '%s: no contact at the foot corner' % hid)
+        foot = m & (Yc < 0) & (Yc > -3 * d) & (Xc > xe) & (Xc < xe + 1)
+        self.assertTrue(foot.any() and (lv[foot] == 3).all(), '%s: the wall\'s foot has no contact' % hid)
         core = lv == 3
         dw = ndi.distance_transform_edt(~fp)
         self.assertTrue((dw[core] <= VO.CORE_W * d).all(), '%s: three tones far from the wall' % hid)

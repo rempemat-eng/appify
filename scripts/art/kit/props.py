@@ -32,6 +32,9 @@ from scripts.art.sun import CAST  # noqa: E402  (kx, ky), the one sun (game/data
 RIM = 6
 TRUNK_CORE, TRUNK_RIM = 1, 3   # the trunk's run: a core 3 texels thick, a rim of 3 each side (9 in all)
 PAD_DEEP = 3                   # the contact pad under the base: 3 texels deep, the base's width + 2
+PAD_DEEP_LOW = 5               # under a tree wider than it is tall (the krummholz): its throw is short and
+#                                lies just south of the base, so the pad reaches it (no lit row between)
+ISLAND = 120                   # a core piece this small, apart from the one at the foot, steps up a tone
 BASE_ROWS = 6                  # rows over the foot whose opaque columns are the base (2 world px)
 DEEP_MIN = 40                  # the third step's parts on snow: at least this many texels
 DRIFT_L = 200                  # a drift at the foot: texels this bright (luma) joined to the base rows
@@ -50,8 +53,8 @@ def crown_shadow(png_res: str, foot, out_name: str, deep: bool = False):
     upper left): every opaque texel at height h above the foot lands CAST[0] h east and CAST[1] h
     south of the foot. What is drawn below the foot (a drift, a root) casts nothing. The shadow is
     tied to its tree (detail and logic audits of #545):
-      - a contact pad in the core tone under the base, the base's width + 2 and PAD_DEEP deep, as the
-        footprint rule's contact;
+      - a contact pad in the core tone under the base, the base's width + 2 and PAD_DEEP deep
+        (PAD_DEEP_LOW under a tree wider than it is tall), as the footprint rule's contact;
       - the trunk's run thrown along the sun's ray from the foot, its core TRUNK_CORE texels each side
         of the axis and its rim TRUNK_RIM beyond, wherever the tree's axis is drawn, so the core runs
         unbroken from the foot into the crown's shadow and a thin snag or sapling keeps a core;
@@ -100,9 +103,12 @@ def crown_shadow(png_res: str, foot, out_name: str, deep: bool = False):
     sy = np.round(h * ky).astype(int)
     ax = np.array([(np.round(x + h_ * kx - fx), np.round(h_ * ky)) for x, h_ in axis], int).reshape(-1, 2)
     px0, px1 = int(np.floor(bx0 - fx)) - 1, int(np.ceil(bx1 + 1 - fx)) + 1     # the pad's columns
+    rows_, cols_ = np.nonzero(a[:fr])
+    low = len(cols_) and (cols_.max() - cols_.min() + 1) > (fr - rows_.min())   # wider than it is tall
+    pad_deep = PAD_DEEP_LOW if low else PAD_DEEP
     M = 8 + TRUNK_RIM + TRUNK_CORE
     xs_all = np.concatenate([sx, ax[:, 0], [px0, px1 - 1]])
-    ys_all = np.concatenate([sy, ax[:, 1], [0, PAD_DEEP - 1]])
+    ys_all = np.concatenate([sy, ax[:, 1], [0, pad_deep - 1]])
     x0, y0 = int(xs_all.min()) - M, int(ys_all.min()) - M
     shape = (int(ys_all.max()) - y0 + M + 1, int(xs_all.max()) - x0 + M + 1)
     m = np.zeros(shape, bool)
@@ -112,7 +118,7 @@ def crown_shadow(png_res: str, foot, out_name: str, deep: bool = False):
     line = np.zeros(shape, bool)
     line[ax[:, 1] - y0, ax[:, 0] - x0] = True
     pad = np.zeros(shape, bool)
-    pad[-y0:-y0 + PAD_DEEP, px0 - x0:px1 - x0] = True
+    pad[-y0:-y0 + pad_deep, px0 - x0:px1 - x0] = True
     sq = np.ones((3, 3), bool)
     tcore = ndi.binary_dilation(line, sq, iterations=TRUNK_CORE) if len(ax) else line
     trim = ndi.binary_dilation(tcore, sq, iterations=TRUNK_RIM)
@@ -128,6 +134,23 @@ def crown_shadow(png_res: str, foot, out_name: str, deep: bool = False):
             size = ndi.sum(inner, lab3, range(1, n3 + 1))
             inner = np.isin(lab3, 1 + np.nonzero(size >= DEEP_MIN)[0])
         out[inner | tcore | pad] = 3
+        out[ndi.binary_dilation(out == 3, sq) & (out == 1)] = 2     # never three tones beside one
+    # one shadow, not dashes (detail audit of #545, round 2): each core step is closed inside the
+    # mask (the trunk's per-row stamps notched it), and a small core piece apart from the one at
+    # the foot steps up a tone into what surrounds it
+    for lv in (3, 2):
+        sel = out >= lv
+        if not sel.any():
+            continue
+        out[ndi.binary_closing(sel, sq, iterations=2) & (out > 0) & (out < lv)] = lv
+        lab_, n_ = ndi.label(out >= lv, sq)
+        if n_ > 1:
+            foot = np.unique(lab_[pad & (out >= lv)])
+            size = ndi.sum(out >= lv, lab_, range(1, n_ + 1))
+            for i in range(1, n_ + 1):
+                if i not in foot and size[i - 1] < ISLAND:
+                    out[lab_ == i] = lv - 1
+    if deep:
         out[ndi.binary_dilation(out == 3, sq) & (out == 1)] = 2     # never three tones beside one
     out[:max(0, -y0)] = 0                           # nothing north of the foot row (the trunk's rim at the foot)
     Image.fromarray(out, 'L').save(os.path.join(OUT, 'art', out_name))
@@ -149,7 +172,10 @@ def crown_shadow(png_res: str, foot, out_name: str, deep: bool = False):
 #    authored height, so the back wall's shadow lies on the fold's floor.
 #  - Buildings (BUILDING_ROLES) cast nothing before their lit front: under the picture nothing south of
 #    the base line but the contact, and south of the foot line only the wedge east of the sun's ray through
-#    the box's front-east foot corner (11.6; Matt, 28 Nov: "Wedge, softer"), cut before the ramp.
+#    the box's front-east foot corner (11.6; Matt, 28 Nov: "Wedge, softer"), cut before the ramp; the
+#    core on the corner and only within CORE_W of the walls, the rim beyond (_building_ramp).
+#  - A tree's crown (crown_shadow) is one shadow: its core steps closed, small core pieces apart from the
+#    foot's stepped up a tone, and a deeper pad under a low, wide tree (the krummholz).
 #  - The ramp: two steps down in the core, one in the rim, the core chosen from the local thickness
 #    (a distance transform), so every shadow at least 3 texels thick keeps a core.
 
@@ -266,6 +292,43 @@ def before_front(cols: np.ndarray, rows: np.ndarray, xe: float, fy: float) -> np
     if ky <= 0:
         return np.broadcast_to(Y > 0, (len(rows), len(cols)))
     return (Y > 0) & (X < xe + kx / ky * Y)
+
+
+CORE_W = 6.0 * D               # texels: a building's core lies within this of its walls (B3's 6 px core; with two
+#                                levels and no mid band, a little under volume.CORE_W's 7)
+
+
+def _building_ramp(m: np.ndarray, rect, fx: float, FY: int, r0: int, r1: int, c0: int, c1: int):
+    """A building's cast (m, canvas rows r0..r1, columns c0..c1 in sprite texels) with its steps,
+    as volume.house_cast lays a house's in this rule's two levels (Matt, 28 Nov: "Wedge, softer";
+    detail audit of #545, round 2): nothing before the lit front; the ground before it counts as
+    inside for the ramp, so the core stands on the wedge's foot corner and along the wall's foot;
+    along the wedge's diagonal the rim grows in from CORE_W along the ray to its full width at
+    twice that (volume.diag_levels); and the core lies only within CORE_W of the box's walls, the
+    rim beyond. Returns (levels, the cut mask)."""
+    from scipy import ndimage as ndi
+    kx, ky = CAST
+    big = m.sum() > 600
+    rim = RIMS[1] if big else RIMS[0]
+    cols, rows = np.arange(c0, c1), np.arange(r0, r1)
+    xe = fx + rect[0] + rect[2]
+    before = before_front(cols, rows, xe, FY)
+    m = m & ~before
+    lv = np.where(m, _ramp(m | before, rim), 0)
+    if ky > 0:
+        X = cols[None, :] + 0.5
+        Y = rows[:, None] + 0.5 - FY
+        n = np.hypot(kx, ky)
+        t = (X - xe) * kx / n + Y * ky / n
+        pdist = np.abs((X - xe) * ky / n - Y * kx / n)
+        g = np.clip((t - CORE_W) / CORE_W, 0.0, 1.0)
+        lv = np.where(m & (pdist <= rim * g), np.minimum(lv, 1), lv)
+    box = np.zeros(m.shape, bool)
+    bx0, by0 = int(np.floor(fx + rect[0])) - c0, int(np.floor(FY + rect[1])) - r0
+    box[max(0, by0):max(0, by0 + int(round(rect[3]))), max(0, bx0):max(0, bx0 + int(round(rect[2])))] = True
+    if box.any():
+        lv = np.where(m & (ndi.distance_transform_edt(~box) > CORE_W), np.minimum(lv, 1), lv)
+    return lv.astype(np.uint8), m
 
 
 def footprint_shadow(p: dict, vid: str, out_name: str) -> dict:
@@ -453,10 +516,7 @@ def footprint_shadow(p: dict, vid: str, out_name: str) -> dict:
             keep = np.unique(lab[pic_c & m])
             m = np.isin(lab, keep[keep > 0])
         if rule == 'building' and rect is not None:
-            # the ground before the lit front is lit: cut before the ramp (see the cut below)
-            big = m.sum() > 600
-            m &= ~before_front(np.arange(c0, c1), np.arange(r0, r1), fx + rect[0] + rect[2], FY)
-            lv = _ramp(m, RIMS[1] if big else RIMS[0])
+            lv, m = _building_ramp(m, rect, fx, FY, r0, r1, c0, c1)
         else:
             lv = _ramp(m, RIMS[1] if (k == 'band' or m.sum() > 600) else RIMS[0])
         if k == 'band':
