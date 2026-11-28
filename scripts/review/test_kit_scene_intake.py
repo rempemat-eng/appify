@@ -94,7 +94,10 @@ class RealSource(unittest.TestCase):
             'woodland': '4fea5f4f055a47a9730f78122a83317aff7bbc1b7e7890c0bae6a64f0b65cb50',
             # #499 (the bell tower) adds cupola_empty/cupola_hung, cupola_shadow, fallen_bell and
             # fallen_bell_shadow; every changed pixel lies within those pictures (was 1b38e86c...)
-            'crossroads': '68cbf3c7676aa18c2f35271d2319b54bb980244df18d7748a988ec1fa7131cc5',
+            # SUN2 (Matt, 28 Nov: "Redraw and re-review") regenerates the ground only, its house shadows
+            # by the one sun: 40,264 composite pixels, all at x 343..1697, y 60..1275, round the seven
+            # houses; every sprite keeps its bytes (was 68cbf3c7...)
+            'crossroads': '276cbc2036f108f506452b31a6cc2320fc249e21817668f2f6d784b5242010c9',
         }
         for name, digest in expected.items():
             self.assertEqual(hashlib.sha256(SN.composite(SN.load_zone(name)).tobytes()).hexdigest(), digest)

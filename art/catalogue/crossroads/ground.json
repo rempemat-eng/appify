@@ -1,7 +1,7 @@
 {
  "id": "crossroads/ground",
  "file": "game/zones/crossroads/art/ground.png",
- "sha256": "88c204452ac927fe0c76d1eba45dde019dd8c8fbdfb406fdf0caaf8b5960d4b5",
+ "sha256": "692c2b617ec5e0ea8195bbdac5c22b1aed039db5ee12199f18b4bc675ce16dba",
  "kind": "ground",
  "biome": "valley",
  "H": 74.0,
@@ -18,11 +18,10 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-11-15",
+ "reviewed": "2026-11-28",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pass",
-  "date": "2026-11-15",
-  "note": "Round 2 at 31c26223, sha 88c20445 (was 7811813e). The diff is 1411 texels, all inside the handcart shadow's mask (x653-766, y788-807 texels), none outside. The patch is the old setts lifted out of shade and is seamless at 1x and 2x. Polish: joints at x658 and x667 (y793-801) and a 2x2 at x697-698 (y795-796) stay one step dark (L113 against the square's joints at 144); the brightest sett tone covers 30 % of the patch against 16 % around it (mean +2.4 L). Lift those joints to 144 and take one or two pale setts down a step."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
