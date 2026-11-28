@@ -259,6 +259,10 @@ def main(argv=None):
         zone = t
     elif t.endswith('.tscn'):
         zone = os.path.basename(t)[:-5].replace('_base', '')
+    elif re.fullmatch(r'[A-Za-z0-9_-]+', t) and not os.path.isfile(t):
+        # A bare kit id is a scene input, including when its plan/scene is missing. Let scene
+        # intake report that failure instead of trying to open the id as a picture filename.
+        zone = t
     name = zone or os.path.splitext(os.path.basename(t))[0]
     out = a.out or os.path.join(REPO, 'artifacts', 'review', name)
     os.makedirs(out, exist_ok=True)
@@ -266,6 +270,16 @@ def main(argv=None):
     if os.path.lexists(report_path):
         os.unlink(report_path)
     report = dict(target=t, generated=time.strftime('%Y-%m-%d %H:%M'), pictures=[], scene=None)
+
+    if zone:
+        try:
+            SN.zone_scene_path(zone, zones)
+        except SN.SceneIntakeError as err:
+            report['scene'] = dict(zone=zone, complete=False, error=str(err))
+            report['complete'] = False
+            write_json(report_path, report)
+            print(str(err), file=sys.stderr)
+            return 1
 
     kit_error = None
     try:
@@ -293,7 +307,8 @@ def main(argv=None):
             print(str(err), file=sys.stderr)
             return 1
         Image.fromarray(comp[..., :3]).save(os.path.join(out, f'{zone}_zone.png'))
-        report['scene'] = dict(zone=zone, size=list(z.size), sprites=len(z.sprites), spawns=list(z.spawns),
+        report['scene'] = dict(zone=zone, registered=zone in zones,
+                               size=list(z.size), sprites=len(z.sprites), spawns=list(z.spawns),
                                doors=[{k: d[k] for k in ('name', 'zone', 'spawn')} for d in z.doors],
                                findings=[f.to_json() for f in res['findings']])
         # A wiring finding with no place in the zone (a quest event, a zone left out: the placeholder box)
@@ -306,6 +321,9 @@ def main(argv=None):
         if not a.no_render:
             spawns = a.spawn or list(z.spawns)
             try:
+                if zone not in zones:
+                    raise RenderError(f'{zone}: not in the runtime zone registry; use --no-render for '
+                                      'kit scene data review (no capture was attempted)')
                 for shot in render(zone, spawns, out, a.stage, a.at, a.wait):
                     with Image.open(shot) as img:
                         native, s, org = to_native(img, 2.0)

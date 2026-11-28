@@ -545,10 +545,34 @@ def scene_spawns(res: str) -> set:
     return {e['node']['name'] for e in nodes if e['node'].get('type') == 'Marker2D' and e['key'].startswith('Spawns/')}
 
 
-def load_zone(zone_id: str, stage: str | None = None) -> Zone:
+def zone_scene_path(zone_id: str, zones: dict | None = None) -> str:
+    """Resolve a review input, without adding kit candidates to the runtime zone table."""
     try:
-        zones = _json(os.path.join(GAME, 'data', 'zones.json'))
-        path = res_path(zones[zone_id])
+        zones = _json(os.path.join(GAME, 'data', 'zones.json')) if zones is None else zones
+        if not isinstance(zones, dict):
+            raise ValueError('zone registry must be an object')
+        if zone_id in zones:
+            if not isinstance(zones[zone_id], str) or not zones[zone_id]:
+                raise ValueError('registered scene path must be a nonempty string')
+            return res_path(zones[zone_id])
+        if not isinstance(zone_id, str) or not re.fullmatch(r'[A-Za-z0-9_-]+', zone_id):
+            raise ValueError('kit zone id must be a single path component')
+        plan = _json(os.path.join(GAME, 'kit', 'zones', zone_id + '.json'))
+        if (not isinstance(plan, dict) or plan.get('zone') != zone_id or
+                not isinstance(plan.get('rows'), list) or not plan['rows'] or
+                not isinstance(plan.get('legend'), dict) or not plan['legend']):
+            raise ValueError('kit plan must name its zone and contain rows and a legend')
+        path = os.path.join(GAME, 'zones', zone_id, zone_id + '.tscn')
+        if not os.path.isfile(path):
+            raise ValueError('kit scene is missing: ' + path)
+        return path
+    except (ValueError, KeyError, TypeError, OSError) as err:
+        raise SceneIntakeError(zone_id, str(err)) from err
+
+
+def load_zone(zone_id: str, stage: str | None = None) -> Zone:
+    path = zone_scene_path(zone_id)
+    try:
         tscn = parse_tscn(path)
         nodes = _walk_nodes(tscn, '')
     except (ValueError, KeyError, TypeError, OSError, IndexError, RecursionError) as err:
@@ -1326,12 +1350,18 @@ def check_wiring(zone_ids=None) -> list[Finding]:
             if zone_ids is None or zid in zone_ids:
                 raise
             unreadable[zid] = err
+    # Review an explicitly requested kit candidate's own doors/spawns/speakers, but keep it out
+    # of runtime event sources: being reviewable does not make an unregistered zone reachable.
+    reviewed = dict(loaded)
+    for zid in zone_ids or ():
+        if zid not in zones:
+            reviewed[zid] = load_zone(zid)
     dialogue = {}
     for p in glob.glob(os.path.join(GAME, 'data', 'dialogue', '*.json')):
         dialogue.update(json.load(open(p)))
     fs = []
     testing = test_build_zones()
-    for zid, z in loaded.items():
+    for zid, z in reviewed.items():
         if zone_ids and zid not in zone_ids:
             continue
         if 'start' not in z.spawns:
