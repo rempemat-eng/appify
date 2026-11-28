@@ -181,7 +181,7 @@ E is Eastward's native px at an adult of 54; ours is at an adult of 25 (k = 0.46
 | 11.3 | Corners                 | quoins a step lit; wall a step darker over the last 5; dark seam, lit arris; no side wall (B3, B1, B6, B5)                          | west arris lit; east 3 at 22 %, seam 42 %              |
 | 11.4 | Foot                    | a step darker over 4 to 14, a 1 to 2 near-black contact line, ground lit below (B1, B5, B6, B7)                                    | 3 at 28 % over the plinth, darks kept; contact row tone 0 |
 | 11.5 | Protrusions             | an L of shade east and under, 1 to 3 (B1, B7, B3)                                                                                  | 0.8 east, 1.2 under, 20 %                              |
-| 11.6 | Ground cast shadow      | a column east from the back to the foot line, following the silhouette; 0.2 to 0.4 A wide; core 45 to 63 % darker, edge 3 to 10; level or a little north, never before the front (B2, B3, B4) | solids (45 degree roof, stacks) projected 0.19 east, 0.10 north a px of height (0.30 A at a 40 wall); one, two, three tones in from the edge (rim 3, then 2.6) |
+| 11.6 | Ground cast shadow      | a column east from the back to the foot line, following the silhouette; 0.2 to 0.4 A wide; core 45 to 63 % darker, edge 3 to 10; level or a little north, never before the front (B2, B3, B4) | solids (45 degree roof, stacks) projected by the one sun (`game/data/sun.json`, 0.46 east, 0.22 south a px of height); south of the foot line only the wedge east of the sun's ray through the front-east foot corner (Matt, 28 Nov); one tone at the edge (rim 3), two inside (2.6), three only within 7 world px of the walls, two to 13 |
 
 ## 10. What this changes
 
@@ -300,18 +300,21 @@ Ours (`volume.house_cast`):
 - The house is solids: its walls, its roof with its real profile, and its stacks.
   - The roof is the eave's rectangle and the ridge at a cottage pitch of 45 degrees (half the depth over the eave), shortened by the hips.
   - Each stack is its own solid, rising its height over the ridge.
-- Each solid is projected 0.19 east and 0.10 north per world px of height and filled as its hull. At a 40 px wall that is 7.6 world px (0.30 A) at the eave, more at the ridge and the stacks.
+- Each solid is projected by the one sun (`game/data/sun.json`: 0.46 east and 0.22 south per world px of height; Matt, 27 Nov) and filled as its hull. At a 40 px wall that is 18.4 world px at the eave, more at the ridge and the stacks. (Until 27 Nov it was 0.19 east and 0.10 north, Eastward's street lean, 7.6 world px or 0.30 A at a 40 px wall.)
   - A gable's column ends in its slanted verges, reaching furthest east at the ridge's line.
   - A hip ends in its slope.
   - A stack that stands beyond the roof's shadow shows as its own notch. On the seven Crossroads houses every stack stands west of the east gable, so its shadow falls inside the roof's; its shadow down the slates is drawn on the roof (`houses.chimney`).
-- Nothing is drawn south of the foot line.
-- The steps follow B3's soft edge and dark core, counted from the column's outline inward:
-  - the outer 3 world px (9 art px, E 6.6) one tone;
-  - the next 2.6 world px two tones;
-  - deeper in, three.
+- **The wedge (Matt, 28 Nov: "Wedge, softer").** Nothing is drawn before the lit front, its door or its doorstep: south of the foot line only what lies east of the sun's ray through the front-east foot corner (xe, 0), the wedge that corner throws, from (xe, 0) to about (xe + 0.46 h, 0.22 h) for an eave h high (`volume.before_front`). The column ends on the same diagonal as the trees' shadows beside it, not in a straight cut at the foot line.
+- The steps follow B3's soft edge and short dark core (a 6 px core, 10 px of fade):
+  - from the column's outline in (the house's own ground and the ground before the front count as inside): the outer 3 world px (9 art px, E 6.6) one tone, the next 2.6 world px at most two;
+  - along the wedge's diagonal the same bands grow in from 7 world px along the ray to their full width at 14 (`volume.diag_levels`), so the core stands on the front-east foot corner and along the wall's whole foot (the contact, 7.1), and the fade lies on the wedge's far tip;
+  - from the walls out: three tones only within 7 world px (`CORE_W`), two within 13 (`MID_W`), one beyond.
+
+  On the seven Crossroads houses the core is 26 to 32 % of the column that shows (it was 61 to 68 % under the foot-line cut), on the mill 14 %. `test_kit.HouseVolume` holds the wedge to the ray, the core to the corner and the wall's foot, and the bands to these widths.
+- The building-footprint rule (huts, sheds, stalls; `props.footprint_shadow`) keeps its two tones on the same plan: the wedge, the core on the corner, the rim growing in along the diagonal, and the core only within 6 world px of the box's walls (B3's 6 px core), the rim beyond. `test_kit.FootprintShadows` holds the core to at most 40 % of the column east of the picture.
 
   The ground keeps its own texture under it, its tufts and patches stepped down, never replaced.
-- **One sun is Matt's call (open).** Props keep the biome's east-and-down projection (7.2). A house's shadow leans a little north, as Eastward's does, because a lean south would lay a band across its own lit front and doorstep, which no Eastward shot shows.
+- **One fixed sun (Matt, 27 Nov).** Every cast shadow follows `game/data/sun.json`: shadows fall south-east; light from the upper left. That holds for props (7.2), trees' crown masks (`scripts/art/kit/props.crown_shadow`) and houses' volumes alike. Night never rotates a shadow; it only softens or fades it under the night tint. A house's column ends in the wedge its front-east corner throws (Matt, 28 Nov, above), so no band lies across its own lit front and doorstep.
 
 Where it is drawn:
 

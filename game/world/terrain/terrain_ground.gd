@@ -288,7 +288,8 @@ static var _sun := Vector2.INF
 
 ## The one sun (game/data/sun.json, read by the Python bake and the kit's masks too): a texel h above
 ## the ground casts its shadow sun().x * h east and sun().y * h south. The pieces' masks are baked for
-## it (KitPiece.shadow warns when they were made for another); a day-night cycle would vary it here.
+## it (KitPiece.shadow warns when they were made for another). Night never rotates it: a day-night
+## cycle would only soften or fade the shadows under the night tint (Matt, 27 Nov).
 static func sun() -> Vector2:
 	if _sun == Vector2.INF:
 		var d = JSON.parse_string(FileAccess.get_file_as_string(SUN))

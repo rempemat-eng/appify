@@ -1926,15 +1926,64 @@ class FootprintShadows(unittest.TestCase):
 
 
     def test_a_building_casts_nothing_before_its_front(self):
-        # eastward-edges 11.6: nothing south of the foot line but the contact under the front
+        # eastward-edges 11.6 (Matt, 28 Nov: "Wedge, softer"): before the lit front, nothing but the
+        # contact under the picture. South of the foot line only the wedge the front-east foot corner
+        # throws: east of the sun's ray through that corner (the solid box's east wall on the foot
+        # line), its west edge on the ray within 2 texels, reaching south of its box's front the sun's
+        # throw of the building's height (less 3 texels), and ramped like every other edge (no core texel touches the lit ground)
+        from scipy import ndimage as ndi
+        from scripts.art.kit import props as PR
+        kx, ky = self.CAST
+        self.assertGreater(ky, 0)
+        Y, X = np.mgrid[0:self.SIZE[0], 0:self.SIZE[1]] + 0.5
+        fy = self.AT[1]
+        n = 0
         for pid, vid in self.variants():
             if (self.lib[pid].get('placement') or {}).get('role') not in ('house', 'coop', 'shelter', 'sty', 'stall'):
                 continue
-            sh, pic, _, _ = self.lay(pid, vid)
+            sh, pic, _, a = self.lay(pid, vid)
+            col = self.idx[pid]['collision']
+            xe = self.AT[0] + col[0] + col[2]
+            before = (Y > fy) & (X < xe + kx / ky * (Y - fy))
             base = max(b for _, b in self.standing(pid, vid))
-            self.assertFalse((sh[base + 3:] > 0).any(), '%s casts before its front' % pid)
+            self.assertFalse(((sh > 0) & before & (Y > base + 3)).any(), '%s casts before its front' % pid)
             east = np.nonzero(pic.any(0))[0].max() + 1
-            self.assertFalse((sh[self.AT[1]:, east:] > 0).any(), '%s casts south of its foot line east of it' % pid)
+            self.assertFalse(((sh > 0) & before)[:, east:].any(), '%s casts before its front east of it' % pid)
+            wedge = (sh > 0) & (Y > fy) & ~pic
+            wedge[:, :east] = False
+            rows = np.nonzero(wedge.any(1))[0]
+            self.assertTrue(len(rows), '%s: no wedge south of its foot line' % pid)
+            for r in rows:
+                ray = xe + kx / ky * (r + 0.5 - fy)
+                if ray > east + 1:
+                    west = np.nonzero(wedge[r])[0].min() + 0.5
+                    self.assertLess(west - ray, 2.0, '%s: the wedge leaves the ray at row %d' % (pid, r - fy))
+            top = int(np.nonzero(a.any(1))[0].min())
+            height = self.idx[pid]['variants'][vid]['foot'][1] - top - col[3]
+            front = col[1] + col[3]                       # the box's front (a shelter's stands back of the foot)
+            self.assertGreaterEqual(rows.max() + 1 - fy, front + ky * height - 3, '%s: the wedge falls short' % pid)
+            # softer, as the houses (Matt, 28 Nov; detail audit of #545, round 2): along the wedge's far
+            # tip the rim, never the core, meets the lit ground; at the foot corner the core stands on
+            # the ground; the core lies only within props.CORE_W (6 world px) of the box's walls and is at most 40 %
+            # of the column east of the picture
+            un = np.hypot(kx, ky)
+            along = ((X - xe) * kx + (Y - fy) * ky) / un
+            tip = ndi.binary_dilation(before & ~pic, iterations=1) & (along >= 2 * PR.CORE_W)
+            self.assertFalse(((sh >= 2) & tip)[:, east:].any(), '%s: its core meets the lit ground' % pid)
+            r = fy + 1
+            west = np.nonzero((sh[r] > 0) & ~before[r])[0]
+            self.assertTrue(len(west) and sh[r, west.min()] == 2, '%s: no contact at the foot corner' % pid)
+            box = np.zeros(self.SIZE, bool)
+            box[int(fy + col[1]):int(fy + col[1] + col[3]), int(self.AT[0] + col[0]):int(xe)] = True
+            far = ndi.distance_transform_edt(~box) > PR.CORE_W + 1
+            self.assertFalse(((sh == 2) & far & ~pic).any(), '%s: core far from its walls' % pid)
+            column = (sh > 0) & ~pic
+            column[:, :east] = False
+            share = (sh[column] == 2).mean()
+            self.assertLessEqual(share, 0.40, '%s: a core slab (%.2f)' % (pid, share))
+            self.assertTrue((sh[column] == 2).any(), '%s: no core in its column' % pid)
+            n += 1
+        self.assertGreaterEqual(n, 7)
 
 
 class FenceRuns(unittest.TestCase):
@@ -2032,8 +2081,41 @@ class Sun(unittest.TestCase):
         idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
         for k, e in idx.items():
             sh = e.get('shadow') or {}
-            if sh.get('kind') == 'footprint':
+            if sh.get('kind') == 'footprint' or 'mask' in sh:
+                # footprint, crown and volume masks alike (one fixed sun: shadows fall south-east)
                 self.assertEqual(tuple(sh['sun']), CAST, '%s: masks made for another sun (run props)' % k)
+        from scripts.art.native import volume as VO
+        self.assertEqual((VO.KX, VO.KY), CAST)
+
+    def test_crown_masks_fall_with_the_sun(self):
+        # the geometry, not the label (logic audit of #545, F6): every tree variant's mask lies with
+        # the sun from its foot (nothing more than 2 texels north of the foot row, its centroid within
+        # 15 to 60 degrees of east towards south, and the sun's own angle is inside that band), and its
+        # core touches the foot (within 3 texels, as the footprint rule's contact): no loose crown blob
+        from PIL import Image
+        from scripts.art.sun import CAST
+        idx = json.load(open(os.path.join(S.ROOT, 'game', 'kit', 'props', 'index.json')))
+        sun = np.degrees(np.arctan2(CAST[1], CAST[0]))
+        self.assertTrue(15 <= sun <= 60)
+        n = 0
+        for k, e in idx.items():
+            sh = e.get('shadow') or {}
+            if e.get('role') != 'tree' or 'mask' not in sh:
+                continue
+            for vid, v in e['variants'].items():
+                m = v.get('shadow') or sh['mask']
+                mk = np.asarray(Image.open(os.path.join(S.ROOT, 'game', m['png'][len('res://'):])))
+                ox, oy = m['offset']
+                ys, xs = np.nonzero(mk)
+                self.assertGreaterEqual(int((ys + oy).min()), -2, '%s %s: north of its foot' % (k, vid))
+                ang = np.degrees(np.arctan2((ys + oy + 0.5).mean(), (xs + ox + 0.5).mean()))
+                self.assertTrue(15 <= ang <= 60, '%s %s: centroid at %.1f degrees' % (k, vid, ang))
+                cy, cx = np.nonzero(mk >= 2)
+                self.assertTrue(len(cx), '%s %s: no core' % (k, vid))
+                self.assertLessEqual(float(np.hypot(cx + ox + 0.5, cy + oy + 0.5).min()), 3.0,
+                                     '%s %s: the core does not reach the foot' % (k, vid))
+                n += 1
+        self.assertGreaterEqual(n, 30)
         gd = open(os.path.join(S.ROOT, 'game', 'world', 'terrain', 'terrain_ground.gd')).read()
         self.assertIn('"res://data/sun.json"', gd)
         # the biomes' old copies are no longer read; they must not drift from the sun meanwhile
@@ -2547,6 +2629,60 @@ class HouseVolume(unittest.TestCase):
             self.assertGreater(west, east, hid)
             self.assertLess(footb, 0.92 * body, hid)
 
+    def _wedge_and_bands(self, hid, look, lv, ox, oy, d=3.0):
+        """Matt, 28 Nov ("Wedge, softer"), eastward-edges 11.6: nothing before the lit front (south of
+        the foot line and west of the sun's ray through the front-east foot corner); south of the foot
+        line the wedge that corner throws, its west edge on the ray (within 1.5 texels on every row)
+        and reaching at least the sun's throw of the wall's eave; along it the rim (one tone) and the
+        mid band (two) as along every edge; three tones only within CORE_W of the walls, touching the
+        east wall, and no more than 40 % of the column that shows (B3: a 6 px core, 10 px of fade)."""
+        from scipy import ndimage as ndi
+        from scripts.art.native import volume as VO
+        kx, ky = VO.KX, VO.KY
+        self.assertGreater(ky, 0)
+        h, w = lv.shape
+        Xc = np.broadcast_to(np.arange(w)[None, :] + ox + 0.5, lv.shape)
+        Yc = np.broadcast_to(np.arange(h)[:, None] + oy + 0.5, lv.shape)
+        xe = look['w'] * d / 2
+        m = lv > 0
+        before = (Yc > 0) & (Xc < xe + kx / ky * Yc)
+        self.assertFalse((m & before).any(), '%s: a shadow before the lit front' % hid)
+        south = m & (Yc > 0)
+        rows = np.nonzero(south.any(1))[0]
+        self.assertTrue(len(rows), '%s: no wedge' % hid)
+        self.assertEqual(list(rows), list(range(rows.min(), rows.max() + 1)), hid)
+        self.assertLessEqual(float(Yc[rows.min(), 0]), 1.0, hid)
+        for r in rows:
+            west = float(Xc[r, np.nonzero(south[r])[0].min()])
+            self.assertLess(abs(west - (xe + kx / ky * Yc[r, 0])), 1.5, '%s: the wedge leaves the ray' % hid)
+        h_eave = look.get('wall_h', 40) - (4 if look.get('roof') == 'thatch' else 0.5)
+        self.assertGreaterEqual(float(Yc[rows.max(), 0]) + 0.5, ky * h_eave * d - 1, '%s: the wedge falls short' % hid)
+        # the bands: the house's own ground and the ground before the front count as inside; along the
+        # wedge's diagonal the rim lies on its far tip (from twice CORE_W along the ray), never at the
+        # corner, where the core stands on the ground (detail audit of #545, round 2: the contact)
+        fp = (np.abs(Xc) < xe) & (Yc > -look['depth'] * d) & (Yc < 0)
+        de = ndi.distance_transform_edt(np.pad(m | fp | before, 1))[1:-1, 1:-1]
+        self.assertTrue((lv[m & (de <= VO.RIM * d)] == 1).all(), '%s: no rim along an edge' % hid)
+        self.assertTrue((lv[m & (de <= (VO.RIM + VO.MID) * d)] <= 2).all(), '%s: the core meets an edge' % hid)
+        un = np.hypot(kx, ky)
+        along = ((Xc - xe) * kx + Yc * ky) / un
+        tip = ndi.binary_dilation(before, iterations=2) & (along >= 2 * VO.CORE_W * d)
+        self.assertTrue((m & tip).any() and (lv[m & tip] == 1).all(), '%s: no rim along the wedge\'s tip' % hid)
+        r0 = rows.min()
+        self.assertEqual(int(lv[r0, np.nonzero(south[r0])[0].min()]), 3, '%s: no contact at the foot corner' % hid)
+        foot = m & (Yc < 0) & (Yc > -3 * d) & (Xc > xe) & (Xc < xe + 1)
+        self.assertTrue(foot.any() and (lv[foot] == 3).all(), '%s: the wall\'s foot has no contact' % hid)
+        core = lv == 3
+        dw = ndi.distance_transform_edt(~fp)
+        self.assertTrue((dw[core] <= VO.CORE_W * d).all(), '%s: three tones far from the wall' % hid)
+        self.assertTrue((core & (Xc > xe) & (Xc < xe + 1.5)).any(), '%s: the core does not meet the east wall' % hid)
+        shows = m & ~fp
+        share = (core & shows).sum() / shows.sum()
+        self.assertLessEqual(share, 0.40, '%s: a core slab (%.2f)' % (hid, share))
+        self.assertGreaterEqual(share, 0.08, '%s: no core (%.2f)' % (hid, share))
+        self.assertTrue(((lv == 2) & shows & (dw > VO.CORE_W * d)).any(), '%s: no two-tone band' % hid)
+        self.assertTrue(((lv == 1) & shows & (dw > VO.MID_W * d)).any(), '%s: no one-tone band' % hid)
+
     def test_cast_shadow_lies_east_follows_the_roof_and_never_before_the_front(self):
         from scripts.art.native import volume as VO
         for hid, look in self.looks.items():
@@ -2555,13 +2691,29 @@ class HouseVolume(unittest.TestCase):
             X = np.arange(w)[None, :] + ox
             Y = np.arange(h)[:, None] + oy
             self.assertEqual(set(np.unique(lv)), {0, 1, 2, 3}, hid)
-            self.assertFalse((lv > 0)[np.broadcast_to(Y >= 0, lv.shape)].any(), hid)
             half = look['w'] * 3.0 / 2
+            self._wedge_and_bands(hid, look, lv, ox, oy)
             self.assertFalse(((lv > 0) & (X < -half - 3 * 6)).any(), hid)
             east = (lv > 0) & (X > half)
             cols = np.nonzero(east.any(0))[0]
             self.assertGreaterEqual(int(X[0, cols.max()] - half), int(0.25 * 25 * 3), hid)
-            if look.get('gable') == 'front':
+            if look.get('gable') == 'front' and VO.KY >= 0:
+                # the sun leaning south (game/data/sun.json: shadows fall south-east): the column is
+                # thrown by the roof, not by a box. Its east reach past the wall is the furthest throw
+                # of the volume's solids (the eave's overhang plus kx times its height), and the
+                # roofed cast covers more ground than the walls alone would throw
+                vol = VO.volume_of(look)
+                w = vol['w']
+                reach = max((x - w / 2 + VO.KX * hh) * 3.0 for part in vol['parts'] for (x, g, hh) in part) - half
+                self.assertLessEqual(abs(int(X[0, cols.max()] + 1 - half) - reach), 2, hid)
+                walls = VO._hull(np.array([((x - w / 2 + VO.KX * hh) * 3.0, (g + VO.KY * hh) * 3.0)
+                                           for (x, g, hh) in vol['parts'][0]]))
+                Xc = np.broadcast_to(X + 0.5, lv.shape)
+                Yc = np.broadcast_to(Y + 0.5, lv.shape)
+                wall_only = VO._inside(walls, Xc, Yc) & (Yc < 0)
+                self.assertGreater(int((lv > 0).sum()), int(wall_only.sum()) + 200, hid)
+                self.assertGreater(int(((lv > 0) & ~wall_only).sum()), 200, hid)
+            elif look.get('gable') == 'front':
                 # a front gable's ridge runs back over the middle at the gable's height: its shadow
                 # reaches furthest north there, more than over either eave
                 north = [int(Y[np.nonzero(c)[0].min(), 0]) if c.any() else None for c in (lv > 0).T]
@@ -2610,8 +2762,8 @@ class HouseVolume(unittest.TestCase):
             self.assertEqual(sh.get('kind'), 'volume', k)
             m = np.asarray(Image.open(os.path.join(S.ROOT, 'game', sh['mask']['png'][len('res://'):])))
             self.assertTrue(set(np.unique(m)) <= {0, 1, 2, 3} and (m == 3).any(), k)
-            # nothing on the foot line or south of it, before the lit front
-            self.assertFalse(m[max(0, -sh['mask']['offset'][1]):].any(), k)
+            # nothing before the lit front, the wedge east of the ray, the soft bands: as house_cast
+            self._wedge_and_bands(k, self.looks[k[len('crossroads_'):]], m, *sh['mask']['offset'])
 
     def test_kit_bake_lays_the_volume_shadow_with_its_levels(self):
         """A house placed in a small kit plan and baked: its ground shadow per texel is the ground

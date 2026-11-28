@@ -2,10 +2,12 @@
 
     from scripts.art.sun import CAST      # (kx, ky): a texel h above the ground lands kx h east, ky h south
 
-Read by the painted zones' bake (scripts/art/native/compose.SHADOW, so the kit bake too) and by the
-kit's prop masks (scripts/art/kit/props.footprint_shadow); the live ground reads the same file
-(TerrainGround.sun()), so the number lives in one place. A day-night cycle would vary this vector;
-see docs/world-editor.md, "The sun".
+Read by the painted zones' bake (scripts/art/native/compose.SHADOW, so the kit bake too), by the
+kit's prop masks (scripts/art/kit/props.footprint_shadow), its trees' crown masks
+(props.crown_shadow) and the houses' volume shadows (scripts/art/native/volume.house_cast); the
+live ground reads the same file (TerrainGround.sun()), so the number lives in one place. One fixed
+sun (Matt, 27 Nov): shadows fall south-east; light from the upper left. Night never rotates it, it
+only softens or fades the shadows under the night tint; see docs/world-editor.md, "The sun".
 """
 from __future__ import annotations
 

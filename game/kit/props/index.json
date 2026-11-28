@@ -3626,10 +3626,14 @@
    "mask": {
     "offset": [
      -110,
-     -170
+     -146
     ],
     "png": "res://kit/props/art/shadow_crossroads_bakery.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    11,
@@ -5039,10 +5043,14 @@
    "mask": {
     "offset": [
      -110,
-     -169
+     -146
     ],
     "png": "res://kit/props/art/shadow_crossroads_fern_cottage.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    11,
@@ -5746,10 +5754,14 @@
    "mask": {
     "offset": [
      -110,
-     -160
+     -146
     ],
     "png": "res://kit/props/art/shadow_crossroads_herbalist.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    10,
@@ -6021,10 +6033,14 @@
    "mask": {
     "offset": [
      -122,
-     -134
+     -122
     ],
     "png": "res://kit/props/art/shadow_crossroads_hut.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    11,
@@ -6598,10 +6614,14 @@
    "mask": {
     "offset": [
      -146,
-     -148
+     -122
     ],
     "png": "res://kit/props/art/shadow_crossroads_library.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    14,
@@ -6899,10 +6919,14 @@
    "mask": {
     "offset": [
      -146,
-     -148
+     -122
     ],
     "png": "res://kit/props/art/shadow_crossroads_north_cottages.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    14,
@@ -7058,11 +7082,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -55,
-     -76
+     -43,
+     -12
     ],
     "png": "res://kit/props/art/shadow_crossroads_oak.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    11,
@@ -7081,8 +7109,8 @@
     "png": "res://zones/crossroads/art/oak_13.png",
     "shadow": {
      "offset": [
-      -55,
-      -76
+      -43,
+      -12
      ],
      "png": "res://kit/props/art/shadow_crossroads_oak.png"
     }
@@ -7095,8 +7123,8 @@
     "png": "res://zones/crossroads/art/oak_21.png",
     "shadow": {
      "offset": [
-      -55,
-      -76
+      -43,
+      -12
      ],
      "png": "res://kit/props/art/shadow_crossroads_oak__oak_21.png"
     }
@@ -7109,8 +7137,8 @@
     "png": "res://zones/crossroads/art/oak_40.png",
     "shadow": {
      "offset": [
-      -55,
-      -76
+      -43,
+      -12
      ],
      "png": "res://kit/props/art/shadow_crossroads_oak__oak_40.png"
     }
@@ -7123,8 +7151,8 @@
     "png": "res://zones/crossroads/art/oak_41.png",
     "shadow": {
      "offset": [
-      -46,
-      -81
+      -33,
+      -12
      ],
      "png": "res://kit/props/art/shadow_crossroads_oak__oak_41.png"
     }
@@ -7137,8 +7165,8 @@
     "png": "res://zones/crossroads/art/oak_42.png",
     "shadow": {
      "offset": [
-      -55,
-      -76
+      -43,
+      -12
      ],
      "png": "res://kit/props/art/shadow_crossroads_oak__oak_42.png"
     }
@@ -7151,8 +7179,8 @@
     "png": "res://zones/crossroads/art/oak_43.png",
     "shadow": {
      "offset": [
-      -55,
-      -76
+      -43,
+      -12
      ],
      "png": "res://kit/props/art/shadow_crossroads_oak__oak_43.png"
     }
@@ -7165,8 +7193,8 @@
     "png": "res://zones/crossroads/art/oak_44.png",
     "shadow": {
      "offset": [
-      -46,
-      -81
+      -33,
+      -12
      ],
      "png": "res://kit/props/art/shadow_crossroads_oak__oak_44.png"
     }
@@ -7179,8 +7207,8 @@
     "png": "res://zones/crossroads/art/oak_45.png",
     "shadow": {
      "offset": [
-      -46,
-      -81
+      -33,
+      -12
      ],
      "png": "res://kit/props/art/shadow_crossroads_oak__oak_45.png"
     }
@@ -7193,8 +7221,8 @@
     "png": "res://zones/crossroads/art/oak_46.png",
     "shadow": {
      "offset": [
-      -46,
-      -81
+      -33,
+      -12
      ],
      "png": "res://kit/props/art/shadow_crossroads_oak__oak_46.png"
     }
@@ -7207,8 +7235,8 @@
     "png": "res://zones/crossroads/art/oak_6.png",
     "shadow": {
      "offset": [
-      -64,
-      -70
+      -56,
+      -12
      ],
      "png": "res://kit/props/art/shadow_crossroads_oak__oak_6.png"
     }
@@ -7667,10 +7695,14 @@
    "mask": {
     "offset": [
      -134,
-     -195
+     -170
     ],
     "png": "res://kit/props/art/shadow_crossroads_smithy.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    13,
@@ -16413,11 +16445,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -77,
-     -35
+     -74,
+     -12
     ],
     "png": "res://kit/props/art/shadow_frost_krummholz.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    4,
@@ -16436,8 +16472,8 @@
     "png": "res://kit/props/art/frost/frost_krummholz_low.png",
     "shadow": {
      "offset": [
-      -66,
-      -30
+      -54,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__low.png"
     }
@@ -16450,8 +16486,8 @@
     "png": "res://kit/props/art/frost/frost_krummholz_low_b.png",
     "shadow": {
      "offset": [
-      -65,
-      -30
+      -60,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__low_b.png"
     }
@@ -16464,8 +16500,8 @@
     "png": "res://kit/props/art/frost/frost_krummholz_still.png",
     "shadow": {
      "offset": [
-      -77,
-      -35
+      -74,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz.png"
     }
@@ -16478,8 +16514,8 @@
     "png": "res://kit/props/art/frost/frost_krummholz_still_b.png",
     "shadow": {
      "offset": [
-      -81,
-      -31
+      -70,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__still_b.png"
     }
@@ -16492,8 +16528,8 @@
     "png": "res://kit/props/art/frost/frost_krummholz_wide.png",
     "shadow": {
      "offset": [
-      -75,
-      -36
+      -71,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__wide.png"
     }
@@ -16506,8 +16542,8 @@
     "png": "res://kit/props/art/frost/frost_krummholz_wide_b.png",
     "shadow": {
      "offset": [
-      -81,
-      -34
+      -69,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_krummholz__wide_b.png"
     }
@@ -16733,11 +16769,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -42,
-     -67
+     -30,
+     -12
     ],
     "png": "res://kit/props/art/shadow_frost_pine.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    4,
@@ -16756,8 +16796,8 @@
     "png": "res://kit/props/art/frost/frost_pine_b.png",
     "shadow": {
      "offset": [
-      -40,
-      -67
+      -33,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_pine__b.png"
     }
@@ -16770,8 +16810,8 @@
     "png": "res://kit/props/art/frost/frost_pine_c.png",
     "shadow": {
      "offset": [
-      -38,
-      -68
+      -26,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_pine__c.png"
     }
@@ -16784,8 +16824,8 @@
     "png": "res://kit/props/art/frost/frost_pine_still.png",
     "shadow": {
      "offset": [
-      -42,
-      -67
+      -30,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_pine.png"
     }
@@ -16836,11 +16876,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -56,
-     -55
+     -58,
+     -12
     ],
     "png": "res://kit/props/art/shadow_frost_pine_squat.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    4,
@@ -16860,7 +16904,7 @@
     "shadow": {
      "offset": [
       -41,
-      -55
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_pine_squat__b.png"
     }
@@ -16873,8 +16917,8 @@
     "png": "res://kit/props/art/frost/frost_pine_squat_c.png",
     "shadow": {
      "offset": [
-      -54,
-      -45
+      -57,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_pine_squat__c.png"
     }
@@ -16887,8 +16931,8 @@
     "png": "res://kit/props/art/frost/frost_pine_squat_still.png",
     "shadow": {
      "offset": [
-      -56,
-      -55
+      -58,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_pine_squat.png"
     }
@@ -17502,11 +17546,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -26,
-     -47
+     -25,
+     -12
     ],
     "png": "res://kit/props/art/shadow_frost_snag.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    2,
@@ -17654,11 +17702,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -40,
-     -77
+     -35,
+     -12
     ],
     "png": "res://kit/props/art/shadow_frost_spruce.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    3,
@@ -17677,8 +17729,8 @@
     "png": "res://kit/props/art/frost/frost_spruce_b.png",
     "shadow": {
      "offset": [
-      -32,
-      -68
+      -31,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_spruce__b.png"
     }
@@ -17691,8 +17743,8 @@
     "png": "res://kit/props/art/frost/frost_spruce_c.png",
     "shadow": {
      "offset": [
-      -33,
-      -77
+      -32,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_spruce__c.png"
     }
@@ -17705,8 +17757,8 @@
     "png": "res://kit/props/art/frost/frost_spruce_still.png",
     "shadow": {
      "offset": [
-      -40,
-      -77
+      -35,
+      -12
      ],
      "png": "res://kit/props/art/shadow_frost_spruce.png"
     }
@@ -19683,10 +19735,14 @@
    "mask": {
     "offset": [
      -158,
-     -196
+     -170
     ],
     "png": "res://kit/props/art/shadow_mill_wheel.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    14,
@@ -22064,11 +22120,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -46,
-     -81
+     -33,
+     -12
     ],
     "png": "res://kit/props/art/shadow_woodland_beech.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    9,
@@ -22132,11 +22192,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -12,
-     -63
+     -24,
+     -12
     ],
     "png": "res://kit/props/art/shadow_woodland_birch.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    5,
@@ -22950,11 +23014,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -64,
-     -70
+     -56,
+     -12
     ],
     "png": "res://kit/props/art/shadow_woodland_hollow_tree.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    11,
@@ -23371,11 +23439,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -55,
-     -76
+     -43,
+     -12
     ],
     "png": "res://kit/props/art/shadow_woodland_oak.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    9,
@@ -23439,11 +23511,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -36,
-     -73
+     -35,
+     -12
     ],
     "png": "res://kit/props/art/shadow_woodland_pine.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    5,
@@ -23507,11 +23583,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -14,
-     -26
+     -18,
+     -12
     ],
     "png": "res://kit/props/art/shadow_woodland_sapling.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    3,
@@ -24326,11 +24406,15 @@
   "shadow": {
    "mask": {
     "offset": [
-     -100,
-     -62
+     -90,
+     -12
     ],
     "png": "res://kit/props/art/shadow_woodland_willow.png"
-   }
+   },
+   "sun": [
+    0.46,
+    0.22
+   ]
   },
   "size_cells": [
    11,

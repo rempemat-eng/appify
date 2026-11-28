@@ -14,8 +14,11 @@ Every house that `houses.building` paints gets these as rules, never hand-painte
 - protrusions (11.5): a sign, a pipe, a plate or a bundle hung on the wall throws an L of shade
   east of it and under it, offset by how far it stands off the wall;
 - the ground cast shadow (11.6): the house as solids (walls, a 45 degree roof, its stacks),
-  projected on the ground east and a little north (`KX`, `KY` per world px of height), a column
-  beside the east wall that ends in its gable's verges, one, two and three tones from its edge in.
+  projected on the ground by the one sun (`KX`, `KY` per world px of height, read from
+  game/data/sun.json through scripts/art/sun.py: shadows fall south-east; light from the upper
+  left), a column beside the east wall that ends in its gable's verges and, south of the foot line,
+  in the wedge its front-east corner throws along the sun's ray (nothing before the lit front;
+  Matt, 28 Nov: "Wedge, softer"); one tone at its edge, two inside, three only near the walls.
 
 Building volume uses the measured depth (eastward-edges 11, house-style 6): each drop is a
 luminance ratio read off Eastward, reached by the fewest steps (one to three) down the texel's own
@@ -30,6 +33,8 @@ from __future__ import annotations
 
 import numpy as np
 from scipy import ndimage as ndi
+
+from scripts.art.sun import CAST
 
 # --- measured rules (eastward-edges.md 11; E native px at an adult of 54, ours world px at 25) ----
 # Building volume uses the measured depth (eastward-edges 11, house-style 6): each shadow is a
@@ -61,9 +66,11 @@ RECESS = (1.0, 0.7)      # world px of an opening's dark head and west reveal (E
 HEAD_DROP, REVEAL_DROP = 0.55, 0.4
 DRIP = 1.0               # world px of a sill's drip shadow (E 2 to 3 px)
 DRIP_DROP = 0.4
-KX, KY = 0.19, -0.10     # the ground cast shadow per world px of height: east, a little north
+KX, KY = CAST            # the ground cast shadow per world px of height: the one sun, east and south
 RIM = 3.0                # world px of the cast shadow's outer band, one tone (E fades over 3 to 10 px)
 MID = 2.6                # world px of the band two tones down inside it; deeper in, three (B3's core)
+CORE_W = 7.0             # world px from the walls within which the column steps three tones (B3: a 6 px core)
+MID_W = 13.0             # and two; beyond, one (B3: 10 px of fade outside the core; Matt, 28 Nov: "softer")
 GLOWS = ('lamp', 'lava', 'glowflora')
 # timber keeps its modelling in the shade: a beam, a post or a board is stepped down, never
 # flattened (a lintel or a corner post under the eave still shows its lit arris and dark underside)
@@ -386,9 +393,14 @@ def house_cast(spec: dict, d: float, kx: float = KX, ky: float = KY):
     steps and its top-left corner in texels from the house's foot (the middle of its front foot
     line). Each solid (the walls, the roof, every stack) is projected (x + kx h, g + ky h) and
     filled as its convex hull, so the column east of the house ends in its gable's slanted verges
-    or its hip and a stack beyond the roof's shadow shows as its own notch. The steps follow
-    Eastward's soft edge and dark core (B3): the outer RIM one tone, the next MID two, deeper in
-    three; nothing falls south of the foot line, before the lit front."""
+    or its hip and a stack beyond the roof's shadow shows as its own notch. (kx, ky) is the one sun
+    (game/data/sun.json), east and south. Nothing falls before the lit front: south of the foot
+    line only the wedge east of the sun's ray through the front-east foot corner (`before_front`;
+    Matt, 28 Nov: "Wedge, softer"). The steps follow Eastward's soft edge and short dark core (B3):
+    from the outline in (the house's own ground and the lit ground before the front count as
+    inside) the outer RIM one tone and the next MID two; along the wedge's diagonal the same bands
+    grow in from CORE_W along the ray (`diag_levels`), so the core keeps its contact at the corner; from the walls out three tones only
+    within CORE_W, two within MID_W, one beyond."""
     vol = volume_of(spec)
     w = vol['w']
     polys = []
@@ -403,16 +415,53 @@ def house_cast(spec: dict, d: float, kx: float = KX, ky: float = KY):
     m = np.zeros(X.shape, bool)
     for p in polys:
         m |= _inside(p, X, Y)
-    m[max(0, -y0):, :] = False
-    # the soft edge: depth from the shadow's outline, the ground's own row under the foot line
-    # counting as inside (the column runs down to the foot, it does not fade there)
-    foot_row = max(1, -y0)
-    k = int(np.ceil((RIM + MID) * d)) + 2
-    tall = np.vstack([m[:foot_row], np.repeat(m[foot_row - 1:foot_row], k, axis=0)])
-    dist = ndi.distance_transform_edt(np.pad(tall, 1))[1:-1, 1:-1][:m.shape[0]]
-    dist = np.vstack([dist, np.zeros((m.shape[0] - dist.shape[0], m.shape[1]))]) if dist.shape[0] < m.shape[0] else dist
-    lv = np.where(dist > (RIM + MID) * d, 3, np.where(dist > RIM * d, 2, 1))
+    # nothing before the lit front (Matt, 28 Nov: "Wedge, softer"): south of the foot line only what
+    # lies east of the sun's ray through the front-east foot corner (xe, 0), the wedge that corner's
+    # vertical edge throws, so the column ends on the trees' diagonal and no shade lies before the
+    # front, its door or its doorstep
+    xe = w / 2 * d
+    before = before_front(X, Y, xe, kx, ky)
+    m &= ~before
+    # the steps (B3's soft edge and short dark core): from the column's outline in, the outer RIM one
+    # tone and the next MID two (the house's own ground counts as inside, the lit ground before the
+    # front as outside, so the bands run along the wedge's diagonal too); and from the walls out,
+    # three tones only within CORE_W of them, two within MID_W, one beyond
+    fp = (np.abs(X) < xe) & (Y > -vol['depth'] * d) & (Y < 0)
+    # the contact (detail audit of #545, round 2): the wedge's diagonal is not an outer edge where the
+    # solid stands on the ground. The outline bands count the ground before the front as inside, and
+    # along the diagonal the rim and mid bands grow in only from CORE_W along the ray to their full
+    # width at twice that (diag_fade), so the core meets the corner and the wall's whole foot and
+    # the fade lies on the wedge's far tip
+    de = ndi.distance_transform_edt(np.pad(m | fp | before, 1))[1:-1, 1:-1]
+    dw = ndi.distance_transform_edt(~fp) if fp.any() else np.full(m.shape, np.inf)
+    lv_edge = np.where(de > (RIM + MID) * d, 3, np.where(de > RIM * d, 2, 1))
+    lv_wall = np.where(dw <= CORE_W * d, 3, np.where(dw <= MID_W * d, 2, 1))
+    lv = np.minimum(np.minimum(lv_edge, lv_wall), diag_levels(X, Y, xe, d, kx, ky))
     return np.where(m, lv, 0).astype(np.uint8), x0, y0
+
+
+def diag_levels(X, Y, xe, d, kx: float = KX, ky: float = KY):
+    """The steps the wedge's diagonal allows (3 where it allows all): along the sun's ray from the
+    front-east foot corner (xe, 0), by a texel's distance p across the ray and t along it, the rim
+    (one tone) and mid (two) bands grow from nothing at CORE_W to RIM and RIM + MID at twice that."""
+    if ky <= 0:
+        return np.full(np.shape(X), 3, np.uint8)
+    n = np.hypot(kx, ky)
+    ux, uy = kx / n, ky / n
+    t = (X - xe) * ux + Y * uy
+    p = np.abs((X - xe) * uy - Y * ux)
+    g = np.clip((t - CORE_W * d) / (CORE_W * d), 0.0, 1.0)
+    return np.where(p <= RIM * d * g, 1, np.where(p <= (RIM + MID) * d * g, 2, 3)).astype(np.uint8)
+
+
+def before_front(X, Y, xe, kx: float = KX, ky: float = KY):
+    """Texel centres (X, Y from the house's foot, y down) that lie before the lit front: south of the
+    foot line and west of the sun's ray through the front-east foot corner (xe, 0). Under a sun
+    leaning north (ky <= 0) that is all the ground south of the foot line."""
+    south = Y > 0
+    if ky <= 0:
+        return south
+    return south & (X < xe + kx / ky * Y)
 
 
 def cast_at(levels, ox, oy, foot, W, H):
